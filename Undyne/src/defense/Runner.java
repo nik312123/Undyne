@@ -51,7 +51,7 @@ public class Runner extends JPanel implements ActionListener {
         Color opaqueWhite = new Color(255, 255, 255, 150);
         g.setColor(opaqueWhite);
         g.drawRect(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2, size, size);
-        while (size-- > 73) {
+        while (--size > 73) {
             size = size - 1;
             g.drawRect(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2, size, size);
         }
