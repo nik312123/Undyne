@@ -1,5 +1,8 @@
 package defense;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 /*
  * Composes an arrow to be implemented in the Attack class
  */
@@ -16,11 +19,57 @@ public class Arrow {
      * This determines the direction the arrow should come from
      */
     private char direction;
+    /*
+     * These are the coordinates of the arrow
+     */
+    private int x, y;
+    /*
+     * Color of the arrow
+     */
+    private Color arrColor;
     
     public Arrow(int speed, boolean reverse, char direction) {
         this.speed = speed;
         this.reverse = reverse;
         this.direction = direction;
+        setCoordinates(direction);
+    }
+    
+    /*
+     * Helper method for the constructor setting the arrow coordinates
+     */
+    private void setCoordinates(char direction) {
+        switch(direction) {
+            case 'r':
+                x = 0;
+                y = 300;
+                break;
+            case 'l':
+                x = 590;
+                y = 300;
+                break;
+            case 'u':
+                x = 300;
+                y = 590;
+                break;
+            case 'd':
+                x = 300;
+                y = 590;
+                break;
+        }
+    }
+    
+    public void draw(Graphics g, Color c) {
+        g.setColor(c);
+        g.fillRect(x, y, 10, 10);
+    }
+    
+    public int getX() {
+        return x;
+    }
+    
+    public int getY() {
+        return y;
     }
     
 }
