@@ -1,7 +1,9 @@
 package defense;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -21,12 +23,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static int delay = 10;
 	public static int shieldDelay = 0;
-
+	static int count = 0;
 	protected Timer timer;
+	BufferedImage gif;
 	BufferedImage heart;
 	BufferedImage shield;
 	public static int angle = 0;
 	public static int red = 30;
+	static boolean runGif = false;
+	static int countsCount = 0;
 	Attack c = new Attack();
 	int counter = 0;
 
@@ -53,19 +58,47 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void paintComponent(Graphics g) {
-
 		super.paintComponent(g);
+		
 		shieldDir();
 		drawBG(g);
 		drawSqu(g);
 		drawCircle(g);
 		drawHeart(g);
 		drawShield(g);
+		gif(g);
 		spawnArrows(g);
-		c.draw(g);
+	
 
 	}
 
+	public void gif(Graphics g) {
+
+		try {
+			
+			gif = ImageIO.read(new File("frame"+count+".png"));
+			
+			if (count == 31){
+				count = 1;
+			}
+			else if(countsCount%3==0){
+				count++;
+			}
+			countsCount++;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Graphics2D g2d = (Graphics2D)g.create();
+		float opacity = 0.4f;
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		g2d.drawImage(gif,
+				189 /* + random.nextInt(10) -5 */ ,
+				10 /* + random.nextInt(10) -5 */, null);
+	    g2d.dispose();
+
+	}
+	
 	public void spawnArrows(Graphics g) {
 		c.tick();
 		if (counter == 0)
@@ -77,7 +110,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 			counter = 1;
 		}
-
+		c.draw(g);
 	}
 
 	public void shieldDir() {
@@ -148,7 +181,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void drawBG(Graphics g) {
-		Color almostBlack = new Color(20, 20, 20);
+		Color almostBlack = new Color(0, 0, 0);
 		g.setColor(almostBlack);
 		g.fillRect(0, 0, getWidth(), getHeight());
 	}
