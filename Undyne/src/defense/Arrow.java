@@ -41,23 +41,43 @@ public class Arrow {
     private void setCoordinates(char direction) {
         switch(direction) {
             case 'r':
-                x = 0;
-                y = 300;
-                break;
+            	x = 590;
+                 y = 300;
+                 break;
             case 'l':
-                x = 590;
+            	x = 0;
                 y = 300;
                 break;
             case 'u':
-                x = 300;
+            	x = 300;
                 y = 590;
                 break;
             case 'd':
                 x = 300;
-                y = 590;
+                y = 0;
                 break;
         }
     }
+
+	public void tick() {
+		switch (direction) {
+		case 'l':
+			x += speed;
+			break;
+		case 'r':
+			x -= speed;
+			break;
+		case 'u':
+			y -= speed;
+			break;
+		case 'd':
+			y += speed;
+			break;
+		
+		}
+
+
+	}
     
     public void draw(Graphics g, Color c) {
         g.setColor(c);
@@ -70,6 +90,10 @@ public class Arrow {
     
     public int getY() {
         return y;
+    }
+    
+    public char getDir(){
+    	return direction;
     }
     
 }
