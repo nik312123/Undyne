@@ -21,6 +21,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public static char dir = 't';
 	private static final long serialVersionUID = 1L;
 	private static int delay = 10;
+	public static int shieldDelay = 0;
+
 	protected Timer timer;
 	BufferedImage heart;
 	BufferedImage shield;
@@ -60,18 +62,26 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void shieldDir() {
+		if (shieldDelay > 20) {
+
 	    switch(dir) {
 	        case 'r':
-	            if(angle == 90)
+	            if(angle == 90){
 	                dir = 't';
+					shieldDelay = 0;
+
+	            }
 	            else if(angle > 90 && angle <= 180)
 	                angle -= 15;
 	            else
 	                angle += 15;
 	            break;
 	        case 'l':
-	            if(angle == 270)
+	            if(angle == 270){
 	                dir = 't';
+					shieldDelay = 0;
+
+	            }
 	            else if(angle < 270 && angle >= 180)
 	                angle += 15;
 	            else if(angle >= 0)
@@ -80,16 +90,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	                angle = 360 + angle;
 	            break;
 	        case 'u':
-	            if(angle == 0)
+	            if(angle == 0){
 	                dir = 't';
+					shieldDelay = 0;
+
+	            }
 	            else if(angle <= 90 && angle > 0)
 	                angle -= 15;
 	            else
 	                angle += 15;
 	            break;
 	        case 'd':
-	            if(angle == 180)
+	            if(angle == 180){
 	                dir = 't';
+					shieldDelay = 0;
+
+	            }
 	            else if(angle <= 270 && angle > 180)
 	                angle -= 15;
 	            else if (angle <= 360 && angle > 270)
@@ -100,6 +116,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    }
 		if (angle > 360)
             angle = 0;
+		
+		} else
+			shieldDelay++;
 	}
 
 	public void drawSqu(Graphics g) {
