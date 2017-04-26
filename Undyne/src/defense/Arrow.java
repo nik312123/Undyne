@@ -47,7 +47,7 @@ public class Arrow {
 	 * Helper method for the constructor setting the arrow coordinates
 	 */
 	private void setCoordinates(char direction) {
-	
+
 		switch (direction) {
 		case 'r':
 			x = 0;
@@ -58,11 +58,11 @@ public class Arrow {
 			y = 270;
 			break;
 		case 'u':
-			x = 300;
+			x = 285;
 			y = 590;
 			break;
 		case 'd':
-			x = 300;
+			x = 285;
 			y = 0;
 			break;
 		}

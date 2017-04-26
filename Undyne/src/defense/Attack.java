@@ -62,39 +62,62 @@ public class Attack {
 
 	public String removeArrow(char dir) {
 		boolean hit = false;
-		
-		if(attackPattern.size() == 0)
+
+		if (attackPattern.size() == 0)
 			return "";
-		if (attackPattern.get(0).getDir() == 'l') {
-			if (attackPattern.get(0).getX() < 280) {
 
-				attackPattern.remove(0);
-			}
-		}
-		else if (attackPattern.get(0).getDir() == 'r') {
-			if(dir=='l'){
-			if (attackPattern.get(0).getX() > 240) {
+		for (int x = 0; x < attackPattern.size(); x++) {
 
-				attackPattern.remove(0);
-				hit = true;
-				
-			}
-			}  if (attackPattern.get(0).getX() > 280) {
+			if (attackPattern.get(x).getDir() == 'l') {
+				if (dir == 'r') {
+					if (attackPattern.get(x).getX() < 325) {
 
-				attackPattern.remove(0);
-			}
-		}
-		else if (attackPattern.get(0).getDir() == 'u') {
-			if (attackPattern.get(0).getY() < 250) {
+						attackPattern.remove(x);
+						hit = true;
 
-				attackPattern.remove(0);
-			}
-		}
-		else if (attackPattern.get(0).getDir() == 'd') { 
-			if (attackPattern.get(0).getY() > 250) {
+					}
+				} else if (attackPattern.get(x).getX() < 295) {
 
-				attackPattern.remove(0);
+					attackPattern.remove(x);
+				}
+			} else if (attackPattern.get(x).getDir() == 'r') {
+				if (dir == 'l') {
+					if (attackPattern.get(x).getX() > 240) {
+
+						attackPattern.remove(x);
+						hit = true;
+
+					}
+				} else if (attackPattern.get(x).getX() > 280) {
+
+					attackPattern.remove(x);
+				}
+			} else if (attackPattern.get(x).getDir() == 'u') {
+				if (dir == 'd') {
+					if (attackPattern.get(x).getY() < 320) {
+
+						attackPattern.remove(x);
+						hit = true;
+
+					}
+				} else if (attackPattern.get(x).getY() < 280) {
+
+					attackPattern.remove(x);
+				}
+			} else if (attackPattern.get(x).getDir() == 'd') {
+				if (dir == 'u') {
+					if (attackPattern.get(x).getY() > 230) {
+
+						attackPattern.remove(x);
+						hit = true;
+
+					}
+				} else if (attackPattern.get(x).getY() > 260) {
+
+					attackPattern.remove(x);
+				}
 			}
+
 		}
 		if (hit)
 			return "H";
@@ -104,7 +127,7 @@ public class Attack {
 	}
 
 	public void draw(Graphics g) throws IOException {
-		if(attackPattern.size() == 0)
+		if (attackPattern.size() == 0)
 			return;
 		attackPattern.get(0).draw(g, Color.RED);
 		for (int i = 1; i < attackPattern.size(); ++i) {

@@ -13,6 +13,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -34,10 +36,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	static int countsCount = 0;
 	Attack c = new Attack();
 	int counter = 0;
-	static int heartFloat = 0;
-	static int heartFloatCounter = 0;
-	static int dynamicY = 1;
+	// done
 	public static String hit = "";
+	Random rand = new Random();
+	public static char[] dirs = new char[] { 'u', 'd', 'r', 'l' };
 
 	public Runner(String s) {
 		JFrame frame = new JFrame(s);
@@ -107,18 +109,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public void spawnArrows(Graphics g) throws IOException {
 		c.tick();
 		if (counter == 0)
-			c.addArrow(new Arrow(5, false, 'r'));
-		if (counter++ > 30) {
-			c.addArrow(new Arrow(5, false, 'r'));
-			 c.addArrow(new Arrow(2, true, 'u'));
-			 c.addArrow(new Arrow(2, false, 'u'));
-			//
-			// c.addArrow(new Arrow(2, false, 'd'));
-			// c.addArrow(new Arrow(2, false, 'l'));
+			c.addArrow(new Arrow(2, false, 'l'));
+		if (counter++ == 50) {
+
+			c.addArrow(new Arrow(2, false, dirs[rand.nextInt(dirs.length)]));
 
 			counter = 1;
 		}
+
 		hit = c.removeArrow(dir);
+
 		if (hit.equals("H")) {
 
 			red = 0;
@@ -128,58 +128,56 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void shieldDir() {
-		if (shieldDelay > 10) {
-			switch (dir) {
-			case 'r':
-				if (angle == 90) {
-					// dir = 't';
-					shieldDelay = 0;
 
-				} else if (angle > 90 && angle <= 180)
-					angle -= 15;
-				else
-					angle += 15;
-				break;
-			case 'l':
-				if (angle == 270) {
-					// dir = 't';
-					shieldDelay = 0;
+		switch (dir) {
+		case 'r':
+			if (angle == 90) {
 
-				} else if (angle < 270 && angle >= 180)
-					angle += 15;
-				else if (angle >= 0)
-					angle -= 15;
-				if (angle < 0)
-					angle = 360 + angle;
-				break;
-			case 'u':
-				if (angle == 0) {
-					// dir = 't';
-					shieldDelay = 0;
+				shieldDelay = 0;
 
-				} else if (angle <= 90 && angle > 0)
-					angle -= 15;
-				else
-					angle += 15;
-				break;
-			case 'd':
-				if (angle == 180) {
-					// dir = 't';
-					shieldDelay = 0;
+			} else if (angle > 90 && angle <= 180)
+				angle -= 15;
+			else
+				angle += 15;
+			break;
+		case 'l':
+			if (angle == 270) {
 
-				} else if (angle <= 270 && angle > 180)
-					angle -= 15;
-				else if (angle <= 360 && angle > 270)
-					angle -= 15;
-				else
-					angle += 15;
-				break;
-			}
-			if (angle > 360)
-				angle = 0;
+				shieldDelay = 0;
 
-		} else
-			shieldDelay++;
+			} else if (angle < 270 && angle >= 180)
+				angle += 15;
+			else if (angle >= 0)
+				angle -= 15;
+			if (angle < 0)
+				angle = 360 + angle;
+			break;
+		case 'u':
+			if (angle == 0) {
+
+				shieldDelay = 0;
+
+			} else if (angle <= 90 && angle > 0)
+				angle -= 15;
+			else
+				angle += 15;
+			break;
+		case 'd':
+			if (angle == 180) {
+
+				shieldDelay = 0;
+
+			} else if (angle <= 270 && angle > 180)
+				angle -= 15;
+			else if (angle <= 360 && angle > 270)
+				angle -= 15;
+			else
+				angle += 15;
+			break;
+		}
+		if (angle > 360)
+			angle = 0;
+
 	}
 
 	public void drawSqu(Graphics g) {
@@ -200,15 +198,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void drawHeart(Graphics g) {
-		heartFloatCounter++;
-		if (heartFloatCounter % 6 == 0)
-			heartFloat += (dynamicY);
-		if (heartFloat == 5 ){
-			dynamicY=-1;
-		}
-		if (heartFloat == -5 ){
-			dynamicY=1;
-		}
+
 		try {
 			heart = ImageIO.read(new File("heart.png"));
 		} catch (IOException e) {
@@ -216,7 +206,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		}
 		int width = heart.getWidth();
 		int height = heart.getHeight();
-		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1, getHeight() / 2 - height / 2 + heartFloat -1 , null);
+		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1, getHeight() / 2 - height / 2, null);
 	}
 
 	public void drawShield(Graphics g) {
