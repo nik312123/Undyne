@@ -40,16 +40,18 @@ public class Arrow {
 		this.reverse = reverse;
 		this.direction = direction;
 		setCoordinates(direction);
+
 	}
 
 	/*
 	 * Helper method for the constructor setting the arrow coordinates
 	 */
-	private void setCoordinates(char direction) { 
-		switch(direction) {
+	private void setCoordinates(char direction) {
+	
+		switch (direction) {
 		case 'r':
 			x = 0;
-			y = 270; 
+			y = 270;
 			break;
 		case 'l':
 			x = 590;
@@ -83,13 +85,12 @@ public class Arrow {
 
 		}
 
-
 	}
 
-	public void draw(Graphics g, Color c) throws IOException { 
+	public void draw(Graphics g, Color c) throws IOException {
 		BufferedImage arr = ImageIO.read(new File("arrowB.png"));
 
-		if(c.equals(Color.RED)){
+		if (c.equals(Color.RED)) {
 			try {
 
 				arr = ImageIO.read(new File("arrowR.png"));
@@ -98,7 +99,7 @@ public class Arrow {
 			}
 		}
 
-		if(reverse){
+		if (reverse) {
 			try {
 
 				arr = ImageIO.read(new File("arrowRE.png"));
@@ -107,33 +108,27 @@ public class Arrow {
 			}
 		}
 
-
 		int angle = 0;
 
-		switch(direction){
-		case 'r' :
-			angle  = 0;
+		switch (direction) {
+		case 'r':
+			angle = 0;
 			break;
-		case 'd' :
+		case 'd':
 			angle = 90;
 			break;
-		case 'l' :
+		case 'l':
 			angle = 180;
 			break;
-		case 'u' :
+		case 'u':
 			angle = -90;
 
 		}
 
-
-		AffineTransform tx = new AffineTransform(); 
-		tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth() / 2,
-				arr.getMinY() + arr.getHeight() / 2);
+		AffineTransform tx = new AffineTransform();
+		tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth() / 2, arr.getMinY() + arr.getHeight() / 2);
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		arr = op.filter(arr, null);
-
-
-
 
 		g.drawImage(arr, x, y, null);
 	}
@@ -146,7 +141,7 @@ public class Arrow {
 		return y;
 	}
 
-	public char getDir(){
+	public char getDir() {
 		return direction;
 	}
 

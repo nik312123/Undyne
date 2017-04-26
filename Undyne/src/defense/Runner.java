@@ -34,6 +34,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	static int countsCount = 0;
 	Attack c = new Attack();
 	int counter = 0;
+	static int heartFloat = 0;
+	static int heartFloatCounter = 0;
+	static int dynamicY = 1;
+	public static String hit = "";
 
 	public Runner(String s) {
 		JFrame frame = new JFrame(s);
@@ -59,7 +63,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		shieldDir();
 		drawBG(g);
 		drawCircle(g);
@@ -72,66 +76,63 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
 
 	}
 
 	public void gif(Graphics g) {
 
 		try {
-			
-			gif = ImageIO.read(new File("frame"+count+".png"));
-			
-			if (count == 31){
+
+			gif = ImageIO.read(new File("frame" + count + ".png"));
+
+			if (count == 31) {
 				count = 1;
-			}
-			else if(countsCount%3==0){
+			} else if (countsCount % 3 == 0) {
 				count++;
 			}
 			countsCount++;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		Graphics2D g2d = (Graphics2D)g.create();
+
+		Graphics2D g2d = (Graphics2D) g.create();
 		float opacity = 0.5f;
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-		g2d.drawImage(gif,
-				189 /* + random.nextInt(10) -5 */ ,
+		g2d.drawImage(gif, 189 /* + random.nextInt(10) -5 */ ,
 				10 /* + random.nextInt(10) -5 */, null);
-	    g2d.dispose();
+		g2d.dispose();
 
 	}
-	
+
 	public void spawnArrows(Graphics g) throws IOException {
 		c.tick();
 		if (counter == 0)
-			c.addArrow(new Arrow(2, false, 'l'));
+			c.addArrow(new Arrow(5, false, 'r'));
 		if (counter++ > 30) {
-			c.addArrow(new Arrow(2, false, 'r'));
-			//c.addArrow(new Arrow(2, true, 'u'));
-			c.addArrow(new Arrow(2, false, 'u'));
-
-			c.addArrow(new Arrow(2, false, 'd'));
-			c.addArrow(new Arrow(2, false, 'l'));
-
-
-
-
+			c.addArrow(new Arrow(5, false, 'r'));
+			 c.addArrow(new Arrow(2, true, 'u'));
+			 c.addArrow(new Arrow(2, false, 'u'));
+			//
+			// c.addArrow(new Arrow(2, false, 'd'));
+			// c.addArrow(new Arrow(2, false, 'l'));
 
 			counter = 1;
 		}
-		c.removeArrow(dir);
+		hit = c.removeArrow(dir);
+		if (hit.equals("H")) {
+
+			red = 0;
+		}
 
 		c.draw(g);
 	}
 
 	public void shieldDir() {
-		if (shieldDelay > 10) { 
+		if (shieldDelay > 10) {
 			switch (dir) {
 			case 'r':
 				if (angle == 90) {
-					dir = 't';
+					// dir = 't';
 					shieldDelay = 0;
 
 				} else if (angle > 90 && angle <= 180)
@@ -141,7 +142,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 				break;
 			case 'l':
 				if (angle == 270) {
-					dir = 't';
+					// dir = 't';
 					shieldDelay = 0;
 
 				} else if (angle < 270 && angle >= 180)
@@ -153,7 +154,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 				break;
 			case 'u':
 				if (angle == 0) {
-					dir = 't';
+					// dir = 't';
 					shieldDelay = 0;
 
 				} else if (angle <= 90 && angle > 0)
@@ -163,7 +164,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 				break;
 			case 'd':
 				if (angle == 180) {
-					dir = 't';
+					// dir = 't';
 					shieldDelay = 0;
 
 				} else if (angle <= 270 && angle > 180)
@@ -199,6 +200,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void drawHeart(Graphics g) {
+		heartFloatCounter++;
+		if (heartFloatCounter % 6 == 0)
+			heartFloat += (dynamicY);
+		if (heartFloat == 5 ){
+			dynamicY=-1;
+		}
+		if (heartFloat == -5 ){
+			dynamicY=1;
+		}
 		try {
 			heart = ImageIO.read(new File("heart.png"));
 		} catch (IOException e) {
@@ -206,12 +216,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		}
 		int width = heart.getWidth();
 		int height = heart.getHeight();
-		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1, getHeight() / 2 - height / 2, null);
+		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1, getHeight() / 2 - height / 2 + heartFloat -1 , null);
 	}
 
 	public void drawShield(Graphics g) {
 		try {
-			if (red < 30) {
+			if (red < 20) {
 				shield = ImageIO.read(new File("shieldh.png"));
 				++red;
 			} else {

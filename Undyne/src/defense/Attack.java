@@ -62,6 +62,7 @@ public class Attack {
 
 	public String removeArrow(char dir) {
 		boolean hit = false;
+		
 		if(attackPattern.size() == 0)
 			return "";
 		if (attackPattern.get(0).getDir() == 'l') {
@@ -71,7 +72,14 @@ public class Attack {
 			}
 		}
 		else if (attackPattern.get(0).getDir() == 'r') {
+			if(dir=='l'){
 			if (attackPattern.get(0).getX() > 240) {
+
+				attackPattern.remove(0);
+				hit = true;
+				
+			}
+			}  if (attackPattern.get(0).getX() > 280) {
 
 				attackPattern.remove(0);
 			}
