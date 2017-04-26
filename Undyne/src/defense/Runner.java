@@ -62,12 +62,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		
 		shieldDir();
 		drawBG(g);
-		drawSqu(g);
 		drawCircle(g);
 		drawHeart(g);
 		drawShield(g);
 		gif(g);
-		spawnArrows(g);
+		drawSqu(g);
+		try {
+			spawnArrows(g);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	
 
 	}
@@ -90,7 +94,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		}
 		
 		Graphics2D g2d = (Graphics2D)g.create();
-		float opacity = 0.4f;
+		float opacity = 0.5f;
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 		g2d.drawImage(gif,
 				189 /* + random.nextInt(10) -5 */ ,
@@ -99,23 +103,31 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	}
 	
-	public void spawnArrows(Graphics g) {
+	public void spawnArrows(Graphics g) throws IOException {
 		c.tick();
 		if (counter == 0)
 			c.addArrow(new Arrow(2, false, 'l'));
-		if (counter++ > 20) {
-			c.addArrow(new Arrow(2, false, 'd'));
+		if (counter++ > 30) {
+			//c.addArrow(new Arrow(2, false, 'r'));
+			//c.addArrow(new Arrow(2, true, 'u'));
+			c.addArrow(new Arrow(2, false, 'u'));
 
-			c.removeArrow(dir);
+			//c.addArrow(new Arrow(2, false, 'd'));
+			//c.addArrow(new Arrow(2, false, 'l'));
+
+
+
+
 
 			counter = 1;
 		}
+		c.removeArrow(dir);
+
 		c.draw(g);
 	}
 
 	public void shieldDir() {
-		if (shieldDelay > 20) {
-
+		if (shieldDelay > 10) { 
 			switch (dir) {
 			case 'r':
 				if (angle == 90) {

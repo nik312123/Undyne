@@ -62,26 +62,28 @@ public class Attack {
 
 	public String removeArrow(char dir) {
 		boolean hit = false;
+		if(attackPattern.size() == 0)
+			return "";
 		if (attackPattern.get(0).getDir() == 'l') {
-			if (attackPattern.get(0).getX() > 300) {
+			if (attackPattern.get(0).getX() > 280) {
 
 				attackPattern.remove(0);
 			}
 		}
-		if (attackPattern.get(0).getDir() == 'r') {
-			if (attackPattern.get(0).getX() < 300) {
+		else if (attackPattern.get(0).getDir() == 'r') {
+			if (attackPattern.get(0).getX() < 240) {
 
 				attackPattern.remove(0);
 			}
 		}
-		if (attackPattern.get(0).getDir() == 'u') {
-			if (attackPattern.get(0).getY() < 300) {
+		else if (attackPattern.get(0).getDir() == 'u') {
+			if (attackPattern.get(0).getY() < 250) {
 
 				attackPattern.remove(0);
 			}
 		}
-		if (attackPattern.get(0).getDir() == 'd') {
-			if (attackPattern.get(0).getY() > 300) {
+		else if (attackPattern.get(0).getDir() == 'd') { 
+			if (attackPattern.get(0).getY() > 250) {
 
 				attackPattern.remove(0);
 			}
@@ -93,7 +95,9 @@ public class Attack {
 
 	}
 
-	public void draw(Graphics g) {
+	public void draw(Graphics g) throws IOException {
+		if(attackPattern.size() == 0)
+			return;
 		attackPattern.get(0).draw(g, Color.RED);
 		for (int i = 1; i < attackPattern.size(); ++i) {
 			attackPattern.get(i).draw(g, Color.BLUE);
