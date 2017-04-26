@@ -12,11 +12,11 @@ public class Attack {
      */
     private LinkedList<Arrow> attackPattern = new LinkedList<Arrow>();
     /*
-     * If the delay for an attack is constant, this is it (milliseconds)
+     * ifthe delay for an attack is constant, this is it (milliseconds)
      */
     private double delay;
     /*
-     * If the delays vary in amount for the arrows, this is it (milliseconds)
+     * ifthe delays vary in amount for the arrows, this is it (milliseconds)
      */
     private double[] delayGroup;
     
@@ -53,31 +53,63 @@ public class Attack {
         attackPattern.remove(a);
     }
     
-    public String removeArrow(char shieldDir) {
-        Arrow temp = attackPattern.get(0);
+    public String removeArrow(char dir) {
         boolean hit = false;
-        switch(temp.getDir()) {
-            case 'l':
-                if(temp.getX() > 300)
-                    attackPattern.remove(0);
-                break;
-            case 'r':
-                if(temp.getX() < 300)
-                    attackPattern.remove(0);
-                break;
-            case 'u':
-                if(temp.getY() < 300)
-                    attackPattern.remove(0);
-                break;
-            case 'd':
-                if(temp.getY() > 300)
-                    attackPattern.remove(0);
-                break;
+        if(attackPattern.size() == 0)
+            return "";
+        for (int i = 0; i < attackPattern.size(); i++) {
+            Arrow tempArrow = attackPattern.get(i);
+            switch(tempArrow.getDir()) {
+                case 'l':
+                    if(dir == 'r') {
+                        if(tempArrow.getX() < 325) {
+                            attackPattern.remove(i);
+                            hit = true;
+                        }
+                    }
+                    else if(attackPattern.get(i).getX() < 295)
+                        attackPattern.remove(i);
+                    break;
+                case 'r':
+                    if(dir == 'l') {
+                        if(tempArrow.getX() > 240) {
+                            attackPattern.remove(i);
+                            hit = true;
+                        }
+                    }
+                    else if(attackPattern.get(i).getX() > 280)
+                        attackPattern.remove(i);
+                    break;
+                case 'u':
+                    if(dir == 'd') {
+                        if(tempArrow.getY() < 320) {
+                            attackPattern.remove(i);
+                            hit = true;
+                        }
+                    }
+                    else if(attackPattern.get(i).getY() < 280)
+                        attackPattern.remove(i);
+                    break;
+                case 'd':
+                    if(dir == 'u') {
+                        if(attackPattern.get(i).getY() > 230) {
+                            attackPattern.remove(i);
+                            hit = true;
+                        }
+                    }
+                    else if(attackPattern.get(i).getY() > 260)
+                        attackPattern.remove(i);
+                    break;
+            }
         }
-        return (hit ? "H" : "");
+        if(hit)
+            return "H";
+        return "";
     }
     
-    public void draw(Graphics g) {
+    public void draw(Graphics g) throws IOException {
+        if(attackPattern.size() == 0)
+            return;
         attackPattern.get(0).draw(g, Color.RED);
         for(int i = 1; i < attackPattern.size(); ++i) {
             attackPattern.get(i).draw(g, Color.BLUE);

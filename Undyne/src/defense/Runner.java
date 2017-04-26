@@ -25,11 +25,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final long serialVersionUID = 1L;
     
 	public static char dir = 'u';
+	public static String hit = "";
+	
+	public static final char[] DIRS = { 'u', 'd', 'r', 'l' };
 	
 	private static int delay = 10;
 	public static int angle = 0;
 	public static int red = 30;
-	private int counter = 0;
+	private int counter = 49;
 	public static int shieldDelay = 0;
 	static int count = 0;
 	static int gifCount = 0;
@@ -40,7 +43,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	BufferedImage heart;
 	BufferedImage shield;
 	
-	static boolean runsGif = false;
+	static boolean runsGif= false;
 	
 	Attack a1 = new Attack(new LinkedList<Arrow>(), 2);
 	
@@ -57,7 +60,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public static void main(String args[]) {
 		@SuppressWarnings("unused")
         Runner a = new Runner("Game");
-
 	}
 
 	public Runner() {
@@ -74,14 +76,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		drawCircle(g);
 		drawHeart(g);
 		drawShield(g);
-		spawnArrows(g);
 		gif(g);
-		a1.draw(g);
+		try {
+		    spawnArrows(g);
+        }
+		catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public void gif(Graphics g) {
 	    try {
-	        gif = ImageIO.read(new File("frame"+count+".png"));
+	        gif= ImageIO.read(new File("frame"+count+".png"));
 	        if(count == 31) {
 	            count = 1;
 	        }
@@ -94,77 +100,65 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	        e.printStackTrace();
 	    }
 	    Graphics2D g2d = (Graphics2D) g.create();
-	    float opacity = 0.4f;
+	    float opacity = 0.5f;
 	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 	    g2d.drawImage(gif, 189, 10, null);
 	    g2d.dispose();
 	}
 	
-	public void spawnArrows(Graphics g) {
+	public void spawnArrows(Graphics g) throws IOException {
 	    a1.tick();
-	    if(counter == 0)
-	        a1.addArrow(new Arrow(2, false, 'l'));
-	    if(++counter > 20) {
-	        a1.addArrow(new Arrow(2, false, 'd'));
-	        a1.removeArrow(dir);
-	        counter = 1;
+	    if(++counter == 50) {
+	        a1.addArrow(new Arrow(2, false, DIRS[(int) (Math.random() * DIRS.length)]));
+	        counter = 0;
 	    }
-	    
+	    hit = a1.removeArrow(dir);
+	    if(hit.equals("H"))
+	        red = 0;
+	    a1.draw(g);
 	}
 
 	public void shieldDir() {
-		if (shieldDelay > 10) {
-    	    switch(dir) {
-    	        case 'r':
-    	            if(angle == 90){
-    	                dir = 't';
-    					shieldDelay = 0;
-    	            }
-    	            else if(angle > 90 && angle <= 180)
-    	                angle -= 15;
-    	            else
-    	                angle += 15;
-    	            break;
-    	        case 'l':
-    	            if(angle == 270){
-    	                dir = 't';
-    					shieldDelay = 0;
-    	            }
-    	            else if(angle < 270 && angle >= 180)
-    	                angle += 15;
-    	            else if(angle >= 0)
-    	                angle -= 15;
-    	            if (angle < 0)
-    	                angle = 360 + angle;
-    	            break;
-    	        case 'u':
-    	            if(angle == 0){
-    	                dir = 't';
-    					shieldDelay = 0;
-    	            }
-    	            else if(angle <= 90 && angle > 0)
-    	                angle -= 15;
-    	            else
-    	                angle += 15;
-    	            break;
-    	        case 'd':
-    	            if(angle == 180){
-    	                dir = 't';
-    					shieldDelay = 0;
-    	            }
-    	            else if(angle <= 270 && angle > 180)
-    	                angle -= 15;
-    	            else if (angle <= 360 && angle > 270)
-    	                angle -= 15;
-    	            else
-    	                angle += 15;
-    	            break;
-    	    }
-    		if (angle > 360)
-                angle = 0;
-		}
-		else
-		    ++shieldDelay;
+	    switch (dir) {
+            case 'r':
+                if(angle == 90)
+                    shieldDelay = 0;
+                else if(angle > 90 && angle <= 180)
+                    angle -= 15;
+                else
+                    angle += 15;
+                break;
+            case 'l':
+                if(angle == 270)
+                    shieldDelay = 0;
+                else if(angle < 270 && angle >= 180)
+                    angle += 15;
+                else if(angle >= 0)
+                    angle -= 15;
+                if(angle < 0)
+                    angle = 360 + angle;
+                break;
+            case 'u':
+                if(angle == 0)
+                    shieldDelay = 0;
+                else if(angle <= 90 && angle > 0)
+                    angle -= 15;
+                else
+                    angle += 15;
+                break;
+            case 'd':
+                if(angle == 180)
+                    shieldDelay = 0;
+                else if(angle <= 270 && angle > 180)
+                    angle -= 15;
+                else if(angle <= 360 && angle > 270)
+                    angle -= 15;
+                else
+                    angle += 15;
+                break;
+        }
+        if(angle > 360)
+            angle = 0;
 	}
 
 	public void drawSqu(Graphics g) {
@@ -197,7 +191,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	public void drawShield(Graphics g) {
 		try {
-			if (red < 30) {
+			if(red < 25) {
 				shield = ImageIO.read(new File("shieldh.png"));
 				++red;
 			}
@@ -214,7 +208,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		shield = op.filter(shield, null);
 		g.translate(-300, -300);
-		g.drawImage(shield, 265, 254, null); // At 0
+		g.drawImage(shield, 265, 254, null);
 	}
 
 	public void drawCircle(Graphics g) {
