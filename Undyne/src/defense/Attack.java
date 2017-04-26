@@ -10,7 +10,7 @@ public class Attack {
     /*
      * List of Arrow objects that make up one attack
      */
-    private LinkedList<Arrow> attackPattern;
+    private LinkedList<Arrow> attackPattern = new LinkedList<Arrow>();
     /*
      * If the delay for an attack is constant, this is it (milliseconds)
      */
@@ -40,6 +40,11 @@ public class Attack {
         this.delayGroup = delayGroup;
     }
     
+    public void tick() {
+        for(Arrow a : attackPattern)
+            a.tick();
+    }
+    
     public void addArrow(Arrow a) {
         attackPattern.add(a);
     }
@@ -48,9 +53,28 @@ public class Attack {
         attackPattern.remove(a);
     }
     
-    public void removeArrow() {
-        if(attackPattern.get(0).getX() > 220)
-            attackPattern.remove(attackPattern.get(0));
+    public String removeArrow(char shieldDir) {
+        Arrow temp = attackPattern.get(0);
+        boolean hit = false;
+        switch(temp.getDir()) {
+            case 'l':
+                if(temp.getX() > 300)
+                    attackPattern.remove(0);
+                break;
+            case 'r':
+                if(temp.getX() < 300)
+                    attackPattern.remove(0);
+                break;
+            case 'u':
+                if(temp.getY() < 300)
+                    attackPattern.remove(0);
+                break;
+            case 'd':
+                if(temp.getY() > 300)
+                    attackPattern.remove(0);
+                break;
+        }
+        return (hit ? "H" : "");
     }
     
     public void draw(Graphics g) {

@@ -1,7 +1,9 @@
 package defense;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -11,6 +13,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -18,16 +21,28 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-	public static char dir = 't';
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
+    
+	public static char dir = 'u';
+	
 	private static int delay = 10;
-	public static int shieldDelay = 0;
-
-	protected Timer timer;
-	BufferedImage heart;
-	BufferedImage shield;
 	public static int angle = 0;
 	public static int red = 30;
+	private int counter = 0;
+	public static int shieldDelay = 0;
+	static int count = 0;
+	static int gifCount = 0;
+	
+	protected Timer timer;
+	
+	BufferedImage gif;
+	BufferedImage heart;
+	BufferedImage shield;
+	
+	static boolean runsGif = false;
+	
+	Attack a1 = new Attack(new LinkedList<Arrow>(), 2);
 	
 	public Runner(String s) {
 		JFrame frame = new JFrame(s);
@@ -59,66 +74,97 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		drawCircle(g);
 		drawHeart(g);
 		drawShield(g);
+		spawnArrows(g);
+		gif(g);
+		a1.draw(g);
+	}
+	
+	public void gif(Graphics g) {
+	    try {
+	        gif = ImageIO.read(new File("frame"+count+".png"));
+	        if(count == 31) {
+	            count = 1;
+	        }
+	        else if(gifCount % 3==0){
+	            ++count;
+	        }
+	        ++gifCount;
+	    }
+	    catch(IOException e) {
+	        e.printStackTrace();
+	    }
+	    Graphics2D g2d = (Graphics2D) g.create();
+	    float opacity = 0.4f;
+	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+	    g2d.drawImage(gif, 189, 10, null);
+	    g2d.dispose();
+	}
+	
+	public void spawnArrows(Graphics g) {
+	    a1.tick();
+	    if(counter == 0)
+	        a1.addArrow(new Arrow(2, false, 'l'));
+	    else if(++counter > 20) {
+	        a1.addArrow(new Arrow(2, false, 'd'));
+	        a1.removeArrow(dir);
+	        counter = 1;
+	    }
+	    
 	}
 
 	public void shieldDir() {
-		if (shieldDelay > 20) {
-
-	    switch(dir) {
-	        case 'r':
-	            if(angle == 90){
-	                dir = 't';
-					shieldDelay = 0;
-
-	            }
-	            else if(angle > 90 && angle <= 180)
-	                angle -= 15;
-	            else
-	                angle += 15;
-	            break;
-	        case 'l':
-	            if(angle == 270){
-	                dir = 't';
-					shieldDelay = 0;
-
-	            }
-	            else if(angle < 270 && angle >= 180)
-	                angle += 15;
-	            else if(angle >= 0)
-	                angle -= 15;
-	            if (angle < 0)
-	                angle = 360 + angle;
-	            break;
-	        case 'u':
-	            if(angle == 0){
-	                dir = 't';
-					shieldDelay = 0;
-
-	            }
-	            else if(angle <= 90 && angle > 0)
-	                angle -= 15;
-	            else
-	                angle += 15;
-	            break;
-	        case 'd':
-	            if(angle == 180){
-	                dir = 't';
-					shieldDelay = 0;
-
-	            }
-	            else if(angle <= 270 && angle > 180)
-	                angle -= 15;
-	            else if (angle <= 360 && angle > 270)
-	                angle -= 15;
-	            else
-	                angle += 15;
-	            break;
-	    }
-		if (angle > 360)
-            angle = 0;
-		
-		} else
-			shieldDelay++;
+		if (shieldDelay > 10) {
+    	    switch(dir) {
+    	        case 'r':
+    	            if(angle == 90){
+    	                dir = 't';
+    					shieldDelay = 0;
+    	            }
+    	            else if(angle > 90 && angle <= 180)
+    	                angle -= 15;
+    	            else
+    	                angle += 15;
+    	            break;
+    	        case 'l':
+    	            if(angle == 270){
+    	                dir = 't';
+    					shieldDelay = 0;
+    	            }
+    	            else if(angle < 270 && angle >= 180)
+    	                angle += 15;
+    	            else if(angle >= 0)
+    	                angle -= 15;
+    	            if (angle < 0)
+    	                angle = 360 + angle;
+    	            break;
+    	        case 'u':
+    	            if(angle == 0){
+    	                dir = 't';
+    					shieldDelay = 0;
+    	            }
+    	            else if(angle <= 90 && angle > 0)
+    	                angle -= 15;
+    	            else
+    	                angle += 15;
+    	            break;
+    	        case 'd':
+    	            if(angle == 180){
+    	                dir = 't';
+    					shieldDelay = 0;
+    	            }
+    	            else if(angle <= 270 && angle > 180)
+    	                angle -= 15;
+    	            else if (angle <= 360 && angle > 270)
+    	                angle -= 15;
+    	            else
+    	                angle += 15;
+    	            break;
+    	    }
+    		if (angle > 360)
+                angle = 0;
+		}
+		else
+		    ++shieldDelay;
 	}
 
 	public void drawSqu(Graphics g) {
@@ -133,8 +179,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void drawBG(Graphics g) {
-		Color almostBlack = new Color(20, 20, 20);
-		g.setColor(almostBlack);
+		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 	}
 

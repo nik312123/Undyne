@@ -41,11 +41,11 @@ public class Arrow {
     private void setCoordinates(char direction) {
         switch(direction) {
             case 'r':
-                x = 0;
+                x = 590;
                 y = 300;
                 break;
             case 'l':
-                x = 590;
+                x = 0;
                 y = 300;
                 break;
             case 'u':
@@ -54,7 +54,24 @@ public class Arrow {
                 break;
             case 'd':
                 x = 300;
-                y = 590;
+                y = 0;
+                break;
+        }
+    }
+    
+    public void tick() {
+        switch(direction) {
+            case 'l':
+                x += speed;
+                break;
+            case 'r':
+                x -= speed;
+                break;
+            case 'u':
+                y -= speed;
+                break;
+            case 'd':
+                y += speed;
                 break;
         }
     }
@@ -70,6 +87,10 @@ public class Arrow {
     
     public int getY() {
         return y;
+    }
+    
+    public char getDir() {
+        return direction;
     }
     
 }
