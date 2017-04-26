@@ -112,13 +112,13 @@ public class Arrow {
 
 		switch(direction){
 		case 'r' :
-			angle  = 180;
+			angle  = 0;
 			break;
 		case 'd' :
 			angle = 90;
 			break;
 		case 'l' :
-			angle = 0;
+			angle = 180;
 			break;
 		case 'u' :
 			angle = -90;

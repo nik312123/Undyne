@@ -65,13 +65,13 @@ public class Attack {
 		if(attackPattern.size() == 0)
 			return "";
 		if (attackPattern.get(0).getDir() == 'l') {
-			if (attackPattern.get(0).getX() > 280) {
+			if (attackPattern.get(0).getX() < 280) {
 
 				attackPattern.remove(0);
 			}
 		}
 		else if (attackPattern.get(0).getDir() == 'r') {
-			if (attackPattern.get(0).getX() < 240) {
+			if (attackPattern.get(0).getX() > 240) {
 
 				attackPattern.remove(0);
 			}

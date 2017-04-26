@@ -108,12 +108,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		if (counter == 0)
 			c.addArrow(new Arrow(2, false, 'l'));
 		if (counter++ > 30) {
-			//c.addArrow(new Arrow(2, false, 'r'));
+			c.addArrow(new Arrow(2, false, 'r'));
 			//c.addArrow(new Arrow(2, true, 'u'));
 			c.addArrow(new Arrow(2, false, 'u'));
 
-			//c.addArrow(new Arrow(2, false, 'd'));
-			//c.addArrow(new Arrow(2, false, 'l'));
+			c.addArrow(new Arrow(2, false, 'd'));
+			c.addArrow(new Arrow(2, false, 'l'));
 
 
 
