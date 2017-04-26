@@ -104,7 +104,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    a1.tick();
 	    if(counter == 0)
 	        a1.addArrow(new Arrow(2, false, 'l'));
-	    else if(++counter > 20) {
+	    if(++counter > 20) {
 	        a1.addArrow(new Arrow(2, false, 'd'));
 	        a1.removeArrow(dir);
 	        counter = 1;
