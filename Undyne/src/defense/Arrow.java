@@ -34,7 +34,7 @@ public class Arrow {
     private int x, y;
     /*
      * Color of the arrow
-     */
+     */                                         
     private Color arrColor;
     
     public Arrow(int speed, boolean reverse, char direction) {
