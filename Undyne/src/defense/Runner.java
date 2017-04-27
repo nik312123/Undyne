@@ -13,12 +13,16 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
     
@@ -33,9 +37,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public static int angle = 0;
 	public static int red = 30;
 	private int counter = 49;
-	public static int shieldDelay = 0;
 	static int count = 0;
 	static int gifCount = 0;
+	public static int currentDirection = 0;
 	
 	protected Timer timer;
 	
@@ -57,9 +61,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		frame.setVisible(true);
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException {
 		@SuppressWarnings("unused")
         Runner a = new Runner("Game");
+		ArrayList<Sound> spiritOfJustice = new ArrayList<Sound>();
+		for(int i = 1; i <= 12; ++i) {
+		    spiritOfJustice.add(new Sound("SOJ" + i + ".wav", false));
+		}
+		Sound.playGroup(spiritOfJustice, true);
 	}
 
 	public Runner() {
@@ -109,12 +118,26 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public void spawnArrows(Graphics g) throws IOException {
 	    a1.tick();
 	    if(++counter == 50) {
-	        a1.addArrow(new Arrow(2, false, DIRS[(int) (Math.random() * DIRS.length)]));
+	        a1.addArrow(new Arrow(2, false, DIRS[currentDirection++]));
+	        if(currentDirection == DIRS.length)
+	            currentDirection = 0;
 	        counter = 0;
 	    }
 	    hit = a1.removeArrow(dir);
-	    if(hit.equals("H"))
+	    Sound block = null;
+	    Sound damage = null;
+        try {
+            block = new Sound("block.wav", false);
+            damage = new Sound("damage.wav", false);
+        } catch (IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+	    if(hit.equals("H")) {
 	        red = 0;
+	        block.play();
+	    }
+	    else if(hit.equals("D"))
+	        damage.play();
 	    a1.draw(g);
 	}
 
@@ -122,7 +145,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    switch (dir) {
             case 'r':
                 if(angle == 90)
-                    shieldDelay = 0;
+                    break;
                 else if(angle > 90 && angle <= 180)
                     angle -= 15;
                 else
@@ -130,7 +153,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case 'l':
                 if(angle == 270)
-                    shieldDelay = 0;
+                    break;
                 else if(angle < 270 && angle >= 180)
                     angle += 15;
                 else if(angle >= 0)
@@ -140,7 +163,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case 'u':
                 if(angle == 0)
-                    shieldDelay = 0;
+                    break;
                 else if(angle <= 90 && angle > 0)
                     angle -= 15;
                 else
@@ -148,7 +171,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case 'd':
                 if(angle == 180)
-                    shieldDelay = 0;
+                    break;
                 else if(angle <= 270 && angle > 180)
                     angle -= 15;
                 else if(angle <= 360 && angle > 270)
@@ -245,5 +268,4 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {}
-	
 }

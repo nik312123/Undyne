@@ -55,6 +55,7 @@ public class Attack {
     
     public String removeArrow(char dir) {
         boolean hit = false;
+        boolean damage = false;
         if(attackPattern.size() == 0)
             return "";
         for (int i = 0; i < attackPattern.size(); i++) {
@@ -67,8 +68,10 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getX() < 295)
+                    else if(attackPattern.get(i).getX() < 295) {
                         attackPattern.remove(i);
+                        damage = true;
+                    }
                     break;
                 case 'r':
                     if(dir == 'l') {
@@ -77,8 +80,10 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getX() > 280)
+                    else if(attackPattern.get(i).getX() > 280) {
                         attackPattern.remove(i);
+                        damage = true;
+                    }
                     break;
                 case 'u':
                     if(dir == 'd') {
@@ -87,8 +92,10 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getY() < 280)
+                    else if(attackPattern.get(i).getY() < 280) {
                         attackPattern.remove(i);
+                        damage = true;
+                    }
                     break;
                 case 'd':
                     if(dir == 'u') {
@@ -97,13 +104,17 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getY() > 260)
+                    else if(attackPattern.get(i).getY() > 260) {
                         attackPattern.remove(i);
+                        damage = true;
+                    }
                     break;
             }
         }
         if(hit)
             return "H";
+        else if(damage)
+            return "D";
         return "";
     }
     
