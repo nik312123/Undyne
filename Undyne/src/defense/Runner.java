@@ -31,7 +31,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public static char dir = 'u';
 	public static String hit = "";
 	
-	public static final char[] DIRS = { 'u', 'd', 'r', 'l' };
+	public static final char[] DIRS = {'u', 'd', 'r', 'l'};
 	
 	private static int delay = 10;
 	public static int angle = 0;
@@ -40,6 +40,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	static int count = 0;
 	static int gifCount = 0;
 	public static int currentDirection = 0;
+	public static boolean isGenocide = true;
 	
 	protected Timer timer;
 	
@@ -64,11 +65,21 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException {
 		@SuppressWarnings("unused")
         Runner a = new Runner("Game");
-		ArrayList<Sound> spiritOfJustice = new ArrayList<Sound>();
-		for(int i = 1; i <= 12; ++i) {
-		    spiritOfJustice.add(new Sound("SOJ" + i + ".wav", false));
+		ArrayList<Sound> mainTheme = new ArrayList<Sound>();
+		int max;
+		String base;
+		if(isGenocide) {
+		    max = 16;
+		    base = "BATH";
 		}
-		Sound.playGroup(spiritOfJustice, true);
+		else {
+		    max = 12;
+		    base = "SOJ";
+		}
+		for(int i = 1; i <= max; ++i) {
+		    mainTheme.add(new Sound(base + i + ".wav", false));
+		}
+		Sound.playGroup(mainTheme, true);
 	}
 
 	public Runner() {
@@ -95,15 +106,44 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	public void gif(Graphics g) {
+	    int maxCount;
+	    int gifChange;
+	    String baseName;
+	    int[] exceptions = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31};
+	    if(isGenocide) {
+	        maxCount = 79;
+	        baseName = "undying";
+	        gifChange = 4;
+	    }
+	    else {
+	        maxCount = 31;
+	        baseName = "frame";
+	        gifChange = 3;
+	    }
 	    try {
-	        gif= ImageIO.read(new File("frame"+count+".png"));
-	        if(count == 31) {
-	            count = 1;
+	        gif = ImageIO.read(new File(baseName + count + ".png"));
+	        if(isGenocide) {
+    	        if(count == maxCount)
+    	            count = 1;
+    	        else if(gifCount % gifChange == 0)
+    	            ++count;
+    	        ++gifCount;
+    	        if(gifCount == gifChange)
+    	            gifCount = 0;
 	        }
-	        else if(gifCount % 3==0){
-	            ++count;
+	        else {
+	            if(count == maxCount)
+                    count = 1;
+                else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
+                    ++count;
+                else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
+                    ++count;
+                ++gifCount;
+                if(gifCount == gifChange && (count - 1) % 3 != 0)
+                    gifCount = 0;
+                else if((count - 1) % 3 == 0 && gifCount == 4)
+                    gifCount = 0;
 	        }
-	        ++gifCount;
 	    }
 	    catch(IOException e) {
 	        e.printStackTrace();
@@ -111,7 +151,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    Graphics2D g2d = (Graphics2D) g.create();
 	    float opacity = 0.5f;
 	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-	    g2d.drawImage(gif, 189, 10, null);
+	    if(isGenocide)
+	        g2d.drawImage(gif, 198, 10, null);
+	    else
+	        g2d.drawImage(gif, 189, 10, null);
 	    g2d.dispose();
 	}
 	
