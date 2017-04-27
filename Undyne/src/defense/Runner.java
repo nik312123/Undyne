@@ -23,7 +23,7 @@ import javax.swing.Timer;
 import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-        private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     
 	public static char dir = 'u';
 	public static String hit = "";
@@ -31,11 +31,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	public static final char[] DIRS = {'u', 'd', 'r', 'l'};
 	private static int delay = 10;
 	public static int angle = 0;
-
+	
 	static int count = 0;
 	static int gifCount = 0;
 	public static int currentDirection = 0;
-	public static boolean isGenocide = true;
+	public static boolean isGenocide = false;
 	protected Timer timer;
 
 	BufferedImage gif;
@@ -58,7 +58,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException {
 		@SuppressWarnings("unused")
-                Runner a = new Runner("Game");
+        Runner a = new Runner("Game");
 		ArrayList<Sound> mainTheme = new ArrayList<Sound>();
 		int max;
 		String base;
@@ -91,10 +91,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		p.shield(g, dir);
 		gif(g);
 		try {
-                    a1.spawnArrows(g, p);
+		    a1.spawnArrows(g, p);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
 	public void gif(Graphics g) {
 	    int maxCount;
 	    int gifChange;
@@ -145,32 +147,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    else
 	        g2d.drawImage(gif, 189, 10, null);
 	    g2d.dispose();
-	}
-	
-	public void spawnArrows(Graphics g) throws IOException {
-	    a1.tick();
-	    if(++counter == 50) {
-	        a1.addArrow(new Arrow(2, false, DIRS[(int) (Math.random() * 4)]));
-	        if(currentDirection == DIRS.length)
-	            currentDirection = 0;
-	        counter = 0;
-	    }
-	    hit = a1.removeArrow(dir);
-	    Sound block = null;
-	    Sound damage = null;
-        try {
-            block = new Sound("Audio/block.wav", false);
-            damage = new Sound("Audio/damage.wav", false);
-        } catch (IOException | UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        }
-	    if(hit.equals("H")) {
-	        red = 0;
-	        block.play();
-	    }
-	    else if(hit.equals("D"))
-	        damage.play();
-	    a1.draw(g);
 	}
 
 	public void drawSqu(Graphics g) {
