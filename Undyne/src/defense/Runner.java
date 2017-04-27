@@ -15,42 +15,35 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
 import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-    
-    private static final long serialVersionUID = 1L;
-    
-	public static char dir = 'u';
-	public static String hit = "";
-	
-	public static final char[] DIRS = { 'u', 'd', 'r', 'l' };
-	
+
+	private static final long serialVersionUID = 1L;
+
+	private static char dir = 'u';
+
 	private static int delay = 10;
 	public static int angle = 0;
-	public static int red = 30;
-	private int counter = 49;
+
 	static int count = 0;
 	static int gifCount = 0;
-	public static int currentDirection = 0;
-	
+
 	protected Timer timer;
-	
+
 	BufferedImage gif;
 	BufferedImage heart;
-	BufferedImage shield;
-	
-	static boolean runsGif= false;
-	
+
+	static boolean runsGif = false;
+
 	Attack a1 = new Attack(new LinkedList<Arrow>(), 2);
-	
+	Player p = new Player();
+
 	public Runner(String s) {
 		JFrame frame = new JFrame(s);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,10 +56,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException {
 		@SuppressWarnings("unused")
-        Runner a = new Runner("Game");
+		Runner a = new Runner("Game");
 		ArrayList<Sound> spiritOfJustice = new ArrayList<Sound>();
-		for(int i = 1; i <= 12; ++i) {
-		    spiritOfJustice.add(new Sound("SOJ" + i + ".wav", false));
+		for (int i = 1; i <= 12; ++i) {
+			spiritOfJustice.add(new Sound("Audio/SOJ" + i + ".wav", false));
 		}
 		Sound.playGroup(spiritOfJustice, true);
 	}
@@ -77,121 +70,48 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	@Override
-	public void paintComponent(Graphics g) { 
-		super.paintComponent(g); 
-		shieldDir();
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		drawBG(g);
 		drawSqu(g);
 		drawCircle(g);
 		drawHeart(g);
-		drawShield(g);
+		p.shield(g, dir);
 		gif(g);
 		try {
-		    spawnArrows(g);
-        }
-		catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
-	
-	public void gif(Graphics g) {
-	    try {
-	        gif= ImageIO.read(new File("frame"+count+".png"));
-	        if(count == 31) {
-	            count = 1;
-	        }
-	        else if(gifCount % 3==0){
-	            ++count;
-	        }
-	        ++gifCount;
-	    }
-	    catch(IOException e) {
-	        e.printStackTrace();
-	    }
-	    Graphics2D g2d = (Graphics2D) g.create();
-	    float opacity = 0.5f;
-	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-	    g2d.drawImage(gif, 189, 10, null);
-	    g2d.dispose();
-	}
-	
-	public void spawnArrows(Graphics g) throws IOException {
-	    a1.tick();
-	    if(++counter == 50) {
-	        a1.addArrow(new Arrow(2, false, DIRS[currentDirection++]));
-	        if(currentDirection == DIRS.length)
-	            currentDirection = 0;
-	        counter = 0;
-	    }
-	    hit = a1.removeArrow(dir);
-	    Sound block = null;
-	    Sound damage = null;
-        try {
-            block = new Sound("block.wav", false);
-            damage = new Sound("damage.wav", false);
-        } catch (IOException | UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        }
-	    if(hit.equals("H")) {
-	        red = 0;
-	        block.play();
-	    }
-	    else if(hit.equals("D"))
-	        damage.play();
-	    a1.draw(g);
+			a1.spawnArrows(g, p);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void shieldDir() {
-	    switch (dir) {
-            case 'r':
-                if(angle == 90)
-                    break;
-                else if(angle > 90 && angle <= 180)
-                    angle -= 15;
-                else
-                    angle += 15;
-                break;
-            case 'l':
-                if(angle == 270)
-                    break;
-                else if(angle < 270 && angle >= 180)
-                    angle += 15;
-                else if(angle >= 0)
-                    angle -= 15;
-                if(angle < 0)
-                    angle = 360 + angle;
-                break;
-            case 'u':
-                if(angle == 0)
-                    break;
-                else if(angle <= 90 && angle > 0)
-                    angle -= 15;
-                else
-                    angle += 15;
-                break;
-            case 'd':
-                if(angle == 180)
-                    break;
-                else if(angle <= 270 && angle > 180)
-                    angle -= 15;
-                else if(angle <= 360 && angle > 270)
-                    angle -= 15;
-                else
-                    angle += 15;
-                break;
-        }
-        if(angle > 360)
-            angle = 0;
+	public void gif(Graphics g) {
+		try {
+			gif = ImageIO.read(new File("images/gif/frame" + count + ".png"));
+			if (count == 31) {
+				count = 1;
+			} else if (gifCount % 3 == 0) {
+				++count;
+			}
+			++gifCount;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Graphics2D g2d = (Graphics2D) g.create();
+		float opacity = 0.5f;
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		g2d.drawImage(gif, 189, 10, null);
+		g2d.dispose();
 	}
 
 	public void drawSqu(Graphics g) {
 		int size = 80;
 		Color translucentWhite = new Color(255, 255, 255, 200);
 		g.setColor(translucentWhite);
-		g.drawRect(getWidth()/2 - size/2, getHeight()/2 - size/2, size, size);
+		g.drawRect(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2, size, size);
 		while (size > 73) {
 			--size;
-			g.drawRect(getWidth()/2 - size/2, getHeight()/2 - size/2, size, size);
+			g.drawRect(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2, size, size);
 		}
 	}
 
@@ -202,42 +122,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	public void drawHeart(Graphics g) {
 		try {
-			heart = ImageIO.read(new File("heart.png"));
-		}
-		catch (IOException e) {
+			heart = ImageIO.read(new File("images/heart.png"));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		int width = heart.getWidth();
 		int height = heart.getHeight();
-		g.drawImage(heart, getWidth()/2 - (width/2) + 1, getHeight()/2 - height/2, null);
-	}
-
-	public void drawShield(Graphics g) {
-		try {
-			if(red < 25) {
-				shield = ImageIO.read(new File("shieldh.png"));
-				++red;
-			}
-			else {
-				shield = ImageIO.read(new File("shield.png"));
-			}
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		g.translate(300, 300);
-		AffineTransform tx = new AffineTransform();
-		tx.rotate(Math.toRadians(angle), shield.getMinX() + shield.getWidth()/2, shield.getMinY() + shield.getHeight()/2);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		shield = op.filter(shield, null);
-		g.translate(-300, -300);
-		g.drawImage(shield, 265, 254, null);
+		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1, getHeight() / 2 - height / 2, null);
 	}
 
 	public void drawCircle(Graphics g) {
 		Color clr = new Color(0, 255, 0);
 		g.setColor(clr);
-		g.drawOval(getWidth()/2 - 25, getHeight()/2 - 25, 50, 50);
+		g.drawOval(getWidth() / 2 - 25, getHeight() / 2 - 25, 50, 50);
 	}
 
 	@Override
@@ -246,26 +143,28 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-	    switch(e.getKeyCode()) {
-    	    case KeyEvent.VK_UP:
-    	        dir = 'u';
-                break;
-    	    case KeyEvent.VK_DOWN:
-    	        dir = 'd';
-                break;
-    	    case KeyEvent.VK_RIGHT:
-    	        dir = 'r';
-                break;
-    	    case KeyEvent.VK_LEFT:
-    	        dir = 'l';
-                break;
-	    }
+	public void keyTyped(KeyEvent e) {
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_UP:
+			dir = 'u';
+			break;
+		case KeyEvent.VK_DOWN:
+			dir = 'd';
+			break;
+		case KeyEvent.VK_RIGHT:
+			dir = 'r';
+			break;
+		case KeyEvent.VK_LEFT:
+			dir = 'l';
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
 }

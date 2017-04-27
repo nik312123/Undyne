@@ -48,25 +48,26 @@ public class Arrow {
      * Helper method for the constructor setting the arrow coordinates
      */
     private void setCoordinates(char direction) {
-        switch(direction) {
-            case 'r':
-                x = 0;
-                y = 270;
-                break;
-            case 'l':
-                x = 590;
-                y = 270;
-                break;
-            case 'u':
-                x = 285;
-                y = 590;
-                break;
-            case 'd':
-                x = 285;
-                y = 0;
-                break;
-        }
-    }
+
+		switch (direction) {
+		case 'r':
+			x = 11;
+			y = 270;
+			break;
+		case 'l':
+			x = 557;
+			y = 270;
+			break;
+		case 'u':
+			x = 285;
+			y = 545;
+			break;
+		case 'd':
+			x = 285;
+			y = 0;
+			break;
+		}
+	}
     
     public void tick() {
         switch(direction) {
@@ -86,10 +87,10 @@ public class Arrow {
     }
     
     public void draw(Graphics g, Color c) throws IOException {
-        BufferedImage arr = ImageIO.read(new File("arrowB.png"));
+        BufferedImage arr = ImageIO.read(new File("images/arrowB.png"));
         if(c.equals(Color.RED)) {
             try {
-                arr = ImageIO.read(new File("arrowR.png"));
+                arr = ImageIO.read(new File("images/arrowR.png"));
             }
             catch(IOException e) {
                 e.printStackTrace();
@@ -97,7 +98,7 @@ public class Arrow {
         }
         if(reverse) {
             try {
-                arr = ImageIO.read(new File("arrowRE.png"));
+                arr = ImageIO.read(new File("images/arrowRE.png"));
             }
             catch(IOException e) {
                 e.printStackTrace();
