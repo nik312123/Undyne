@@ -159,8 +159,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    Sound block = null;
 	    Sound damage = null;
         try {
-            block = new Sound("block.wav", false);
-            damage = new Sound("damage.wav", false);
+            block = new Sound("Audio/block.wav", false);
+            damage = new Sound("Audio/damage.wav", false);
         } catch (IOException | UnsupportedAudioFileException e) {
             e.printStackTrace();
         }
