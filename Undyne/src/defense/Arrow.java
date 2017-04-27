@@ -48,21 +48,20 @@ public class Arrow {
      * Helper method for the constructor setting the arrow coordinates
      */
     private void setCoordinates(char direction) {
-
 		switch (direction) {
-		case 'r':
+		    case 'r':
 			x = 11;
 			y = 270;
 			break;
-		case 'l':
+		    case 'l':
 			x = 557;
 			y = 270;
 			break;
-		case 'u':
+		    case 'u':
 			x = 285;
 			y = 545;
 			break;
-		case 'd':
+		    case 'd':
 			x = 285;
 			y = 0;
 			break;
