@@ -23,7 +23,7 @@ import javax.swing.Timer;
 import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-  private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
     
 	public static char dir = 'u';
 	public static String hit = "";
@@ -58,7 +58,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
 	public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException {
 		@SuppressWarnings("unused")
-    Runner a = new Runner("Game");
+                Runner a = new Runner("Game");
 		ArrayList<Sound> mainTheme = new ArrayList<Sound>();
 		int max;
 		String base;
@@ -71,7 +71,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		    base = "SOJ";
 		}
 		for(int i = 1; i <= max; ++i) {
-		    mainTheme.add(new Sound(base + i + ".wav", false));
+		    mainTheme.add(new Sound("Audio/" + base + i + ".wav", false));
 		}
 		Sound.playGroup(mainTheme, true);
 	}
@@ -91,7 +91,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		p.shield(g, dir);
 		gif(g);
 		try {
-      a1.spawnArrows(g, p);
+                    a1.spawnArrows(g, p);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
