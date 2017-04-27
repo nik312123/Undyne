@@ -2,14 +2,13 @@ package defense;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +50,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		frame.add(bp);
 		frame.addKeyListener(this);
 		frame.setSize(600, 600);
+		
 		frame.setVisible(true);
 	}
 
@@ -83,8 +83,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		try {
+            p.drawHealth(g);
+        } catch (FontFormatException | IOException e) {
+           
+            e.printStackTrace();
+        }
+		
 	}
 
+	public void refresh(){
+	    
+	}
+	
 	public void gif(Graphics g) {
 		try {
 			gif = ImageIO.read(new File("images/gif/frame" + count + ".png"));

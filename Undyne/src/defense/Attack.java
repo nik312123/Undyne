@@ -63,7 +63,7 @@ public class Attack {
         attackPattern.remove(a);
     }
     
-    public String removeArrow(char dir) {
+    public String removeArrow(char dir, Player p) {
         boolean hit = false;
         boolean damage = false;
         if(attackPattern.size() == 0)
@@ -123,8 +123,10 @@ public class Attack {
         }
         if(hit)
             return "H";
-        else if(damage)
+        else if(damage){
+            p.damage();
             return "D";
+        }
         return "";
     }
     
@@ -145,7 +147,7 @@ public class Attack {
 	            currentDirection = 0;
 	        counter = 0;
 	    }
-	    hit = removeArrow(p.getDir());
+	    hit = removeArrow(p.getDir(),p);
 	    Sound block = null;
 	    Sound damage = null;
         try {
