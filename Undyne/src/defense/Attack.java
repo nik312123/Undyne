@@ -5,8 +5,15 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import nikunj.classes.Sound;
+
 
 public class Attack {
+	public static int currentDirection = 0;
+	public static final char[] DIRS = { 'u', 'd', 'r', 'l' };
+	private int counter = 49;
     /*
      * List of Arrow objects that make up one attack
      */
@@ -20,7 +27,10 @@ public class Attack {
      */
     private double[] delayGroup;
     
+    public static String hit = "";
+    
     /*
+     * 
      * Constructor for constant delay
      */
     public Attack(LinkedList<Arrow> attackPattern, double delay) {
@@ -68,7 +78,7 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getX() < 295) {
+                    else if(attackPattern.get(i).getX() < 308) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -80,7 +90,7 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getX() > 280) {
+                    else if(attackPattern.get(i).getX() > 261) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -92,7 +102,7 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getY() < 280) {
+                    else if(attackPattern.get(i).getY() < 295) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -104,7 +114,7 @@ public class Attack {
                             hit = true;
                         }
                     }
-                    else if(attackPattern.get(i).getY() > 260) {
+                    else if(attackPattern.get(i).getY() > 252) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -126,5 +136,33 @@ public class Attack {
             attackPattern.get(i).draw(g, Color.BLUE);
         }
     }
+    
+    public void spawnArrows(Graphics g, Player p) throws IOException {
+	    tick();
+	    if(++counter == 50) {
+	        addArrow(new Arrow(2, false, DIRS[currentDirection++]));
+	        if(currentDirection == DIRS.length)
+	            currentDirection = 0;
+	        counter = 0;
+	    }
+	    hit = removeArrow(p.getDir());
+	    Sound block = null;
+	    Sound damage = null;
+        try {
+            block = new Sound("Audio/block.wav", false);
+            damage = new Sound("Audio/damage.wav", false);
+        } catch (IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+	    if(hit.equals("H")) {
+	        p.setRed(0);
+	        block.play();
+	    }
+	    else if(hit.equals("D"))
+	        damage.play();
+	    draw(g);
+	}
+    
+    
     
 }
