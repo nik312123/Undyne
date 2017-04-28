@@ -167,7 +167,7 @@ public class Attack {
 
         }
         if (isDamaged) {
-            p.setElementPosition(10 + (move));
+            p.setElementPosition(10 +  (move));
             move += adder;
             if (move == 2)
                 adder *= -1;
