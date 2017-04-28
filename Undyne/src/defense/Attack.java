@@ -27,8 +27,9 @@ public class Attack {
     private double[] delayGroup;
 
     public static String hit = "";
-
+    int adder = 1;
     boolean isDamaged = false;
+    int hitPoint = 0;
     int move = 0;
     Player p;
 
@@ -143,7 +144,7 @@ public class Attack {
 
         tick();
         if (++counter == 40) {
-            addArrow(new Arrow(1, false, DIRS[currentDirection++], p));
+            addArrow(new Arrow(3, false, DIRS[currentDirection++], p));
             if (currentDirection == DIRS.length)
                 currentDirection = 0;
             counter = 0;
@@ -163,17 +164,25 @@ public class Attack {
         } else if (hit.equals("D")) {
             isDamaged = true;
             damage.play();
-            hit = "";
 
         }
-        if (isDamaged) { 
-            p.setElementPosition(move += 2);
-            if (move >= 5) {
-                isDamaged = false;
+        if (isDamaged) {
+            p.setElementPosition(10 + (move));
+            move += adder;
+            if (move == 2)
+                adder *= -1;
+            if (move == -2) {
+                adder *= -1;
+                hitPoint++;
+            }
+            if (hitPoint == 2 && move == 0) {
+                hitPoint = 0;
                 move = 0;
-                p.setElementPosition(10); 
+                isDamaged = false;
+                p.setElementPosition(10);
+
             }
         }
-        draw(g); 
+        draw(g);
     }
 }
