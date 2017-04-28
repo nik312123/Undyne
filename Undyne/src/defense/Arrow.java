@@ -139,7 +139,7 @@ public class Arrow {
     }
     
     public char getDir() {
-        return direction; //how does it shake, though? How does it return to its original position? 
+        return direction; 
     }
    
     
