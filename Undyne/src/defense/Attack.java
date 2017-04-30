@@ -143,12 +143,16 @@ public class Attack {
     public void spawnArrows(Graphics g, Player p) throws IOException {
 
         tick();
+        
         if (++counter == 40) {
+
             addArrow(new Arrow(3, false, DIRS[currentDirection++], p));
             if (currentDirection == DIRS.length)
                 currentDirection = 0;
             counter = 0;
+            
         }
+        
         hit = removeArrow(p.getDir(), p);
         Sound block = null;
         Sound damage = null;
@@ -167,7 +171,8 @@ public class Attack {
 
         }
         if (isDamaged) {
-            p.setElementPosition(10 +  (move));
+            p.setElementPosition(move);
+
             move += adder;
             if (move == 2)
                 adder *= -1;
@@ -179,7 +184,7 @@ public class Attack {
                 hitPoint = 0;
                 move = 0;
                 isDamaged = false;
-                p.setElementPosition(10);
+                p.setElementPosition(0);
 
             }
         }

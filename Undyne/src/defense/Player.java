@@ -23,7 +23,7 @@ public class Player {
 
 	BufferedImage shield;
 	
-	int elementPosition = 10;
+	int elementPosition = 0;
 	/*
 	 * Delay in milliseconds between each movement of the player
 	 */
@@ -165,4 +165,6 @@ public class Player {
     public void setElementPosition(int x){
         elementPosition = x;
     }
+
+	
 }
