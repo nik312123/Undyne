@@ -12,10 +12,12 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 
+
 /*
  * Composes an arrow to be implemented in the Attack class
  */
 public class Arrow {
+    int move = 0;
     /*
      * This determines the speed the arrow should go at between 1 – 100
      */
@@ -32,12 +34,16 @@ public class Arrow {
      * These are the coordinates of the arrow
      */
     private int x, y;
+  
+    Player p;                           
     
-    public Arrow(int speed, boolean reverse, char direction) {
+    
+    public Arrow(int speed, boolean reverse, char direction, Player p) {
         this.speed = speed;
         this.reverse = reverse;
         this.direction = direction;
         setCoordinates(direction);
+        this.p = p;
     }
     
     /*
@@ -118,7 +124,7 @@ public class Arrow {
         tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth()/2, arr.getMinY() + arr.getHeight()/2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         arr = op.filter(arr, null);
-        g.drawImage(arr, x, y, null);
+        g.drawImage(arr, x+p.getElementPosition(), y+p.getElementPosition(), null);
     }
     
     public int getX() {
@@ -130,7 +136,8 @@ public class Arrow {
     }
     
     public char getDir() {
-        return direction;
+        return direction; 
     }
+   
     
 }

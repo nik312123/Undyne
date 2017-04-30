@@ -22,6 +22,8 @@ public class Player {
 	public char dir = 'u';
 
 	BufferedImage shield;
+	
+	int elementPosition = 10;
 	/*
 	 * Delay in milliseconds between each movement of the player
 	 */
@@ -90,7 +92,7 @@ public class Player {
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		shield = op.filter(shield, null);
 		g.translate(-300, -300);
-		g.drawImage(shield, 265, 254, null);
+		g.drawImage(shield, 265+getElementPosition(), 254+getElementPosition(), null);
 	}
 
 	public void shieldDir() {
@@ -147,4 +149,13 @@ public class Player {
 	public int getHealth(){
 	    return health;
 	}
+	
+	 
+    public int getElementPosition(){
+        return elementPosition;
+    }
+    
+    public void setElementPosition(int x){
+        elementPosition = x;
+    }
 }

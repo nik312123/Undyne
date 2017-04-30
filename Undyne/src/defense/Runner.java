@@ -24,10 +24,15 @@ import javax.swing.Timer;
 import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-    private static final long serialVersionUID = 1L;
-    
+  private static final long serialVersionUID = 1L;
+  
 	static char dir = 'u';
-		
+  
+  static final char[] DIRS = {'u', 'd', 'r', 'l'};
+  
+  String hit = "";
+  
+	static int move = 0;
 	static int delay = 10;
 	static int angle = 0;
 	static int breakCount = 0;
@@ -55,8 +60,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	private static NewerSound main;
 	private static NewerSound gameDone;
 
-	Attack a1 = new Attack(new LinkedList<Arrow>(), 2);
+	
 	Player p = new Player();
+	
+	Attack a1 = new Attack(new LinkedList<Arrow>(), 2, p);
 
 	public Runner(String s) {
 		JFrame frame = new JFrame(s);
@@ -126,6 +133,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		        drawGameOver(g);
 		    }
 		}
+		try {
+        p.drawHealth(g);
+    }
+    catch (FontFormatException | IOException e) {
+        e.printStackTrace();
+    }
 	}
 
 	
@@ -175,9 +188,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    float opacity = 0.5f;
 	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 	    if(isGenocide)
-	        g2d.drawImage(gif, 198, 10, null);
+	        g2d.drawImage(gif, 198+p.getElementPosition(), 10+p.getElementPosition(), null);
 	    else
-	        g2d.drawImage(gif, 189, 10, null);
+	        g2d.drawImage(gif, 189+p.getElementPosition(), 10+p.getElementPosition(), null);
 	    g2d.dispose();
 	}
 	
@@ -322,10 +335,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		int size = 80;
 		Color translucentWhite = new Color(255, 255, 255, 200);
 		g.setColor(translucentWhite);
-		g.drawRect(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2, size, size);
+		g.drawRect(getWidth() / 2 - size / 2+p.getElementPosition(), getHeight() / 2 - size / 2+p.getElementPosition(), size, size);
 		while (size > 73) {
 			--size;
-			g.drawRect(getWidth() / 2 - size / 2, getHeight() / 2 - size / 2, size, size);
+			g.drawRect(getWidth() / 2 - size / 2+p.getElementPosition(), getHeight() / 2 - size / 2+p.getElementPosition(), size, size);
 		}
 	}
 
@@ -342,13 +355,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		}
 		int width = heart.getWidth();
 		int height = heart.getHeight();
-		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1, getHeight() / 2 - height / 2, null);
+		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1+p.getElementPosition(), getHeight() / 2 - height / 2+p.getElementPosition(), null);
 	}
 
 	public void drawCircle(Graphics g) {
 		Color clr = new Color(0, 255, 0);
 		g.setColor(clr);
-		g.drawOval(getWidth() / 2 - 25, getHeight() / 2 - 25, 50, 50);
+		g.drawOval(getWidth() / 2 - 25+p.getElementPosition(), getHeight() / 2 - 25+p.getElementPosition(), 50, 50);
 	}
 
 	@Override
