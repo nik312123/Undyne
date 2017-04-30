@@ -66,8 +66,6 @@ public class Player {
 
 	    }
 
-	
-
 	public void shield(Graphics g, char dir) {
 		this.dir = dir;
 		shieldDir();
@@ -149,7 +147,6 @@ public class Player {
 	public int getHealth(){
 	    return health;
 	}
-	
 	 
     public int getElementPosition(){
         return elementPosition;
@@ -158,6 +155,4 @@ public class Player {
     public void setElementPosition(int x){
         elementPosition = x;
     }
-
-	
 }
