@@ -27,13 +27,13 @@ import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
 
-  private static final long serialVersionUID = 1L;
-  static boolean beginning = true;
+	private static final long serialVersionUID = 1L;
+	static boolean beginning = true;
 	static char dir = 'u';
   
-  static final char[] DIRS = {'u', 'd', 'r', 'l'};
+	static final char[] DIRS = {'u', 'd', 'r', 'l'};
   
-  String hit = "";
+	String hit = "";
   
 	static int move = 0;
 	static int delay = 10;
@@ -46,6 +46,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	static int currentDirection = 0;
 	static int gameOverCount = 0;
 	static int gameOverFrame = 0;
+	static int subTitleMovement = 330;
 	
 	static boolean isGenocide = true;
 	static boolean runsGif = false;
@@ -53,14 +54,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	static boolean gameOverDone = false;
 	static boolean firstEnd = true;
 	static boolean secondEnd = true;
+	static boolean startEnter = false;
 	
 	protected Timer timer;
 
 	static double fadeStartAdder = 1;
-
-	static boolean startEnter = false;
-
-	static int subTitleMovement = 330;
 
 	BufferedImage gif;
 	BufferedImage heart;
@@ -81,8 +79,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		frame.add(bp);
 		frame.addKeyListener(this);
 		frame.setSize(600, 600);
-
-
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setSize(600, 600);
 		frame.setLocation(dim.width/2 - frame.getSize().width/2, dim.height/2 - frame.getSize().height/2);
@@ -98,7 +94,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         else
             main = new NewerSound("audio/soj.wav", true);
 	    main.play();
-
 	}
 
 	public Runner() {
@@ -109,11 +104,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-  
-  	if (beginning)
+  		if (beginning)
 			stage.run(g);
-
 		else {
 		if(p.getHealth() != 0) {
     		drawBG(g);
@@ -169,7 +161,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 			maxCount = 79;
 			baseName = "undying";
 			gifChange = 4;
-		} else {
+		}
+		else {
 			maxCount = 31;
 			baseName = "frame";
 			gifChange = 3;
@@ -184,7 +177,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 				++gifCount;
 				if (gifCount == gifChange)
 					gifCount = 0;
-			} else {
+			}
+			else {
 				if (count == maxCount)
 					count = 1;
 				else if (gifCount % gifChange == 0 && (count - 1) % 3 != 0)
@@ -197,7 +191,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 				else if ((count - 1) % 3 == 0 && gifCount == 4)
 					gifCount = 0;
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		Graphics2D g2d = (Graphics2D) g.create();
@@ -223,7 +218,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak.getWidth();
         int height = heartBreak.getHeight();
-        g2d.drawImage(heartBreak, getWidth() / 2 - (width / 2) + 11, getHeight() / 2 - height / 2 + 78, null);
+        g2d.drawImage(heartBreak, getWidth()/2 - (width/2) + 11, getHeight()/2 - height/2 + 78, null);
         g2d.dispose();
 	}
 	
@@ -232,7 +227,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    boolean exception = breakHeartException(breakFrame);
 	    try {
 	        heartBreak = ImageIO.read(new File("images/gif/heartBreak" + breakFrame + ".png"));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 	    if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
@@ -401,9 +397,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	}
 
 	@Override
-
 	public void actionPerformed(ActionEvent e) { 
-
 		repaint();
 	}
 
@@ -431,17 +425,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 			stage.setLeft();
 			break;
 		case KeyEvent.VK_ENTER:
-			beginning = false;
-			dir = 'u';
+		        if(beginning) {
+			    beginning = false;
+			    dir = 'u';
+			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
-
 			stage.setUpf();
 			break;
 		case KeyEvent.VK_DOWN:
@@ -453,7 +447,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		case KeyEvent.VK_LEFT:
 			stage.setLeftf();
 			break;
-
 		}
 	}
 }
