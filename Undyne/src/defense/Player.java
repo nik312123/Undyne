@@ -23,7 +23,7 @@ public class Player {
 
 	BufferedImage shield;
 	
-	int elementPosition = 10;
+	int elementPosition = 0;
 	/*
 	 * Delay in milliseconds between each movement of the player
 	 */
@@ -65,8 +65,6 @@ public class Player {
             g4.drawString(health+"/60",513,547);
 
 	    }
-
-	
 
 	public void shield(Graphics g, char dir) {
 		this.dir = dir;
@@ -149,7 +147,6 @@ public class Player {
 	public int getHealth(){
 	    return health;
 	}
-	
 	 
     public int getElementPosition(){
         return elementPosition;

@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,24 +26,27 @@ import javax.swing.Timer;
 import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-  private static final long serialVersionUID = 1L;
-  
+
+	private static final long serialVersionUID = 1L;
+	static boolean beginning = true;
 	static char dir = 'u';
   
-  static final char[] DIRS = {'u', 'd', 'r', 'l'};
+	static final char[] DIRS = {'u', 'd', 'r', 'l'};
   
-  String hit = "";
+	String hit = "";
   
 	static int move = 0;
 	static int delay = 10;
 	static int angle = 0;
 	static int breakCount = 0;
 	static int breakFrame = 0;
+
 	static int count = 0;
 	static int gifCount = 0;
 	static int currentDirection = 0;
 	static int gameOverCount = 0;
 	static int gameOverFrame = 0;
+	static int subTitleMovement = 330;
 	
 	static boolean isGenocide = true;
 	static boolean runsGif = false;
@@ -49,8 +54,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	static boolean gameOverDone = false;
 	static boolean firstEnd = true;
 	static boolean secondEnd = true;
+	static boolean startEnter = false;
 	
 	protected Timer timer;
+
+	static double fadeStartAdder = 1;
 
 	BufferedImage gif;
 	BufferedImage heart;
@@ -60,10 +68,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	private static NewerSound main;
 	private static NewerSound gameDone;
 
-	
 	Player p = new Player();
-	
 	Attack a1 = new Attack(new LinkedList<Arrow>(), 2, p);
+	StartScreen stage = new StartScreen();
 
 	public Runner(String s) {
 		JFrame frame = new JFrame(s);
@@ -97,6 +104,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+  		if (beginning)
+			stage.run(g);
+		else {
 		if(p.getHealth() != 0) {
     		drawBG(g);
     		drawSqu(g);
@@ -139,59 +149,60 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     catch (FontFormatException | IOException e) {
         e.printStackTrace();
     }
+    }
+
 	}
 
-	
 	public void gif(Graphics g) {
-	    int maxCount;
-	    int gifChange;
-	    String baseName;
-	    if(isGenocide) {
-	        maxCount = 79;
-	        baseName = "undying";
-	        gifChange = 4;
-	    }
-	    else {
-	        maxCount = 31;
-	        baseName = "frame";
-	        gifChange = 3;
-	    }
-	    try {
-	        gif = ImageIO.read(new File("images/gif/" + baseName + count + ".png"));
-	        if(isGenocide) {
-    	        if(count == maxCount)
-    	            count = 1;
-    	        else if(gifCount % gifChange == 0)
-    	            ++count;
-    	        ++gifCount;
-    	        if(gifCount == gifChange)
-    	            gifCount = 0;
-	        }
-	        else {
-	            if(count == maxCount)
-                    count = 1;
-                else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
-                    ++count;
-                else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
-                    ++count;
-                ++gifCount;
-                if(gifCount == gifChange && (count - 1) % 3 != 0)
-                    gifCount = 0;
-                else if((count - 1) % 3 == 0 && gifCount == 4)
-                    gifCount = 0;
-	        }
-	    }
-	    catch(IOException e) {
-	        e.printStackTrace();
-	    }
-	    Graphics2D g2d = (Graphics2D) g.create();
-	    float opacity = 0.5f;
-	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-	    if(isGenocide)
-	        g2d.drawImage(gif, 198+p.getElementPosition(), 10+p.getElementPosition(), null);
-	    else
-	        g2d.drawImage(gif, 189+p.getElementPosition(), 10+p.getElementPosition(), null);
-	    g2d.dispose();
+		int maxCount;
+		int gifChange;
+		String baseName;
+		if (isGenocide) {
+			maxCount = 79;
+			baseName = "undying";
+			gifChange = 4;
+		}
+		else {
+			maxCount = 31;
+			baseName = "frame";
+			gifChange = 3;
+		}
+		try {
+			gif = ImageIO.read(new File("images/gif/" + baseName + count + ".png"));
+			if (isGenocide) {
+				if (count == maxCount)
+					count = 1;
+				else if (gifCount % gifChange == 0)
+					++count;
+				++gifCount;
+				if (gifCount == gifChange)
+					gifCount = 0;
+			}
+			else {
+				if (count == maxCount)
+					count = 1;
+				else if (gifCount % gifChange == 0 && (count - 1) % 3 != 0)
+					++count;
+				else if ((count - 1) % 3 == 0 && gifCount % 4 == 0)
+					++count;
+				++gifCount;
+				if (gifCount == gifChange && (count - 1) % 3 != 0)
+					gifCount = 0;
+				else if ((count - 1) % 3 == 0 && gifCount == 4)
+					gifCount = 0;
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		Graphics2D g2d = (Graphics2D) g.create();
+		float opacity = 0.5f;
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		if (isGenocide)
+			g2d.drawImage(gif, 198 + p.getElementPosition(), 10 + p.getElementPosition(), null);
+		else
+			g2d.drawImage(gif, 189 + p.getElementPosition(), 10 + p.getElementPosition(), null);
+		g2d.dispose();
 	}
 	
 	public boolean breakHeartException(int breakFrame) {
@@ -207,7 +218,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak.getWidth();
         int height = heartBreak.getHeight();
-        g2d.drawImage(heartBreak, getWidth() / 2 - (width / 2) + 11, getHeight() / 2 - height / 2 + 78, null);
+        g2d.drawImage(heartBreak, getWidth()/2 - (width/2) + 11, getHeight()/2 - height/2 + 78, null);
         g2d.dispose();
 	}
 	
@@ -216,7 +227,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 	    boolean exception = breakHeartException(breakFrame);
 	    try {
 	        heartBreak = ImageIO.read(new File("images/gif/heartBreak" + breakFrame + ".png"));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 	    if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
@@ -335,10 +347,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		int size = 80;
 		Color translucentWhite = new Color(255, 255, 255, 200);
 		g.setColor(translucentWhite);
-		g.drawRect(getWidth() / 2 - size / 2+p.getElementPosition(), getHeight() / 2 - size / 2+p.getElementPosition(), size, size);
+		g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
+				getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
 		while (size > 73) {
 			--size;
-			g.drawRect(getWidth() / 2 - size / 2+p.getElementPosition(), getHeight() / 2 - size / 2+p.getElementPosition(), size, size);
+			g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
+					getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
 		}
 	}
 
@@ -355,13 +369,31 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		}
 		int width = heart.getWidth();
 		int height = heart.getHeight();
-		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1+p.getElementPosition(), getHeight() / 2 - height / 2+p.getElementPosition(), null);
+		g.drawImage(heart, getWidth() / 2 - (width / 2) + 1 + p.getElementPosition(),
+				getHeight() / 2 - height / 2 + p.getElementPosition(), null);
 	}
 
 	public void drawCircle(Graphics g) {
 		Color clr = new Color(0, 255, 0);
 		g.setColor(clr);
-		g.drawOval(getWidth() / 2 - 25+p.getElementPosition(), getHeight() / 2 - 25+p.getElementPosition(), 50, 50);
+		g.drawOval(getWidth() / 2 - 25 + p.getElementPosition(), getHeight() / 2 - 25 + p.getElementPosition(), 50, 50);
+	}
+
+	public void subTitle(Graphics g) {
+		try {
+			heart = ImageIO.read(new File("/Users/64009455/Documents/undertaleSub.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		g.translate(300, 300);
+		AffineTransform tx = new AffineTransform();
+		tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth() / 2, heart.getMinY() + heart.getHeight() / 2);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+		heart = op.filter(heart, null);
+		g.translate(-300, -300);
+		g.drawImage(heart, 300, 300, null);
+
 	}
 
 	@Override
@@ -378,20 +410,43 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
 			dir = 'u';
+			stage.setUp();
 			break;
 		case KeyEvent.VK_DOWN:
 			dir = 'd';
+			stage.setDown();
 			break;
 		case KeyEvent.VK_RIGHT:
 			dir = 'r';
+			stage.setRight();
 			break;
 		case KeyEvent.VK_LEFT:
 			dir = 'l';
+			stage.setLeft();
 			break;
+		case KeyEvent.VK_ENTER:
+		        if(beginning) {
+			    beginning = false;
+			    dir = 'u';
+			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_UP:
+			stage.setUpf();
+			break;
+		case KeyEvent.VK_DOWN:
+			stage.setDownf();
+			break;
+		case KeyEvent.VK_RIGHT:
+			stage.setRightf();
+			break;
+		case KeyEvent.VK_LEFT:
+			stage.setLeftf();
+			break;
+		}
 	}
 }
