@@ -32,10 +32,6 @@ public class Arrow {
      * These are the coordinates of the arrow
      */
     private int x, y;
-    /*
-     * Color of the arrow
-     */                                         
-    private Color arrColor;
     
     public Arrow(int speed, boolean reverse, char direction) {
         this.speed = speed;

@@ -5,10 +5,12 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import nikunj.classes.Sound;
-
+import nikunj.classes.NewSound;
+import nikunj.classes.NewerSound;
 
 public class Attack {
 	public static int currentDirection = 0;
@@ -148,14 +150,8 @@ public class Attack {
 	        counter = 0;
 	    }
 	    hit = removeArrow(p.getDir(),p);
-	    Sound block = null;
-	    Sound damage = null;
-        try {
-            block = new Sound("Audio/block.wav", false);
-            damage = new Sound("Audio/damage.wav", false);
-        } catch (IOException | UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        }
+	    NewerSound block = new NewerSound("audio/block.wav", false);
+	    NewerSound damage = new NewerSound("audio/damage.wav", false);
 	    if(hit.equals("H")) {
 	        p.setRed(0);
 	        block.play();
