@@ -11,8 +11,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-
-
 /*
  * Composes an arrow to be implemented in the Attack class
  */
@@ -36,7 +34,6 @@ public class Arrow {
     private int x, y;
   
     Player p;                           
-    
     
     public Arrow(int speed, boolean reverse, char direction, Player p) {
         this.speed = speed;
