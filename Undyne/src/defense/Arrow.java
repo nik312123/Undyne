@@ -32,15 +32,15 @@ public class Arrow {
      * These are the coordinates of the arrow
      */
     private int x, y;
-  
-    Player p;                           
+    
+    Player p;
     
     public Arrow(int speed, boolean reverse, char direction, Player p) {
         this.speed = speed;
         this.reverse = reverse;
         this.direction = direction;
-        setCoordinates(direction);
         this.p = p;
+        setCoordinates(direction);
     }
     
     /*
@@ -121,7 +121,7 @@ public class Arrow {
         tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth()/2, arr.getMinY() + arr.getHeight()/2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         arr = op.filter(arr, null);
-        g.drawImage(arr, x+p.getElementPosition(), y+p.getElementPosition(), null);
+        g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
     }
     
     public int getX() {
@@ -133,8 +133,7 @@ public class Arrow {
     }
     
     public char getDir() {
-        return direction; 
+        return direction;
     }
-   
     
 }
