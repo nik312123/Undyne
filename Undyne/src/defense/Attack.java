@@ -168,7 +168,7 @@ public class Attack {
             damage.play();
         }
         if(isDamaged) {
-            p.setElementPosition(10 + move);
+            p.setElementPosition(move);
             move += adder;
             if(move == 2)
                 adder *= -1;
@@ -180,7 +180,7 @@ public class Attack {
                 hitPoint = 0;
                 move = 0;
                 isDamaged = false;
-                p.setElementPosition(10);
+                p.setElementPosition(0);
             }
         }
         draw(g);
