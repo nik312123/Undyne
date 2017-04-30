@@ -157,24 +157,25 @@ public class Attack {
 	        block.play();
 	    }
 	    else if(hit.equals("D")) {
-          isDamaged = true;
+                isDamaged = true;
 	        damage.play();
-      if(isDamaged) {
-          p.setElementPosition(10 + move);
-          move += adder;
-          if(move == 2)
-              adder *= -1;
-          if(move == -2) {
-              adder *= -1;
-              ++hitPoint;
-          }
-          if (hitPoint == 2 && move == 0) {
-              hitPoint = 0;
-              move = 0;
-              isDamaged = false;
-              p.setElementPosition(10);
-          }
-      }
+	    }
+            if(isDamaged) {
+                p.setElementPosition(10 + move);
+                move += adder;
+                if(move == 2)
+                    adder *= -1;
+                if(move == -2) {
+                    adder *= -1;
+                    ++hitPoint;
+                }
+                if (hitPoint == 2 && move == 0) {
+                    hitPoint = 0;
+                    move = 0;
+                    isDamaged = false;
+                    p.setElementPosition(10);
+                }
+            }
 	    draw(g);
-	}
+    }
 }
