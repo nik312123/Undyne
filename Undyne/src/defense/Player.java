@@ -41,24 +41,17 @@ public class Player {
 
 	public void damage() {
 		health -= (int) (Math.random() * 3 + 12);
+		if(health < 0)
+		    health = 0;
 	}
 	
 	public void drawHealth(Graphics g) throws FontFormatException, IOException{
-	    
-	    
-	       
-	    
-	        g.setColor(Color.red);
+	        g.setColor(Color.RED);
 	        g.fillRect(430, 530, 70, 20);
-	        
-	        g.setColor(new Color(255,255,0));
-            g.fillRect(430, 530, (int) (70*(health/(double)60)), 20); //Still need to have a game over screen but looks good so far! :D I'm corrrecting test oka
-	      
-
-
+	        g.setColor(Color.YELLOW);
+            g.fillRect(430, 530, (int) (70 * ((double) health/60)), 20);
 	        URL fontUrl = new URL("file:font/undyne.ttf");
 	        Font font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
-
 	        Graphics2D g3 = (Graphics2D) g;
 	        g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	        g3.setFont(font);

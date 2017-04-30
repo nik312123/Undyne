@@ -5,9 +5,10 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import nikunj.classes.Sound;
+import nikunj.classes.NewerSound;
 
 public class Attack {
     public static int currentDirection = 0;
@@ -142,52 +143,43 @@ public class Attack {
 
     public void spawnArrows(Graphics g, Player p) throws IOException {
 
-        tick();
-        
-        if (++counter == 40) {
+   tick();
+	    if(++counter == 40) {
+	        addArrow(new Arrow(3, false, DIRS[currentDirection++], p));
+	        if(currentDirection == DIRS.length)
+	            currentDirection = 0;
+	        counter = 0;
+	    }
+	    hit = removeArrow(p.getDir(),p);
+	    NewerSound block = new NewerSound("audio/block.wav", false);
+	    NewerSound damage = new NewerSound("audio/damage.wav", false);
+	    if(hit.equals("H")) {
+	        p.setRed(0);
+	        block.play();
+	    }
+	    else if(hit.equals("D")) {
+                isDamaged = true;
+	        damage.play();
+	    }
+            if(isDamaged) {
+                p.setElementPosition(10 + move);
+                move += adder;
+                if(move == 2)
+                    adder *= -1;
+                if(move == -2) {
+                    adder *= -1;
+                    ++hitPoint;
+                }
+                if (hitPoint == 2 && move == 0) {
+                    hitPoint = 0;
+                    move = 0;
+                    isDamaged = false;
+                    p.setElementPosition(10);
+                }
 
-            addArrow(new Arrow(3, false, DIRS[currentDirection++], p));
-            if (currentDirection == DIRS.length)
-                currentDirection = 0;
-            counter = 0;
-            
-        }
-        
-        hit = removeArrow(p.getDir(), p);
-        Sound block = null;
-        Sound damage = null;
-        try {
-            block = new Sound("Audio/block.wav", false);
-            damage = new Sound("Audio/damage.wav", false);
-        } catch (IOException | UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        }
-        if (hit.equals("H")) {
-            p.setRed(0);
-            block.play();
-        } else if (hit.equals("D")) {
-            isDamaged = true;
-            damage.play();
-
-        }
-        if (isDamaged) {
-            p.setElementPosition(move);
-
-            move += adder;
-            if (move == 2)
-                adder *= -1;
-            if (move == -2) {
-                adder *= -1;
-                hitPoint++;
-            }
-            if (hitPoint == 2 && move == 0) {
-                hitPoint = 0;
-                move = 0;
-                isDamaged = false;
-                p.setElementPosition(0);
+	 
 
             }
-        }
-        draw(g);
+	    draw(g);
     }
 }
