@@ -16,7 +16,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -60,16 +60,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     static double fadeStartAdder = 1;
     
-    BufferedImage gif;
-    BufferedImage heart;
-    BufferedImage heartBreak;
-    BufferedImage gameOver;
+    static BufferedImage[] gif;
+    static BufferedImage heart;
+    static BufferedImage[] heartBreak;
+    static BufferedImage[] gameOver;
+    public static BufferedImage blueArr;
+    public static BufferedImage redArr;
+    public static BufferedImage reverseArr;
     
     private static NewerSound main;
     private static NewerSound gameDone;
+    private static NewerSound startScreen;
     
     Player p = new Player();
-    Attack a1 = new Attack(new LinkedList<Arrow>(), 2, p);
+    Attack a1 = new Attack(new ArrayList<Arrow>(), 2, p);
     StartScreen stage = new StartScreen();
     
     public Runner(String s) {
@@ -86,15 +90,36 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setVisible(true);
     }
     
-    public static void main(String args[])
-            throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+        int gifMax;
+        String baseName;
+        startScreen = new NewerSound("audio/NGAHHH.wav", true);
+        if(isGenocide) {
+            main = new NewerSound("audio/bath.wav", true);
+            gifMax = 79;
+            baseName = "undying";
+        }
+        else {
+            main = new NewerSound("audio/soj.wav", true);
+            gifMax = 31;
+            baseName = "frame";
+        }
+        gif = new BufferedImage[gifMax + 1];
+        for(int i = 0; i <= gifMax; ++i)
+            gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
+        heart = ImageIO.read(new File("images/heart.png"));
+        heartBreak = new BufferedImage[49];
+        for(int i = 0; i <= 48; ++i)
+            heartBreak[i] = ImageIO.read(new File("images/gif/heartBreak" + i + ".png"));
+        gameOver = new BufferedImage[226];
+        for(int i = 0; i <= 225; ++i)
+            gameOver[i] = ImageIO.read(new File("images/gif/gameOver" + i + ".png"));
+        blueArr = ImageIO.read(new File("images/arrowB.png"));
+        redArr = ImageIO.read(new File("images/arrowR.png"));
+        reverseArr = ImageIO.read(new File("images/arrowRE.png"));
         @SuppressWarnings("unused")
         Runner a = new Runner("Game");
-        if(isGenocide)
-            main = new NewerSound("audio/bath.wav", true);
-        else
-            main = new NewerSound("audio/soj.wav", true);
-        main.play();
+        startScreen.play();
     }
     
     public Runner() {
@@ -147,7 +172,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     gameOver(g);
                 }
                 else {
-                    drawGameOver(g);
+                    drawGameOver(g, gameOverFrame);
                 }
             }
         }
@@ -157,52 +182,43 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void gif(Graphics g) {
         int maxCount;
         int gifChange;
-        String baseName;
         if(isGenocide) {
             maxCount = 79;
-            baseName = "undying";
             gifChange = 4;
         }
         else {
             maxCount = 31;
-            baseName = "frame";
             gifChange = 3;
         }
-        try {
-            gif = ImageIO.read(new File("images/gif/" + baseName + count + ".png"));
-            if(isGenocide) {
-                if(count == maxCount)
-                    count = 1;
-                else if(gifCount % gifChange == 0)
-                    ++count;
-                ++gifCount;
-                if(gifCount == gifChange)
-                    gifCount = 0;
-            }
-            else {
-                if(count == maxCount)
-                    count = 1;
-                else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
-                    ++count;
-                else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
-                    ++count;
-                ++gifCount;
-                if(gifCount == gifChange && (count - 1) % 3 != 0)
-                    gifCount = 0;
-                else if((count - 1) % 3 == 0 && gifCount == 4)
-                    gifCount = 0;
-            }
+        if(isGenocide) {
+            if(count == maxCount)
+                count = 1;
+            else if(gifCount % gifChange == 0)
+                ++count;
+            ++gifCount;
+            if(gifCount == gifChange)
+                gifCount = 0;
         }
-        catch(IOException e) {
-            e.printStackTrace();
+        else {
+            if(count == maxCount)
+                count = 1;
+            else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
+                ++count;
+            else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
+                ++count;
+            ++gifCount;
+            if(gifCount == gifChange && (count - 1) % 3 != 0)
+                gifCount = 0;
+            else if((count - 1) % 3 == 0 && gifCount == 4)
+                gifCount = 0;
         }
         Graphics2D g2d = (Graphics2D) g.create();
         float opacity = 0.5f;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(isGenocide)
-            g2d.drawImage(gif, 198 + p.getElementPosition(), 10 + p.getElementPosition(), null);
+            g2d.drawImage(gif[count], 198 + p.getElementPosition(), 10 + p.getElementPosition(), null);
         else
-            g2d.drawImage(gif, 189 + p.getElementPosition(), 10 + p.getElementPosition(), null);
+            g2d.drawImage(gif[count], 189 + p.getElementPosition(), 10 + p.getElementPosition(), null);
         g2d.dispose();
     }
     
@@ -215,23 +231,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         return false;
     }
     
-    public void makeBreakHeart(Graphics g) {
+    public void makeBreakHeart(Graphics g, int breakFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
-        int width = heartBreak.getWidth();
-        int height = heartBreak.getHeight();
-        g2d.drawImage(heartBreak, getWidth()/2 - (width/2) + 11, getHeight()/2 - height/2 + 78, null);
+        int width = heartBreak[breakFrame].getWidth();
+        int height = heartBreak[breakFrame].getHeight();
+        g2d.drawImage(heartBreak[breakFrame], getWidth()/2 - (width/2) + 11, getHeight()/2 - height/2 + 78, null);
         g2d.dispose();
     }
     
     public void breakHeart(Graphics g) {
         ++breakCount;
         boolean exception = breakHeartException(breakFrame);
-        try {
-            heartBreak = ImageIO.read(new File("images/gif/heartBreak" + breakFrame + ".png"));
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
         if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
             ++breakFrame;
             if(breakFrame == 25) {
@@ -268,17 +278,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
             }
         }
-        makeBreakHeart(g);
+        makeBreakHeart(g, breakFrame);
     }
     
     public void gameOver(Graphics g) {
         ++gameOverCount;
-        try {
-            gameOver = ImageIO.read(new File("images/gif/gameOver" + gameOverFrame + ".png"));
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
         if(gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
             switch(gameOverFrame) {
@@ -334,14 +338,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 gameOverDone = true;
             gameOverCount = 0;
         }
-        drawGameOver(g);
+        drawGameOver(g, gameOverFrame);
     }
     
-    public void drawGameOver(Graphics g) {
+    public void drawGameOver(Graphics g, int gameOverFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
-        int width = gameOver.getWidth();
-        int height = gameOver.getHeight();
-        g2d.drawImage(gameOver, getWidth()/2 - (width/2) + 1, getHeight()/2 - height/2, null);
+        int width = gameOver[gameOverFrame].getWidth();
+        int height = gameOver[gameOverFrame].getHeight();
+        g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - (width/2) + 1, getHeight()/2 - height/2, null);
         g2d.dispose();
     }
     
@@ -364,14 +368,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public void drawHeart(Graphics g) {
-        try {
-            heart = ImageIO.read(new File("images/heart.png"));
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        int width = heart.getWidth();
-        int height = heart.getHeight();
+        int width = 30;
+        int height = 30;
         g.drawImage(heart, getWidth()/2 - (width/2) + 1 + p.getElementPosition(),
                 getHeight()/2 - height/2 + p.getElementPosition(), null);
     }
@@ -430,6 +428,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             case KeyEvent.VK_ENTER:
                 if(beginning) {
                     beginning = false;
+                    startScreen.stop();
+                    main.play();
                     dir = 'u';
                 }
         }

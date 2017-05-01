@@ -3,7 +3,7 @@ package defense;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -17,7 +17,7 @@ public class Attack {
     /*
      * List of Arrow objects that make up one attack
      */
-    private LinkedList<Arrow> attackPattern = new LinkedList<Arrow>();
+    private ArrayList<Arrow> attackPattern = new ArrayList<Arrow>();
     /*
      * ifthe delay for an attack is constant, this is it (milliseconds)
      */
@@ -41,7 +41,7 @@ public class Attack {
      * 
      * Constructor for constant delay
      */
-    public Attack(LinkedList<Arrow> attackPattern, double delay, Player p) {
+    public Attack(ArrayList<Arrow> attackPattern, double delay, Player p) {
         this.attackPattern = attackPattern;
         this.delay = delay;
         this.delayGroup = new double[0];
@@ -51,7 +51,7 @@ public class Attack {
     /*
      * Constructor for varying delays
      */
-    public Attack(LinkedList<Arrow> attackPattern, double[] delayGroup) throws IOException {
+    public Attack(ArrayList<Arrow> attackPattern, double[] delayGroup) throws IOException {
         if(delayGroup.length == attackPattern.size() - 1)
             throw new IOException("Error: Number of delays must be one less than the number of attacks");
         this.attackPattern = attackPattern;
