@@ -111,7 +111,7 @@ public class Arrow {
         tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth()/2, arr.getMinY() + arr.getHeight()/2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         arr = op.filter(arr, null);
-        g.drawImage(arr, x + p.getElementPosition(), y+p.getElementPosition(), null);
+        g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
     }
     
     public int getX() {
