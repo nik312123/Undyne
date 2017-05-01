@@ -85,23 +85,13 @@ public class Arrow {
     }
     
     public void draw(Graphics g, Color c) throws IOException {
-        BufferedImage arr = ImageIO.read(new File("images/arrowB.png"));
-        if(c.equals(Color.RED)) {
-            try {
-                arr = ImageIO.read(new File("images/arrowR.png"));
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if(reverse) {
-            try {
-                arr = ImageIO.read(new File("images/arrowRE.png"));
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
+        BufferedImage arr;
+        if(reverse)
+            arr = Runner.reverseArr;
+        else if(c.equals(Color.RED))
+            arr = Runner.redArr;
+        else
+            arr = Runner.blueArr;
         int angle = 0;
         switch(direction) {
             case 'r':
@@ -135,5 +125,6 @@ public class Arrow {
     public char getDir() {
         return direction;
     }
+   
     
 }
