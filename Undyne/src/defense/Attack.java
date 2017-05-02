@@ -129,9 +129,9 @@ public class Attack {
         if(hit)
             return "H";
         else if(damage) {
-            if(!p.getHit()){
-            p.damage();
-            return "D";
+            if(!p.getHit()) {
+                p.damage();
+                return "D";
             }
         }
         return "";
