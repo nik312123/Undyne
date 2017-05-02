@@ -140,12 +140,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 drawHeart(g);
                 p.shield(g, dir);
                 gif(g);
-                try {
-                    p.drawHealth(g);
-                }
-                catch(FontFormatException | IOException e) {
-                    e.printStackTrace();
-                }
+                
                 try {
                     a1.spawnArrows(g, p);
                     p.drawHealth(g);
