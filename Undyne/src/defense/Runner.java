@@ -118,10 +118,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         redArr = ImageIO.read(new File("images/arrowR.png"));
         reverseArr = ImageIO.read(new File("images/arrowRE.png"));
         @SuppressWarnings("unused")
-        
         Runner a = new Runner("Game");
-        
-         startScreen.play();
+        startScreen.play();
     }
     
     public Runner() {
