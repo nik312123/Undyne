@@ -85,13 +85,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
-        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+        frame.setLocation(dim.width/2 - frame.getSize().width/2, dim.height/2 - frame.getSize().height/2);
         frame.setResizable(false);
         frame.setVisible(true);
     }
     
-    public static void main(String args[])
-            throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
         int gifMax;
         String baseName;
         startScreen = new NewerSound("audio/NGAHHH.wav", true);
