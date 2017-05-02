@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
 
 public class Player {
 
-	private int red = 30; 
+	private int red = 30;
 	
 	public char dir = 'u';
 
@@ -180,6 +180,6 @@ public class Player {
     }
     
     public void decreaseCounter(){
-        timeoutCounter--;
+        --timeoutCounter;
     }
 }
