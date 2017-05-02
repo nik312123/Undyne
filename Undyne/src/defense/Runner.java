@@ -40,15 +40,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static int angle = 0;
     static int breakCount = 0;
     static int breakFrame = 0;
-    
+    static int flickeringHeart = 0;
     static int count = 0;
     static int gifCount = 0;
     static int currentDirection = 0;
     static int gameOverCount = 0;
     static int gameOverFrame = 0;
     static int subTitleMovement = 330;
-    
-    static boolean isGenocide = true;
+    static int frameCounter = 0;
+    static boolean isGenocide = false;
     static boolean runsGif = false;
     static boolean heartDone = false;
     static boolean gameOverDone = false;
@@ -130,6 +130,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        ++frameCounter;
+        if(frameCounter == 1000)
+            frameCounter = 0;
+        if(p.getHit()) {
+            p.decreaseCounter();
+            if(frameCounter % 16 == 0) {
+                if(flickeringHeart == 0)
+                    flickeringHeart = 9000;
+                else
+                    flickeringHeart = 0;
+            }
+            if(p.getTimeoutCounter() == 0) {
+                p.setHit(false);
+                p.resetTimeoutCounter();
+                flickeringHeart = 0;
+            }
+        }
         if(beginning)
             stage.run(g);
         else {
@@ -140,12 +157,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 drawHeart(g);
                 p.shield(g, dir);
                 gif(g);
-                try {
-                    p.drawHealth(g);
-                }
-                catch(FontFormatException | IOException e) {
-                    e.printStackTrace();
-                }
                 try {
                     a1.spawnArrows(g, p);
                     p.drawHealth(g);
@@ -235,7 +246,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak[breakFrame].getWidth();
         int height = heartBreak[breakFrame].getHeight();
-        g2d.drawImage(heartBreak[breakFrame], getWidth()/2 - (width/2) + 11, getHeight()/2 - height/2 + 78, null);
+        g2d.drawImage(heartBreak[breakFrame], getWidth()/2 - width/2 + 11, getHeight()/2 - height/2 + 78, null);
         g2d.dispose();
     }
     
@@ -345,7 +356,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = gameOver[gameOverFrame].getWidth();
         int height = gameOver[gameOverFrame].getHeight();
-        g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - (width/2) + 1, getHeight()/2 - height/2, null);
+        g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - width/2 + 1, getHeight()/2 - height/2, null);
         g2d.dispose();
     }
     
@@ -353,12 +364,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
-        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(),
-                getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
         while(size > 73) {
             --size;
-            g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(),
-                    getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+            g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
         }
     }
     
@@ -370,8 +379,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
-        g.drawImage(heart, getWidth()/2 - (width/2) + 1 + p.getElementPosition(),
-                getHeight()/2 - height/2 + p.getElementPosition(), null);
+        g.drawImage(heart, getWidth()/2 - width/2 + 1 + p.getElementPosition() + flickeringHeart, getHeight()/2 - height/2 + p.getElementPosition(), null);
     }
     
     public void drawCircle(Graphics g) {
@@ -427,10 +435,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_ENTER:
                 if(beginning) {
-                    beginning = false;
-                    startScreen.stop();
-                    main.play();
-                    dir = 'u';
+                    if(stage.hasSelected()) {
+                        beginning = false;
+                        startScreen.stop();
+                        main.play();
+                        dir = 'u';
+                    }
                 }
         }
     }

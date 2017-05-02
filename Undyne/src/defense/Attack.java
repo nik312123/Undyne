@@ -5,9 +5,6 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import nikunj.classes.NewerSound;
 
 public class Attack {
@@ -28,7 +25,6 @@ public class Attack {
     private double[] delayGroup;
     
     public static String hit = "";
-    
     int adder = 1;
     int hitPoint = 0;
     int move = 0;
@@ -133,8 +129,10 @@ public class Attack {
         if(hit)
             return "H";
         else if(damage) {
-            p.damage();
-            return "D";
+            if(!p.getHit()) {
+                p.damage();
+                return "D";
+            }
         }
         return "";
     }
@@ -150,8 +148,8 @@ public class Attack {
     
     public void spawnArrows(Graphics g, Player p) throws IOException {
         tick();
-        if(++counter == 40) {
-            addArrow(new Arrow(3, false, DIRS[currentDirection++], p));
+        if(++counter == 30) {
+            addArrow(new Arrow(5, false, DIRS[(int) (Math.random() * DIRS.length)], p));
             if(currentDirection == DIRS.length)
                 currentDirection = 0;
             counter = 0;
@@ -164,8 +162,11 @@ public class Attack {
             block.play();
         }
         else if(hit.equals("D")) {
-            isDamaged = true;
-            damage.play();
+            if(!p.getHit()) {
+                isDamaged = true;
+                damage.play();
+                p.setHit(true);
+            }
         }
         if(isDamaged) {
             p.setElementPosition(move);

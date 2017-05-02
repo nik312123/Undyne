@@ -20,6 +20,7 @@ public class StartScreen {
     BufferedImage hard;
     BufferedImage easy;
     BufferedImage heartMouse;
+    BufferedImage select;
     BufferedImage[] fire;
     
     static int speed = 2;
@@ -51,12 +52,13 @@ public class StartScreen {
         try {
             undyne = ImageIO.read(new File("images/undyne.png"));
             start = ImageIO.read(new File("images/start.png"));
+            select = ImageIO.read(new File("images/select.png"));
             hard = ImageIO.read(new File("images/hard.png"));
             easy = ImageIO.read(new File("images/easy.png"));
             heartMouse = ImageIO.read(new File("images/heartMouse.png"));
             for(int i = 0; i <= 37; ++i)
                 fire[i] = ImageIO.read(new File("images/fireGif/" + i + "frames.png"));
-            }
+        }
         catch(IOException e) {
             e.printStackTrace();
         }
@@ -66,6 +68,15 @@ public class StartScreen {
         drawBG(g);
         gifFire(g);
         starterTitle(g, fadeIn);
+        moveHeart();
+        constrain();
+        enterToStart(g);
+        hardButton(g);
+        easyButton(g);
+        heartMouse(g);
+    }
+    
+    public void moveHeart() {
         if(enterCounter > 10) {
             if(right)
                 heartX += speed;
@@ -75,11 +86,6 @@ public class StartScreen {
                 heartY -= speed;
             if(down)
                 heartY += speed;
-            constrain();
-            enterToStart(g);
-            hardButton(g);
-            easyButton(g);
-            heartMouse(g);
         }
     }
     
@@ -123,7 +129,10 @@ public class StartScreen {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        g2d.drawImage(start, 0, 0, null);
+        if(!(easyButtonRectRed || hardButtonRectRed))
+            g2d.drawImage(select, 0, 0, null);
+        else
+            g2d.drawImage(start, 0, 0, null);
         g2d.dispose();
         if(flashCount % 2 == 0) {
             if(fadeStart <= 1 && !switchFade)
@@ -145,12 +154,14 @@ public class StartScreen {
         if(hardButtonCount % 5 == 0) {
             if(heartX > 78 && heartX < 231 && heartY < 57 && heartY > -11) {
                 if(hardButtonRect < 60)
-                    hardButtonRect += 6;
-                else
+                    hardButtonRect += 5;
+                else {
                     hardButtonRectRed = true;
+                    easyButtonRectRed = false;
+                }
             }
-            else if(hardButtonRect > 0)
-                hardButtonRect -= 6;
+            else if(hardButtonRect > 0 && !hardButtonRectRed)
+                hardButtonRect -= 5;
         }
         ++hardButtonCount;
         if(hardButtonCount == 5)
@@ -171,13 +182,15 @@ public class StartScreen {
         if(easyButtonCount % 5 == 0) {
             if(heartX > -220 && heartX < -70 && heartY < 57 && heartY > -11) {
                 if(easyButtonRect < 60)
-                    easyButtonRect += 6;
-                else
+                    easyButtonRect += 5;
+                else {
                     easyButtonRectRed = true;
+                    hardButtonRectRed = false;
+                }
             }
             else {
-                if(easyButtonRect > 0)
-                    easyButtonRect -= 6;
+                if(easyButtonRect > 0 && !easyButtonRectRed)
+                    easyButtonRect -= 5;
             }
         }
         ++easyButtonCount;
@@ -204,7 +217,7 @@ public class StartScreen {
             frameCounter = 0;
         if(count2 == 37)
             count2 = 0;
-        if(fire2 && count2 >= 0)
+        if(fire2 && count2 >= 0 && (hardButtonRectRed))
             g.drawImage(fire[count2], 330, 160, null);
     }
     
@@ -240,4 +253,7 @@ public class StartScreen {
         down = true;
     }
     
+    public boolean hasSelected() {
+        return hardButtonRectRed || easyButtonRectRed;
+    }
 }
