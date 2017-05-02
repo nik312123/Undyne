@@ -34,7 +34,7 @@ public class Player {
 	/*
 	 * Initial player health
 	 */
-	private int health = 60000;
+	private int health = 60;
 	/*
 	 * How much the player is currently rotated by
 	 */
