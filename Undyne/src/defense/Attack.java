@@ -162,10 +162,10 @@ public class Attack {
             block.play();
         }
         else if(hit.equals("D")) {
-            if(!p.getHit()){
-            isDamaged = true;
-            damage.play();
-            p.setHit(true);
+            if(!p.getHit()) {
+                isDamaged = true;
+                damage.play();
+                p.setHit(true);
             }
         }
         if(isDamaged) {
