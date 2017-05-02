@@ -77,7 +77,6 @@ public class StartScreen {
     }
     
     public void moveHeart() {
-        
         if(enterCounter > 10) {
             if(right)
                 heartX += speed;
@@ -88,7 +87,6 @@ public class StartScreen {
             if(down)
                 heartY += speed;
         }
-        
     }
     
     public void drawBG(Graphics g) {
@@ -135,7 +133,6 @@ public class StartScreen {
             g2d.drawImage(select, 0, 0, null);
         else
             g2d.drawImage(start, 0, 0, null);
-        
         g2d.dispose();
         if(flashCount % 2 == 0) {
             if(fadeStart <= 1 && !switchFade)
@@ -155,9 +152,7 @@ public class StartScreen {
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         if(hardButtonCount % 5 == 0) {
-            
             if(heartX > 78 && heartX < 231 && heartY < 57 && heartY > -11) {
-                
                 if(hardButtonRect < 60)
                     hardButtonRect += 5;
                 else {
@@ -258,7 +253,7 @@ public class StartScreen {
         down = true;
     }
     
-    public boolean hasSelected(){
+    public boolean hasSelected() {
         return hardButtonRectRed || easyButtonRectRed;
     }
 }
