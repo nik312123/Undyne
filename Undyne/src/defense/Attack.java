@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import nikunj.classes.NewerSound;
 
@@ -26,7 +25,6 @@ public class Attack {
     private double[] delayGroup;
     
     public static String hit = "";
-    Random rand = new Random();
     int adder = 1;
     int hitPoint = 0;
     int move = 0;
@@ -151,7 +149,7 @@ public class Attack {
     public void spawnArrows(Graphics g, Player p) throws IOException {
         tick();
         if(++counter == 30) {
-            addArrow(new Arrow(5, false, DIRS[rand.nextInt(DIRS.length)], p));
+            addArrow(new Arrow(5, false, DIRS[(int) (Math.random() * DIRS.length)], p));
             if(currentDirection == DIRS.length)
                 currentDirection = 0;
             counter = 0;
