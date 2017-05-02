@@ -31,7 +31,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean beginning = true;
     static char dir = 'u';
     
-    static final char[] DIRS = {'u', 'd', 'r', 'l', 'u', 'u', 'u'};
+    static final char[] DIRS = {'u', 'd', 'r', 'l'};
     
     String hit = "";
     
