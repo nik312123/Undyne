@@ -31,7 +31,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean beginning = true;
     static char dir = 'u';
     
-    static final char[] DIRS = {'u', 'd', 'r', 'l'};
+    static final char[] DIRS = {'u', 'd', 'r', 'l', 'u', 'u', 'u'};
     
     String hit = "";
     
@@ -48,7 +48,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static int gameOverFrame = 0;
     static int subTitleMovement = 330;
     
-    static boolean isGenocide = true;
+    static boolean isGenocide = false;
     static boolean runsGif = false;
     static boolean heartDone = false;
     static boolean gameOverDone = false;

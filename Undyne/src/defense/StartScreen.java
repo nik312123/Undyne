@@ -64,6 +64,7 @@ public class StartScreen {
     
     public void run(Graphics g) {
         drawBG(g);
+       
         gifFire(g);
         starterTitle(g, fadeIn);
         if(enterCounter > 10) {
@@ -145,12 +146,14 @@ public class StartScreen {
         if(hardButtonCount % 5 == 0) {
             if(heartX > 78 && heartX < 231 && heartY < 57 && heartY > -11) {
                 if(hardButtonRect < 60)
-                    hardButtonRect += 6;
-                else
+                    hardButtonRect += 5;
+                else{
                     hardButtonRectRed = true;
+                    easyButtonRectRed = false;
+                }
             }
-            else if(hardButtonRect > 0)
-                hardButtonRect -= 6;
+            else if(hardButtonRect > 0 && !hardButtonRectRed)
+                hardButtonRect -= 5;
         }
         ++hardButtonCount;
         if(hardButtonCount == 5)
@@ -171,13 +174,15 @@ public class StartScreen {
         if(easyButtonCount % 5 == 0) {
             if(heartX > -220 && heartX < -70 && heartY < 57 && heartY > -11) {
                 if(easyButtonRect < 60)
-                    easyButtonRect += 6;
-                else
+                    easyButtonRect += 5;
+                else{
                     easyButtonRectRed = true;
+                    hardButtonRectRed = false;
+                }
             }
             else {
-                if(easyButtonRect > 0)
-                    easyButtonRect -= 6;
+                if(easyButtonRect > 0  && !easyButtonRectRed)
+                    easyButtonRect -= 5;
             }
         }
         ++easyButtonCount;
@@ -204,7 +209,7 @@ public class StartScreen {
             frameCounter = 0;
         if(count2 == 37)
             count2 = 0;
-        if(fire2 && count2 >= 0)
+        if(fire2 && count2 >= 0 &&  (hardButtonRectRed))
             g.drawImage(fire[count2], 330, 160, null);
     }
     
