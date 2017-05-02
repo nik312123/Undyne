@@ -155,7 +155,9 @@ public class StartScreen {
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         if(hardButtonCount % 5 == 0) {
+            
             if(heartX > 78 && heartX < 231 && heartY < 57 && heartY > -11) {
+                
                 if(hardButtonRect < 60)
                     hardButtonRect += 5;
                 else {
@@ -256,4 +258,7 @@ public class StartScreen {
         down = true;
     }
     
+    public boolean hasSelected(){
+        return hardButtonRectRed || easyButtonRectRed;
+    }
 }

@@ -17,22 +17,24 @@ import javax.imageio.ImageIO;
 
 public class Player {
 
-	private int red = 30;
+	private int red = 30; 
 	
 	public char dir = 'u';
 
+	boolean hit = false;
+	int time = 100; 
+	int timeoutCounter = time;
+	
 	BufferedImage shield;
 	
 	BufferedImage[] shields = new BufferedImage[2];
 	
 	int elementPosition = 0;
-	/*
-	 * Delay in milliseconds between each movement of the player
-	 */
+	
 	/*
 	 * Initial player health
 	 */
-	private int health = 60;
+	private int health = 60000;
 	/*
 	 * How much the player is currently rotated by
 	 */
@@ -159,5 +161,25 @@ public class Player {
     
     public void setElementPosition(int x){
         elementPosition = x;
+    }
+    
+    public void setHit(boolean hit){
+        this.hit = hit;
+    }
+    
+    public boolean getHit(){
+        return hit;
+    }
+    
+    public int getTimeoutCounter(){
+        return timeoutCounter;
+    }
+    
+    public void resetTimeoutCounter(){
+        timeoutCounter = time;
+    }
+    
+    public void decreaseCounter(){
+        timeoutCounter--;
     }
 }
