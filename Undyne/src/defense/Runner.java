@@ -55,6 +55,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean firstEnd = true;
     static boolean secondEnd = true;
     static boolean startEnter = false;
+    static boolean automatic = false;
     
     protected Timer timer;
     
@@ -85,12 +86,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
-        frame.setLocation(dim.width/2 - frame.getSize().width/2, dim.height/2 - frame.getSize().height/2);
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
         frame.setResizable(false);
         frame.setVisible(true);
     }
     
-    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+    public static void main(String args[])
+            throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
         startScreen = new NewerSound("audio/WF.wav", true);
         heart = ImageIO.read(new File("images/heart.png"));
         heartBreak = new BufferedImage[49];
@@ -145,6 +147,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 try {
                     a1.spawnArrows(g, p);
                     p.drawHealth(g);
+                    automatic();
                 }
                 catch(FontFormatException | IOException e) {
                     e.printStackTrace();
@@ -170,6 +173,26 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 else {
                     drawGameOver(g, gameOverFrame);
                 }
+            }
+        }
+        
+    }
+    
+    private void automatic() {
+        if(automatic) {
+            switch(a1.getList().get(0).getDir()) {
+                case 'd':
+                    dir = 'u';
+                    break;
+                case 'r':
+                    dir = 'l';
+                    break;
+                case 'u':
+                    dir = 'd';
+                    break;
+                case 'l':
+                    dir = 'r';
+                    break;
             }
         }
         
@@ -231,7 +254,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak[breakFrame].getWidth();
         int height = heartBreak[breakFrame].getHeight();
-        g2d.drawImage(heartBreak[breakFrame], getWidth()/2 - width/2 + 11, getHeight()/2 - height/2 + 78, null);
+        g2d.drawImage(heartBreak[breakFrame], getWidth() / 2 - width / 2 + 11, getHeight() / 2 - height / 2 + 78, null);
         g2d.dispose();
     }
     
@@ -341,7 +364,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = gameOver[gameOverFrame].getWidth();
         int height = gameOver[gameOverFrame].getHeight();
-        g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - width/2 + 1, getHeight()/2 - height/2, null);
+        g2d.drawImage(gameOver[gameOverFrame], getWidth() / 2 - width / 2 + 1, getHeight() / 2 - height / 2, null);
         g2d.dispose();
     }
     
@@ -349,10 +372,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
-        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+        g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
+                getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
         while(size > 73) {
             --size;
-            g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+            g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
+                    getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
         }
     }
     
@@ -364,13 +389,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
-        g.drawImage(heart, getWidth()/2 - width/2 + 1 + p.getElementPosition() + flickeringHeart, getHeight()/2 - height/2 + p.getElementPosition(), null);
+        g.drawImage(heart, getWidth() / 2 - width / 2 + 1 + p.getElementPosition() + flickeringHeart,
+                getHeight() / 2 - height / 2 + p.getElementPosition(), null);
     }
     
     public void drawCircle(Graphics g) {
         Color clr = new Color(0, 255, 0);
         g.setColor(clr);
-        g.drawOval(getWidth()/2 - 25 + p.getElementPosition(), getHeight()/2 - 25 + p.getElementPosition(), 50, 50);
+        g.drawOval(getWidth() / 2 - 25 + p.getElementPosition(), getHeight() / 2 - 25 + p.getElementPosition(), 50, 50);
     }
     
     public void subTitle(Graphics g) {
@@ -383,7 +409,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth()/2, heart.getMinY() + heart.getHeight()/2);
+        tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth() / 2, heart.getMinY() + heart.getHeight() / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         heart = op.filter(heart, null);
         g.translate(-300, -300);
@@ -436,8 +462,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         gif = new BufferedImage[gifMax + 1];
                         try {
-                        for(int i = 0; i <= gifMax; ++i)
-                            gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
+                            for(int i = 0; i <= gifMax; ++i)
+                                gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
                         }
                         catch(IOException err) {
                             err.printStackTrace();
@@ -448,6 +474,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         dir = 'u';
                     }
                 }
+                break;
+            case KeyEvent.VK_A:
+                automatic ^= true;
+                
         }
     }
     
