@@ -91,22 +91,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
-        int gifMax;
-        String baseName;
-        startScreen = new NewerSound("audio/NGAHHH.wav", true);
-        if(isGenocide) {
-            main = new NewerSound("audio/bath.wav", true);
-            gifMax = 79;
-            baseName = "undying";
-        }
-        else {
-            main = new NewerSound("audio/soj.wav", true);
-            gifMax = 31;
-            baseName = "frame";
-        }
-        gif = new BufferedImage[gifMax + 1];
-        for(int i = 0; i <= gifMax; ++i)
-            gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
+        startScreen = new NewerSound("audio/WF.wav", true);
         heart = ImageIO.read(new File("images/heart.png"));
         heartBreak = new BufferedImage[49];
         for(int i = 0; i <= 48; ++i)
@@ -436,6 +421,27 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             case KeyEvent.VK_ENTER:
                 if(beginning) {
                     if(stage.hasSelected()) {
+                        isGenocide = stage.isHard();
+                        int gifMax;
+                        String baseName;
+                        if(isGenocide) {
+                            main = new NewerSound("audio/bath.wav", true);
+                            gifMax = 79;
+                            baseName = "undying";
+                        }
+                        else {
+                            main = new NewerSound("audio/soj.wav", true);
+                            gifMax = 31;
+                            baseName = "frame";
+                        }
+                        gif = new BufferedImage[gifMax + 1];
+                        try {
+                        for(int i = 0; i <= gifMax; ++i)
+                            gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
+                        }
+                        catch(IOException err) {
+                            err.printStackTrace();
+                        }
                         beginning = false;
                         startScreen.stop();
                         main.play();

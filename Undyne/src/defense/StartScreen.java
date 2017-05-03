@@ -11,6 +11,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import nikunj.classes.NewerSound;
+
 public class StartScreen {
     static double fadeIn = 0;
     static double fadeStart = 0;
@@ -22,6 +24,7 @@ public class StartScreen {
     BufferedImage heartMouse;
     BufferedImage select;
     BufferedImage[] fire;
+    BufferedImage[] dog = new BufferedImage[2];
     
     static int speed = 2;
     static int enterCounter = 0;
@@ -37,6 +40,8 @@ public class StartScreen {
     static int flashCount = 0;
     static int hardButtonCount = 0;
     static int easyButtonCount = 0;
+    static int dogCount = 0;
+    static int dogFrame = 0;
     
     static boolean right = false;
     static boolean left = false;
@@ -46,18 +51,28 @@ public class StartScreen {
     static boolean hardButtonRectRed = false;
     static boolean easyButtonRectRed = false;
     static boolean fire2 = false;
+    static boolean playFire = true;
+    static boolean needDog = false;
+    static boolean playBark = true;
+    
+    NewerSound flare;
+    NewerSound bark;
     
     public StartScreen() {
         fire = new BufferedImage[38];
+        flare = new NewerSound("audio/fire.wav", false); //Credit to wjl from https://goo.gl/ofAZRS
+        bark = new NewerSound("audio/bark.wav", false);
         try {
             undyne = ImageIO.read(new File("images/undyne.png"));
             start = ImageIO.read(new File("images/start.png"));
             select = ImageIO.read(new File("images/select.png"));
             hard = ImageIO.read(new File("images/hard.png"));
             easy = ImageIO.read(new File("images/easy.png"));
-            heartMouse = ImageIO.read(new File("images/heartMouse.png"));
+            heartMouse = ImageIO.read(new File("images/heartMouse1.png"));
             for(int i = 0; i <= 37; ++i)
                 fire[i] = ImageIO.read(new File("images/fireGif/" + i + "frames.png"));
+            dog[0] = ImageIO.read(new File("images/annoyingDog/dog1.png"));
+            dog[1] = ImageIO.read(new File("images/annoyingDog/dog2.png"));
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -67,6 +82,7 @@ public class StartScreen {
     public void run(Graphics g) {
         drawBG(g);
         gifFire(g);
+        gifDog(g);
         starterTitle(g, fadeIn);
         moveHeart();
         constrain();
@@ -153,15 +169,23 @@ public class StartScreen {
         g.setColor(new Color(246, 138, 21));
         if(hardButtonCount % 5 == 0) {
             if(heartX > 78 && heartX < 231 && heartY < 57 && heartY > -11) {
-                if(hardButtonRect < 60)
+                if(hardButtonRect < 60) {
                     hardButtonRect += 5;
+                    playFire = true;
+                }
                 else {
+                    if(playFire) {
+                        playFire = false;
+                        flare.play();
+                    }
                     hardButtonRectRed = true;
                     easyButtonRectRed = false;
                 }
             }
-            else if(hardButtonRect > 0 && !hardButtonRectRed)
+            else if(hardButtonRect > 0 && !hardButtonRectRed) {
                 hardButtonRect -= 5;
+                playFire = true;
+            }
         }
         ++hardButtonCount;
         if(hardButtonCount == 5)
@@ -170,7 +194,7 @@ public class StartScreen {
             g.fillRect(380, 360 - (300 - (Math.abs(300 - hardButtonRect))), 140, hardButtonRect);
         else {
             fire2 = true;
-            g.setColor(Color.red);
+            g.setColor(Color.RED);
             g.fillRect(380, 300, 140, 60);
             
         }
@@ -181,16 +205,24 @@ public class StartScreen {
         g.setColor(new Color(246, 138, 21));
         if(easyButtonCount % 5 == 0) {
             if(heartX > -220 && heartX < -70 && heartY < 57 && heartY > -11) {
-                if(easyButtonRect < 60)
+                if(easyButtonRect < 60) {
                     easyButtonRect += 5;
+                    playBark = true;
+                }
                 else {
+                    if(playBark) {
+                        bark.play();
+                        playBark = false;
+                    }
                     easyButtonRectRed = true;
                     hardButtonRectRed = false;
                 }
             }
             else {
-                if(easyButtonRect > 0 && !easyButtonRectRed)
+                if(easyButtonRect > 0 && !easyButtonRectRed) {
                     easyButtonRect -= 5;
+                    playBark = true;
+                }
             }
         }
         ++easyButtonCount;
@@ -219,6 +251,20 @@ public class StartScreen {
             count2 = 0;
         if(fire2 && count2 >= 0 && (hardButtonRectRed))
             g.drawImage(fire[count2], 330, 160, null);
+    }
+    
+    public void gifDog(Graphics g) {
+        if(easyButtonRectRed) {
+            ++dogCount;
+            if(dogCount != 0 && dogCount % 20 == 0) {
+                if(dogFrame == 0)
+                    dogFrame = 1;
+                else
+                    dogFrame = 0;
+                dogCount = 0;
+            }
+            g.drawImage(dog[dogFrame], 130, 261, null);
+        }
     }
     
     public void setRightf() {
@@ -256,4 +302,9 @@ public class StartScreen {
     public boolean hasSelected() {
         return hardButtonRectRed || easyButtonRectRed;
     }
+    
+    public boolean isHard() {
+        return hardButtonRectRed;
+    }
+    
 }
