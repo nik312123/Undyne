@@ -22,7 +22,7 @@ public class Player {
 	public char dir = 'u';
 
 	boolean hit = false;
-	int time = 100; 
+	int time = 75; 
 	int timeoutCounter = time;
 	
 	BufferedImage shield;
