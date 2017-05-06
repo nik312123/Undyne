@@ -546,9 +546,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             
         }
-        if(!(e.getKeyChar() == '￿')) { // getKeyChar tries to get the text for
-                                       // keys such as shift, arrows, cmd, etc
-                                       // ok
+        if(!(e.getKeyChar() == '￿')) { 
+                                      
             typed += e.getKeyChar();
         }
         
