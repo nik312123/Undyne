@@ -125,21 +125,21 @@ public class StartScreen {
         if(floatSubBoolean) {
             //floatSub++;
             if(floatSub == 10)
-                floatSubBoolean ^= true;
+                floatSubBoolean = !floatSubBoolean;
         }
         else {
             //floatSub--;
             if(floatSub == -10)
-                floatSubBoolean ^= true;
+                floatSubBoolean = !floatSubBoolean;
         }
         
         if(frameCounter1 > 200) {
-            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale / 2,
-                    dropY - scale / 2 + floatSub, null);
+            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2,
+                    dropY - scale/2 + floatSub, null);
         }
         else {
-            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale / 2,
-                    dropY - scale / 2, null);
+            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2,
+                    dropY - scale/2, null);
         }
     }
     

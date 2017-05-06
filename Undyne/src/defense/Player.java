@@ -57,7 +57,7 @@ public class Player {
             fontUrl = new URL("file:font/undyne.ttf");
             font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
         }
-        catch(MalformedURLException | FontFormatException | IOException e) {
+        catch(FontFormatException | IOException e) {
             e.printStackTrace();
         }
        
