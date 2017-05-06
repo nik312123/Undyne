@@ -58,7 +58,7 @@ public class Player {
             font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
         }
         catch(MalformedURLException | FontFormatException | IOException e) {
-            e1.printStackTrace();
+            e.printStackTrace();
         }
        
 	}
