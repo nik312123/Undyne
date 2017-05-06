@@ -43,7 +43,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     static int cheatTextCounter = 0;
     static int move = 0;
-    static int delay = 5;
+    static int delay = 10;
     static int angle = 0;
     static int breakCount = 0;
     static int breakFrame = 0;
@@ -130,7 +130,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     public void drawCheat(Graphics g) throws FontFormatException, IOException {
         if(automatic)
-            activated = "Cheat Activated...";
+            activated = "Cheat Activated";
         else {
             activated = "";
             cheatTextCounter = 0;
