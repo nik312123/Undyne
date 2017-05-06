@@ -11,6 +11,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -31,6 +32,8 @@ public class Player {
 	
 	int elementPosition = 0;
 	
+	Font font;
+	
 	/*
 	 * Initial player health
 	 */
@@ -48,6 +51,16 @@ public class Player {
         catch(IOException e) {
             e.printStackTrace();
         }
+	    
+	    URL fontUrl;
+        try {
+            fontUrl = new URL("file:font/undyne.ttf");
+            font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
+        }
+        catch(MalformedURLException | FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+       
 	}
 
 	public void damage() {
@@ -61,8 +74,7 @@ public class Player {
 	        g.fillRect(430, 530, 70, 20);
 	        g.setColor(Color.YELLOW);
             g.fillRect(430, 530, (int) (70 * ((double) health/60)), 20);
-	        URL fontUrl = new URL("file:font/undyne.ttf");
-	        Font font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
+	       
 	        Graphics2D g3 = (Graphics2D) g;
 	        g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	        g3.setFont(font);

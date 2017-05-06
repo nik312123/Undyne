@@ -3,9 +3,11 @@ package defense;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
@@ -28,13 +31,17 @@ import nikunj.classes.NewerSound;
 public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static final long serialVersionUID = 1L;
-    static boolean beginning = true;
+    
     static char dir = 'u';
     
     static final char[] DIRS = {'u', 'd', 'r', 'l'};
     
-    String hit = "";
+    static String nothing = "badtime";
+    static String hit = "";
+    static String typed = "";
+    static String activated = "";
     
+    static int nothingCounter = 0;
     static int move = 0;
     static int delay = 10;
     static int angle = 0;
@@ -55,6 +62,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean firstEnd = true;
     static boolean secondEnd = true;
     static boolean startEnter = false;
+    static boolean beginning = true;
+    static boolean automatic = false;
     
     protected Timer timer;
     
@@ -72,6 +81,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static NewerSound gameDone;
     private static NewerSound startScreen;
     
+    static Font font;
+    
     Player p = new Player();
     Attack a1 = new Attack(new ArrayList<Arrow>(), 2, p);
     StartScreen stage = new StartScreen();
@@ -85,12 +96,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
-        frame.setLocation(dim.width/2 - frame.getSize().width/2, dim.height/2 - frame.getSize().height/2);
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
         frame.setResizable(false);
         frame.setVisible(true);
     }
     
-    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException,
+            LineUnavailableException, FontFormatException {
+        
         startScreen = new NewerSound("audio/WF.wav", true);
         heart = ImageIO.read(new File("images/heart.png"));
         heartBreak = new BufferedImage[49];
@@ -102,9 +115,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         blueArr = ImageIO.read(new File("images/arrowB.png"));
         redArr = ImageIO.read(new File("images/arrowR.png"));
         reverseArr = ImageIO.read(new File("images/arrowRE.png"));
+        URL fontUrl = new URL("file:font/dete.otf");
+        font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Game");
         startScreen.play();
+        
     }
     
     public Runner() {
@@ -112,9 +128,29 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         timer.start();
     }
     
+    public void drawCheat(Graphics g) throws FontFormatException, IOException {
+        if(automatic)
+            activated = "Cheat Activated";
+        else {
+            activated = "";
+            nothingCounter = 0;
+        }
+        
+        Graphics2D g1 = (Graphics2D) g;
+        g1.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g1.setFont(font);
+        g1.setColor(Color.GREEN);
+        if(!activated.equals(""))
+            g1.drawString(activated.substring(0, nothingCounter), 0, 13);
+        if(frameCounter % 7 == 0 && nothingCounter < activated.length())
+            nothingCounter++;
+        
+    }
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
         ++frameCounter;
         if(frameCounter == 1000)
             frameCounter = 0;
@@ -132,19 +168,38 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 flickeringHeart = 0;
             }
         }
-        if(beginning)
+        if(beginning) {
             stage.run(g);
+            
+            try {
+                drawCheat(g);
+            }
+            catch(FontFormatException | IOException e1) {
+                e1.printStackTrace();
+            }
+            
+        }
         else {
             if(p.getHealth() != 0) {
                 drawBG(g);
+                
+                try {
+                    drawCheat(g);
+                }
+                catch(FontFormatException | IOException e1) {
+                    e1.printStackTrace();
+                }
+                
                 drawSqu(g);
                 drawCircle(g);
                 drawHeart(g);
+                
                 p.shield(g, dir);
                 gif(g);
                 try {
                     a1.spawnArrows(g, p);
                     p.drawHealth(g);
+                    automatic();
                 }
                 catch(FontFormatException | IOException e) {
                     e.printStackTrace();
@@ -173,6 +228,43 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
         }
         
+    }
+    
+    private void automatic() {
+        if(automatic && a1.getList().size() > 0) {
+            switch(a1.getList().get(0).getDir()) {
+                case 'd':
+                    dir = 'u';
+                    break;
+                case 'r':
+                    dir = 'l';
+                    break;
+                case 'u':
+                    dir = 'd';
+                    break;
+                case 'l':
+                    dir = 'r';
+                    break;
+            }
+        }
+        
+    }
+    
+    public void nothing() {
+        
+        if(typed.length() > nothing.length())
+            typed = typed.substring(typed.length() - nothing.length(), typed.length());
+        if(typed.length() == nothing.length()) {
+            if(typed.equals((nothing))) {
+                automatic = !automatic;
+                if(automatic)
+                    System.out.println("Cheat code activaed");
+                else
+                    System.out.println("Cheat code deactivaed");
+                typed = typed.substring(0, typed.length() - nothing.length());
+            }
+            
+        }
     }
     
     public void gif(Graphics g) {
@@ -231,7 +323,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak[breakFrame].getWidth();
         int height = heartBreak[breakFrame].getHeight();
-        g2d.drawImage(heartBreak[breakFrame], getWidth()/2 - width/2 + 11, getHeight()/2 - height/2 + 78, null);
+        g2d.drawImage(heartBreak[breakFrame], getWidth() / 2 - width / 2 + 11, getHeight() / 2 - height / 2 + 78, null);
         g2d.dispose();
     }
     
@@ -341,7 +433,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = gameOver[gameOverFrame].getWidth();
         int height = gameOver[gameOverFrame].getHeight();
-        g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - width/2 + 1, getHeight()/2 - height/2, null);
+        g2d.drawImage(gameOver[gameOverFrame], getWidth() / 2 - width / 2 + 1, getHeight() / 2 - height / 2, null);
         g2d.dispose();
     }
     
@@ -349,10 +441,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
-        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+        g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
+                getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
         while(size > 73) {
             --size;
-            g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+            g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
+                    getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
         }
     }
     
@@ -364,13 +458,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
-        g.drawImage(heart, getWidth()/2 - width/2 + 1 + p.getElementPosition() + flickeringHeart, getHeight()/2 - height/2 + p.getElementPosition(), null);
+        g.drawImage(heart, getWidth() / 2 - width / 2 + 1 + p.getElementPosition() + flickeringHeart,
+                getHeight() / 2 - height / 2 + p.getElementPosition(), null);
     }
     
     public void drawCircle(Graphics g) {
         Color clr = new Color(0, 255, 0);
         g.setColor(clr);
-        g.drawOval(getWidth()/2 - 25 + p.getElementPosition(), getHeight()/2 - 25 + p.getElementPosition(), 50, 50);
+        g.drawOval(getWidth() / 2 - 25 + p.getElementPosition(), getHeight() / 2 - 25 + p.getElementPosition(), 50, 50);
     }
     
     public void subTitle(Graphics g) {
@@ -383,7 +478,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth()/2, heart.getMinY() + heart.getHeight()/2);
+        tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth() / 2, heart.getMinY() + heart.getHeight() / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         heart = op.filter(heart, null);
         g.translate(-300, -300);
@@ -436,8 +531,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         gif = new BufferedImage[gifMax + 1];
                         try {
-                        for(int i = 0; i <= gifMax; ++i)
-                            gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
+                            for(int i = 0; i <= gifMax; ++i)
+                                gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
                         }
                         catch(IOException err) {
                             err.printStackTrace();
@@ -448,7 +543,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         dir = 'u';
                     }
                 }
+                break;
+            
         }
+        if(!(e.getKeyChar() == '￿')) { 
+                                      
+            typed += e.getKeyChar();
+        }
+        
+        nothing();
+        
     }
     
     @Override
@@ -468,4 +572,5 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
         }
     }
+    
 }

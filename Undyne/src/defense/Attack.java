@@ -186,4 +186,8 @@ public class Attack {
         }
         draw(g);
     }
+    
+    public ArrayList<Arrow> getList(){
+        return attackPattern;
+    }
 }
