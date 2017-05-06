@@ -3,9 +3,11 @@ package defense;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
@@ -28,15 +31,19 @@ import nikunj.classes.NewerSound;
 public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static final long serialVersionUID = 1L;
-    static boolean beginning = true;
+    
     static char dir = 'u';
     
     static final char[] DIRS = {'u', 'd', 'r', 'l'};
     
-    String hit = "";
+    static String cheatCode = "badtime";
+    static String hit = "";
+    static String typed = "";
+    static String activated = "";
     
+    static int cheatTextCounter = 0;
     static int move = 0;
-    static int delay = 10;
+    static int delay = 5;
     static int angle = 0;
     static int breakCount = 0;
     static int breakFrame = 0;
@@ -55,6 +62,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean firstEnd = true;
     static boolean secondEnd = true;
     static boolean startEnter = false;
+    static boolean beginning = true;
     static boolean automatic = false;
     
     protected Timer timer;
@@ -72,6 +80,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static NewerSound main;
     private static NewerSound gameDone;
     private static NewerSound startScreen;
+    
+    static Font font;
     
     Player p = new Player();
     Attack a1 = new Attack(new ArrayList<Arrow>(), 2, p);
@@ -91,8 +101,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setVisible(true);
     }
     
-    public static void main(String args[])
-            throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException,
+            LineUnavailableException, FontFormatException {
+        
         startScreen = new NewerSound("audio/WF.wav", true);
         heart = ImageIO.read(new File("images/heart.png"));
         heartBreak = new BufferedImage[49];
@@ -104,9 +115,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         blueArr = ImageIO.read(new File("images/arrowB.png"));
         redArr = ImageIO.read(new File("images/arrowR.png"));
         reverseArr = ImageIO.read(new File("images/arrowRE.png"));
+        URL fontUrl = new URL("file:font/dete.otf");
+        font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Game");
         startScreen.play();
+        
     }
     
     public Runner() {
@@ -114,9 +128,29 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         timer.start();
     }
     
+    public void drawCheat(Graphics g) throws FontFormatException, IOException {
+        if(automatic)
+            activated = "Cheat Activated...";
+        else {
+            activated = "";
+            cheatTextCounter = 0;
+        }
+        
+        Graphics2D g1 = (Graphics2D) g;
+        g1.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g1.setFont(font);
+        g1.setColor(Color.WHITE);
+        if(!activated.equals(""))
+            g1.drawString(activated.substring(0, cheatTextCounter), 0, 13);
+        if(frameCounter % 7 == 0 && cheatTextCounter < activated.length())
+            cheatTextCounter++;
+        
+    }
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
         ++frameCounter;
         if(frameCounter == 1000)
             frameCounter = 0;
@@ -134,14 +168,32 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 flickeringHeart = 0;
             }
         }
-        if(beginning)
+        if(beginning) {
             stage.run(g);
+            
+            try {
+                drawCheat(g);
+            }
+            catch(FontFormatException | IOException e1) {
+                e1.printStackTrace();
+            }
+            
+        }
         else {
             if(p.getHealth() != 0) {
                 drawBG(g);
+                
+                try {
+                    drawCheat(g);
+                }
+                catch(FontFormatException | IOException e1) {
+                    e1.printStackTrace();
+                }
+                
                 drawSqu(g);
                 drawCircle(g);
                 drawHeart(g);
+                
                 p.shield(g, dir);
                 gif(g);
                 try {
@@ -179,7 +231,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     private void automatic() {
-        if(automatic) {
+        if(automatic && a1.getList().size() > 0) {
             switch(a1.getList().get(0).getDir()) {
                 case 'd':
                     dir = 'u';
@@ -196,6 +248,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
         }
         
+    }
+    
+    public void cheatCodeChecker() {
+        
+        if(typed.length() > cheatCode.length())
+            typed = typed.substring(typed.length() - cheatCode.length(), typed.length());
+        if(typed.length() == cheatCode.length()) {
+            if(typed.equals((cheatCode))) {
+                automatic = !automatic;
+                if(automatic)
+                    System.out.println("Cheat code activaed");
+                else
+                    System.out.println("Cheat code deactivaed");
+                typed = typed.substring(0, typed.length() - cheatCode.length());
+            }
+            
+        }
     }
     
     public void gif(Graphics g) {
@@ -475,10 +544,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
                 }
                 break;
-            case KeyEvent.VK_A:
-                automatic ^= true;
-                
+            
         }
+        if(!(e.getKeyChar() == '￿')) { // getKeyChar tries to get the text for
+                                       // keys such as shift, arrows, cmd, etc
+                                       // ok
+            typed += e.getKeyChar();
+        }
+        
+        cheatCodeChecker();
+        
     }
     
     @Override
@@ -498,4 +573,5 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
         }
     }
+    
 }
