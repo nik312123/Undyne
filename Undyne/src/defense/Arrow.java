@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
 
 import java.io.IOException;
 
+    /*
+    * Composes an arrow to be implemented in the Attack class
+    */
     public class Arrow {
     int move = 0;
     /*
