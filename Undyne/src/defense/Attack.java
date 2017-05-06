@@ -148,7 +148,7 @@ public class Attack {
     
     public void spawnArrows(Graphics g, Player p) throws IOException {
         tick();
-        if(++counter == 40) {
+        if(++counter == 30) {
             addArrow(new Arrow(5, false, DIRS[(int) (Math.random() * DIRS.length)], p));
             if(currentDirection == DIRS.length)
                 currentDirection = 0;
