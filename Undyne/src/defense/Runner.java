@@ -139,7 +139,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g1 = (Graphics2D) g;
         g1.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g1.setFont(font);
-        g1.setColor(Color.WHITE);
+        g1.setColor(Color.GREEN);
         if(!activated.equals(""))
             g1.drawString(activated.substring(0, cheatTextCounter), 0, 13);
         if(frameCounter % 7 == 0 && cheatTextCounter < activated.length())
