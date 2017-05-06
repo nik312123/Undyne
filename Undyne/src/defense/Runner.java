@@ -36,12 +36,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     static final char[] DIRS = {'u', 'd', 'r', 'l'};
     
-    static String cheatCode = "badtime";
+    static String nothing = "badtime";
     static String hit = "";
     static String typed = "";
     static String activated = "";
     
-    static int cheatTextCounter = 0;
+    static int nothingCounter = 0;
     static int move = 0;
     static int delay = 10;
     static int angle = 0;
@@ -133,7 +133,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             activated = "Cheat Activated";
         else {
             activated = "";
-            cheatTextCounter = 0;
+            nothingCounter = 0;
         }
         
         Graphics2D g1 = (Graphics2D) g;
@@ -141,9 +141,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g1.setFont(font);
         g1.setColor(Color.GREEN);
         if(!activated.equals(""))
-            g1.drawString(activated.substring(0, cheatTextCounter), 0, 13);
-        if(frameCounter % 7 == 0 && cheatTextCounter < activated.length())
-            cheatTextCounter++;
+            g1.drawString(activated.substring(0, nothingCounter), 0, 13);
+        if(frameCounter % 7 == 0 && nothingCounter < activated.length())
+            nothingCounter++;
         
     }
     
@@ -250,18 +250,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         
     }
     
-    public void cheatCodeChecker() {
+    public void nothing() {
         
-        if(typed.length() > cheatCode.length())
-            typed = typed.substring(typed.length() - cheatCode.length(), typed.length());
-        if(typed.length() == cheatCode.length()) {
-            if(typed.equals((cheatCode))) {
+        if(typed.length() > nothing.length())
+            typed = typed.substring(typed.length() - nothing.length(), typed.length());
+        if(typed.length() == nothing.length()) {
+            if(typed.equals((nothing))) {
                 automatic = !automatic;
                 if(automatic)
                     System.out.println("Cheat code activaed");
                 else
                     System.out.println("Cheat code deactivaed");
-                typed = typed.substring(0, typed.length() - cheatCode.length());
+                typed = typed.substring(0, typed.length() - nothing.length());
             }
             
         }
@@ -552,7 +552,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             typed += e.getKeyChar();
         }
         
-        cheatCodeChecker();
+        nothing();
         
     }
     
