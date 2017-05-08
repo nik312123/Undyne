@@ -92,13 +92,13 @@ public class StartScreen {
     
     public void run(Graphics g) {
         drawBG(g);
+        gifFire(g);
         if(frameCounter1++ > 100) {
             if(frameCounter1++ > 200) {
                 if(scale > 1)
                     scale -= scaleSub;
                 drawSubtitle(g);
             }
-            gifFire(g);
             gifDog(g);
             starterTitle(g, fadeIn);
             if(frameCounter1 > 250) {
