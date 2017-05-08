@@ -14,49 +14,47 @@ import javax.imageio.ImageIO;
 import nikunj.classes.NewerSound;
 
 public class StartScreen {
-    static double fadeIn = 0;
-    static double fadeStart = 0;
+    private static double fadeIn = 0;
+    private static double fadeStart = 0;
     
-    BufferedImage undyne;
-    BufferedImage start;
-    BufferedImage hard;
-    BufferedImage easy;
-    BufferedImage heartMouse;
-    BufferedImage select;
-    BufferedImage[] fire;
-    BufferedImage[] dog = new BufferedImage[2];
+    private BufferedImage undyne;
+    private BufferedImage start;
+    private BufferedImage hard;
+    private BufferedImage easy;
+    private BufferedImage heartMouse;
+    private BufferedImage select;
+    private BufferedImage[] fire;
+    private BufferedImage[] dog = new BufferedImage[2];
     
-    static int speed = 2;
-    static int enterCounter = 0;
-    static int heartX = 0;
-    static int heartY = 0;
-    static int hardButtonRect = 0;
-    static int easyButtonRect = 0;
-    int frame = -1;
-    int frameCounter = 0;
-    static int count2 = -100;
-    int undyneCount = 0;
-    static int randX, randY;
-    static int flashCount = 0;
-    static int hardButtonCount = 0;
-    static int easyButtonCount = 0;
-    static int dogCount = 0;
-    static int dogFrame = 0;
+    private static int speed = 2;
+    private static int enterCounter = 0;
+    private static int heartX = 0;
+    private static int heartY = 0;
+    private static int hardButtonRect = 0;
+    private static int easyButtonRect = 0;
+    private int frameCounter = 0;
+    private static int count2 = -100;
+    private int undyneCount = 0;
+    private static int randX, randY;
+    private static int flashCount = 0;
+    private static int hardButtonCount = 0;
+    private static int easyButtonCount = 0;
+    private static int dogCount = 0;
+    private static int dogFrame = 0;
     
-    static boolean right = false;
-    static boolean left = false;
-    static boolean up = false;
-    static boolean down = false;
-    static boolean switchFade = false;
-    static boolean hardButtonRectRed = false;
-    static boolean easyButtonRectRed = false;
-    static boolean fire2 = false;
-    static boolean playFire = true;
-    static boolean needDog = false;
-    static boolean playBark = true;
+    private static boolean right = false;
+    private static boolean left = false;
+    private static boolean up = false;
+    private static boolean down = false;
+    private static boolean switchFade = false;
+    private static boolean hardButtonRectRed = false;
+    private static boolean easyButtonRectRed = false;
+    private static boolean fire2 = false;
+    private static boolean playFire = true;
+    private static boolean playBark = true;
     
-    NewerSound flare;
-    NewerSound bark;
+    private NewerSound flare;
+    private NewerSound bark;
     
     public StartScreen() {
         fire = new BufferedImage[38];

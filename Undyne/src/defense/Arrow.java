@@ -12,7 +12,6 @@ import java.io.IOException;
  * Composes an arrow to be implemented in the Attack class
  */
 public class Arrow {
-    int move = 0;
     /*
      * This determines the speed the arrow should go at between 1 – 100
      */
@@ -29,56 +28,68 @@ public class Arrow {
      * These are the coordinates of the arrow
      */
     private int x, y;
+    /*
+     * This is the delay after the arrow for the next arrow
+     */
+    private int delay;
     
-    Player p;
+    static Player p;
     
-    public Arrow(int speed, boolean reverse, char direction, Player p) {
+    private boolean isOne = true;
+    private boolean isSlow;
+    
+    public Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
         this.direction = direction;
-        this.p = p;
+        this.delay = delay;
+        this.isSlow = isSlow;
         setCoordinates(direction);
     }
     
     /*
-     * Helper method for the constructor setting the arrow coordinates
+     * Helper method for the constructor setting the original arrow coordinates
      */
     private void setCoordinates(char direction) {
-        switch(direction) {
-            case 'r':
-                x = 11;
-                y = 270;
-                break;
-            case 'l':
-                x = 557;
-                y = 270;
-                break;
-            case 'u':
-                x = 285;
-                y = 545;
-                break;
-            case 'd':
-                x = 285;
-                y = 0;
-                break;
-        }
+            switch(direction) {
+                case 'r':
+                    x = 11;
+                    y = 270;
+                    break;
+                case 'l':
+                    x = 557;
+                    y = 270;
+                    break;
+                case 'u':
+                    x = 285;
+                    y = 545;
+                    break;
+                case 'd':
+                    x = 285;
+                    y = 0;
+                    break;
+            }
     }
     
     public void tick() {
-        switch(direction) {
-            case 'l':
-                x -= speed;
-                break;
-            case 'r':
-                x += speed;
-                break;
-            case 'u':
-                y -= speed;
-                break;
-            case 'd':
-                y += speed;
-                break;
+        if(speed != 1 || speed == 1 && isOne || !isSlow) {
+            switch(direction) {
+                case 'l':
+                    x -= speed;
+                    break;
+                case 'r':
+                    x += speed;
+                    break;
+                case 'u':
+                    y -= speed;
+                    break;
+                case 'd':
+                    y += speed;
+                    break;
+            }
         }
+        if(isSlow)
+            isOne = !isOne;
     }
     
     public void draw(Graphics g, Color c) throws IOException {
@@ -122,6 +133,18 @@ public class Arrow {
     public char getDir() {
         return direction;
     }
-   
+    
+    public int getDelay() {
+        return delay;
+    }
+    
+    public int getSpeed() {
+        return speed;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Arrow[speed = %d, direction = %c]", speed, direction);
+    }
     
 }

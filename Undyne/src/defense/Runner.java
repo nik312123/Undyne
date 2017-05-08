@@ -48,6 +48,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static int gameOverFrame = 0;
     static int subTitleMovement = 330;
     static int frameCounter = 0;
+    static int attackDelay = 0;
     static boolean isGenocide = false;
     static boolean runsGif = false;
     static boolean heartDone = false;
@@ -72,8 +73,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static NewerSound gameDone;
     private static NewerSound startScreen;
     
-    Player p = new Player();
-    Attack a1 = new Attack(new ArrayList<Arrow>(), 2, p);
+    private static Player p = new Player();
+    private static Attack a1;
+    private static Attacks a;
     StartScreen stage = new StartScreen();
     
     public Runner(String s) {
@@ -91,6 +93,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException {
+        Arrow.p = p;
         startScreen = new NewerSound("audio/WF.wav", true);
         heart = ImageIO.read(new File("images/heart.png"));
         heartBreak = new BufferedImage[49];
@@ -142,6 +145,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 drawHeart(g);
                 p.shield(g, dir);
                 gif(g);
+                
                 try {
                     a1.spawnArrows(g, p);
                     p.drawHealth(g);
@@ -422,6 +426,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 if(beginning) {
                     if(stage.hasSelected()) {
                         isGenocide = stage.isHard();
+                        a = new Attacks(isGenocide);
+                        a1 = new Attack(new ArrayList<Arrow>(), p, a);
+                        if(isGenocide) {
+                            p.setHealth(60);
+                            p.setBaseDamage(3);
+                            p.setDamageOffset(12);
+                        }
+                        else {
+                            p.setHealth(20);
+                            p.setBaseDamage(0);
+                            p.setDamageOffset(2);
+                        }
                         int gifMax;
                         String baseName;
                         if(isGenocide) {
