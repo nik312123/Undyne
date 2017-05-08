@@ -41,21 +41,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static String typed = "";
     static String activated = "";
     
-    static int nothingCounter = 0;
-    static int move = 0;
-    static int delay = 10;
-    static int angle = 0;
-    static int breakCount = 0;
-    static int breakFrame = 0;
-    static int flickeringHeart = 0;
-    static int count = 0;
-    static int gifCount = 0;
-    static int currentDirection = 0;
-    static int gameOverCount = 0;
-    static int gameOverFrame = 0;
-    static int subTitleMovement = 330;
-    static int frameCounter = 0;
-    static int attackDelay = 0;
+    private static int nothingCounter = 0;
+    private static int delay = 10;
+    private static int breakCount = 0;
+    private static int breakFrame = 0;
+    private static int flickeringHeart = 0;
+    private static int count = 0;
+    private static int gifCount = 0;
+    private static int gameOverCount = 0;
+    private static int gameOverFrame = 0;
+    private static int frameCounter = 0;
     static boolean isGenocide = false;
     static boolean runsGif = false;
     static boolean heartDone = false;
@@ -86,7 +81,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Attack a1;
     private static Attacks a;
     static Font font;
-    StartScreen stage = new StartScreen();
+    private StartScreen stage = new StartScreen();
     
     public Runner(String s) {
         JFrame frame = new JFrame(s);

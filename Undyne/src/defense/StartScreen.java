@@ -24,14 +24,12 @@ public class StartScreen {
     private BufferedImage heartMouse;
     private BufferedImage select;
     private BufferedImage subtitle;
-    private BufferedImage constrains;
     private BufferedImage[] fire;
     private BufferedImage[] dog = new BufferedImage[2];
     
     private static int speed = 2;
     private static int enterCounter = 0;
     private static int heartX = 0;
-    private static int heartY = 0;
     private static int hardButtonRect = 0;
     private static int easyButtonRect = 0;
     private int frameCounter = 0;
@@ -51,12 +49,7 @@ public class StartScreen {
     private static int dropX = 0;
     private static int dropY = -10;
     private static int shift = 0;
-    private static int speed = 4;
-    private static int enterCounter = 0;
-    private static int heartX = 0;
     private static int heartY = 0 + shift;
-    private static int frame = -1;
-    private static int frameCounter = 0;
     private static int frameCounter1 = 0;
     
     private static boolean right = false;
@@ -98,17 +91,13 @@ public class StartScreen {
     }
     
     public void run(Graphics g) {
-        
         drawBG(g);
-        
         if(frameCounter1++ > 100) {
-            
             if(frameCounter1++ > 200) {
                 if(scale > 1)
                     scale -= scaleSub;
                 drawSubtitle(g);
             }
-            
             gifFire(g);
             gifDog(g);
             starterTitle(g, fadeIn);
@@ -127,12 +116,10 @@ public class StartScreen {
     
     public void drawSubtitle(Graphics g) {
         if(floatSubBoolean) {
-            //floatSub++;
             if(floatSub == 10)
                 floatSubBoolean = !floatSubBoolean;
         }
         else {
-            //floatSub--;
             if(floatSub == -10)
                 floatSubBoolean = !floatSubBoolean;
         }
