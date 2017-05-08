@@ -8,51 +8,30 @@ import java.util.ArrayList;
 import nikunj.classes.NewerSound;
 
 public class Attack {
-    public static int currentDirection = 0;
-    public static final char[] DIRS = {'u', 'd', 'r', 'l'};
     private int counter = 0;
+    private static boolean isFirst = true;
     /*
      * List of Arrow objects that make up one attack
      */
     private ArrayList<Arrow> attackPattern = new ArrayList<Arrow>();
-    /*
-     * ifthe delay for an attack is constant, this is it (milliseconds)
-     */
-    private double delay;
-    /*
-     * ifthe delays vary in amount for the arrows, this is it (milliseconds)
-     */
-    private double[] delayGroup;
+        
+    private static String hit = "";
+    private int adder = 1;
+    private int hitPoint = 0;
+    private int move = 0;
+    private int attackDelay = 0;
+    private int lastDelay = 0;
     
-    public static String hit = "";
-    int adder = 1;
-    int hitPoint = 0;
-    int move = 0;
+    private boolean isDamaged = false;
     
-    boolean isDamaged = false;
-    
-    Player p;
+    private Attacks a;
     
     /*
-     * 
      * Constructor for constant delay
      */
-    public Attack(ArrayList<Arrow> attackPattern, double delay, Player p) {
+    public Attack(ArrayList<Arrow> attackPattern, Player p, Attacks a) {
         this.attackPattern = attackPattern;
-        this.delay = delay;
-        this.delayGroup = new double[0];
-        this.p = p;
-    }
-    
-    /*
-     * Constructor for varying delays
-     */
-    public Attack(ArrayList<Arrow> attackPattern, double[] delayGroup) throws IOException {
-        if(delayGroup.length == attackPattern.size() - 1)
-            throw new IOException("Error: Number of delays must be one less than the number of attacks");
-        this.attackPattern = attackPattern;
-        this.delay = 0;
-        this.delayGroup = delayGroup;
+        this.a = a;
     }
     
     public void tick() {
@@ -148,10 +127,19 @@ public class Attack {
     
     public void spawnArrows(Graphics g, Player p) throws IOException {
         tick();
-        if(++counter == 30) {
-            addArrow(new Arrow(5, false, DIRS[(int) (Math.random() * DIRS.length)], p));
-            if(currentDirection == DIRS.length)
-                currentDirection = 0;
+        if(a.isNewAttack()) {
+            if(++attackDelay == 100) {
+                a.notNewAttack();
+                attackDelay = 0;
+            }
+        }
+        else if(isFirst || ++counter == lastDelay) {
+            isFirst = false;
+            Arrow temp = a.getCurrentArrow();
+            if(temp.getSpeed() != 0) {
+                addArrow(temp);
+                lastDelay = temp.getDelay();
+            }
             counter = 0;
         }
         hit = removeArrow(p.getDir(), p);

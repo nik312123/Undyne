@@ -13,24 +13,29 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
 public class Player {
+	
+	private char dir = 'u';
 
+	private boolean hit = false;
+	
 	private int red = 30;
+	private int time = 75; 
+	private int timeoutCounter = time;
+	private int elementPosition = 0;
+	private int baseDamage;
+	private int damageOffset;
+	private int maxHealth;
 	
-	public char dir = 'u';
-
-	boolean hit = false;
-	int time = 75; 
-	int timeoutCounter = time;
+	private Random random = new Random();
 	
-	BufferedImage shield;
+	private BufferedImage shield;
 	
-	BufferedImage[] shields = new BufferedImage[2];
-	
-	int elementPosition = 0;
+	private BufferedImage[] shields = new BufferedImage[2];
 	
 	Font font;
 	
@@ -64,7 +69,9 @@ public class Player {
 	}
 
 	public void damage() {
-		health -= (int) (Math.random() * 3 + 12);
+		health -= (int) (Math.random() * baseDamage + damageOffset);
+		if(baseDamage == 0 && random.nextInt(10) < 7)
+		    health -= 1;
 		if(health < 0)
 		    health = 0;
 	}
@@ -73,8 +80,7 @@ public class Player {
 	        g.setColor(Color.RED);
 	        g.fillRect(430, 530, 70, 20);
 	        g.setColor(Color.YELLOW);
-            g.fillRect(430, 530, (int) (70 * ((double) health/60)), 20);
-	       
+          g.fillRect(430, 530, (int) (70 * ((double) health/maxHealth)), 20);
 	        Graphics2D g3 = (Graphics2D) g;
 	        g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	        g3.setFont(font);
@@ -85,7 +91,7 @@ public class Player {
             g4.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g4.setFont(font);
             g4.setColor(Color.WHITE);
-            g4.drawString(health + "/60", 513, 547);
+            g4.drawString(health + "/" + maxHealth, 513, 547);
 
 	    }
 
@@ -109,7 +115,7 @@ public class Player {
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		shield = op.filter(shield, null);
 		g.translate(-300, -300);
-		g.drawImage(shield, 265+getElementPosition(), 254+getElementPosition(), null);
+		g.drawImage(shield, 265 + getElementPosition(), 254 + getElementPosition(), null);
 	}
 
 	public void shieldDir() {
@@ -166,6 +172,11 @@ public class Player {
 	public int getHealth(){
 	    return health;
 	}
+	
+	public void setHealth(int health) {
+	    this.health = health;
+	    maxHealth = health;
+	}
 	 
     public int getElementPosition(){
         return elementPosition;
@@ -193,5 +204,13 @@ public class Player {
     
     public void decreaseCounter(){
         --timeoutCounter;
+    }
+    
+    public void setDamageOffset(int damageOffset) {
+        this.damageOffset = damageOffset;
+    }
+    
+    public void setBaseDamage(int baseDamage) {
+        this.baseDamage = baseDamage;
     }
 }
