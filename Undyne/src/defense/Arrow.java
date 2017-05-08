@@ -51,24 +51,24 @@ public class Arrow {
      * Helper method for the constructor setting the original arrow coordinates
      */
     private void setCoordinates(char direction) {
-            switch(direction) {
-                case 'r':
-                    x = 11;
-                    y = 270;
-                    break;
-                case 'l':
-                    x = 557;
-                    y = 270;
-                    break;
-                case 'u':
-                    x = 285;
-                    y = 545;
-                    break;
-                case 'd':
-                    x = 285;
-                    y = 0;
-                    break;
-            }
+        switch(direction) {
+            case 'r':
+                x = 11;
+                y = 270;
+                break;
+            case 'l':
+                x = 557;
+                y = 270;
+                break;
+            case 'u':
+                x = 285;
+                y = 545;
+                break;
+            case 'd':
+                x = 285;
+                y = 0;
+                break;
+        }
     }
     
     public void tick() {
@@ -140,11 +140,6 @@ public class Arrow {
     
     public int getSpeed() {
         return speed;
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("Arrow[speed = %d, direction = %c]", speed, direction);
     }
     
 }
