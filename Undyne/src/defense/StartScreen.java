@@ -4,8 +4,8 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -23,6 +23,8 @@ public class StartScreen {
     private BufferedImage easy;
     private BufferedImage heartMouse;
     private BufferedImage select;
+    private BufferedImage subtitle;
+    private BufferedImage constrains;
     private BufferedImage[] fire;
     private BufferedImage[] dog = new BufferedImage[2];
     
@@ -41,6 +43,21 @@ public class StartScreen {
     private static int easyButtonCount = 0;
     private static int dogCount = 0;
     private static int dogFrame = 0;
+    private static int scaleSub = 40;
+    private static int w = 600;
+    private static int h = 600;
+    private static int floatSub = 0;
+    private static int scale = 500;
+    private static int dropX = 0;
+    private static int dropY = -10;
+    private static int shift = 0;
+    private static int speed = 4;
+    private static int enterCounter = 0;
+    private static int heartX = 0;
+    private static int heartY = 0 + shift;
+    private static int frame = -1;
+    private static int frameCounter = 0;
+    private static int frameCounter1 = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -52,15 +69,18 @@ public class StartScreen {
     private static boolean fire2 = false;
     private static boolean playFire = true;
     private static boolean playBark = true;
+    private static boolean floatSubBoolean = false;
     
     private NewerSound flare;
     private NewerSound bark;
     
     public StartScreen() {
         fire = new BufferedImage[38];
-        flare = new NewerSound("audio/fire.wav", false); //Credit to wjl from https://goo.gl/ofAZRS
+        flare = new NewerSound("audio/fire.wav", false); // Credit to wjl from
+                                                         // https://goo.gl/ofAZRS
         bark = new NewerSound("audio/bark.wav", false);
         try {
+            subtitle = ImageIO.read(new File("images/sub.png"));
             undyne = ImageIO.read(new File("images/undyne.png"));
             start = ImageIO.read(new File("images/start.png"));
             select = ImageIO.read(new File("images/select.png"));
@@ -78,20 +98,58 @@ public class StartScreen {
     }
     
     public void run(Graphics g) {
+        
         drawBG(g);
-        gifFire(g);
-        gifDog(g);
-        starterTitle(g, fadeIn);
-        moveHeart();
-        constrain();
-        enterToStart(g);
-        hardButton(g);
-        easyButton(g);
-        heartMouse(g);
+        
+        if(frameCounter1++ > 100) {
+            
+            if(frameCounter1++ > 200) {
+                if(scale > 1)
+                    scale -= scaleSub;
+                drawSubtitle(g);
+            }
+            
+            gifFire(g);
+            gifDog(g);
+            starterTitle(g, fadeIn);
+            if(frameCounter1 > 250) {
+                moveHeart();
+                constrain();
+                enterToStart(g);
+                hardButton(g);
+                easyButton(g);
+                heartMouse(g);
+            }
+            
+        }
+        
+    }
+    
+    public void drawSubtitle(Graphics g) {
+        if(floatSubBoolean) {
+            //floatSub++;
+            if(floatSub == 10)
+                floatSubBoolean = !floatSubBoolean;
+        }
+        else {
+            //floatSub--;
+            if(floatSub == -10)
+                floatSubBoolean = !floatSubBoolean;
+        }
+        
+        if(frameCounter1 > 200) {
+            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2,
+                    dropY - scale/2 + floatSub, null);
+        }
+        else {
+            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2,
+                    dropY - scale/2, null);
+        }
     }
     
     public void moveHeart() {
         if(enterCounter > 10) {
+            
             if(right)
                 heartX += speed;
             if(left)
@@ -117,7 +175,7 @@ public class StartScreen {
             enterCounter++;
         }
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        if(undyneCount % 5 == 0) {
+        if(undyneCount % 5 == 0 && scale < 1) {
             randX = (int) (Math.random() * 3);
             randY = (int) (Math.random() * 3);
         }
@@ -144,9 +202,9 @@ public class StartScreen {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(!(easyButtonRectRed || hardButtonRectRed))
-            g2d.drawImage(select, 0, 0, null);
+            g2d.drawImage(select, 0, 0 + shift, null);
         else
-            g2d.drawImage(start, 0, 0, null);
+            g2d.drawImage(start, 0, 0 + shift, null);
         g2d.dispose();
         if(flashCount % 2 == 0) {
             if(fadeStart <= 1 && !switchFade)
@@ -166,7 +224,7 @@ public class StartScreen {
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         if(hardButtonCount % 5 == 0) {
-            if(heartX > 78 && heartX < 231 && heartY < 57 && heartY > -11) {
+            if(heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift) {
                 if(hardButtonRect < 60) {
                     hardButtonRect += 5;
                     playFire = true;
@@ -189,20 +247,20 @@ public class StartScreen {
         if(hardButtonCount == 5)
             hardButtonCount = 0;
         if(!hardButtonRectRed)
-            g.fillRect(380, 360 - (300 - (Math.abs(300 - hardButtonRect))), 140, hardButtonRect);
+            g.fillRect(380, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
         else {
             fire2 = true;
             g.setColor(Color.RED);
-            g.fillRect(380, 300, 140, 60);
+            g.fillRect(380, 300 + shift, 140, 60);
             
         }
-        g.drawImage(hard, 0, 0, null);
+        g.drawImage(hard, 0, 0 + shift, null);
     }
     
     public void easyButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         if(easyButtonCount % 5 == 0) {
-            if(heartX > -220 && heartX < -70 && heartY < 57 && heartY > -11) {
+            if(heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift) {
                 if(easyButtonRect < 60) {
                     easyButtonRect += 5;
                     playBark = true;
@@ -227,12 +285,12 @@ public class StartScreen {
         if(easyButtonCount == 5)
             easyButtonCount = 0;
         if(!easyButtonRectRed)
-            g.fillRect(80, 360 - (300 - (Math.abs(300 - easyButtonRect))), 140, easyButtonRect);
+            g.fillRect(80, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
         else {
             g.setColor(new Color(0, 234 - 30, 77 - 30));
-            g.fillRect(80, 300, 140, 60);
+            g.fillRect(80, 300 + shift, 140, 60);
         }
-        g.drawImage(easy, 0, 0, null);
+        g.drawImage(easy, 0, 0 + shift, null);
     }
     
     public void heartMouse(Graphics g) {
@@ -248,7 +306,7 @@ public class StartScreen {
         if(count2 == 37)
             count2 = 0;
         if(fire2 && count2 >= 0 && (hardButtonRectRed))
-            g.drawImage(fire[count2], 330, 160, null);
+            g.drawImage(fire[count2], 330, 160 + shift, null);
     }
     
     public void gifDog(Graphics g) {
@@ -261,7 +319,7 @@ public class StartScreen {
                     dogFrame = 0;
                 dogCount = 0;
             }
-            g.drawImage(dog[dogFrame], 130, 261, null);
+            g.drawImage(dog[dogFrame], 130, 261 + shift, null);
         }
     }
     
@@ -305,4 +363,13 @@ public class StartScreen {
         return hardButtonRectRed;
     }
     
+    public BufferedImage resize(BufferedImage img, int newW, int newH) {
+        
+        BufferedImage dimg = new BufferedImage(newW, newH, img.getType());
+        Graphics2D g = dimg.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(img, 0, 0, newW, newH, 0, 0, w, h, null);
+        g.dispose();
+        return dimg;
+    }
 }
