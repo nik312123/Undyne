@@ -14,7 +14,7 @@ public class Attack {
      * List of Arrow objects that make up one attack
      */
     private ArrayList<Arrow> attackPattern = new ArrayList<Arrow>();
-        
+    
     private static String hit = "";
     private int adder = 1;
     private int hitPoint = 0;
@@ -128,7 +128,7 @@ public class Attack {
     public void spawnArrows(Graphics g, Player p) throws IOException {
         tick();
         if(a.isNewAttack()) {
-            if(++attackDelay == 100) {
+            if(++attackDelay == 125) {
                 a.notNewAttack();
                 attackDelay = 0;
             }
@@ -175,7 +175,7 @@ public class Attack {
         draw(g);
     }
     
-    public ArrayList<Arrow> getList(){
+    public ArrayList<Arrow> getList() {
         return attackPattern;
     }
 }

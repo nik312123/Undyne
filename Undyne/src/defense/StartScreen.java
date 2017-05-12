@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -24,11 +25,11 @@ public class StartScreen {
     private BufferedImage heartMouse;
     private BufferedImage select;
     private BufferedImage subtitle;
-    private BufferedImage[] fire;
+    private BufferedImage[] fire = new BufferedImage[25];
     private BufferedImage[] dog = new BufferedImage[2];
     
     private static int speed = 2;
-    private static int enterCounter = 0;
+    private static int zCounter = 0;
     private static int heartX = 0;
     private static int hardButtonRect = 0;
     private static int easyButtonRect = 0;
@@ -67,10 +68,10 @@ public class StartScreen {
     private NewerSound flare;
     private NewerSound bark;
     
+    private Random rand = new Random();
+    
     public StartScreen() {
-        fire = new BufferedImage[38];
-        flare = new NewerSound("audio/fire.wav", false); // Credit to wjl from
-                                                         // https://goo.gl/ofAZRS
+        flare = new NewerSound("audio/fire.wav", false); //Credit to wjl from goo.gl/ofAZRS
         bark = new NewerSound("audio/bark.wav", false);
         try {
             subtitle = ImageIO.read(new File("images/sub.png"));
@@ -79,9 +80,9 @@ public class StartScreen {
             select = ImageIO.read(new File("images/select.png"));
             hard = ImageIO.read(new File("images/hard.png"));
             easy = ImageIO.read(new File("images/easy.png"));
-            heartMouse = ImageIO.read(new File("images/heartMouse1.png"));
-            for(int i = 0; i <= 37; ++i)
-                fire[i] = ImageIO.read(new File("images/fireGif/" + i + "frames.png"));
+            heartMouse = ImageIO.read(new File("images/heartMouse.png"));
+            for(int i = 0; i <= 24; ++i) //Credit: goo.gl/QR3vVj
+                fire[i] = ImageIO.read(new File("images/fireGif/fire" + i + ".png"));
             dog[0] = ImageIO.read(new File("images/annoyingDog/dog1.png"));
             dog[1] = ImageIO.read(new File("images/annoyingDog/dog2.png"));
         }
@@ -104,14 +105,12 @@ public class StartScreen {
             if(frameCounter1 > 250) {
                 moveHeart();
                 constrain();
-                enterToStart(g);
+                zToStart(g);
                 hardButton(g);
                 easyButton(g);
                 heartMouse(g);
             }
-            
         }
-        
     }
     
     public void drawSubtitle(Graphics g) {
@@ -124,19 +123,14 @@ public class StartScreen {
                 floatSubBoolean = !floatSubBoolean;
         }
         
-        if(frameCounter1 > 200) {
-            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2,
-                    dropY - scale/2 + floatSub, null);
-        }
-        else {
-            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2,
-                    dropY - scale/2, null);
-        }
+        if(frameCounter1 > 200)
+            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2, dropY - scale/2 + floatSub, null);
+        else
+            g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2, dropY - scale/2, null);
     }
     
     public void moveHeart() {
-        if(enterCounter > 10) {
-            
+        if(zCounter > 10) {
             if(right)
                 heartX += speed;
             if(left)
@@ -159,12 +153,12 @@ public class StartScreen {
         if(fadeIn < 1)
             fadeIn += 0.02;
         else {
-            enterCounter++;
+            zCounter++;
         }
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(undyneCount % 5 == 0 && scale < 1) {
-            randX = (int) (Math.random() * 3);
-            randY = (int) (Math.random() * 3);
+            randX = rand.nextInt(3);
+            randY = rand.nextInt(3);
         }
         g2d.drawImage(undyne, randX, -100 + randY, null);
         g2d.dispose();
@@ -184,7 +178,7 @@ public class StartScreen {
             heartY = 260;
     }
     
-    public void enterToStart(Graphics g) {
+    public void zToStart(Graphics g) {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
@@ -239,7 +233,6 @@ public class StartScreen {
             fire2 = true;
             g.setColor(Color.RED);
             g.fillRect(380, 300 + shift, 140, 60);
-            
         }
         g.drawImage(hard, 0, 0 + shift, null);
     }
@@ -290,10 +283,10 @@ public class StartScreen {
         ++frameCounter;
         if(frameCounter == 3)
             frameCounter = 0;
-        if(count2 == 37)
+        if(count2 == 25)
             count2 = 0;
         if(fire2 && count2 >= 0 && (hardButtonRectRed))
-            g.drawImage(fire[count2], 330, 160 + shift, null);
+            g.drawImage(fire[count2], 379, 194 + shift, null);
     }
     
     public void gifDog(Graphics g) {
@@ -351,7 +344,6 @@ public class StartScreen {
     }
     
     public BufferedImage resize(BufferedImage img, int newW, int newH) {
-        
         BufferedImage dimg = new BufferedImage(newW, newH, img.getType());
         Graphics2D g = dimg.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
