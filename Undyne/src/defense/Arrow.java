@@ -141,5 +141,4 @@ public class Arrow {
     public int getSpeed() {
         return speed;
     }
-    
 }

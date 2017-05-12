@@ -18,28 +18,30 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static final long serialVersionUID = 1L;
     
-    static char dir = 'u';
+    private static char dir = 'u';
     
-    static final char[] DIRS = {'u', 'd', 'r', 'l'};
+    private static String nothing = "bad time";
+    private static String typed = "";
+    private static String activated = "";
     
-    static String nothing = "badtime";
-    static String hit = "";
-    static String typed = "";
-    static String activated = "";
+    private static double fadeStart;
     
     private static int nothingCounter = 0;
     private static int delay = 10;
@@ -51,27 +53,29 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static int gameOverCount = 0;
     private static int gameOverFrame = 0;
     private static int frameCounter = 0;
-    static boolean isGenocide = false;
-    static boolean runsGif = false;
-    static boolean heartDone = false;
-    static boolean gameOverDone = false;
-    static boolean firstEnd = true;
-    static boolean secondEnd = true;
-    static boolean startEnter = false;
-    static boolean beginning = true;
-    static boolean automatic = false;
+    private static int flashCount = 0;
+    
+    private static boolean isGenocide = false;
+    private static boolean heartDone = false;
+    private static boolean gameOverDone = false;
+    private static boolean firstEnd = true;
+    private static boolean secondEnd = true;
+    private static boolean beginning = true;
+    private static boolean automatic = false;
+    private static boolean isGameOver = false;
+    public static boolean switchFade = false;
     
     protected Timer timer;
     
-    static double fadeStartAdder = 1;
+    private static BufferedImage[] gif;
+    private static BufferedImage[] heartBreak;
+    private static BufferedImage[] gameOver;
     
-    static BufferedImage[] gif;
-    static BufferedImage heart;
-    static BufferedImage[] heartBreak;
-    static BufferedImage[] gameOver;
+    private static BufferedImage heart;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
+    public static BufferedImage replay;
     
     private static NewerSound main;
     private static NewerSound gameDone;
@@ -80,7 +84,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Player p = new Player();
     private static Attack a1;
     private static Attacks a;
-    static Font font;
+    private static Font font;
     private StartScreen stage = new StartScreen();
     
     public Runner(String s) {
@@ -110,12 +114,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         blueArr = ImageIO.read(new File("images/arrowB.png"));
         redArr = ImageIO.read(new File("images/arrowR.png"));
         reverseArr = ImageIO.read(new File("images/arrowRE.png"));
+        replay = ImageIO.read(new File("images/replay.png"));
         URL fontUrl = new URL("file:font/dete.otf");
         font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Game");
         startScreen.play();
-        
     }
     
     public Runner() {
@@ -130,7 +134,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             activated = "";
             nothingCounter = 0;
         }
-        
         Graphics2D g1 = (Graphics2D) g;
         g1.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g1.setFont(font);
@@ -139,13 +142,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             g1.drawString(activated.substring(0, nothingCounter), 0, 13);
         if(frameCounter % 7 == 0 && nothingCounter < activated.length())
             nothingCounter++;
-        
     }
     
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
         ++frameCounter;
         if(frameCounter == 1000)
             frameCounter = 0;
@@ -172,26 +173,21 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             catch(FontFormatException | IOException e1) {
                 e1.printStackTrace();
             }
-            
         }
         else {
             if(p.getHealth() != 0) {
                 drawBG(g);
-                
                 try {
                     drawCheat(g);
                 }
                 catch(FontFormatException | IOException e1) {
                     e1.printStackTrace();
                 }
-                
                 drawSqu(g);
                 drawCircle(g);
                 drawHeart(g);
-                
                 p.shield(g, dir);
                 gif(g);
-                
                 try {
                     a1.spawnArrows(g, p);
                     p.drawHealth(g);
@@ -215,51 +211,63 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     gameDone = new NewerSound("audio/dt.wav", true);
                     gameDone.play();
                 }
-                else if(!gameOverDone) {
+                else if(!gameOverDone)
                     gameOver(g);
-                }
                 else {
                     drawGameOver(g, gameOverFrame);
+                    if(isGameOver)
+                        drawReplay(g);
                 }
             }
         }
-        
+        g.dispose();
     }
     
     private void automatic() {
         if(automatic && a1.getList().size() > 0) {
-            switch(a1.getList().get(0).getDir()) {
-                case 'd':
-                    dir = 'u';
-                    break;
-                case 'r':
-                    dir = 'l';
-                    break;
-                case 'u':
-                    dir = 'd';
-                    break;
-                case 'l':
-                    dir = 'r';
-                    break;
+            ArrayList<Arrow> arrows = a1.getList();
+            int distance = Integer.MAX_VALUE;
+            char pointTowards = 'u';
+            for(int i = 0; i < arrows.size(); ++i) {
+                switch(arrows.get(i).getDir()) {
+                    case 'l':
+                        if(distance > arrows.get(i).getX() - 308) {
+                            distance = arrows.get(i).getX() - 308;
+                            pointTowards = 'r';
+                        }
+                        break;
+                    case 'r':
+                        if(distance > 261 - arrows.get(i).getX()) {
+                            distance = 261 - arrows.get(i).getX();
+                            pointTowards = 'l';
+                        }
+                        break;
+                    case 'u':
+                        if(distance > arrows.get(i).getY() - 295) {
+                            distance = arrows.get(i).getY() - 295;
+                            pointTowards = 'd';
+                        }
+                        break;
+                    case 'd':
+                        if(distance > 252 - arrows.get(i).getY()) {
+                            distance = 252 - arrows.get(i).getY();
+                            pointTowards = 'u';
+                        }
+                        break;
+                }
             }
+            dir = pointTowards;
         }
-        
     }
     
     public void nothing() {
-        
         if(typed.length() > nothing.length())
             typed = typed.substring(typed.length() - nothing.length(), typed.length());
         if(typed.length() == nothing.length()) {
             if(typed.equals((nothing))) {
                 automatic = !automatic;
-                if(automatic)
-                    System.out.println("Cheat code activaed");
-                else
-                    System.out.println("Cheat code deactivaed");
                 typed = typed.substring(0, typed.length() - nothing.length());
             }
-            
         }
     }
     
@@ -431,18 +439,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         int height = gameOver[gameOverFrame].getHeight();
         g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - width/2 + 1, getHeight()/2 - height/2, null);
         g2d.dispose();
+        if(gameOverFrame == 225)
+            isGameOver = true;
     }
     
     public void drawSqu(Graphics g) {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
-        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(),
-                getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
         while(size > 73) {
             --size;
-            g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(),
-                    getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+            g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
         }
     }
     
@@ -454,13 +462,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
-        g.drawImage(heart, getWidth()/2 - width/2 + 1 + p.getElementPosition() + flickeringHeart,
-                getHeight()/2 - height/2 + p.getElementPosition(), null);
+        g.drawImage(heart, getWidth()/2 - width/2 + 1 + p.getElementPosition() + flickeringHeart, getHeight()/2 - height/2 + p.getElementPosition(), null);
     }
     
     public void drawCircle(Graphics g) {
-        Color clr = new Color(0, 255, 0);
-        g.setColor(clr);
+        g.setColor(Color.GREEN);
         g.drawOval(getWidth()/2 - 25 + p.getElementPosition(), getHeight()/2 - 25 + p.getElementPosition(), 50, 50);
     }
     
@@ -482,6 +488,27 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         
     }
     
+    public void drawReplay(Graphics g) {
+        float opacity = (float) fadeStart;
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        g2d.drawImage(replay, 3, -40, null);
+        g2d.dispose();
+        if(flashCount % 2 == 0) {
+            if(fadeStart <= 1 && !switchFade)
+                fadeStart += 0.02;
+            else {
+                switchFade = true;
+                fadeStart -= 0.02;
+                if(fadeStart < 0.03)
+                    switchFade = false;
+            }
+        }
+        ++flashCount;
+        if(flashCount == 2)
+            flashCount = 0;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         repaint();
@@ -494,27 +521,35 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()) {
             case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
                 dir = 'u';
                 stage.setUp();
                 break;
             case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
                 dir = 'd';
                 stage.setDown();
                 break;
             case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
                 dir = 'r';
                 stage.setRight();
                 break;
             case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
                 dir = 'l';
                 stage.setLeft();
                 break;
-            case KeyEvent.VK_ENTER:
+            case KeyEvent.VK_Q:
+                System.exit(0);
+                break;
+            case KeyEvent.VK_Z:
                 if(beginning) {
                     if(stage.hasSelected()) {
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), p, a);
+                        a.setAttack(a1);
                         if(isGenocide) {
                             p.setHealth(60);
                             p.setBaseDamage(3);
@@ -551,34 +586,57 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         dir = 'u';
                     }
                 }
+                else if(isGameOver) {
+                    try {
+                        restartApplication();
+                    }
+                    catch(URISyntaxException | IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
                 break;
-            
         }
-        if(!(e.getKeyChar() == '￿')) { 
-                                      
+        if(!(e.getKeyChar() == '￿')) {
             typed += e.getKeyChar();
         }
-        
         nothing();
-        
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()) {
             case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
                 stage.setUpf();
                 break;
             case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
                 stage.setDownf();
                 break;
             case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
                 stage.setRightf();
                 break;
             case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
                 stage.setLeftf();
                 break;
         }
     }
     
+    //Credit to https://goo.gl/3zFVm
+    public void restartApplication() throws URISyntaxException, IOException {
+        new NewerSound("audio/replaySelect.wav", false).play();
+        final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+        final File currentJar = new File(Runner.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        if(!currentJar.getName().endsWith(".jar"))
+            return;
+        final ArrayList<String> command = new ArrayList<String>();
+        command.add(javaBin);
+        command.add("-jar");
+        command.add(currentJar.getPath());
+        final ProcessBuilder builder = new ProcessBuilder(command);
+        builder.start();
+        System.exit(0);
+    }
 }
