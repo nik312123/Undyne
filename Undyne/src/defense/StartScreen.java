@@ -18,13 +18,13 @@ public class StartScreen {
     private static double fadeIn = 0;
     private static double fadeStart = 0;
     
-    private BufferedImage undyne;
-    private BufferedImage start;
-    private BufferedImage hard;
-    private BufferedImage easy;
-    private BufferedImage heartMouse;
-    private BufferedImage select;
-    private BufferedImage subtitle;
+    private BufferedImage undyne = null;
+    private BufferedImage start = null;
+    private BufferedImage hard = null;
+    private BufferedImage easy = null;
+    private BufferedImage heartMouse = null;
+    private BufferedImage select = null;
+    private BufferedImage subtitle = null;
     private BufferedImage[] fire = new BufferedImage[25];
     private BufferedImage[] dog = new BufferedImage[2];
     
@@ -52,6 +52,7 @@ public class StartScreen {
     private static int shift = 0;
     private static int heartY = 0 + shift;
     private static int frameCounter1 = 0;
+    private static int moveCounter = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -69,7 +70,7 @@ public class StartScreen {
     private NewerSound bark;
     
     private Random rand = new Random();
-    
+        
     public StartScreen() {
         flare = new NewerSound("audio/fire.wav", false); //Credit to wjl from goo.gl/ofAZRS
         bark = new NewerSound("audio/bark.wav", false);
@@ -131,14 +132,19 @@ public class StartScreen {
     
     public void moveHeart() {
         if(zCounter > 10) {
-            if(right)
-                heartX += speed;
-            if(left)
-                heartX -= speed;
-            if(up)
-                heartY -= speed;
-            if(down)
-                heartY += speed;
+            if(moveCounter != 2) {
+                if(right)
+                    heartX += speed;
+                if(left)
+                    heartX -= speed;
+                if(up)
+                    heartY -= speed;
+                if(down)
+                    heartY += speed;
+            }
+            else
+                moveCounter = -1;
+            ++moveCounter;
         }
     }
     
@@ -351,4 +357,53 @@ public class StartScreen {
         g.dispose();
         return dimg;
     }
+    
+    public void resetVars() {
+        fadeIn = 0;
+        fadeStart = 0;
+        undyne = null;
+        start = null;
+        hard = null;
+        easy = null;
+        heartMouse = null;
+        select = null;
+        subtitle = null;
+        fire = new BufferedImage[25];
+        dog = new BufferedImage[2];
+        speed = 2;
+        zCounter = 0;
+        heartX = 0;
+        hardButtonRect = 0;
+        easyButtonRect = 0;
+        frameCounter = 0;
+        count2 = -100;
+        undyneCount = 0;
+        flashCount = 0;
+        hardButtonCount = 0;
+        easyButtonCount = 0;
+        dogCount = 0;
+        dogFrame = 0;
+        scaleSub = 40;
+        w = 600;
+        h = 600;
+        floatSub = 0;
+        scale = 500;
+        dropX = 0;
+        dropY = -10;
+        shift = 0;
+        heartY = 0 + shift;
+        frameCounter1 = 0;
+        right = false;
+        left = false;
+        up = false;
+        down = false;
+        switchFade = false;
+        hardButtonRectRed = false;
+        easyButtonRectRed = false;
+        fire2 = false;
+        playFire = true;
+        playBark = true;
+        floatSubBoolean = false;
+    }
+    
 }

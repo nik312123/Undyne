@@ -25,7 +25,7 @@ public class Attack {
     private boolean isDamaged = false;
     
     private Attacks a;
-    
+        
     /*
      * Constructor for constant delay
      */
@@ -178,4 +178,19 @@ public class Attack {
     public ArrayList<Arrow> getList() {
         return attackPattern;
     }
+    
+    public void resetVars() {
+        counter = 0;
+        isFirst = true;
+        attackPattern = new ArrayList<Arrow>();
+        hit = "";
+        adder = 1;
+        hitPoint = 0;
+        move = 0;
+        attackDelay = 0;
+        lastDelay = 0;
+        isDamaged = false;
+        a = null;
+    }
+    
 }

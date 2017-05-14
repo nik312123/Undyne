@@ -46,7 +46,7 @@ public class Player {
      * How much the player is currently rotated by
      */
     private int angle = 0;
-    
+        
     public Player() {
         try {
             shields[0] = ImageIO.read(new File("images/shieldh.png"));
@@ -209,4 +209,18 @@ public class Player {
     public void setBaseDamage(int baseDamage) {
         this.baseDamage = baseDamage;
     }
+    
+    public void resetVars() {
+        dir = 'u';
+        hit = false;
+        red = 30;
+        time = 75;
+        timeoutCounter = time;
+        elementPosition = 0;
+        shield = null;
+        shields = new BufferedImage[2];
+        health = 60;
+        angle = 0;
+    }
+    
 }
