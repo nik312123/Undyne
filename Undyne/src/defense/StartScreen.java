@@ -97,8 +97,12 @@ public class StartScreen {
     public void run(Graphics g) {
         drawBG(g);
         gifFire(g);
-        if(frameCounter1++ > 100) {
-            if(frameCounter1++ > 200) {
+        if(frameCounter1 != 251)
+            ++frameCounter1;
+        if(frameCounter1 > 100) {
+            if(frameCounter1 > 100 && frameCounter1 != 251)
+                ++frameCounter1;
+            if(frameCounter1 > 200) {
                 if(scale > 1)
                     scale -= scaleSub;
                 drawSubtitle(g);
@@ -117,15 +121,8 @@ public class StartScreen {
     }
     
     public void drawSubtitle(Graphics g) {
-        if(floatSubBoolean) {
-            if(floatSub == 10)
+        if(floatSubBoolean && floatSub == 10 || !floatSubBoolean && floatSub == -10)
                 floatSubBoolean = !floatSubBoolean;
-        }
-        else {
-            if(floatSub == -10)
-                floatSubBoolean = !floatSubBoolean;
-        }
-        
         if(frameCounter1 > 200)
             g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2, dropY - scale/2 + floatSub, null);
         else
@@ -160,9 +157,8 @@ public class StartScreen {
         float opacity = (float) fade;
         if(fadeIn < 1)
             fadeIn += 0.02;
-        else {
-            zCounter++;
-        }
+        else if(zCounter < 11)
+            ++zCounter;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(undyneCount % 5 == 0 && scale < 1) {
             randX = rand.nextInt(3);
@@ -190,7 +186,7 @@ public class StartScreen {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        if(!(easyButtonRectRed || hardButtonRectRed))
+        if(!easyButtonRectRed && !hardButtonRectRed)
             g2d.drawImage(select, 0, 0 + shift, null);
         else
             g2d.drawImage(start, 0, 0 + shift, null);
@@ -289,13 +285,13 @@ public class StartScreen {
     
     public void gifFire(Graphics g) {
         if(frameCounter % 3 == 0 || count2 < 0)
-            count2++;
+            ++count2;
         ++frameCounter;
         if(frameCounter == 3)
             frameCounter = 0;
         if(count2 == 25)
             count2 = 0;
-        if(fire2 && count2 >= 0 && (hardButtonRectRed))
+        if(fire2 && count2 >= 0 && hardButtonRectRed)
             g.drawImage(fire[count2], 379, 194 + shift, null);
     }
     

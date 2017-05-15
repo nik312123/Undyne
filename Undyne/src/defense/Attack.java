@@ -52,7 +52,7 @@ public class Attack {
         boolean damage = false;
         if(attackPattern.size() == 0)
             return "";
-        for(int i = 0; i < attackPattern.size(); i++) {
+        for(int i = 0; i < attackPattern.size() && hit != true && damage != true; i++) {
             Arrow tempArrow = attackPattern.get(i);
             switch(tempArrow.getDir()) {
                 case 'l':

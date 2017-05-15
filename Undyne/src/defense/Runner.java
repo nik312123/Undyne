@@ -64,6 +64,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean isGameOver = false;
     private static boolean switchFade = false;
     private static boolean allStopped = false;
+    private static boolean isStart = true;
     
     public static Timer timer;
     
@@ -145,6 +146,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             g1.drawString(activated.substring(0, nothingCounter), 0, 13);
         if(frameCounter % 7 == 0 && nothingCounter < activated.length())
             nothingCounter++;
+        if(isStart)
+            g.dispose();
     }
     
     @Override
@@ -154,20 +157,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             ++frameCounter;
             if(frameCounter == 1000)
                 frameCounter = 0;
-            if(p.getHit()) {
-                p.decreaseCounter();
-                if(frameCounter % 16 == 0) {
-                    if(flickeringHeart == 0)
-                        flickeringHeart = 9000;
-                    else
-                        flickeringHeart = 0;
-                }
-                if(p.getTimeoutCounter() == 0) {
-                    p.setHit(false);
-                    p.resetTimeoutCounter();
-                    flickeringHeart = 0;
-                }
-            }
             if(beginning) {
                 stage.run(g);
                 try {
@@ -178,6 +167,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 }
             }
             else {
+                if(p.getHit()) {
+                    p.decreaseCounter();
+                    if(frameCounter % 16 == 0) {
+                        if(flickeringHeart == 0)
+                            flickeringHeart = 9000;
+                        else
+                            flickeringHeart = 0;
+                    }
+                    if(p.getTimeoutCounter() == 0) {
+                        p.setHit(false);
+                        p.resetTimeoutCounter();
+                        flickeringHeart = 0;
+                    }
+                }
                 if(p.getHealth() != 0) {
                     drawBG(g);
                     try {
@@ -609,6 +612,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             case KeyEvent.VK_Z:
                 if(beginning) {
                     if(stage.shouldStart()) {
+                        isStart = false;
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), p, a);
