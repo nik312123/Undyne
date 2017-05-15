@@ -65,6 +65,8 @@ public class StartScreen {
     private static boolean playFire = true;
     private static boolean playBark = true;
     private static boolean floatSubBoolean = false;
+    private static boolean isOnHard;
+    private static boolean isOnEasy;
     
     private NewerSound flare;
     private NewerSound bark;
@@ -132,7 +134,7 @@ public class StartScreen {
     
     public void moveHeart() {
         if(zCounter > 10) {
-            if(moveCounter != 2) {
+            if(moveCounter != 3) {
                 if(right)
                     heartX += speed;
                 if(left)
@@ -210,8 +212,9 @@ public class StartScreen {
     
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
+        isOnHard = (heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift);
         if(hardButtonCount % 5 == 0) {
-            if(heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift) {
+            if(isOnHard) {
                 if(hardButtonRect < 60) {
                     hardButtonRect += 5;
                     playFire = true;
@@ -245,8 +248,9 @@ public class StartScreen {
     
     public void easyButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
+        isOnEasy = (heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift);
         if(easyButtonCount % 5 == 0) {
-            if(heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift) {
+            if(isOnEasy) {
                 if(easyButtonRect < 60) {
                     easyButtonRect += 5;
                     playBark = true;
@@ -341,10 +345,6 @@ public class StartScreen {
         down = true;
     }
     
-    public boolean hasSelected() {
-        return hardButtonRectRed || easyButtonRectRed;
-    }
-    
     public boolean isHard() {
         return hardButtonRectRed;
     }
@@ -404,6 +404,10 @@ public class StartScreen {
         playFire = true;
         playBark = true;
         floatSubBoolean = false;
+    }
+    
+    public boolean shouldStart() {
+        return hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard;
     }
     
 }

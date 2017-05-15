@@ -224,6 +224,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
+        drawPoint(g);
         g.dispose();
     }
     
@@ -512,6 +513,34 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             flashCount = 0;
     }
     
+    public void drawPoint(Graphics g) {
+        Graphics g2d = g;
+        g2d.setColor(Color.RED);
+        try {
+            int xChange = 0;
+            int yChange = 0;
+            for(Arrow temp : a1.getList()) {
+                if(temp.getDir() == 'u' || temp.getDir() == 'd') {
+                    xChange = 16;
+                    if(temp.getDir() == 'u')
+                        yChange = 0;
+                    else
+                        yChange = 31;
+                }
+                else {
+                    yChange = 17;
+                    if(temp.getDir() == 'l')
+                        xChange = 0;
+                    else
+                        xChange = 31;
+                }
+                g2d.drawOval(temp.getX() + xChange, temp.getY() + yChange, 1, 1);
+            }
+        }
+        catch(NullPointerException | IndexOutOfBoundsException e) {}
+        g2d.dispose();
+    }
+    
     public void restartApplication() {
         timer.stop();
         allStopped = true;
@@ -608,7 +637,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_Z:
                 if(beginning) {
-                    if(stage.hasSelected()) {
+                    if(stage.shouldStart()) {
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), p, a);
