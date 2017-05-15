@@ -18,7 +18,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -41,10 +40,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static String typed = "";
     private static String activated = "";
     
-    private static double fadeStart;
+    private static double fadeStart = 0;
     
     private static int nothingCounter = 0;
-    private static int delay = 10;
+    private final static int DELAY = 10;
     private static int breakCount = 0;
     private static int breakFrame = 0;
     private static int flickeringHeart = 0;
@@ -63,32 +62,36 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean beginning = true;
     private static boolean automatic = false;
     private static boolean isGameOver = false;
-    public static boolean switchFade = false;
+    private static boolean switchFade = false;
+    private static boolean allStopped = false;
+    private static boolean isStart = true;
     
-    protected Timer timer;
+    public static Timer timer;
     
     private static BufferedImage[] gif;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     
     private static BufferedImage heart;
+    private static BufferedImage replay;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
-    public static BufferedImage replay;
     
     private static NewerSound main;
     private static NewerSound gameDone;
     private static NewerSound startScreen;
     
-    private static Player p = new Player();
     private static Attack a1;
     private static Attacks a;
     private static Font font;
     private StartScreen stage = new StartScreen();
+    private static Player p = new Player();
+    
+    static JFrame frame;
     
     public Runner(String s) {
-        JFrame frame = new JFrame(s);
+        frame = new JFrame(s);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Runner bp = new Runner();
         frame.add(bp);
@@ -98,10 +101,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setSize(600, 600);
         frame.setLocation(dim.width/2 - frame.getSize().width/2, dim.height/2 - frame.getSize().height/2);
         frame.setResizable(false);
+        frame.setAlwaysOnTop(true);
         frame.setVisible(true);
     }
     
-    public static void main(String args[]) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
+    public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
         startScreen = new NewerSound("audio/WF.wav", true);
         heart = ImageIO.read(new File("images/heart.png"));
@@ -123,7 +127,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public Runner() {
-        timer = new Timer(delay, this);
+        timer = new Timer(DELAY, this);
         timer.start();
     }
     
@@ -142,81 +146,84 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             g1.drawString(activated.substring(0, nothingCounter), 0, 13);
         if(frameCounter % 7 == 0 && nothingCounter < activated.length())
             nothingCounter++;
+        if(isStart)
+            g.dispose();
     }
     
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        ++frameCounter;
-        if(frameCounter == 1000)
-            frameCounter = 0;
-        if(p.getHit()) {
-            p.decreaseCounter();
-            if(frameCounter % 16 == 0) {
-                if(flickeringHeart == 0)
-                    flickeringHeart = 9000;
-                else
-                    flickeringHeart = 0;
-            }
-            if(p.getTimeoutCounter() == 0) {
-                p.setHit(false);
-                p.resetTimeoutCounter();
-                flickeringHeart = 0;
-            }
-        }
-        if(beginning) {
-            stage.run(g);
-            
-            try {
-                drawCheat(g);
-            }
-            catch(FontFormatException | IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-        else {
-            if(p.getHealth() != 0) {
-                drawBG(g);
+        if(!allStopped) {
+            super.paintComponent(g);
+            ++frameCounter;
+            if(frameCounter == 1000)
+                frameCounter = 0;
+            if(beginning) {
+                stage.run(g);
                 try {
                     drawCheat(g);
                 }
                 catch(FontFormatException | IOException e1) {
                     e1.printStackTrace();
                 }
-                drawSqu(g);
-                drawCircle(g);
-                drawHeart(g);
-                p.shield(g, dir);
-                gif(g);
-                try {
-                    a1.spawnArrows(g, p);
-                    p.drawHealth(g);
-                    automatic();
-                }
-                catch(FontFormatException | IOException e) {
-                    e.printStackTrace();
-                }
             }
             else {
-                drawBG(g);
-                if(firstEnd) {
-                    main.stop();
-                    firstEnd = false;
+                if(p.getHit()) {
+                    p.decreaseCounter();
+                    if(frameCounter % 16 == 0) {
+                        if(flickeringHeart == 0)
+                            flickeringHeart = 9000;
+                        else
+                            flickeringHeart = 0;
+                    }
+                    if(p.getTimeoutCounter() == 0) {
+                        p.setHit(false);
+                        p.resetTimeoutCounter();
+                        flickeringHeart = 0;
+                    }
                 }
-                else if(!heartDone) {
-                    breakHeart(g);
+                if(p.getHealth() != 0) {
+                    drawBG(g);
+                    try {
+                        drawCheat(g);
+                    }
+                    catch(FontFormatException | IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    drawSqu(g);
+                    drawCircle(g);
+                    drawHeart(g);
+                    p.shield(g, dir);
+                    gif(g);
+                    try {
+                        a1.spawnArrows(g, p);
+                        p.drawHealth(g);
+                        automatic();
+                    }
+                    catch(FontFormatException | IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-                else if(secondEnd) {
-                    secondEnd = false;
-                    gameDone = new NewerSound("audio/dt.wav", true);
-                    gameDone.play();
-                }
-                else if(!gameOverDone)
-                    gameOver(g);
                 else {
-                    drawGameOver(g, gameOverFrame);
-                    if(isGameOver)
-                        drawReplay(g);
+                    drawBG(g);
+                    if(firstEnd) {
+                        main.stop();
+                        firstEnd = false;
+                    }
+                    else if(!heartDone) {
+                        breakHeart(g);
+                    }
+                    else if(secondEnd) {
+                        secondEnd = false;
+                        gameDone = new NewerSound("audio/dt.wav", true);
+                        gameDone.play();
+                    }
+                    else if(!gameOverDone)
+                        gameOver(g);
+                    else {
+                        drawGameOver(g, gameOverFrame);
+                        if(isGameOver)
+                            drawReplay(g);
+                    }
                 }
             }
         }
@@ -477,7 +484,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         catch(IOException e) {
             e.printStackTrace();
         }
-        
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth()/2, heart.getMinY() + heart.getHeight()/2);
@@ -507,6 +513,66 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         ++flashCount;
         if(flashCount == 2)
             flashCount = 0;
+    }
+    
+    public void restartApplication() {
+        timer.stop();
+        allStopped = true;
+        stage.resetVars();
+        a.resetVars();
+        p.resetVars();
+        a1.resetVars();
+        gameDone.stop();
+        dir = 'u';
+        nothing = "bad time";
+        typed = "";
+        activated = "";
+        fadeStart = 0;
+        nothingCounter = 0;
+        breakCount = 0;
+        breakFrame = 0;
+        flickeringHeart = 0;
+        count = 0;
+        gifCount = 0;
+        gameOverCount = 0;
+        gameOverFrame = 0;
+        frameCounter = 0;
+        flashCount = 0;
+        isGenocide = false;
+        heartDone = false;
+        gameOverDone = false;
+        firstEnd = true;
+        secondEnd = true;
+        beginning = true;
+        automatic = false;
+        isGameOver = false;
+        switchFade = false;
+        timer = null;
+        gif = null;
+        heartBreak = null;
+        gameOver = null;
+        heart = null;
+        replay = null;
+        main = null;
+        gameDone = null;
+        startScreen = null;
+        a1 = null;
+        a = null;
+        font = null;
+        stage = null;
+        p = null;
+        frame = null;
+        System.gc();
+        allStopped = false;
+        stage = new StartScreen();
+        p = new Player();
+        try {
+            Runner.main();
+        }
+        catch(IOException | UnsupportedAudioFileException | InterruptedException | LineUnavailableException
+                | FontFormatException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -545,7 +611,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_Z:
                 if(beginning) {
-                    if(stage.hasSelected()) {
+                    if(stage.shouldStart()) {
+                        isStart = false;
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), p, a);
@@ -587,12 +654,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
                 }
                 else if(isGameOver) {
-                    try {
-                        restartApplication();
-                    }
-                    catch(URISyntaxException | IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    restartApplication();
                 }
                 break;
         }
@@ -624,19 +686,4 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
     }
     
-    //Credit to https://goo.gl/3zFVm
-    public void restartApplication() throws URISyntaxException, IOException {
-        new NewerSound("audio/replaySelect.wav", false).play();
-        final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        final File currentJar = new File(Runner.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        if(!currentJar.getName().endsWith(".jar"))
-            return;
-        final ArrayList<String> command = new ArrayList<String>();
-        command.add(javaBin);
-        command.add("-jar");
-        command.add(currentJar.getPath());
-        final ProcessBuilder builder = new ProcessBuilder(command);
-        builder.start();
-        System.exit(0);
-    }
 }

@@ -310,4 +310,18 @@ public class Attacks {
         return isFinished;
     }
     
+    public void resetVars() {
+        isNewAttack = true;
+        loopDone = false;
+        isFinished = false;
+        lastAttack = 1;
+        currentAttack = 1;
+        position = 0;
+        counter = 0;
+        speed = 0;
+        prevChar = 'u';
+        undyneAttacks = new ArrayList<ArrayList<Arrow>>();
+        att = null;
+    }
+    
 }

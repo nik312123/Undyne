@@ -18,13 +18,13 @@ public class StartScreen {
     private static double fadeIn = 0;
     private static double fadeStart = 0;
     
-    private BufferedImage undyne;
-    private BufferedImage start;
-    private BufferedImage hard;
-    private BufferedImage easy;
-    private BufferedImage heartMouse;
-    private BufferedImage select;
-    private BufferedImage subtitle;
+    private BufferedImage undyne = null;
+    private BufferedImage start = null;
+    private BufferedImage hard = null;
+    private BufferedImage easy = null;
+    private BufferedImage heartMouse = null;
+    private BufferedImage select = null;
+    private BufferedImage subtitle = null;
     private BufferedImage[] fire = new BufferedImage[25];
     private BufferedImage[] dog = new BufferedImage[2];
     
@@ -52,6 +52,7 @@ public class StartScreen {
     private static int shift = 0;
     private static int heartY = 0 + shift;
     private static int frameCounter1 = 0;
+    private static int moveCounter = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -64,12 +65,14 @@ public class StartScreen {
     private static boolean playFire = true;
     private static boolean playBark = true;
     private static boolean floatSubBoolean = false;
+    private static boolean isOnHard;
+    private static boolean isOnEasy;
     
     private NewerSound flare;
     private NewerSound bark;
     
     private Random rand = new Random();
-    
+        
     public StartScreen() {
         flare = new NewerSound("audio/fire.wav", false); //Credit to wjl from goo.gl/ofAZRS
         bark = new NewerSound("audio/bark.wav", false);
@@ -94,8 +97,12 @@ public class StartScreen {
     public void run(Graphics g) {
         drawBG(g);
         gifFire(g);
-        if(frameCounter1++ > 100) {
-            if(frameCounter1++ > 200) {
+        if(frameCounter1 != 251)
+            ++frameCounter1;
+        if(frameCounter1 > 100) {
+            if(frameCounter1 > 100 && frameCounter1 != 251)
+                ++frameCounter1;
+            if(frameCounter1 > 200) {
                 if(scale > 1)
                     scale -= scaleSub;
                 drawSubtitle(g);
@@ -114,15 +121,8 @@ public class StartScreen {
     }
     
     public void drawSubtitle(Graphics g) {
-        if(floatSubBoolean) {
-            if(floatSub == 10)
+        if(floatSubBoolean && floatSub == 10 || !floatSubBoolean && floatSub == -10)
                 floatSubBoolean = !floatSubBoolean;
-        }
-        else {
-            if(floatSub == -10)
-                floatSubBoolean = !floatSubBoolean;
-        }
-        
         if(frameCounter1 > 200)
             g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2, dropY - scale/2 + floatSub, null);
         else
@@ -131,14 +131,19 @@ public class StartScreen {
     
     public void moveHeart() {
         if(zCounter > 10) {
-            if(right)
-                heartX += speed;
-            if(left)
-                heartX -= speed;
-            if(up)
-                heartY -= speed;
-            if(down)
-                heartY += speed;
+            if(moveCounter != 3) {
+                if(right)
+                    heartX += speed;
+                if(left)
+                    heartX -= speed;
+                if(up)
+                    heartY -= speed;
+                if(down)
+                    heartY += speed;
+            }
+            else
+                moveCounter = -1;
+            ++moveCounter;
         }
     }
     
@@ -152,9 +157,8 @@ public class StartScreen {
         float opacity = (float) fade;
         if(fadeIn < 1)
             fadeIn += 0.02;
-        else {
-            zCounter++;
-        }
+        else if(zCounter < 11)
+            ++zCounter;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(undyneCount % 5 == 0 && scale < 1) {
             randX = rand.nextInt(3);
@@ -182,7 +186,7 @@ public class StartScreen {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        if(!(easyButtonRectRed || hardButtonRectRed))
+        if(!easyButtonRectRed && !hardButtonRectRed)
             g2d.drawImage(select, 0, 0 + shift, null);
         else
             g2d.drawImage(start, 0, 0 + shift, null);
@@ -204,8 +208,9 @@ public class StartScreen {
     
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
+        isOnHard = (heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift);
         if(hardButtonCount % 5 == 0) {
-            if(heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift) {
+            if(isOnHard) {
                 if(hardButtonRect < 60) {
                     hardButtonRect += 5;
                     playFire = true;
@@ -239,8 +244,9 @@ public class StartScreen {
     
     public void easyButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
+        isOnEasy = (heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift);
         if(easyButtonCount % 5 == 0) {
-            if(heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift) {
+            if(isOnEasy) {
                 if(easyButtonRect < 60) {
                     easyButtonRect += 5;
                     playBark = true;
@@ -279,13 +285,13 @@ public class StartScreen {
     
     public void gifFire(Graphics g) {
         if(frameCounter % 3 == 0 || count2 < 0)
-            count2++;
+            ++count2;
         ++frameCounter;
         if(frameCounter == 3)
             frameCounter = 0;
         if(count2 == 25)
             count2 = 0;
-        if(fire2 && count2 >= 0 && (hardButtonRectRed))
+        if(fire2 && count2 >= 0 && hardButtonRectRed)
             g.drawImage(fire[count2], 379, 194 + shift, null);
     }
     
@@ -335,10 +341,6 @@ public class StartScreen {
         down = true;
     }
     
-    public boolean hasSelected() {
-        return hardButtonRectRed || easyButtonRectRed;
-    }
-    
     public boolean isHard() {
         return hardButtonRectRed;
     }
@@ -351,4 +353,57 @@ public class StartScreen {
         g.dispose();
         return dimg;
     }
+    
+    public void resetVars() {
+        fadeIn = 0;
+        fadeStart = 0;
+        undyne = null;
+        start = null;
+        hard = null;
+        easy = null;
+        heartMouse = null;
+        select = null;
+        subtitle = null;
+        fire = new BufferedImage[25];
+        dog = new BufferedImage[2];
+        speed = 2;
+        zCounter = 0;
+        heartX = 0;
+        hardButtonRect = 0;
+        easyButtonRect = 0;
+        frameCounter = 0;
+        count2 = -100;
+        undyneCount = 0;
+        flashCount = 0;
+        hardButtonCount = 0;
+        easyButtonCount = 0;
+        dogCount = 0;
+        dogFrame = 0;
+        scaleSub = 40;
+        w = 600;
+        h = 600;
+        floatSub = 0;
+        scale = 500;
+        dropX = 0;
+        dropY = -10;
+        shift = 0;
+        heartY = 0 + shift;
+        frameCounter1 = 0;
+        right = false;
+        left = false;
+        up = false;
+        down = false;
+        switchFade = false;
+        hardButtonRectRed = false;
+        easyButtonRectRed = false;
+        fire2 = false;
+        playFire = true;
+        playBark = true;
+        floatSubBoolean = false;
+    }
+    
+    public boolean shouldStart() {
+        return hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard;
+    }
+    
 }
