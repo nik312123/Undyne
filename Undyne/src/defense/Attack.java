@@ -52,17 +52,19 @@ public class Attack {
         boolean damage = false;
         if(attackPattern.size() == 0)
             return "";
-        for(int i = 0; i < attackPattern.size() && hit != true && damage != true; i++) {
+        for(int i = 0; i < attackPattern.size() && !hit && !damage; i++) {
             Arrow tempArrow = attackPattern.get(i);
             switch(tempArrow.getDir()) {
                 case 'l':
                     if(dir == 'r') {
-                        if(tempArrow.getX() < 325) {
-                            attackPattern.remove(i);
-                            hit = true;
+                        if(tempArrow.getX() < 324) {
+                            if(!tempArrow.getInside()) {
+                                hit = true;
+                                attackPattern.remove(i);
+                            }
                         }
                     }
-                    else if(attackPattern.get(i).getX() < 308) {
+                    if(!hit && attackPattern.get(i).getX() < 308) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -70,11 +72,13 @@ public class Attack {
                 case 'r':
                     if(dir == 'l') {
                         if(tempArrow.getX() > 240) {
-                            attackPattern.remove(i);
-                            hit = true;
+                            if(!tempArrow.getInside()) {
+                                hit = true;
+                                attackPattern.remove(i);
+                            }
                         }
                     }
-                    else if(attackPattern.get(i).getX() > 261) {
+                    if(!hit && attackPattern.get(i).getX() > 261) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -82,11 +86,13 @@ public class Attack {
                 case 'u':
                     if(dir == 'd') {
                         if(tempArrow.getY() < 320) {
-                            attackPattern.remove(i);
-                            hit = true;
+                            if(!tempArrow.getInside()) {
+                                hit = true;
+                                attackPattern.remove(i);
+                            }
                         }
                     }
-                    else if(attackPattern.get(i).getY() < 295) {
+                    if(!hit && attackPattern.get(i).getY() < 295) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -94,16 +100,18 @@ public class Attack {
                 case 'd':
                     if(dir == 'u') {
                         if(attackPattern.get(i).getY() > 230) {
-                            attackPattern.remove(i);
-                            hit = true;
+                            if(!tempArrow.getInside()) {
+                                hit = true;
+                                attackPattern.remove(i);
+                            }
                         }
                     }
-                    else if(attackPattern.get(i).getY() > 252) {
+                    if(!hit && attackPattern.get(i).getY() > 252) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
-            }
+            } 
         }
         if(hit)
             return "H";

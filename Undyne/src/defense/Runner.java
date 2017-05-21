@@ -123,7 +123,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Game");
-        startScreen.play();
+        //startScreen.play();
     }
     
     public Runner() {
