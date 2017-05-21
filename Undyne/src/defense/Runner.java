@@ -13,8 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +121,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Game");
-        startScreen.play();
+        //startScreen.play();
     }
     
     public Runner() {
@@ -475,23 +473,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void drawCircle(Graphics g) {
         g.setColor(Color.GREEN);
         g.drawOval(getWidth()/2 - 25 + p.getElementPosition(), getHeight()/2 - 25 + p.getElementPosition(), 50, 50);
-    }
-    
-    public void subTitle(Graphics g) {
-        try {
-            heart = ImageIO.read(new File("/Users/64009455/Documents/undertaleSub.png"));
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        g.translate(300, 300);
-        AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(-6), heart.getMinX() + heart.getWidth()/2, heart.getMinY() + heart.getHeight()/2);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        heart = op.filter(heart, null);
-        g.translate(-300, -300);
-        g.drawImage(heart, 300, 300, null);
-        
     }
     
     public void drawReplay(Graphics g) {

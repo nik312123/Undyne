@@ -45,6 +45,12 @@ public class Attacks {
             addArrow(10, 2, false, 'r', 55);
         }
         else {
+//            testAttack();
+//            testAttack();
+//            testAttack();
+//            testAttack();
+//            testAttack();
+
             genocideAttackOne();
             genocideAttackTwo();
             genocideAttackThree();
@@ -123,6 +129,15 @@ public class Attacks {
         for(int i = 0; i < 3; ++i)
             addArrow(0, 2, false, 'd', 45);
     }
+    
+//    private void testAttack() {
+//        addArrow(0, 1, false, 'l', 75);
+//        addArrow(0, 1, false, 'l', 75);
+//        addArrow(0, 1, false, 'l', 75);
+//        addArrow(0, 1, false, 'l', 75);
+//        addArrow(0, 1, false, 'l', 75);
+//        addArrow(0, 1, false, 'l', 75);
+//    }
     
     private void normalAttackTwo() {
         addArrow(1, 2, false, 'd', 45);

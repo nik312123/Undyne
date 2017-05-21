@@ -66,7 +66,7 @@ public class Player {
     }
     
     public void damage() {
-        health -= (int) (Math.random() * baseDamage + damageOffset);
+        health -= 0;//(int) (Math.random() * baseDamage + damageOffset);
         if(baseDamage == 0 && random.nextInt(10) < 7)
             health -= 1;
         if(health < 0)
