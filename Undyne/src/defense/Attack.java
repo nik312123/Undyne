@@ -48,15 +48,12 @@ public class Attack {
     }
     
     public String removeArrow(char dir, Player p) {
-        int min = Integer.MAX_VALUE;
         boolean hit = false;
         boolean damage = false;
         if(attackPattern.size() == 0)
             return "";
         for(int i = 0; i < attackPattern.size() && !hit && !damage; i++) {
             Arrow tempArrow = attackPattern.get(i);
-            if(tempArrow.getX()<min)
-                min = tempArrow.getX();
             switch(tempArrow.getDir()) {
                 case 'l':
                     if(dir == 'r') {
@@ -114,12 +111,7 @@ public class Attack {
                         damage = true;
                     }
                     break;
-            }
-            
-            
-            
-            
-            
+            } 
         }
         if(hit)
             return "H";
