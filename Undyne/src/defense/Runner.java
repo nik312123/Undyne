@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import javafx.scene.shape.Rectangle;
 import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
@@ -41,7 +42,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static double fadeStart = 0;
     
     private static int nothingCounter = 0;
-    private final static int DELAY = 10;
+    private static final int DELAY = 10;
     private static int breakCount = 0;
     private static int breakFrame = 0;
     private static int flickeringHeart = 0;
@@ -51,6 +52,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static int gameOverFrame = 0;
     private static int frameCounter = 0;
     private static int flashCount = 0;
+    private static int alwaysOnTopCounter = 0;
     
     private static boolean isGenocide = false;
     private static boolean heartDone = false;
@@ -64,7 +66,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean allStopped = false;
     private static boolean isStart = true;
     
-    public static Timer timer;
+    private static Timer timer;
     
     private static BufferedImage[] gif;
     private static BufferedImage[] heartBreak;
@@ -83,10 +85,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Attack a1;
     private static Attacks a;
     private static Font font;
-    private StartScreen stage = new StartScreen();
+    private static StartScreen stage = new StartScreen();
     private static Player p = new Player();
     
-    static JFrame frame;
+    private static JFrame frame;
     
     public Runner(String s) {
         frame = new JFrame(s);
@@ -97,7 +99,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
-        frame.setLocation(dim.width/2 - frame.getSize().width/2, dim.height/2 - frame.getSize().height/2);
+        frame.setLocation(dim.width/2 - frame.getWidth()/2, dim.height/2 - frame.getHeight()/2);
         frame.setResizable(false);
         frame.setAlwaysOnTop(true);
         frame.setVisible(true);
@@ -152,6 +154,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void paintComponent(Graphics g) {
         if(!allStopped) {
             super.paintComponent(g);
+            if(++alwaysOnTopCounter >= 20) {
+                alwaysOnTopCounter = 20;
+                frame.setAlwaysOnTop(false);
+            }
             ++frameCounter;
             if(frameCounter == 1000)
                 frameCounter = 0;
@@ -310,7 +316,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 gifCount = 0;
         }
         Graphics2D g2d = (Graphics2D) g.create();
-        float opacity = 0.5f;
+        float opacity = 0.3f;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(isGenocide)
             g2d.drawImage(gif[count], 198 + p.getElementPosition(), 10 + p.getElementPosition(), null);
@@ -382,46 +388,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         ++gameOverCount;
         if(gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
-            switch(gameOverFrame) {
-                case 68:
-                case 70:
-                case 73:
-                case 75:
-                case 76:
-                case 78:
-                case 80:
-                case 81:
-                case 85:
-                case 86:
-                case 88:
-                case 93:
-                case 95:
-                case 96:
-                case 98:
-                case 138:
-                case 140:
-                case 141:
-                case 143:
-                case 145:
-                case 146:
-                case 148:
-                case 163:
-                case 165:
-                case 166:
-                case 168:
-                case 171:
-                case 173:
-                case 175:
-                case 176:
-                case 178:
-                case 180:
-                case 181:
-                case 183:
-                case 185:
-                case 186:
-                case 188:
-                case 190:
-                case 191:
+            if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
                     try {
                         NewerSound asgore = new NewerSound("audio/asgore.wav", false);
                         asgore.play();
@@ -429,7 +396,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     catch(Exception e) {
                         e.printStackTrace();
                     }
-                    break;
             }
             if(gameOverFrame == 225)
                 gameOverDone = true;
@@ -452,10 +418,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
-        g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
-        while(size > 73) {
-            --size;
+        while(size > 72) {
             g.drawRect(getWidth()/2 - size/2 + p.getElementPosition(), getHeight()/2 - size/2 + p.getElementPosition(), size, size);
+            --size;
         }
     }
     
@@ -548,10 +513,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         stage = new StartScreen();
         p = new Player();
         try {
-            Runner.main();
+            main();
         }
-        catch(IOException | UnsupportedAudioFileException | InterruptedException | LineUnavailableException
-                | FontFormatException e) {
+        catch(IOException | UnsupportedAudioFileException | InterruptedException | LineUnavailableException | FontFormatException e) {
             e.printStackTrace();
         }
     }
@@ -611,7 +575,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         int gifMax;
                         String baseName;
                         if(isGenocide) {
-                            main = new NewerSound("audio/bath.wav", true);
+                            main = new NewerSound("audio/bath.ogg", true);
                             gifMax = 79;
                             baseName = "undying";
                         }
@@ -634,14 +598,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         dir = 'u';
                     }
                 }
-                else if(isGameOver) {
+                else if(isGameOver)
                     restartApplication();
-                }
                 break;
         }
-        if(!(e.getKeyChar() == '￿')) {
+        if(e.getKeyChar() != '￿')
             typed += e.getKeyChar();
-        }
         nothing();
     }
     
