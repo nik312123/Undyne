@@ -2,12 +2,15 @@ package defense;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -344,6 +347,19 @@ public class StartScreen {
     public boolean isHard() {
         return hardButtonRectRed;
     }
+    
+    public void openCreditsLink() {
+        try {
+            Desktop.getDesktop().browse(new URI("http://athena.edenpr.org/~chawlan/undyne.html"));
+        }
+        catch(IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+    
+//    public boolean isOnLink() {
+//        return (heartX > numLeftX && heartX < numRightX && heartY < numBottomY + shift && heartY > nummBottomX + shift);
+//    }
     
     public BufferedImage resize(BufferedImage img, int newW, int newH) {
         BufferedImage dimg = new BufferedImage(newW, newH, img.getType());

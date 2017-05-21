@@ -98,7 +98,7 @@ public class Player {
     }
     
     public void drawShield(Graphics g) {
-        if(red < 25) {
+        if(red < 15) {
             shield = shields[0];
             ++red;
         }
