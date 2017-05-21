@@ -40,8 +40,6 @@ public class Arrow {
     static Player p;
     
     private boolean inside = false;
-
-    
     private boolean isOne = true;
     private boolean isSlow;
     
@@ -100,12 +98,7 @@ public class Arrow {
     }
     
     public void draw(Graphics g, Color c) throws IOException {
-
-        Rectangle cir = new Rectangle(300-50/2,300-10-50/2, 50, 50);
-        Graphics2D g2 = (Graphics2D) g;
-       // g2.setColor(Color.GREEN);
-       // g2.draw(cir);
-       
+        Rectangle cir = new Rectangle(300 - 50/2, 300 - 10 - 50/2, 50, 50);       
         BufferedImage arr;
         if(reverse)
             arr = Runner.reverseArr;
@@ -153,9 +146,6 @@ public class Arrow {
                 break;
         }
        pos.setBounds(getX() + xShift, getY() + yShift, 1, 1);
-        
-        //g2.draw(pos);
-        
         if(cir.intersects(pos))
             inside = true;
     }
