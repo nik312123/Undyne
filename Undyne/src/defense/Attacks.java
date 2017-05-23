@@ -274,7 +274,7 @@ public class Attacks {
                 curChar = DIRS[rand.nextInt(4)];
             prevChar = curChar;
             if(i != 17)
-                addArrow(2, 1, false, curChar, 26);
+                addArrow(2, 1, false, curChar, 28);
         }
         addArrow(2, 1, false, DIRS[rand.nextInt(4)], 110);
     }

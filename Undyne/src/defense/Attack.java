@@ -29,7 +29,7 @@ public class Attack {
     /*
      * Constructor for constant delay
      */
-    public Attack(ArrayList<Arrow> attackPattern, Player p, Attacks a) {
+    public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
     }
@@ -57,61 +57,61 @@ public class Attack {
             switch(tempArrow.getDir()) {
                 case 'l':
                     if(dir == 'r') {
-                        if(tempArrow.getX() < 324) {
-                            if(!tempArrow.getInside()) {
+                        if(tempArrow.getX() < 324 && tempArrow.getY() == 270) {
+                            if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getX() < 308) {
+                    if(!hit && attackPattern.get(i).getX() < 308 && tempArrow.getY() == 270) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'r':
                     if(dir == 'l') {
-                        if(tempArrow.getX() > 240) {
-                            if(!tempArrow.getInside()) {
+                        if(tempArrow.getX() > 240 && tempArrow.getY() == 270) {
+                            if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getX() > 261) {
+                    if(!hit && attackPattern.get(i).getX() > 261 && tempArrow.getY() == 270) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'u':
                     if(dir == 'd') {
-                        if(tempArrow.getY() < 320) {
-                            if(!tempArrow.getInside()) {
+                        if(tempArrow.getY() < 320 && tempArrow.getX() == 285) {
+                            if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getY() < 295) {
+                    if(!hit && attackPattern.get(i).getY() < 295 && tempArrow.getX() == 285) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'd':
                     if(dir == 'u') {
-                        if(attackPattern.get(i).getY() > 230) {
-                            if(!tempArrow.getInside()) {
+                        if(attackPattern.get(i).getY() > 230 && tempArrow.getX() == 285) {
+                            if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getY() > 252) {
+                    if(!hit && attackPattern.get(i).getY() > 252 && tempArrow.getX() == 285) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
-            } 
+            }
         }
         if(hit)
             return "H";

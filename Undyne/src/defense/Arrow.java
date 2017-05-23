@@ -2,7 +2,6 @@ package defense;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -35,7 +34,8 @@ public class Arrow {
      */
     private int delay;
     
-    private Rectangle pos = new Rectangle (0,0,1,1);
+    private Rectangle pos = new Rectangle (0, 0, 1, 1);
+    private static Rectangle cir = new Rectangle(277, 266, 45, 46);       
     
     static Player p;
     
@@ -98,7 +98,6 @@ public class Arrow {
     }
     
     public void draw(Graphics g, Color c) throws IOException {
-        Rectangle cir = new Rectangle(300 - 50/2, 300 - 10 - 50/2, 50, 50);       
         BufferedImage arr;
         if(reverse)
             arr = Runner.reverseArr;
@@ -145,7 +144,7 @@ public class Arrow {
                 xShift = 17;
                 break;
         }
-       pos.setBounds(getX() + xShift, getY() + yShift, 1, 1);
+        pos.setBounds(getX() + xShift, getY() + yShift, 1, 1);
         if(cir.intersects(pos))
             inside = true;
     }
