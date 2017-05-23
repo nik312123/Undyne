@@ -2,11 +2,13 @@ package defense;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -26,7 +28,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import javafx.scene.shape.Rectangle;
 import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
@@ -74,9 +75,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static BufferedImage heart;
     private static BufferedImage replay;
+    private static BufferedImage cursor;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
+    
+    private static Cursor blankCursor;
     
     private static NewerSound main;
     private static NewerSound gameDone;
@@ -103,6 +107,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setResizable(false);
         frame.setAlwaysOnTop(true);
         frame.setVisible(true);
+        frame.getContentPane().setCursor(blankCursor);
     }
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
@@ -119,11 +124,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         redArr = ImageIO.read(new File("images/arrowR.png"));
         reverseArr = ImageIO.read(new File("images/arrowRE.png"));
         replay = ImageIO.read(new File("images/replay.png"));
+        cursor = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Blank Cursor");
         URL fontUrl = new URL("file:font/dete.otf");
         font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
-        Runner a = new Runner("Game");
-        //startScreen.play();
+        Runner a = new Runner("Undyne: Absolute");
+        startScreen.play();
     }
     
     public Runner() {
@@ -295,7 +302,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         if(isGenocide) {
             if(count == maxCount)
-                count = 1;
+                count = 0;
             else if(gifCount % gifChange == 0)
                 ++count;
             ++gifCount;
@@ -304,7 +311,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         else {
             if(count == maxCount)
-                count = 1;
+                count = 0;
             else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
                 ++count;
             else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
@@ -397,7 +404,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         e.printStackTrace();
                     }
             }
-            if(gameOverFrame == 225)
+            if(gameOverFrame >= 225)
                 gameOverDone = true;
             gameOverCount = 0;
         }
@@ -406,6 +413,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     public void drawGameOver(Graphics g, int gameOverFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
+        if(gameOverFrame > 225)
+            gameOverFrame = 225;
         int width = gameOver[gameOverFrame].getWidth();
         int height = gameOver[gameOverFrame].getHeight();
         g2d.drawImage(gameOver[gameOverFrame], getWidth()/2 - width/2 + 1, getHeight()/2 - height/2, null);
@@ -560,7 +569,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         isStart = false;
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
-                        a1 = new Attack(new ArrayList<Arrow>(), p, a);
+                        a1 = new Attack(new ArrayList<Arrow>(), a);
                         a.setAttack(a1);
                         if(isGenocide) {
                             p.setHealth(60);
@@ -598,7 +607,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         dir = 'u';
                     }
                 }
-                else if(isGameOver)
+                else if(!secondEnd && !isGameOver) {
+                    gameOverFrame = 225;
+                    isGameOver = true;
+                }
+                else if(isGameOver && !allStopped)
                     restartApplication();
                 break;
         }

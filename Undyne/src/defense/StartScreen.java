@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class StartScreen {
     private BufferedImage[] fire = new BufferedImage[25];
     private BufferedImage[] dog = new BufferedImage[2];
     
-    private static int speed = 1;
+    private static int speed = 2;
     private static int zCounter = 0;
     private static int heartX = 0;
     private static int hardButtonRect = 0;
@@ -46,12 +45,12 @@ public class StartScreen {
     private static int easyButtonCount = 0;
     private static int dogCount = 0;
     private static int dogFrame = 0;
-    private static int scaleSub = 15;
+    private static int scaleSub = 10;
     private static int scale = 500;
     private static int shift = 0;
     private static int heartY = 0 + shift;
     private static int frameCounter1 = 0;
-    private static int moveCounter = 0;
+    private static int moveCounter = 1;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -120,17 +119,13 @@ public class StartScreen {
     }
     
     public void drawSubtitle(Graphics g) {
-      
-     //       g.drawImage(resize(subtitle, subtitle.getHeight() + scale, subtitle.getWidth() + scale), dropX - scale/2, dropY - scale/2, null);
-            g.drawImage(subtitle, 0-scale,0-scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
-
-    
-    
+        g.drawImage(subtitle, 0-scale,0-scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
     }
     
     public void moveHeart() {
         if(zCounter > 10) {
-            if(moveCounter != 3) {
+            ++moveCounter;
+            if(moveCounter > 2) {
                 if(right)
                     heartX += speed;
                 if(left)
@@ -139,10 +134,9 @@ public class StartScreen {
                     heartY -= speed;
                 if(down)
                     heartY += speed;
+                if(moveCounter == 4)
+                    moveCounter = 1;
             }
-            else
-                moveCounter = -1;
-            ++moveCounter;
         }
     }
     
@@ -188,12 +182,10 @@ public class StartScreen {
         if(!easyButtonRectRed && !hardButtonRectRed){
             g2d.drawImage(select, 0, 0 + shift, null);
             g2d.drawImage(keys, 0, -20 , null);
-
         }
         else{
             g2d.drawImage(start, 0, 0 + shift, null);
             g2d.drawImage(keys, 0, -20 , null);
-
         }
         g2d.dispose();
         if(flashCount % 2 == 0) {
@@ -214,7 +206,7 @@ public class StartScreen {
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         isOnHard = (heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift);
-        if(hardButtonCount % 5 == 0) {
+        if(hardButtonCount % 6 == 0) {
             if(isOnHard) {
                 if(hardButtonRect < 60) {
                     hardButtonRect += 5;
@@ -235,7 +227,7 @@ public class StartScreen {
             }
         }
         ++hardButtonCount;
-        if(hardButtonCount == 5)
+        if(hardButtonCount == 6)
             hardButtonCount = 0;
         if(!hardButtonRectRed)
             g.fillRect(380, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
@@ -250,7 +242,7 @@ public class StartScreen {
     public void easyButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         isOnEasy = (heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift);
-        if(easyButtonCount % 5 == 0) {
+        if(easyButtonCount % 6 == 0) {
             if(isOnEasy) {
                 if(easyButtonRect < 60) {
                     easyButtonRect += 5;
@@ -273,7 +265,7 @@ public class StartScreen {
             }
         }
         ++easyButtonCount;
-        if(easyButtonCount == 5)
+        if(easyButtonCount == 6)
             easyButtonCount = 0;
         if(!easyButtonRectRed)
             g.fillRect(80, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
@@ -289,10 +281,10 @@ public class StartScreen {
     }
     
     public void gifFire(Graphics g) {
-        if(frameCounter % 3 == 0 || count2 < 0)
+        if(frameCounter % 4 == 0 || count2 < 0)
             ++count2;
         ++frameCounter;
-        if(frameCounter == 3)
+        if(frameCounter == 4)
             frameCounter = 0;
         if(count2 == 25)
             count2 = 0;
@@ -388,7 +380,7 @@ public class StartScreen {
         easyButtonCount = 0;
         dogCount = 0;
         dogFrame = 0;
-        scaleSub = 40;
+        scaleSub = 10;
         scale = 500;
         shift = 0;
         heartY = 0 + shift;
@@ -402,7 +394,7 @@ public class StartScreen {
         easyButtonRectRed = false;
         fire2 = false;
         playFire = true;
-        playBark = true;
+        playBark = true;      
     }
     
     public boolean shouldStart() {
