@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import nikunj.classes.NewerSound;
 
@@ -71,8 +72,18 @@ public class StartScreen {
     private Random rand = new Random();
         
     public StartScreen() {
-        flare = new NewerSound("audio/fire.wav", false); //Credit to wjl from goo.gl/ofAZRS
-        bark = new NewerSound("audio/bark.wav", false);
+        try {
+            flare = new NewerSound("audio/fire.wav", false);
+        }
+        catch(UnsupportedAudioFileException | IOException e1) {
+            e1.printStackTrace();
+        } //Credit to wjl from goo.gl/ofAZRS
+        try {
+            bark = new NewerSound("audio/bark.wav", false);
+        }
+        catch(UnsupportedAudioFileException | IOException e1) {
+            e1.printStackTrace();
+        }
         try {
             subtitle = ImageIO.read(new File("images/sub.png"));
             keys = ImageIO.read(new File("images/keys.png"));
