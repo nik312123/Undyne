@@ -2,19 +2,19 @@ package defense;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import nikunj.classes.NewerSound;
+import nikunj.classes.GradientButton;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
     
@@ -65,7 +66,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean isGameOver = false;
     private static boolean switchFade = false;
     private static boolean allStopped = false;
-    private static boolean isStart = true;
+    private static boolean isFirstTime = true;
     
     private static Timer timer;
     
@@ -75,16 +76,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static BufferedImage heart;
     private static BufferedImage replay;
-    private static BufferedImage cursor;
+    private static BufferedImage close;
+    private static BufferedImage draggable;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
-    
-    private static Cursor blankCursor;
-    
+        
     private static NewerSound main;
     private static NewerSound gameDone;
     private static NewerSound startScreen;
+    
+    private static GradientButton closeButton;
+    private static GradientButton draggableButton;
     
     private static Attack a1;
     private static Attacks a;
@@ -93,22 +96,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Player p = new Player();
     
     private static JFrame frame;
-    
-    public Runner(String s) {
-        frame = new JFrame(s);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Runner bp = new Runner();
-        frame.add(bp);
-        frame.addKeyListener(this);
-        frame.setSize(600, 600);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setSize(600, 600);
-        frame.setLocation(dim.width/2 - frame.getWidth()/2, dim.height/2 - frame.getHeight()/2);
-        frame.setResizable(false);
-        frame.setAlwaysOnTop(true);
-        frame.setVisible(true);
-        frame.getContentPane().setCursor(blankCursor);
-    }
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
@@ -124,13 +111,97 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         redArr = ImageIO.read(new File("images/arrowR.png"));
         reverseArr = ImageIO.read(new File("images/arrowRE.png"));
         replay = ImageIO.read(new File("images/replay.png"));
-        cursor = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Blank Cursor");
+        close = ImageIO.read(new File("images/close.png"));
+        draggable = ImageIO.read(new File("images/draggable.png"));
         URL fontUrl = new URL("file:font/dete.otf");
         font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Undyne: Absolute");
         startScreen.play();
+    }
+    
+    public Runner(String s) {
+        frame = new JFrame(s);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Runner bp = new Runner();
+        bp.setBounds(0, 0, 600, 600);
+        frame.add(bp);
+        closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public void beforeDraw(Graphics g) {
+              g.setColor(Color.BLACK);
+              g.fillRect(0, 0, 26, 26);
+            }
+            
+        };
+        draggableButton = new GradientButton(draggable, Color.BLACK, Color.BLUE, 30, 2, 24, 24) {
+            private static final long serialVersionUID = 1L;
+            private int xPos, yPos;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                xPos = e.getX();
+                yPos = e.getY();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                frame.setLocation((int) (frame.getLocation().getX() + e.getX() - xPos), (int) (frame.getLocation().getY() + e.getY() - yPos));
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+        };
+        frame.add(closeButton);
+        frame.add(draggableButton);
+        frame.addKeyListener(this);
+        frame.setSize(600, 600);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize(600, 600);
+        frame.setLocation(dim.width/2 - frame.getWidth()/2, dim.height/2 - frame.getHeight()/2);
+        frame.setResizable(false);
+        frame.setAlwaysOnTop(true);
+        frame.setUndecorated(true);
+        frame.getContentPane().setLayout(null);
+        frame.setVisible(true);
     }
     
     public Runner() {
@@ -150,11 +221,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g1.setFont(font);
         g1.setColor(Color.GREEN);
         if(!activated.equals(""))
-            g1.drawString(activated.substring(0, nothingCounter), 0, 13);
+            g1.drawString(activated.substring(0, nothingCounter), 0, 13 + 30);
         if(frameCounter % 7 == 0 && nothingCounter < activated.length())
             nothingCounter++;
-        if(isStart)
-            g.dispose();
     }
     
     @Override
@@ -225,7 +294,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
                     else if(secondEnd) {
                         secondEnd = false;
-                        gameDone = new NewerSound("audio/dt.wav", true);
+                        try {
+                            gameDone = new NewerSound("audio/dt.wav", true);
+                        }
+                        catch(UnsupportedAudioFileException | IOException e) {
+                            e.printStackTrace();
+                        }
                         gameDone.play();
                     }
                     else if(!gameOverDone)
@@ -238,6 +312,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
+        closeButton.draw(g);
+        draggableButton.draw(g);
         g.dispose();
     }
     
@@ -355,8 +431,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
             ++breakFrame;
             if(breakFrame == 25) {
-                NewerSound split = new NewerSound("audio/split.wav", false);
-                split.play();
+                NewerSound split;
+                try {
+                    split = new NewerSound("audio/split.wav", false);
+                    split.play();
+                }
+                catch(UnsupportedAudioFileException | IOException e) {
+                    e.printStackTrace();
+                }
             }
             if(breakFrame == 48)
                 heartDone = true;
@@ -381,8 +463,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     if(breakCount % 8 == 0) {
                         ++breakFrame;
                         if(breakFrame == 9) {
-                            NewerSound broke = new NewerSound("audio/heartBreak.wav", false);
-                            broke.play();
+                            NewerSound broke;
+                            try {
+                                broke = new NewerSound("audio/heartBreak.wav", false);
+                                broke.play();
+                            }
+                            catch(UnsupportedAudioFileException | IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                         breakCount = 0;
                     }
@@ -493,6 +581,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         gameOverFrame = 0;
         frameCounter = 0;
         flashCount = 0;
+        isFirstTime = false;
         isGenocide = false;
         heartDone = false;
         gameOverDone = false;
@@ -566,7 +655,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             case KeyEvent.VK_Z:
                 if(beginning) {
                     if(stage.shouldStart()) {
-                        isStart = false;
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), a);
@@ -584,12 +672,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         int gifMax;
                         String baseName;
                         if(isGenocide) {
-                            main = new NewerSound("audio/bath.ogg", true);
+                            try {
+                                main = new NewerSound("audio/bath.ogg", true);
+                            }
+                            catch(UnsupportedAudioFileException | IOException e1) {
+                                e1.printStackTrace();
+                            }
                             gifMax = 79;
                             baseName = "undying";
                         }
                         else {
-                            main = new NewerSound("audio/soj.wav", true);
+                            try {
+                                main = new NewerSound("audio/soj.wav", true);
+                            }
+                            catch(UnsupportedAudioFileException | IOException e1) {
+                                e1.printStackTrace();
+                            }
                             gifMax = 31;
                             baseName = "frame";
                         }
@@ -607,7 +705,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         dir = 'u';
                     }
                 }
-                else if(!secondEnd && !isGameOver) {
+                else if(!secondEnd && !isGameOver && !isFirstTime) {
                     gameOverFrame = 225;
                     isGameOver = true;
                 }

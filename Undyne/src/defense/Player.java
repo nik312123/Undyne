@@ -75,19 +75,19 @@ public class Player {
     
     public void drawHealth(Graphics g) throws FontFormatException, IOException {
         g.setColor(Color.RED);
-        g.fillRect(430, 530, 70, 20);
+        g.fillRect(430, 530 + 40, 70, 20);
         g.setColor(Color.YELLOW);
-        g.fillRect(430, 530, (int) (70 * ((double) health/maxHealth)), 20);
+        g.fillRect(430, 530 + 40, (int) (70 * ((double) health/maxHealth)), 20);
         Graphics2D g3 = (Graphics2D) g;
         g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g3.setFont(font);
         g3.setColor(Color.WHITE);
-        g3.drawString("HP", 390, 548);
+        g3.drawString("HP", 390, 548 + 40);
         Graphics2D g4 = (Graphics2D) g;
         g4.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g4.setFont(font);
         g4.setColor(Color.WHITE);
-        g4.drawString(health + "/" + maxHealth, 513, 547);
+        g4.drawString(health + "/" + maxHealth, 513, 547 + 40);
         
     }
     
@@ -111,7 +111,7 @@ public class Player {
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         shield = op.filter(shield, null);
         g.translate(-300, -300);
-        g.drawImage(shield, 265 + elementPosition, 254 + elementPosition, null);
+        g.drawImage(shield, 265 + elementPosition, 254 + 11 + elementPosition, null);
     }
     
     public void shieldDir() {

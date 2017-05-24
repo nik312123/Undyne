@@ -35,7 +35,7 @@ public class Arrow {
     private int delay;
     
     private Rectangle pos = new Rectangle (0, 0, 1, 1);
-    private static Rectangle cir = new Rectangle(277, 266, 45, 46);       
+    private static Rectangle cir = new Rectangle(277, 266 + 11, 45, 46);       
     
     static Player p;
     
@@ -59,19 +59,19 @@ public class Arrow {
         switch(direction) {
             case 'r':
                 x = 11;
-                y = 270;
+                y = 270 + 11;
                 break;
             case 'l':
                 x = 557;
-                y = 270;
+                y = 270 + 11;
                 break;
             case 'u':
                 x = 285;
-                y = 545;
+                y = 545 + 11;
                 break;
             case 'd':
                 x = 285;
-                y = 0;
+                y = 0 + 11;
                 break;
         }
     }

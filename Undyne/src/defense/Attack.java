@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import nikunj.classes.NewerSound;
 
 public class Attack {
@@ -57,56 +59,56 @@ public class Attack {
             switch(tempArrow.getDir()) {
                 case 'l':
                     if(dir == 'r') {
-                        if(tempArrow.getX() < 324 && tempArrow.getY() == 270) {
+                        if(tempArrow.getX() < 324 && tempArrow.getY() == 270 + 11) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getX() < 308 && tempArrow.getY() == 270) {
+                    if(!hit && attackPattern.get(i).getX() < 308 && tempArrow.getY() == 270 + 11) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'r':
                     if(dir == 'l') {
-                        if(tempArrow.getX() > 240 && tempArrow.getY() == 270) {
+                        if(tempArrow.getX() > 240 && tempArrow.getY() == 270 + 11) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getX() > 261 && tempArrow.getY() == 270) {
+                    if(!hit && attackPattern.get(i).getX() > 261 && tempArrow.getY() == 270 + 11) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'u':
                     if(dir == 'd') {
-                        if(tempArrow.getY() < 320 && tempArrow.getX() == 285) {
+                        if(tempArrow.getY() < 320 + 11 && tempArrow.getX() == 285) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getY() < 295 && tempArrow.getX() == 285) {
+                    if(!hit && attackPattern.get(i).getY() < 295 + 11 && tempArrow.getX() == 285) {
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'd':
                     if(dir == 'u') {
-                        if(attackPattern.get(i).getY() > 230 && tempArrow.getX() == 285) {
+                        if(attackPattern.get(i).getY() > 230 + 11 && tempArrow.getX() == 285) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getY() > 252 && tempArrow.getX() == 285) {
+                    if(!hit && attackPattern.get(i).getY() > 252 + 11 && tempArrow.getX() == 285) {
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -151,8 +153,15 @@ public class Attack {
             counter = 0;
         }
         hit = removeArrow(p.getDir(), p);
-        NewerSound block = new NewerSound("audio/block.wav", false);
-        NewerSound damage = new NewerSound("audio/damage.wav", false);
+        NewerSound block = null;
+        NewerSound damage = null;
+        try {
+            block = new NewerSound("audio/block.wav", false);
+            damage = new NewerSound("audio/damage.wav", false);
+        }
+        catch(UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
         if(hit.equals("H")) {
             p.setRed(0);
             block.play();
