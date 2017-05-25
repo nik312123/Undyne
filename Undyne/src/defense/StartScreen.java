@@ -20,6 +20,7 @@ import nikunj.classes.NewerSound;
 public class StartScreen {
     private static double fadeIn = 0;
     private static double fadeStart = 0;
+    private static double volume = 1;
     
     private BufferedImage undyne = null;
     private BufferedImage start = null;
@@ -226,6 +227,7 @@ public class StartScreen {
                 else {
                     if(playFire) {
                         playFire = false;
+                        flare.changeVolume(volume);
                         flare.play();
                     }
                     hardButtonRectRed = true;
@@ -261,6 +263,7 @@ public class StartScreen {
                 }
                 else {
                     if(playBark) {
+                        bark.changeVolume(volume);
                         bark.play();
                         playBark = false;
                     }
@@ -410,6 +413,10 @@ public class StartScreen {
     
     public boolean shouldStart() {
         return hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard;
+    }
+    
+    public static void changeVol(double change) {
+        volume = change;
     }
     
 }

@@ -2,7 +2,6 @@ package defense;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -33,9 +32,6 @@ public class Arrow {
      * This is the delay after the arrow for the next arrow
      */
     private int delay;
-    
-    private Rectangle pos = new Rectangle (0, 0, 1, 1);
-    private static Rectangle cir = new Rectangle(277, 266 + 11, 45, 46);       
     
     static Player p;
     
@@ -144,9 +140,24 @@ public class Arrow {
                 xShift = 17;
                 break;
         }
-        pos.setBounds(getX() + xShift, getY() + yShift, 1, 1);
-        if(cir.intersects(pos))
-            inside = true;
+        switch(direction) {
+            case 'l':
+                if(x + xShift <= 322)
+                    inside = true;
+                break;
+            case 'r':
+                if(x + xShift >= 277)
+                    inside = true;
+                break;
+            case 'u':
+                if(y + yShift <= 323)
+                    inside = true;
+                break;
+            case 'd':
+                if(y + yShift >= 277)
+                    inside = true;
+                break;
+        }
     }
     
     public boolean getInside(){

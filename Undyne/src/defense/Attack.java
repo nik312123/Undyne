@@ -23,6 +23,7 @@ public class Attack {
     private int move = 0;
     private int attackDelay = 0;
     private int lastDelay = 0;
+    private static double volume = 1;
     
     private boolean isDamaged = false;
     
@@ -62,11 +63,13 @@ public class Attack {
                         if(tempArrow.getX() < 324 && tempArrow.getY() == 270 + 11) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
+                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!hit && attackPattern.get(i).getX() < 308 && tempArrow.getY() == 270 + 11) {
+                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -76,11 +79,13 @@ public class Attack {
                         if(tempArrow.getX() > 240 && tempArrow.getY() == 270 + 11) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
+                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!hit && attackPattern.get(i).getX() > 261 && tempArrow.getY() == 270 + 11) {
+                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -90,11 +95,13 @@ public class Attack {
                         if(tempArrow.getY() < 320 + 11 && tempArrow.getX() == 285) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
+                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!hit && attackPattern.get(i).getY() < 295 + 11 && tempArrow.getX() == 285) {
+                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -104,11 +111,13 @@ public class Attack {
                         if(attackPattern.get(i).getY() > 230 + 11 && tempArrow.getX() == 285) {
                             if(!tempArrow.getInside() || p.getHit()) {
                                 hit = true;
+                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!hit && attackPattern.get(i).getY() > 252 + 11 && tempArrow.getX() == 285) {
+                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -162,6 +171,8 @@ public class Attack {
         catch(UnsupportedAudioFileException e) {
             e.printStackTrace();
         }
+        block.changeVolume(volume);
+        damage.changeVolume(volume);
         if(hit.equals("H")) {
             p.setRed(0);
             block.play();
@@ -208,6 +219,10 @@ public class Attack {
         lastDelay = 0;
         isDamaged = false;
         a = null;
+    }
+    
+    public static void changeVol(double change) {
+        volume = change;
     }
     
 }

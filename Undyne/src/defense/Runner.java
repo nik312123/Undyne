@@ -1,6 +1,7 @@
 package defense;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +29,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import nikunj.classes.NewerSound;
 import nikunj.classes.GradientButton;
+import nikunj.classes.NewerSound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
     
@@ -42,6 +43,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static String activated = "";
     
     private static double fadeStart = 0;
+    private static double sfxVolume = 1;
+    private static double musicVolume = 1;
     
     private static int nothingCounter = 0;
     private static final int DELAY = 10;
@@ -67,6 +70,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean switchFade = false;
     private static boolean allStopped = false;
     private static boolean isFirstTime = true;
+    private static boolean musicMuted = false;
+    private static boolean sfxMuted = false;
     
     private static Timer timer;
     
@@ -78,6 +83,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage replay;
     private static BufferedImage close;
     private static BufferedImage draggable;
+    private static BufferedImage music;
+    private static BufferedImage sfx;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
@@ -88,6 +95,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
+    private static GradientButton musicButton;
+    private static GradientButton sfxButton;
     
     private static Attack a1;
     private static Attacks a;
@@ -113,10 +122,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         replay = ImageIO.read(new File("images/replay.png"));
         close = ImageIO.read(new File("images/close.png"));
         draggable = ImageIO.read(new File("images/draggable.png"));
+        music = ImageIO.read(new File("images/music.png"));
+        sfx = ImageIO.read(new File("images/sfx.png"));
         URL fontUrl = new URL("file:font/dete.otf");
         font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Undyne: Absolute");
+        startScreen.changeVolume(musicVolume);
         startScreen.play();
     }
     
@@ -131,7 +143,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+                System.exit(0);
             }
 
             @Override
@@ -190,8 +202,125 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             public void mouseMoved(MouseEvent e) {}
             
         };
+        musicButton = new GradientButton(music, Color.BLACK, new Color(255, 140, 0), 545, 2, 24, 24) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(musicMuted) {
+                    musicVolume = 1;
+                    try {
+                        main.changeVolume(1);
+                    }
+                    catch(NullPointerException e1) {}
+                    try {
+                        gameDone.changeVolume(1);
+                    }
+                    catch(NullPointerException e1) {}
+                    try {
+                        startScreen.changeVolume(1);
+                    }
+                    catch(NullPointerException e1) {}
+                }
+                else {
+                    musicVolume = 0;
+                    try {
+                        main.changeVolume(0);
+                    }
+                    catch(NullPointerException e1) {}
+                    try {
+                        startScreen.changeVolume(0);
+                    }
+                    catch(NullPointerException e1) {}
+                    try {
+                        gameDone.changeVolume(0);
+                    }
+                    catch(NullPointerException e1) {}
+                }
+                musicMuted = !musicMuted;
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public void afterDraw(Graphics g) {
+                if(musicMuted) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setColor(Color.WHITE);
+                    g2d.setStroke(new BasicStroke(2));
+                    g2d.draw(new Line2D.Float(549, 22, 565, 4));
+                }
+            }
+            
+        };
+        
+        sfxButton = new GradientButton(sfx, Color.BLACK, Color.GREEN, 573, 2, 24, 24) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(sfxMuted) {
+                    Attack.changeVol(1);
+                    StartScreen.changeVol(1);
+                    sfxVolume = 1;
+                }
+                else {
+                    Attack.changeVol(0);
+                    StartScreen.changeVol(0);
+                    sfxVolume = 0;
+                }
+                sfxMuted = !sfxMuted;
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public void afterDraw(Graphics g) {
+                if(sfxMuted) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setColor(Color.WHITE);
+                    g2d.setStroke(new BasicStroke(2));
+                    g2d.draw(new Line2D.Float(577, 22, 593, 4));
+                }
+            }
+            
+        };
         frame.add(closeButton);
         frame.add(draggableButton);
+        frame.add(musicButton);
+        frame.add(sfxButton);
         frame.addKeyListener(this);
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -300,6 +429,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         catch(UnsupportedAudioFileException | IOException e) {
                             e.printStackTrace();
                         }
+                        gameDone.changeVolume(musicVolume);
                         gameDone.play();
                     }
                     else if(!gameOverDone)
@@ -314,6 +444,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         closeButton.draw(g);
         draggableButton.draw(g);
+        musicButton.draw(g);
+        sfxButton.draw(g);
         g.dispose();
     }
     
@@ -434,6 +566,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 NewerSound split;
                 try {
                     split = new NewerSound("audio/split.wav", false);
+                    split.changeVolume(sfxVolume);
                     split.play();
                 }
                 catch(UnsupportedAudioFileException | IOException e) {
@@ -466,6 +599,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                             NewerSound broke;
                             try {
                                 broke = new NewerSound("audio/heartBreak.wav", false);
+                                broke.changeVolume(sfxVolume);
                                 broke.play();
                             }
                             catch(UnsupportedAudioFileException | IOException e) {
@@ -486,6 +620,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
                     try {
                         NewerSound asgore = new NewerSound("audio/asgore.wav", false);
+                        asgore.changeVolume(sfxVolume);
                         asgore.play();
                     }
                     catch(Exception e) {
@@ -701,6 +836,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         beginning = false;
                         startScreen.stop();
+                        main.changeVolume(musicVolume);
                         main.play();
                         dir = 'u';
                     }
