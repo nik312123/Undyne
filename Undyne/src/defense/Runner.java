@@ -459,25 +459,37 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     case 'l':
                         if(distance > arrows.get(i).getX() - 308) {
                             distance = arrows.get(i).getX() - 308;
-                            pointTowards = 'r';
+                            if(arrows.get(i).getDirectionNotSwitched() && arrows.get(i).getReverse())
+                                pointTowards = 'l';
+                            else
+                                pointTowards = 'r';
                         }
                         break;
                     case 'r':
                         if(distance > 261 - arrows.get(i).getX()) {
                             distance = 261 - arrows.get(i).getX();
-                            pointTowards = 'l';
+                            if(arrows.get(i).getDirectionNotSwitched() && arrows.get(i).getReverse())
+                                pointTowards = 'r';
+                            else
+                                pointTowards = 'l';
                         }
                         break;
                     case 'u':
                         if(distance > arrows.get(i).getY() - 295) {
                             distance = arrows.get(i).getY() - 295;
-                            pointTowards = 'd';
+                            if(arrows.get(i).getDirectionNotSwitched() && arrows.get(i).getReverse())
+                                pointTowards = 'u';
+                            else
+                                pointTowards = 'd';
                         }
                         break;
                     case 'd':
                         if(distance > 252 - arrows.get(i).getY()) {
                             distance = 252 - arrows.get(i).getY();
-                            pointTowards = 'u';
+                            if(arrows.get(i).getDirectionNotSwitched() && arrows.get(i).getReverse())
+                                pointTowards = 'd';
+                            else
+                                pointTowards = 'u';
                         }
                         break;
                 }

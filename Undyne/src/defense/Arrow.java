@@ -32,16 +32,20 @@ public class Arrow {
      * This is the delay after the arrow for the next arrow
      */
     private int delay;
+    private int radius = 0;
     
     static Player p;
     
     private boolean inside = false;
     private boolean isOne = true;
     private boolean isSlow;
+    private boolean switchDir = false;
+    private boolean directionNotSwitched;
     
     public Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
+        directionNotSwitched = reverse;
         this.direction = direction;
         this.delay = delay;
         this.isSlow = isSlow;
@@ -54,21 +58,66 @@ public class Arrow {
     private void setCoordinates(char direction) {
         switch(direction) {
             case 'r':
-                x = 11;
-                y = 270 + 11;
+                if(reverse) {
+                    x = 17 + 11;
+                    y = 270 + 11;
+                }
+                else {
+                    x = 11;
+                    y = 270 + 11;
+                }
                 break;
             case 'l':
-                x = 557;
-                y = 270 + 11;
+                if(reverse) {
+                    x = 557 - 9 - 11;
+                    y = 270 + 11;
+                }
+                else {
+                    x = 557;
+                    y = 270 + 11;
+                }
                 break;
             case 'u':
-                x = 285;
-                y = 545 + 11;
+                if(reverse) {
+                    x = 285;
+                    y = 545 - 8;
+                }
+                else {
+                    x = 285;
+                    y = 545 + 11;
+                }
                 break;
             case 'd':
-                x = 285;
-                y = 0 + 11;
+                if(reverse) {
+                    x = 285;
+                    y = 0 + 11 + 8 + 11;
+                }
+                else {
+                    x = 285;
+                    y = 0 + 11;
+                }
                 break;
+        }
+    }
+    
+    public void switchDir() {
+        switchDir = true;
+        if(radius == 0) {
+            switch(direction) {
+                case 'l':
+                    radius = x - 300;
+                    break;
+                case 'r':
+                    radius = 300 - x;
+                    break;
+                case 'u':
+                    radius = y - 300;
+                    break;
+                case 'd':
+                    radius = 300 - y;
+                    break;
+            }
+            speed *= 3;
         }
     }
     
@@ -91,6 +140,49 @@ public class Arrow {
         }
         if(isSlow)
             isOne = !isOne;
+        if(switchDir && directionNotSwitched) {
+            switch(direction) {
+                case 'l':
+                    if(Math.pow(x - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(x < 300 && y == 281))
+                        y = 281 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(x - 300 - (radius - 72), 2));
+                    else {
+                        y = 281;
+                        directionNotSwitched = false;
+                        direction = 'r';
+                    }
+                    break;
+                case 'r':
+                    if(Math.pow(300 - x - (radius - 72), 2) < Math.pow(radius, 2) && !(x > 300 && y == 281)) {
+                        y = 281 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - x - (radius - 72), 2));
+                    }
+                    else {
+                        x -= 5;
+                        y = 281;
+                        directionNotSwitched = false;
+                        direction = 'l';
+                    }
+                    break;
+                case 'u':
+                    if(Math.pow(y - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(y < 300 && x == 285))
+                        x = 285 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(y - 300 - (radius - 72), 2));
+                    else {
+                        y += 9;
+                        x = 285;
+                        directionNotSwitched = false;
+                        direction = 'd';
+                    }
+                    break;
+                case 'd':
+                    if(Math.pow(300 - y - (radius - 72), 2) < Math.pow(72, 2) && !(y > 300 && x == 285))
+                        x = 285 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - y - (radius - 72), 2));
+                    else {
+                        x = 285;
+                        directionNotSwitched = false;
+                        direction = 'u';
+                    }
+                    break;
+            }
+        }
     }
     
     public void draw(Graphics g, Color c) throws IOException {
@@ -104,16 +196,28 @@ public class Arrow {
         int angle = 0;
         switch(direction) {
             case 'r':
-                angle = 0;
+                if(!reverse || reverse && directionNotSwitched)
+                    angle = 0;
+                else
+                    angle = 180;
                 break;
             case 'd':
-                angle = 90;
+                if(!reverse || reverse && directionNotSwitched)
+                    angle = 90;
+                else
+                    angle = -90;
                 break;
             case 'l':
-                angle = 180;
+                if(!reverse || reverse && directionNotSwitched)
+                    angle = 180;
+                else
+                    angle = 0;
                 break;
             case 'u':
-                angle = -90;
+                if(!reverse || reverse && directionNotSwitched)
+                    angle = -90;
+                else
+                    angle = 90;
                 break;
         }
         AffineTransform tx = new AffineTransform();
@@ -122,40 +226,50 @@ public class Arrow {
         arr = op.filter(arr, null);
         g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
         int xShift = 0, yShift = 0;
-        switch(getDir()) {
-            case 'r':
-                xShift = 30;
-                yShift = 17;
-                break;
-            case 'l':
-                yShift = 17;
-                xShift = 1;
-                break;
-            case 'd':
-                xShift = 17;
-                yShift = 30;
-                break;
-            case 'u':
-                yShift = 1;
-                xShift = 17;
-                break;
-        }
         switch(direction) {
-            case 'l':
-                if(x + xShift <= 322)
-                    inside = true;
-                break;
             case 'r':
-                if(x + xShift >= 277)
-                    inside = true;
+                if(reverse) {
+                    xShift = 22;
+                    yShift = 15;
+                }
+                else {
+                    xShift = 30;
+                    yShift = 17;
+                }
+                inside = x + xShift >= 277 && (!reverse || !directionNotSwitched);
                 break;
-            case 'u':
-                if(y + yShift <= 323)
-                    inside = true;
+            case 'l':
+                if(reverse) {
+                    yShift = 17;
+                    xShift = 10;
+                }
+                else {
+                    yShift = 17;
+                    xShift = 1;
+                }
+                inside = x + xShift <= 322 && (!reverse || !directionNotSwitched);
                 break;
             case 'd':
-                if(y + yShift >= 277)
-                    inside = true;
+                if(reverse) {
+                    xShift = 17;
+                    yShift = 22;
+                }
+                else {
+                    xShift = 17;
+                    yShift = 30;
+                }
+                inside = y + yShift >= 277 && (!reverse || !directionNotSwitched);
+                break;
+            case 'u':
+                if(reverse) {
+                    yShift = 10;
+                    xShift = 15;
+                }
+                else {
+                    yShift = 1;
+                    xShift = 17;
+                }
+                inside = y + yShift <= 323 && (!reverse || !directionNotSwitched);
                 break;
         }
     }
@@ -182,6 +296,14 @@ public class Arrow {
     
     public int getSpeed() {
         return speed;
+    }
+    
+    public boolean getReverse() {
+        return reverse;
+    }
+    
+    public boolean getDirectionNotSwitched() {
+        return directionNotSwitched;
     }
     
 }
