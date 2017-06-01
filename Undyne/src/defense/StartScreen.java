@@ -29,7 +29,7 @@ public class StartScreen {
     private BufferedImage heartMouse = null;
     private BufferedImage select = null;
     private BufferedImage subtitle = null;
-    private BufferedImage keys = null;
+    private BufferedImage[] keys = new BufferedImage[2];
     private BufferedImage[] fire = new BufferedImage[25];
     private BufferedImage[] dog = new BufferedImage[2];
     
@@ -87,7 +87,8 @@ public class StartScreen {
         }
         try {
             subtitle = ImageIO.read(new File("images/sub.png"));
-            keys = ImageIO.read(new File("images/keys.png"));
+            keys[0] = ImageIO.read(new File("images/keysRed.png"));
+            keys[1] = ImageIO.read(new File("images/keys.png"));
             undyne = ImageIO.read(new File("images/undyne.png"));
             start = ImageIO.read(new File("images/start.png"));
             select = ImageIO.read(new File("images/select.png"));
@@ -193,11 +194,11 @@ public class StartScreen {
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(!easyButtonRectRed && !hardButtonRectRed){
             g2d.drawImage(select, 0, 0 + shift, null);
-            g2d.drawImage(keys, 0, -20 , null);
+            g2d.drawImage(keys[0], 0, -20 , null);
         }
         else{
             g2d.drawImage(start, 0, 0 + shift, null);
-            g2d.drawImage(keys, 0, -20 , null);
+            g2d.drawImage(keys[0], 0, -20 , null);
         }
         g2d.dispose();
         if(flashCount % 2 == 0) {

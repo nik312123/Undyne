@@ -452,32 +452,45 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private void automatic() {
         if(automatic && a1.getList().size() > 0) {
             ArrayList<Arrow> arrows = a1.getList();
-            int distance = Integer.MAX_VALUE;
+            double time = Integer.MAX_VALUE;
             char pointTowards = 'u';
             for(int i = 0; i < arrows.size(); ++i) {
-                switch(arrows.get(i).getDir()) {
+                Arrow tempArrow = arrows.get(i);
+                switch(tempArrow.getDir()) {
                     case 'l':
-                        if(distance > arrows.get(i).getX() - 308) {
-                            distance = arrows.get(i).getX() - 308;
-                            pointTowards = 'r';
+                        if(time > (tempArrow.getX() - 308)/(double) tempArrow.getSpeed()) {
+                            time = (tempArrow.getX() - 308)/(double) tempArrow.getSpeed();
+                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                                pointTowards = 'l';
+                            else
+                                pointTowards = 'r';
                         }
                         break;
                     case 'r':
-                        if(distance > 261 - arrows.get(i).getX()) {
-                            distance = 261 - arrows.get(i).getX();
-                            pointTowards = 'l';
+                        if(time > (261 - tempArrow.getX())/(double) tempArrow.getSpeed()) {
+                            time = (261 - tempArrow.getX())/(double) tempArrow.getSpeed();
+                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                                pointTowards = 'r';
+                            else
+                                pointTowards = 'l';
                         }
                         break;
                     case 'u':
-                        if(distance > arrows.get(i).getY() - 295) {
-                            distance = arrows.get(i).getY() - 295;
-                            pointTowards = 'd';
+                        if(time > (tempArrow.getY() - 295)/(double) tempArrow.getSpeed()) {
+                            time = (tempArrow.getY() - 295)/(double) tempArrow.getSpeed();
+                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                                pointTowards = 'u';
+                            else
+                                pointTowards = 'd';
                         }
                         break;
                     case 'd':
-                        if(distance > 252 - arrows.get(i).getY()) {
-                            distance = 252 - arrows.get(i).getY();
-                            pointTowards = 'u';
+                        if(time > (252 - tempArrow.getY())/(double) tempArrow.getSpeed()) {
+                            time = (252 - tempArrow.getY())/(double) tempArrow.getSpeed();
+                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                                pointTowards = 'd';
+                            else
+                                pointTowards = 'u';
                         }
                         break;
                 }

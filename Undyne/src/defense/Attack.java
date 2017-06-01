@@ -57,18 +57,66 @@ public class Attack {
             return "";
         for(int i = 0; i < attackPattern.size() && !hit && !damage; i++) {
             Arrow tempArrow = attackPattern.get(i);
+            int xShift = 0, yShift = 0;
+            switch(tempArrow.getDir()) {
+                case 'r':
+                    if(tempArrow.getReverse()) {
+                        xShift = 22;
+                        yShift = 15;
+                    }
+                    else {
+                        xShift = 30;
+                        yShift = 17;
+                    }
+                    break;
+                case 'l':
+                    if(tempArrow.getReverse()) {
+                        yShift = 17;
+                        xShift = 10;
+                    }
+                    else {
+                        yShift = 17;
+                        xShift = 1;
+                    }
+                    break;
+                case 'd':
+                    if(tempArrow.getReverse()) {
+                        xShift = 17;
+                        yShift = 22;
+                    }
+                    else {
+                        xShift = 17;
+                        yShift = 30;
+                    }
+                    break;
+                case 'u':
+                    if(tempArrow.getReverse()) {
+                        yShift = 10;
+                        xShift = 15;
+                    }
+                    else {
+                        yShift = 1;
+                        xShift = 17;
+                    }
+                    break;
+            }
+            if(tempArrow.getDirectionNotSwitched() && ((tempArrow.getDir() == 'l' && tempArrow.getX() + xShift - 300 <= 72 && tempArrow.getX() + xShift - 300 > 0)
+                    || (tempArrow.getDir() == 'r' && 300 - (tempArrow.getX() + xShift) <= 72 && 300 - (tempArrow.getX() + xShift) > 0)
+                    || (tempArrow.getDir() == 'd' && 300 - (tempArrow.getY() + yShift) <= 72 && 300 - (tempArrow.getY() + yShift) > 0)
+                    || (tempArrow.getDir() == 'u' && (tempArrow.getY() + yShift) - 300 <= 72 && (tempArrow.getY() + yShift) - 300 > 0)))
+                tempArrow.switchDir();
             switch(tempArrow.getDir()) {
                 case 'l':
                     if(dir == 'r') {
-                        if(tempArrow.getX() < 324 && tempArrow.getY() == 270 + 11) {
-                            if(!tempArrow.getInside() || p.getHit()) {
+                        if(tempArrow.getX() + xShift < 266 + 67 && tempArrow.getY() == 270 + 11) {
+                            if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getX() < 308 && tempArrow.getY() == 270 + 11) {
+                    if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getX() + xShift < 291 + 19 && tempArrow.getY() == 270 + 11) {
                         attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
@@ -76,15 +124,15 @@ public class Attack {
                     break;
                 case 'r':
                     if(dir == 'l') {
-                        if(tempArrow.getX() > 240 && tempArrow.getY() == 270 + 11) {
-                            if(!tempArrow.getInside() || p.getHit()) {
+                        if(tempArrow.getX() + xShift > 266 && tempArrow.getY() == 270 + 11) {
+                            if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getX() > 261 && tempArrow.getY() == 270 + 11) {
+                    if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getX() + xShift > 291 && tempArrow.getY() == 270 + 11) {
                         attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
@@ -92,15 +140,15 @@ public class Attack {
                     break;
                 case 'u':
                     if(dir == 'd') {
-                        if(tempArrow.getY() < 320 + 11 && tempArrow.getX() == 285) {
-                            if(!tempArrow.getInside() || p.getHit()) {
+                        if(tempArrow.getY() + yShift < 266 + 67 && tempArrow.getX() == 285) {
+                            if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getY() < 295 + 11 && tempArrow.getX() == 285) {
+                    if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getY() + yShift < 291 + 19 && tempArrow.getX() == 285) {
                         attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
@@ -108,15 +156,15 @@ public class Attack {
                     break;
                 case 'd':
                     if(dir == 'u') {
-                        if(attackPattern.get(i).getY() > 230 + 11 && tempArrow.getX() == 285) {
-                            if(!tempArrow.getInside() || p.getHit()) {
+                        if(attackPattern.get(i).getY() + yShift > 266 && tempArrow.getX() == 285) {
+                            if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
-                    if(!hit && attackPattern.get(i).getY() > 252 + 11 && tempArrow.getX() == 285) {
+                    if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getY() + yShift > 291 && tempArrow.getX() == 285) {
                         attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
