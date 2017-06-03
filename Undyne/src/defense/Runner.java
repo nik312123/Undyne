@@ -476,9 +476,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         draggableButton.draw(g);
         musicButton.draw(g);
         sfxButton.draw(g);
-        if(speechDone) {
+        if(speechDone)
             drawReplay(g, 10);
-        }
         g.dispose();
     }
     
@@ -855,7 +854,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         isGameOver = false;
         switchFade = false;
         allStopped = false;
-        isFirstTime = true;
+        isFirstTime = false;
         musicMuted = false;
         sfxMuted = false;
         speechDone = false;
@@ -891,6 +890,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         p = null;
         stage = new StartScreen();
         p = new Player();
+        allStopped = false;
         System.gc();
         try {
             main();
