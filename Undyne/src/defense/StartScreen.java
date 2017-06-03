@@ -184,8 +184,8 @@ public class StartScreen {
             heartX = 296;
         if(heartY < -300)
             heartY = -300;
-        else if(heartY > 260)
-            heartY = 260;
+        else if(heartY > 281)
+            heartY = 281;
     }
     
     public void zToStart(Graphics g) {

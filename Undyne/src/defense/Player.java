@@ -36,7 +36,7 @@ public class Player {
     
     private BufferedImage[] shields = new BufferedImage[2];
     
-    Font font;
+    Font undyneFont;
     
     /*
      * Initial player health
@@ -58,7 +58,7 @@ public class Player {
         URL fontUrl;
         try {
             fontUrl = new URL("file:font/undyne.ttf");
-            font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
+            undyneFont = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
         }
         catch(FontFormatException | IOException e) {
             e.printStackTrace();
@@ -80,12 +80,12 @@ public class Player {
         g.fillRect(430, 530 + 40, (int) (70 * ((double) health/maxHealth)), 20);
         Graphics2D g3 = (Graphics2D) g;
         g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g3.setFont(font);
+        g3.setFont(undyneFont);
         g3.setColor(Color.WHITE);
         g3.drawString("HP", 390, 548 + 40);
         Graphics2D g4 = (Graphics2D) g;
         g4.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g4.setFont(font);
+        g4.setFont(undyneFont);
         g4.setColor(Color.WHITE);
         g4.drawString(health + "/" + maxHealth, 513, 547 + 40);
         
