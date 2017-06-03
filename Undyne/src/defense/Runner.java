@@ -58,6 +58,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static int frameCounter = 0;
     private static int flashCount = 0;
     private static int alwaysOnTopCounter = 0;
+    private static int speechCounter = 0;
+    private static int speechCounterPrev = 0;
+    private static int speechDelayCounter = 0;
+    private static int speechX, speechY;
     
     private static boolean isGenocide = false;
     private static boolean heartDone = false;
@@ -72,6 +76,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean isFirstTime = true;
     private static boolean musicMuted = false;
     private static boolean sfxMuted = false;
+    private static boolean speechDone = false;
     
     private static Timer timer;
     
@@ -85,6 +90,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage draggable;
     private static BufferedImage music;
     private static BufferedImage sfx;
+    private static BufferedImage speech;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
@@ -92,15 +98,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static NewerSound main;
     private static NewerSound gameDone;
     private static NewerSound startScreen;
+    private static NewerSound undyne;
+    private static NewerSound undying;
     
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
     private static GradientButton musicButton;
     private static GradientButton sfxButton;
     
+    private static Font deteFontNorm;
+    private static Font deteFontSpeech;
+    
     private static Attack a1;
     private static Attacks a;
-    private static Font font;
     private static StartScreen stage = new StartScreen();
     private static Player p = new Player();
     
@@ -109,6 +119,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
         startScreen = new NewerSound("audio/WF.wav", true);
+        undyne = new NewerSound("audio/undyne.wav", false);
+        undying = new NewerSound("audio/undying.wav", false);
         heart = ImageIO.read(new File("images/heart.png"));
         heartBreak = new BufferedImage[49];
         for(int i = 0; i <= 48; ++i)
@@ -124,8 +136,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         draggable = ImageIO.read(new File("images/draggable.png"));
         music = ImageIO.read(new File("images/music.png"));
         sfx = ImageIO.read(new File("images/sfx.png"));
+        speech = ImageIO.read(new File("images/speech.png"));
         URL fontUrl = new URL("file:font/dete.otf");
-        font = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
+        deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
+        deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Undyne: Absolute");
         startScreen.changeVolume(musicVolume);
@@ -278,11 +292,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 if(sfxMuted) {
                     Attack.changeVol(1);
                     StartScreen.changeVol(1);
+                    undyne.changeVolume(1);
+                    undying.changeVolume(1);
                     sfxVolume = 1;
                 }
                 else {
                     Attack.changeVol(0);
                     StartScreen.changeVol(0);
+                    undyne.changeVolume(0);
+                    undying.changeVolume(0);
                     sfxVolume = 0;
                 }
                 sfxMuted = !sfxMuted;
@@ -331,6 +349,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.setUndecorated(true);
         frame.getContentPane().setLayout(null);
         frame.setVisible(true);
+        frame.requestFocus();
     }
     
     public Runner() {
@@ -345,12 +364,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             activated = "";
             nothingCounter = 0;
         }
-        Graphics2D g1 = (Graphics2D) g;
-        g1.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g1.setFont(font);
-        g1.setColor(Color.GREEN);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setFont(deteFontNorm);
+        g2.setColor(Color.GREEN);
         if(!activated.equals(""))
-            g1.drawString(activated.substring(0, nothingCounter), 0, 13 + 30);
+            g2.drawString(activated.substring(0, nothingCounter), 0, 13 + 30);
         if(frameCounter % 7 == 0 && nothingCounter < activated.length())
             nothingCounter++;
     }
@@ -437,15 +456,29 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     else {
                         drawGameOver(g, gameOverFrame);
                         if(isGameOver)
-                            drawReplay(g);
+                            drawReplay(g, 0);
                     }
                 }
             }
         }
+        if(a != null && a.getIsFinished()) {
+            if(isGenocide && count == 19 || !isGenocide && count == 10) {
+                try {
+                    main.stop();
+                }
+                catch(NullPointerException e) {}
+                g.drawImage(speech, speechX, speechY, null);
+            }
+        }
+        if(a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10))
+            undyneSpeech(g);
         closeButton.draw(g);
         draggableButton.draw(g);
         musicButton.draw(g);
         sfxButton.draw(g);
+        if(speechDone) {
+            drawReplay(g, 10);
+        }
         g.dispose();
     }
     
@@ -511,45 +544,49 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public void gif(Graphics g) {
-        int maxCount;
-        int gifChange;
-        if(isGenocide) {
-            maxCount = 79;
-            gifChange = 4;
-        }
-        else {
-            maxCount = 31;
-            gifChange = 3;
-        }
-        if(isGenocide) {
-            if(count == maxCount)
-                count = 0;
-            else if(gifCount % gifChange == 0)
-                ++count;
-            ++gifCount;
-            if(gifCount == gifChange)
-                gifCount = 0;
-        }
-        else {
-            if(count == maxCount)
-                count = 0;
-            else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
-                ++count;
-            else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
-                ++count;
-            ++gifCount;
-            if(gifCount == gifChange && (count - 1) % 3 != 0)
-                gifCount = 0;
-            else if((count - 1) % 3 == 0 && gifCount == 4)
-                gifCount = 0;
+        if(a == null || !a.getIsFinished() || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
+            int maxCount;
+            int gifChange;
+            if(isGenocide) {
+                maxCount = 79;
+                gifChange = 4;
+            }
+            else {
+                maxCount = 31;
+                gifChange = 3;
+            }
+            if(isGenocide) {
+                if(count == maxCount)
+                    count = 0;
+                else if(gifCount % gifChange == 0)
+                    ++count;
+                ++gifCount;
+                if(gifCount == gifChange)
+                    gifCount = 0;
+            }
+            else {
+                if(count == maxCount)
+                    count = 0;
+                else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
+                    ++count;
+                else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
+                    ++count;
+                ++gifCount;
+                if(gifCount == gifChange && (count - 1) % 3 != 0)
+                    gifCount = 0;
+                else if((count - 1) % 3 == 0 && gifCount == 4)
+                    gifCount = 0;
+            }
         }
         Graphics2D g2d = (Graphics2D) g.create();
         float opacity = 0.3f;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        int gifXShift = 0;
         if(isGenocide)
-            g2d.drawImage(gif[count], 198 + p.getElementPosition(), 10 + p.getElementPosition(), null);
+            gifXShift = 198;
         else
-            g2d.drawImage(gif[count], 189 + p.getElementPosition(), 10 + p.getElementPosition(), null);
+            gifXShift = 189;
+        g2d.drawImage(gif[count], gifXShift + p.getElementPosition(), 10 + p.getElementPosition(), null);
         g2d.dispose();
     }
     
@@ -685,11 +722,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g.drawOval(getWidth()/2 - 25 + p.getElementPosition(), getHeight()/2 - 25 + p.getElementPosition(), 50, 50);
     }
     
-    public void drawReplay(Graphics g) {
+    public void drawReplay(Graphics g, int xShift) {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        g2d.drawImage(replay, 3, -40, null);
+        g2d.drawImage(replay, 3 + xShift, -40, null);
         g2d.dispose();
         if(flashCount % 2 == 0) {
             if(fadeStart <= 1 && !switchFade)
@@ -706,6 +743,76 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             flashCount = 0;
     }
     
+    public void undyneSpeech(Graphics g) {
+        String[] easyMessage = {"Not bad, punk!", "Let me go", "harder on you."};
+        String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setFont(deteFontSpeech);
+        g2d.setColor(Color.BLACK);
+        if(!isGenocide) {
+            String print = "";
+            if(speechCounter < easyMessage[0].length() + 1) {
+                print = easyMessage[0].substring(0, speechCounter);
+                g.drawString(easyMessage[0].substring(0, speechCounter), speechX + 30, speechY + 20);
+            }
+            else if(speechCounter < easyMessage[1].length() + easyMessage[0].length() + 2) {
+                print = easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1));
+                g.drawString(easyMessage[0], speechX + 30, speechY + 20);
+                g.drawString(easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1)), speechX + 30, speechY + 40);
+            }
+            else if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3) {
+                print = easyMessage[2].substring(0, speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2));
+                g.drawString(easyMessage[0], speechX + 30, speechY + 20);
+                g.drawString(easyMessage[1], speechX + 30, speechY + 40);
+                g.drawString(easyMessage[2].substring(0, speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2)), speechX + 30, speechY + 60);
+            }
+            else {
+                g.drawString(easyMessage[0], speechX + 30, speechY + 20);
+                g.drawString(easyMessage[1], speechX + 30, speechY + 40);
+                g.drawString(easyMessage[2], speechX + 30, speechY + 60);
+                speechDone = true;
+            }
+            if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ')
+                undyne.play();
+            speechCounterPrev = speechCounter;
+            if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
+                ++speechCounter;
+        }
+        if(isGenocide) {
+            String print = "";
+            if(speechCounter < hardMessage[0].length() + 1) {
+                print = hardMessage[0].substring(0, speechCounter);
+                g.drawString(hardMessage[0].substring(0, speechCounter), speechX + 30, speechY + 20);
+            }
+            else if(speechCounter < hardMessage[1].length() + hardMessage[0].length() + 2) {
+                print = hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1));
+                g.drawString(hardMessage[0], speechX + 30, speechY + 20);
+                g.drawString(hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1)), speechX + 30, speechY + 40);
+            }
+            else if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3) {
+                print = hardMessage[2].substring(0, speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2));
+                g.drawString(hardMessage[0], speechX + 30, speechY + 20);
+                g.drawString(hardMessage[1], speechX + 30, speechY + 40);
+                g.drawString(hardMessage[2].substring(0, speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2)), speechX + 30, speechY + 60);
+            }
+            else {
+                g.drawString(hardMessage[0], speechX + 30, speechY + 20);
+                g.drawString(hardMessage[1], speechX + 30, speechY + 40);
+                g.drawString(hardMessage[2], speechX + 30, speechY + 60);
+                speechDone = true;
+            }
+            if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ')
+                undying.play();
+            speechCounterPrev = speechCounter;
+            if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
+                ++speechCounter;
+        }
+        ++speechDelayCounter;
+        if(speechDelayCounter == 6)
+            speechDelayCounter = 0;
+    }
+    
     public void restartApplication() {
         timer.stop();
         allStopped = true;
@@ -713,12 +820,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         a.resetVars();
         p.resetVars();
         a1.resetVars();
-        gameDone.stop();
+        try {
+            gameDone.stop();
+        }
+        catch(NullPointerException e) {}
         dir = 'u';
         nothing = "bad time";
         typed = "";
         activated = "";
         fadeStart = 0;
+        sfxVolume = 1;
+        musicVolume = 1;
         nothingCounter = 0;
         breakCount = 0;
         breakFrame = 0;
@@ -729,7 +841,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         gameOverFrame = 0;
         frameCounter = 0;
         flashCount = 0;
-        isFirstTime = false;
+        alwaysOnTopCounter = 0;
+        speechCounter = 0;
+        speechCounterPrev = 0;
+        speechDelayCounter = 0;
         isGenocide = false;
         heartDone = false;
         gameOverDone = false;
@@ -739,25 +854,44 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         automatic = false;
         isGameOver = false;
         switchFade = false;
+        allStopped = false;
+        isFirstTime = true;
+        musicMuted = false;
+        sfxMuted = false;
+        speechDone = false;
         timer = null;
         gif = null;
         heartBreak = null;
         gameOver = null;
         heart = null;
         replay = null;
+        close = null;
+        draggable = null;
+        music = null;
+        sfx = null;
+        speech = null;
+        blueArr = null;
+        redArr= null;
+        reverseArr = null;
         main = null;
         gameDone = null;
         startScreen = null;
+        undyne = null;
+        undying = null;
+        closeButton = null;
+        draggableButton = null;
+        musicButton = null;
+        sfxButton = null;
+        deteFontNorm = null;
+        deteFontSpeech = null;
         a1 = null;
         a = null;
-        font = null;
+        frame = null;
         stage = null;
         p = null;
-        frame = null;
-        System.gc();
-        allStopped = false;
         stage = new StartScreen();
         p = new Player();
+        System.gc();
         try {
             main();
         }
@@ -828,6 +962,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                             }
                             gifMax = 79;
                             baseName = "undying";
+                            speechX = 310;
+                            speechY = 60;
                         }
                         else {
                             try {
@@ -838,6 +974,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                             }
                             gifMax = 31;
                             baseName = "frame";
+                            speechX = 305;
+                            speechY = 50;
                         }
                         gif = new BufferedImage[gifMax + 1];
                         try {
@@ -858,7 +996,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     gameOverFrame = 225;
                     isGameOver = true;
                 }
-                else if(isGameOver && !allStopped)
+                else if(isGameOver && !allStopped || speechDone && !allStopped)
                     restartApplication();
                 break;
         }
