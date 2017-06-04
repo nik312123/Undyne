@@ -91,6 +91,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage music;
     private static BufferedImage sfx;
     private static BufferedImage speech;
+    private static BufferedImage credits;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
@@ -105,6 +106,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static GradientButton draggableButton;
     private static GradientButton musicButton;
     private static GradientButton sfxButton;
+    private static GradientButton creditsButton;
     
     private static Font deteFontNorm;
     private static Font deteFontSpeech;
@@ -137,6 +139,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         music = ImageIO.read(new File("images/music.png"));
         sfx = ImageIO.read(new File("images/sfx.png"));
         speech = ImageIO.read(new File("images/speech.png"));
+        credits = ImageIO.read(new File("images/credits.png"));
         URL fontUrl = new URL("file:font/dete.otf");
         deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
@@ -335,10 +338,42 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
+        creditsButton = new GradientButton(credits, Color.BLACK, Color.ORANGE, 76, 380, 62, 148) {
+            
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public boolean onButton() {
+                return isDisplayable() && stage.isOnLink();
+            }
+            
+        };
         frame.add(closeButton);
         frame.add(draggableButton);
         frame.add(musicButton);
         frame.add(sfxButton);
+        frame.add(creditsButton);
         frame.addKeyListener(this);
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -386,6 +421,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             if(frameCounter == 1000)
                 frameCounter = 0;
             if(beginning) {
+                drawBG(g);
+                if(stage.shouldShow()) {
+                    creditsButton.draw(g);
+                    creditsButton.setVisible(true);
+                }
                 stage.run(g);
                 try {
                     drawCheat(g);
@@ -812,6 +852,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             speechDelayCounter = 0;
     }
     
+    public void hideCredits() {
+        creditsButton.setVisible(false);
+    }
+    
     public void restartApplication() {
         timer.stop();
         allStopped = true;
@@ -886,8 +930,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         a1 = null;
         a = null;
         frame = null;
-        stage = null;
-        p = null;
         stage = new StartScreen();
         p = new Player();
         allStopped = false;
@@ -936,7 +978,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_Z:
                 if(beginning) {
-                    if(stage.shouldStart()) {
+                    if(stage.isOnLink() && creditsButton.isDisplayable())
+                        stage.openCreditsLink();
+                    else if(stage.shouldStart()) {
                         isGenocide = stage.isHard();
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), a);
