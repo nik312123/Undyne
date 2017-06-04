@@ -338,7 +338,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
-        creditsButton = new GradientButton(credits, Color.BLACK, Color.ORANGE, 76, 380, 62, 148) {
+        creditsButton = new GradientButton(credits, Color.BLACK, Color.ORANGE, 76, 380, 148, 62) {
             
             private static final long serialVersionUID = 1L;
 
