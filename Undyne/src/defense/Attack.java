@@ -105,67 +105,60 @@ public class Attack {
                     || (tempArrow.getDir() == 'd' && 300 - (tempArrow.getY() + yShift) <= 72 && 300 - (tempArrow.getY() + yShift) > 0)
                     || (tempArrow.getDir() == 'u' && (tempArrow.getY() + yShift) - 300 <= 72 && (tempArrow.getY() + yShift) - 300 > 0)))
                 tempArrow.switchDir();
+            int angle = p.getAngle();
             switch(tempArrow.getDir()) {
                 case 'l':
-                    if(dir == 'r') {
+                    if(dir == 'r' && (angle <= 135 && angle >= 45 || p.getHit())) {
                         if(tempArrow.getX() + xShift < 266 + 67 && tempArrow.getY() == 270 + 11) {
                             if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
-                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getX() + xShift < 291 + 19 && tempArrow.getY() == 270 + 11) {
-                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'r':
-                    if(dir == 'l') {
+                    if(dir == 'l' && angle <= 315 && angle >= 225) {
                         if(tempArrow.getX() + xShift > 266 && tempArrow.getY() == 270 + 11) {
                             if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
-                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getX() + xShift > 291 && tempArrow.getY() == 270 + 11) {
-                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'u':
-                    if(dir == 'd') {
+                    if(dir == 'd' && (angle <= 225 && angle >= 135 || p.getHit())) {
                         if(tempArrow.getY() + yShift < 266 + 67 && tempArrow.getX() == 285) {
                             if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
-                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getY() + yShift < 291 + 19 && tempArrow.getX() == 285) {
-                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
                     break;
                 case 'd':
-                    if(dir == 'u') {
+                    if(dir == 'u' && (angle <= 45 || angle >= 315 || p.getHit())) {
                         if(attackPattern.get(i).getY() + yShift > 266 && tempArrow.getX() == 285) {
                             if(!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
                                 hit = true;
-                                attackPattern.set(i, null);
                                 attackPattern.remove(i);
                             }
                         }
                     }
                     if(!tempArrow.getDirectionNotSwitched() && !hit && tempArrow.getY() + yShift > 291 && tempArrow.getX() == 285) {
-                        attackPattern.set(i, null);
                         attackPattern.remove(i);
                         damage = true;
                     }
@@ -213,8 +206,8 @@ public class Attack {
         NewerSound block = null;
         NewerSound damage = null;
         try {
-            block = new NewerSound("audio/block.wav", false);
-            damage = new NewerSound("audio/damage.wav", false);
+            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
         }
         catch(UnsupportedAudioFileException e) {
             e.printStackTrace();

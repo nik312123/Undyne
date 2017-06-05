@@ -9,7 +9,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
@@ -49,15 +48,15 @@ public class Player {
         
     public Player() {
         try {
-            shields[0] = ImageIO.read(new File("images/shieldh.png"));
-            shields[1] = ImageIO.read(new File("images/shield.png"));
+            shields[0] = ImageIO.read(Runner.class.getResource("/shieldH.png"));
+            shields[1] = ImageIO.read(Runner.class.getResource("/shield.png"));
         }
         catch(IOException e) {
             e.printStackTrace();
         }
         URL fontUrl;
         try {
-            fontUrl = new URL("file:font/undyne.ttf");
+            fontUrl = Runner.class.getResource("/undyne.ttf");
             undyneFont = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(25.0f);
         }
         catch(FontFormatException | IOException e) {
@@ -159,6 +158,10 @@ public class Player {
     
     public char getDir() {
         return dir;
+    }
+    
+    public int getAngle() {
+        return angle;
     }
     
     public void setRed(int red) {

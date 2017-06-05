@@ -6,7 +6,6 @@ import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -74,26 +73,26 @@ public class StartScreen {
         
     public StartScreen() {
         try { //Credit to wjl from goo.gl/ofAZRS
-            flare = new NewerSound("audio/fire.wav", false);
-            bark = new NewerSound("audio/bark.wav", false);
+            flare = new NewerSound(Runner.class.getResource("/fire.wav"), false);
+            bark = new NewerSound(Runner.class.getResource("/bark.wav"), false);
         }
         catch(UnsupportedAudioFileException | IOException e1) {
             e1.printStackTrace();
         }
         try {
-            subtitle = ImageIO.read(new File("images/sub.png"));
-            keys[0] = ImageIO.read(new File("images/keysRed.png"));
-            keys[1] = ImageIO.read(new File("images/keys.png"));
-            undyne = ImageIO.read(new File("images/undyne.png"));
-            start = ImageIO.read(new File("images/start.png"));
-            select = ImageIO.read(new File("images/select.png"));
-            hard = ImageIO.read(new File("images/hard.png"));
-            easy = ImageIO.read(new File("images/easy.png"));
-            heartMouse = ImageIO.read(new File("images/heartMouse.png"));
+            subtitle = ImageIO.read(Runner.class.getResource("/sub.png"));
+            keys[0] = ImageIO.read(Runner.class.getResource("/keysRed.png"));
+            keys[1] = ImageIO.read(Runner.class.getResource("/keys.png"));
+            undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
+            start = ImageIO.read(Runner.class.getResource("/start.png"));
+            select = ImageIO.read(Runner.class.getResource("/select.png"));
+            hard = ImageIO.read(Runner.class.getResource("/hard.png"));
+            easy = ImageIO.read(Runner.class.getResource("/easy.png"));
+            heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
             for(int i = 0; i <= 24; ++i) //Credit: nevit from goo.gl/QR3vVj
-                fire[i] = ImageIO.read(new File("images/fireGif/fire" + i + ".png"));
-            dog[0] = ImageIO.read(new File("images/annoyingDog/dog1.png"));
-            dog[1] = ImageIO.read(new File("images/annoyingDog/dog2.png"));
+                fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
+            dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
+            dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
         }
         catch(IOException e) {
             e.printStackTrace();
