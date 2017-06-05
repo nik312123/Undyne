@@ -22,13 +22,13 @@ public class StartScreen {
     private static double fadeStart = 0;
     private static double volume = 1;
     
-    private BufferedImage undyne = null;
-    private BufferedImage start = null;
-    private BufferedImage hard = null;
-    private BufferedImage easy = null;
-    private BufferedImage heartMouse = null;
-    private BufferedImage select = null;
-    private BufferedImage subtitle = null;
+    private BufferedImage undyne;
+    private BufferedImage start;
+    private BufferedImage hard;
+    private BufferedImage easy;
+    private BufferedImage heartMouse;
+    private BufferedImage select;
+    private BufferedImage subtitle;
     private BufferedImage[] keys = new BufferedImage[2];
     private BufferedImage[] fire = new BufferedImage[25];
     private BufferedImage[] dog = new BufferedImage[2];
@@ -73,13 +73,8 @@ public class StartScreen {
     private Random rand = new Random();
         
     public StartScreen() {
-        try {
+        try { //Credit to wjl from goo.gl/ofAZRS
             flare = new NewerSound("audio/fire.wav", false);
-        }
-        catch(UnsupportedAudioFileException | IOException e1) {
-            e1.printStackTrace();
-        } //Credit to wjl from goo.gl/ofAZRS
-        try {
             bark = new NewerSound("audio/bark.wav", false);
         }
         catch(UnsupportedAudioFileException | IOException e1) {
@@ -95,7 +90,7 @@ public class StartScreen {
             hard = ImageIO.read(new File("images/hard.png"));
             easy = ImageIO.read(new File("images/easy.png"));
             heartMouse = ImageIO.read(new File("images/heartMouse.png"));
-            for(int i = 0; i <= 24; ++i) //Credit: goo.gl/QR3vVj
+            for(int i = 0; i <= 24; ++i) //Credit: nevit from goo.gl/QR3vVj
                 fire[i] = ImageIO.read(new File("images/fireGif/fire" + i + ".png"));
             dog[0] = ImageIO.read(new File("images/annoyingDog/dog1.png"));
             dog[1] = ImageIO.read(new File("images/annoyingDog/dog2.png"));
@@ -106,7 +101,6 @@ public class StartScreen {
     }
     
     public void run(Graphics g) {
-        drawBG(g);
         gifFire(g);
         if(frameCounter1 != 251)
             ++frameCounter1;
@@ -132,7 +126,7 @@ public class StartScreen {
     }
     
     public void drawSubtitle(Graphics g) {
-        g.drawImage(subtitle, 0-scale,0-scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+        g.drawImage(subtitle, 0 - scale, 0 - scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
     }
     
     public void moveHeart() {
@@ -153,19 +147,13 @@ public class StartScreen {
         }
     }
     
-    public void drawBG(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 600, 600);
-    }
-    
     public void starterTitle(Graphics g, double fade) {
         Graphics2D g2d = (Graphics2D) g.create();
-        float opacity = (float) fade;
         if(fadeIn < 1)
             fadeIn += 0.02;
         else if(zCounter < 11)
             ++zCounter;
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fade));
         if(undyneCount % 7 == 0 && scale < 1) {
             randX = rand.nextInt(3);
             randY = rand.nextInt(3);
@@ -193,12 +181,12 @@ public class StartScreen {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         if(!easyButtonRectRed && !hardButtonRectRed){
-            g2d.drawImage(select, 0, 0 + shift, null);
-            g2d.drawImage(keys[0], 0, -20 , null);
+            g2d.drawImage(select, 0, 50 + shift, null);
+            g2d.drawImage(keys[0], 0, 50 - 20, null);
         }
         else{
-            g2d.drawImage(start, 0, 0 + shift, null);
-            g2d.drawImage(keys[0], 0, -20 , null);
+            g2d.drawImage(start, 0, 50 + shift, null);
+            g2d.drawImage(keys[1], 0, 50 - 20, null);
         }
         g2d.dispose();
         if(flashCount % 2 == 0) {
@@ -366,10 +354,6 @@ public class StartScreen {
         }
     }
     
-//    public boolean isOnLink() {
-//        return (heartX > numLeftX && heartX < numRightX && heartY < numBottomY + shift && heartY > nummBottomX + shift);
-//    }
-    
     public void resetVars() {
         fadeIn = 0;
         fadeStart = 0;
@@ -416,8 +400,16 @@ public class StartScreen {
         return hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard;
     }
     
+    public boolean shouldShow() {
+        return frameCounter1 > 250;
+    }
+    
     public static void changeVol(double change) {
         volume = change;
     }
+    
+  public boolean isOnLink() {
+      return (heartX + 288 + 16 >= 76 && heartX + 288 <= 224 && heartY + 300 <= 442 && heartY + 300 + 16 >= 380);
+  }
     
 }
