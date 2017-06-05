@@ -17,7 +17,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -120,27 +119,27 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
-        startScreen = new NewerSound("audio/WF.wav", true);
-        undyne = new NewerSound("audio/undyne.wav", false);
-        undying = new NewerSound("audio/undying.wav", false);
-        heart = ImageIO.read(new File("images/heart.png"));
+        startScreen = new NewerSound(Runner.class.getResource("/WF.wav"), true);
+        undyne = new NewerSound(Runner.class.getResource("/undyne.wav"), false);
+        undying = new NewerSound(Runner.class.getResource("/undying.wav"), false);
+        heart = ImageIO.read(Runner.class.getResource("/heart.png"));
         heartBreak = new BufferedImage[49];
         for(int i = 0; i <= 48; ++i)
-            heartBreak[i] = ImageIO.read(new File("images/gif/heartBreak" + i + ".png"));
+            heartBreak[i] = ImageIO.read(Runner.class.getResource("/gif/heartBreak" + i + ".png"));
         gameOver = new BufferedImage[226];
         for(int i = 0; i <= 225; ++i)
-            gameOver[i] = ImageIO.read(new File("images/gif/gameOver" + i + ".png"));
-        blueArr = ImageIO.read(new File("images/arrowB.png"));
-        redArr = ImageIO.read(new File("images/arrowR.png"));
-        reverseArr = ImageIO.read(new File("images/arrowRE.png"));
-        replay = ImageIO.read(new File("images/replay.png"));
-        close = ImageIO.read(new File("images/close.png"));
-        draggable = ImageIO.read(new File("images/draggable.png"));
-        music = ImageIO.read(new File("images/music.png"));
-        sfx = ImageIO.read(new File("images/sfx.png"));
-        speech = ImageIO.read(new File("images/speech.png"));
-        credits = ImageIO.read(new File("images/credits.png"));
-        URL fontUrl = new URL("file:font/dete.otf");
+            gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
+        blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
+        redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
+        reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
+        replay = ImageIO.read(Runner.class.getResource("/replay.png"));
+        close = ImageIO.read(Runner.class.getResource("/close.png"));
+        draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
+        music = ImageIO.read(Runner.class.getResource("/music.png"));
+        sfx = ImageIO.read(Runner.class.getResource("/sfx.png"));
+        speech = ImageIO.read(Runner.class.getResource("/speech.png"));
+        credits = ImageIO.read(Runner.class.getResource("/credits.png"));
+        URL fontUrl = Runner.class.getResource("/dete.otf");
         deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
         @SuppressWarnings("unused")
@@ -339,7 +338,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             
         };
         creditsButton = new GradientButton(credits, Color.BLACK, Color.ORANGE, 76, 380, 148, 62) {
-            
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -483,7 +481,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     else if(secondEnd) {
                         secondEnd = false;
                         try {
-                            gameDone = new NewerSound("audio/dt.wav", true);
+                            gameDone = new NewerSound(Runner.class.getResource("/dt.wav"), true);
                         }
                         catch(UnsupportedAudioFileException | IOException e) {
                             e.printStackTrace();
@@ -654,7 +652,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             if(breakFrame == 25) {
                 NewerSound split;
                 try {
-                    split = new NewerSound("audio/split.wav", false);
+                    split = new NewerSound(Runner.class.getResource("/split.wav"), false);
                     split.changeVolume(sfxVolume);
                     split.play();
                 }
@@ -687,7 +685,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         if(breakFrame == 9) {
                             NewerSound broke;
                             try {
-                                broke = new NewerSound("audio/heartBreak.wav", false);
+                                broke = new NewerSound(Runner.class.getResource("/heartBreak.wav"), false);
                                 broke.changeVolume(sfxVolume);
                                 broke.play();
                             }
@@ -708,7 +706,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             ++gameOverFrame;
             if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
                     try {
-                        NewerSound asgore = new NewerSound("audio/asgore.wav", false);
+                        NewerSound asgore = new NewerSound(Runner.class.getResource("/asgore.wav"), false);
                         asgore.changeVolume(sfxVolume);
                         asgore.play();
                     }
@@ -925,6 +923,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         draggableButton = null;
         musicButton = null;
         sfxButton = null;
+        credits = null;
+        creditsButton = null;
         deteFontNorm = null;
         deteFontSpeech = null;
         a1 = null;
@@ -999,7 +999,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         String baseName;
                         if(isGenocide) {
                             try {
-                                main = new NewerSound("audio/bath.ogg", true);
+                                main = new NewerSound(Runner.class.getResource("/bath.ogg"), true);
                             }
                             catch(UnsupportedAudioFileException | IOException e1) {
                                 e1.printStackTrace();
@@ -1011,7 +1011,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         else {
                             try {
-                                main = new NewerSound("audio/soj.wav", true);
+                                main = new NewerSound(Runner.class.getResource("/soj.wav"), true);
                             }
                             catch(UnsupportedAudioFileException | IOException e1) {
                                 e1.printStackTrace();
@@ -1024,10 +1024,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         gif = new BufferedImage[gifMax + 1];
                         try {
                             for(int i = 0; i <= gifMax; ++i)
-                                gif[i] = ImageIO.read(new File("images/gif/" + baseName + i + ".png"));
+                                gif[i] = ImageIO.read(Runner.class.getResource("/gif/" + baseName + i + ".png"));
                         }
-                        catch(IOException err) {
-                            err.printStackTrace();
+                        catch(IOException e1) {
+                            e1.printStackTrace();
                         }
                         beginning = false;
                         startScreen.stop();
