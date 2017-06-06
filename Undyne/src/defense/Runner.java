@@ -91,6 +91,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage sfx;
     private static BufferedImage speech;
     private static BufferedImage credits;
+    private static BufferedImage help;
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
@@ -106,6 +107,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static GradientButton musicButton;
     private static GradientButton sfxButton;
     private static GradientButton creditsButton;
+    private static GradientButton helpButton;
     
     private static Font deteFontNorm;
     private static Font deteFontSpeech;
@@ -139,6 +141,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         sfx = ImageIO.read(Runner.class.getResource("/sfx.png"));
         speech = ImageIO.read(Runner.class.getResource("/speech.png"));
         credits = ImageIO.read(Runner.class.getResource("/credits.png"));
+        help = ImageIO.read(Runner.class.getResource("/help.png"));
         URL fontUrl = Runner.class.getResource("/dete.otf");
         deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
@@ -218,7 +221,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             public void mouseMoved(MouseEvent e) {}
             
         };
-        musicButton = new GradientButton(music, Color.BLACK, new Color(255, 140, 0), 545, 2, 24, 24) {
+        musicButton = new GradientButton(music, Color.BLACK, new Color(148, 0, 211), 545, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -337,7 +340,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
-        creditsButton = new GradientButton(credits, Color.BLACK, Color.ORANGE, 76, 380, 148, 62) {
+        creditsButton = new GradientButton(credits, Color.BLACK, new Color(255, 140, 0), 76, 380, 148, 62) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -367,11 +370,43 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
+        
+        helpButton = new GradientButton(help, Color.BLACK, new Color(255, 140, 0), 376, 380, 148, 62) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public boolean onButton() {
+                return isDisplayable() && stage.isOnHelp();
+            }
+            
+        };
         frame.add(closeButton);
         frame.add(draggableButton);
         frame.add(musicButton);
         frame.add(sfxButton);
         frame.add(creditsButton);
+        frame.add(helpButton);
         frame.addKeyListener(this);
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -423,6 +458,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 if(stage.shouldShow()) {
                     creditsButton.draw(g);
                     creditsButton.setVisible(true);
+                    helpButton.draw(g);
+                    helpButton.setVisible(true);
                 }
                 stage.run(g);
                 try {
@@ -850,8 +887,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             speechDelayCounter = 0;
     }
     
-    public void hideCredits() {
+    public void hideButtons() {
         creditsButton.setVisible(false);
+        helpButton.setVisible(false);
     }
     
     public void restartApplication() {
@@ -925,6 +963,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         sfxButton = null;
         credits = null;
         creditsButton = null;
+        help = null;
+        helpButton = null;
         deteFontNorm = null;
         deteFontSpeech = null;
         a1 = null;
@@ -985,6 +1025,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         a = new Attacks(isGenocide);
                         a1 = new Attack(new ArrayList<Arrow>(), a);
                         a.setAttack(a1);
+                        hideButtons();
                         if(isGenocide) {
                             p.setHealth(60);
                             p.setBaseDamage(3);
@@ -999,7 +1040,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         String baseName;
                         if(isGenocide) {
                             try {
-                                main = new NewerSound(Runner.class.getResource("/bath.ogg"), true);
+                                main = new NewerSound(Runner.class.getResource("/bath.wav"), true);
                             }
                             catch(UnsupportedAudioFileException | IOException e1) {
                                 e1.printStackTrace();

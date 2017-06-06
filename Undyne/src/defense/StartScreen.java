@@ -396,7 +396,7 @@ public class StartScreen {
     }
     
     public boolean shouldStart() {
-        return hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard;
+        return !isOnLink() && !isOnHelp() && (hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard);
     }
     
     public boolean shouldShow() {
@@ -409,6 +409,10 @@ public class StartScreen {
     
   public boolean isOnLink() {
       return (heartX + 288 + 16 >= 76 && heartX + 288 <= 224 && heartY + 300 <= 442 && heartY + 300 + 16 >= 380);
+  }
+  
+  public boolean isOnHelp() {
+      return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 442 && heartY + 300 + 16 >= 380);
   }
     
 }
