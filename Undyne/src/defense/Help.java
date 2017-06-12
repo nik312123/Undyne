@@ -13,7 +13,7 @@ public class Help {
     private int frameCounter = 0;
     private int dynamicSize = 0;
     private int counter = 0;
-    private static final int size = 450;
+    private static final int SIZE = 450;
     
     private BufferedImage[] helpGif = new BufferedImage[465];
     
