@@ -213,19 +213,6 @@ public class Player {
         this.baseDamage = baseDamage;
     }
     
-    public void resetVars() {
-        dir = 'u';
-        hit = false;
-        red = 30;
-        time = 75;
-        timeoutCounter = time;
-        elementPosition = 0;
-        shield = null;
-        shields = new BufferedImage[2];
-        health = 60;
-        angle = 0;
-    }
-    
     public void convertHealth() {
         health += 40;
         maxHealth = 60;

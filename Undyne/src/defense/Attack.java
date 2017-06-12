@@ -264,18 +264,9 @@ public class Attack {
     }
     
     public void resetVars() {
-        counter = 0;
         isFirst = true;
-        attackPattern = new ArrayList<Arrow>();
         hit = "";
-        adder = 1;
-        hitPoint = 0;
-        move = 0;
-        attackDelay = 0;
-        lastDelay = 0;
-        isDamaged = false;
-        lastImportantAttack = 0;
-        a = null;
+        volume = 1;
     }
     
     public static void changeVol(double change) {

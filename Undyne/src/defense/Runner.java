@@ -37,7 +37,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static char dir = 'u';
     
-    private static String nothing = "bad time";
+    private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
     private static final String[] mainSounds = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
@@ -628,12 +628,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public void nothing() {
-        if(typed.length() > nothing.length())
-            typed = typed.substring(typed.length() - nothing.length(), typed.length());
-        if(typed.length() == nothing.length()) {
-            if(typed.equalsIgnoreCase((nothing))) {
+        if(typed.length() > NOTHING.length())
+            typed = typed.substring(typed.length() - NOTHING.length(), typed.length());
+        if(typed.length() == NOTHING.length()) {
+            if(typed.equalsIgnoreCase(NOTHING)) {
                 automatic = !automatic;
-                typed = typed.substring(0, typed.length() - nothing.length());
+                typed = typed.substring(0, typed.length() - NOTHING.length());
             }
         }
     }
@@ -973,14 +973,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         allStopped = true;
         stage.resetVars();
         a.resetVars();
-        p.resetVars();
         a1.resetVars();
         try {
             gameDone.stop();
         }
         catch(NullPointerException e) {}
         dir = 'u';
-        nothing = "bad time";
         typed = "";
         activated = "";
         fadeStart = 0;
@@ -1033,7 +1031,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         sfx = null;
         speech = null;
         blueArr = null;
-        redArr= null;
+        redArr = null;
         reverseArr = null;
         main = null;
         gameDone = null;
@@ -1051,6 +1049,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         helpButton = null;
         deteFontNorm = null;
         deteFontSpeech = null;
+        deteFontScore = null;
         a1 = null;
         a = null;
         frame.dispose();
