@@ -37,9 +37,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static char dir = 'u';
     
-    private static String nothing = "bad time";
+    private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
+    private static final String[] mainSounds = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
     
     private static double fadeStart = 0;
     private static double sfxVolume = 1;
@@ -62,8 +63,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static int speechDelayCounter = 0;
     private static int speechX, speechY;
     public static int keyCounter = 0;
+    private static int mainIndex = 0;
+    private static int levelIndex = 0;
+    private static int score = 0;
+    private static int lastAttack = 1;
     
     private static boolean isGenocide = false;
+    private static boolean survival = false;
     private static boolean heartDone = false;
     private static boolean gameOverDone = false;
     private static boolean firstEnd = true;
@@ -81,10 +87,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static Timer timer;
     
-    private static BufferedImage[] gif;
-    private static BufferedImage[] heartBreak;
-    private static BufferedImage[] gameOver;
-    
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -97,12 +99,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
-    
+
+    private static BufferedImage[] gif;
+    private static BufferedImage[] gif2;
+    private static BufferedImage[] heartBreak;
+    private static BufferedImage[] gameOver;
+    private static BufferedImage[] levels = new BufferedImage[4];
+        
     private static NewerSound main;
     private static NewerSound gameDone;
     private static NewerSound startScreen;
     private static NewerSound undyne;
     private static NewerSound undying;
+    private static NewerSound heal;
     
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
@@ -111,8 +120,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
     
-    public static Font deteFontNorm;
-    public static Font deteFontSpeech;
+    private static Font deteFontNorm;
+    private static Font deteFontSpeech;
+    private static Font deteFontScore;
     
     private static Attack a1;
     private static Attacks a;
@@ -129,6 +139,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         startScreen = new NewerSound(Runner.class.getResource("/WF.wav"), true);
         undyne = new NewerSound(Runner.class.getResource("/undyne.wav"), false);
         undying = new NewerSound(Runner.class.getResource("/undying.wav"), false);
+        heal = new NewerSound(Runner.class.getResource("/heal.wav"), false);
         heart = ImageIO.read(Runner.class.getResource("/heart.png"));
         heartBreak = new BufferedImage[49];
         for(int i = 0; i <= 48; ++i)
@@ -136,6 +147,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         gameOver = new BufferedImage[226];
         for(int i = 0; i <= 225; ++i)
             gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
+        levels[0] = ImageIO.read(Runner.class.getResource("/levelOne.png"));
+        levels[1] = ImageIO.read(Runner.class.getResource("/levelTwo.png"));
+        levels[2] = ImageIO.read(Runner.class.getResource("/levelThree.png"));
+        levels[3] = ImageIO.read(Runner.class.getResource("/levelFour.png"));
         blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
         redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
         reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
@@ -150,6 +165,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         URL fontUrl = Runner.class.getResource("/dete.otf");
         deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
+        deteFontScore = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(22.0f);
         @SuppressWarnings("unused")
         Runner a = new Runner("Undyne: Absolute");
         startScreen.changeVolume(musicVolume);
@@ -227,7 +243,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             public void mouseMoved(MouseEvent e) {}
             
         };
-        musicButton = new GradientButton(music, Color.BLACK, new Color(148, 0, 211), 545, 2, 24, 24) {
+        musicButton = new GradientButton(music, Color.BLACK, new Color(0, 208, 208), 545, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
             @Override
@@ -305,6 +321,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     StartScreen.changeVol(1);
                     undyne.changeVolume(1);
                     undying.changeVolume(1);
+                    heal.changeVolume(1);
                     sfxVolume = 1;
                 }
                 else {
@@ -312,6 +329,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     StartScreen.changeVol(0);
                     undyne.changeVolume(0);
                     undying.changeVolume(0);
+                    heal.changeVolume(0);
                     sfxVolume = 0;
                 }
                 sfxMuted = !sfxMuted;
@@ -346,7 +364,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
-        creditsButton = new GradientButton(credits, Color.BLACK, new Color(255, 140, 0), 76, 380, 148, 62) {
+        creditsButton = new GradientButton(credits, Color.BLACK, new Color(148, 0, 211), 76, 380 + 20, 148, 62) {
             private static final long serialVersionUID = 1L;
             
             @Override
@@ -377,7 +395,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             
         };
         
-        helpButton = new GradientButton(help, Color.BLACK, new Color(255, 140, 0), 376, 380, 148, 62) {
+        helpButton = new GradientButton(help, Color.BLACK, new Color(148, 0, 211), 376, 380 + 20, 148, 62) {
             private static final long serialVersionUID = 1L;
             
             @Override
@@ -503,6 +521,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     drawHeart(g);
                     p.shield(g, dir);
                     gif(g);
+                    if(survival)
+                        g.drawImage(levels[levelIndex], 433, 4, null);
                     try {
                         a1.spawnArrows(g, p);
                         p.drawHealth(g);
@@ -560,7 +580,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(speechDone)
             drawReplay(g, 10);
         helper.initiate(g, helpStarter);
-        //keyboardAnimations.show(g, dir);
+        if(survival && !beginning)
+            printScore(g);
         g.dispose();
     }
     
@@ -615,12 +636,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public void nothing() {
-        if(typed.length() > nothing.length())
-            typed = typed.substring(typed.length() - nothing.length(), typed.length());
-        if(typed.length() == nothing.length()) {
-            if(typed.equals((nothing))) {
+        if(typed.length() > NOTHING.length())
+            typed = typed.substring(typed.length() - NOTHING.length(), typed.length());
+        if(typed.length() == NOTHING.length()) {
+            if(typed.equalsIgnoreCase(NOTHING)) {
                 automatic = !automatic;
-                typed = typed.substring(0, typed.length() - nothing.length());
+                typed = typed.substring(0, typed.length() - NOTHING.length());
             }
         }
     }
@@ -911,9 +932,64 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             speechDelayCounter = 0;
     }
     
-    public void hideButtons() {
+    public static void printScore(Graphics g) {
+        if(a != null && a.isNewAttack() && a.getCurrentAttack() != lastAttack && a1.getList().size() == 0) {
+            lastAttack = a.getCurrentAttack();
+            switch(levelIndex) {
+                case 0:
+                    score += 5;
+                    break;
+                case 1:
+                    score += 15;
+                    break;
+                case 2:
+                    score += 20;
+                    break;
+                case 3:
+                    score += 25;
+                    break;
+            }
+        }
+        g.setColor(Color.YELLOW);
+        g.setFont(deteFontScore);
+        g.drawString("Score: " + score, 5, 590);
+    }
+    
+    public static void hideButtons() {
         creditsButton.setVisible(false);
         helpButton.setVisible(false);
+    }
+    
+    public static void changeMain() {
+        ++levelIndex;
+        if(levelIndex > 1)
+            heal.play();
+        main.stop();
+        try {
+            main = new NewerSound(Runner.class.getResource(mainSounds[++mainIndex]), true);
+        }
+        catch(UnsupportedAudioFileException | IOException e) {
+            e.printStackTrace();
+        }
+        main.changeVolume(musicVolume);
+        main.play();
+    }
+    
+    public static void changeGif() {
+        isGenocide = true;
+        gif = gif2;
+        p.setBaseDamage(2);
+        p.setDamageOffset(4);
+        p.convertHealth();
+    }
+    
+    public static void finalBoost() {
+        heal.play();
+        p.healthBoost();
+    }
+    
+    public static boolean isSurvival() {
+        return survival;
     }
     
     public void restartApplication() {
@@ -921,14 +997,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         allStopped = true;
         stage.resetVars();
         a.resetVars();
-        p.resetVars();
         a1.resetVars();
         try {
             gameDone.stop();
         }
         catch(NullPointerException e) {}
         dir = 'u';
-        nothing = "bad time";
         typed = "";
         activated = "";
         fadeStart = 0;
@@ -948,7 +1022,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         speechCounter = 0;
         speechCounterPrev = 0;
         speechDelayCounter = 0;
+        score = 0;
+        mainIndex = 0;
+        levelIndex = 0;
+        lastAttack = 1;
         isGenocide = false;
+        survival = false;
         heartDone = false;
         gameOverDone = false;
         firstEnd = true;
@@ -964,8 +1043,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         speechDone = false;
         timer = null;
         gif = null;
+        gif2 = null;
         heartBreak = null;
         gameOver = null;
+        levels = new BufferedImage[4];
         heart = null;
         replay = null;
         close = null;
@@ -979,6 +1060,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         main = null;
         gameDone = null;
         startScreen = null;
+        heal = null;
         undyne = null;
         undying = null;
         closeButton = null;
@@ -991,8 +1073,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         helpButton = null;
         deteFontNorm = null;
         deteFontSpeech = null;
+        deteFontScore = null;
         a1 = null;
         a = null;
+        frame.dispose();
         frame = null;
         stage = new StartScreen();
         p = new Player();
@@ -1053,7 +1137,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         helpStarter = true;
                     else if(stage.shouldStart()) {
                         isGenocide = stage.isHard();
-                        a = new Attacks(isGenocide);
+                        survival = stage.isSurvival();
+                        a = new Attacks(isGenocide, survival);
                         a1 = new Attack(new ArrayList<Arrow>(), a);
                         a.setAttack(a1);
                         hideButtons();
@@ -1097,6 +1182,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         try {
                             for(int i = 0; i <= gifMax; ++i)
                                 gif[i] = ImageIO.read(Runner.class.getResource("/gif/" + baseName + i + ".png"));
+                            if(survival) {
+                                gifMax = 79;
+                                baseName = "undying";
+                                gif2 = new BufferedImage[gifMax + 1];
+                                for(int i = 0; i <= gifMax; ++i)
+                                    gif2[i] = ImageIO.read(Runner.class.getResource("/gif/" + baseName + i + ".png"));
+                            }
                         }
                         catch(IOException e1) {
                             e1.printStackTrace();

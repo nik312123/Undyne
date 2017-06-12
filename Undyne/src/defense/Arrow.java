@@ -306,4 +306,9 @@ public class Arrow {
         return directionNotSwitched;
     }
     
+    @Override
+    public String toString() {
+        return String.format("Arrow[speed = %d, reverse = %b, direction = %c, delay = %d]", speed, reverse, direction, delay);
+    }
+    
 }

@@ -23,6 +23,7 @@ public class Attack {
     private int move = 0;
     private int attackDelay = 0;
     private int lastDelay = 0;
+    private int lastImportantAttack = 0;
     private static double volume = 1;
     
     private boolean isDamaged = false;
@@ -192,8 +193,21 @@ public class Attack {
                 a.notNewAttack();
                 attackDelay = 0;
             }
+            if(Runner.isSurvival() && (a.getCurrentAttack() == 8 && lastImportantAttack != 8 || a.getCurrentAttack() == 43 && lastImportantAttack != 43 || a.getCurrentAttack() == 79 && lastImportantAttack != 79) && attackPattern.size() == 0 && attackDelay == 100) {
+                if(a.getCurrentAttack() == 8)
+                    lastImportantAttack = 8;
+                else if(a.getCurrentAttack() == 43) {
+                    lastImportantAttack = 43;
+                    Runner.changeGif();
+                }
+                else if(a.getCurrentAttack() == 79) {
+                    lastImportantAttack = 79;
+                    Runner.finalBoost();
+                }
+                Runner.changeMain();
+            }
         }
-        else if(isFirst || ++counter == lastDelay) {
+        else if(++counter == lastDelay || isFirst) {
             isFirst = false;
             Arrow temp = a.getCurrentArrow();
             if(temp.getSpeed() != 0) {
@@ -249,17 +263,9 @@ public class Attack {
     }
     
     public void resetVars() {
-        counter = 0;
         isFirst = true;
-        attackPattern = new ArrayList<Arrow>();
         hit = "";
-        adder = 1;
-        hitPoint = 0;
-        move = 0;
-        attackDelay = 0;
-        lastDelay = 0;
-        isDamaged = false;
-        a = null;
+        volume = 1;
     }
     
     public static void changeVol(double change) {
