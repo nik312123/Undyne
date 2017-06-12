@@ -23,20 +23,19 @@ public class StartScreen {
     
     private BufferedImage undyne;
     private BufferedImage start;
-    private BufferedImage hard;
-    private BufferedImage easy;
     private BufferedImage heartMouse;
     private BufferedImage select;
     private BufferedImage subtitle;
+    private BufferedImage buttons;
     private BufferedImage[] keys = new BufferedImage[2];
-    private BufferedImage[] fire = new BufferedImage[25];
+    private BufferedImage[] fire = new BufferedImage[38];
     private BufferedImage[] dog = new BufferedImage[2];
     
     private static int speed = 2;
     private static int zCounter = 0;
-    private static int heartX = 0;
     private static int hardButtonRect = 0;
     private static int easyButtonRect = 0;
+    private static int survivalButtonRect = 0;
     private int frameCounter = 0;
     private static int count2 = -100;
     private int undyneCount = 0;
@@ -44,12 +43,14 @@ public class StartScreen {
     private static int flashCount = 0;
     private static int hardButtonCount = 0;
     private static int easyButtonCount = 0;
+    private static int survivalButtonCount = 0;
     private static int dogCount = 0;
     private static int dogFrame = 0;
     private static int scaleSub = 10;
     private static int scale = 500;
     private static int shift = 0;
-    private static int heartY = 0 + shift;
+    private static int heartX = 5;
+    private static int heartY = 100 + shift;
     private static int frameCounter1 = 0;
     private static int moveCounter = 1;
     
@@ -60,14 +61,20 @@ public class StartScreen {
     private static boolean switchFade = false;
     private static boolean hardButtonRectRed = false;
     private static boolean easyButtonRectRed = false;
+    private static boolean survivalButtonRectRed = false;
     private static boolean fire2 = false;
     private static boolean playFire = true;
     private static boolean playBark = true;
+    private static boolean playSpear = true;
     private static boolean isOnHard;
     private static boolean isOnEasy;
+    private static boolean isOnSurvival;
     
     private NewerSound flare;
     private NewerSound bark;
+    private NewerSound spearAppear;
+    private NewerSound spearFly;
+    private NewerSound spearHit;
     
     private Random rand = new Random();
         
@@ -75,6 +82,9 @@ public class StartScreen {
         try { //Credit to wjl from goo.gl/ofAZRS
             flare = new NewerSound(Runner.class.getResource("/fire.wav"), false);
             bark = new NewerSound(Runner.class.getResource("/bark.wav"), false);
+            spearAppear = new NewerSound(Runner.class.getResource("/spearAppear.wav"), false);
+            spearFly = new NewerSound(Runner.class.getResource("/spearFly.wav"), false);
+            spearHit = new NewerSound(Runner.class.getResource("/spearHit.wav"), false);
         }
         catch(UnsupportedAudioFileException | IOException e1) {
             e1.printStackTrace();
@@ -86,10 +96,9 @@ public class StartScreen {
             undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
             start = ImageIO.read(Runner.class.getResource("/start.png"));
             select = ImageIO.read(Runner.class.getResource("/select.png"));
-            hard = ImageIO.read(Runner.class.getResource("/hard.png"));
-            easy = ImageIO.read(Runner.class.getResource("/easy.png"));
             heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
-            for(int i = 0; i <= 24; ++i) //Credit: nevit from goo.gl/QR3vVj
+            buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
+            for(int i = 0; i <= 37; ++i) //Credit: nevit from goo.gl/QR3vVj
                 fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
             dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
             dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
@@ -101,6 +110,9 @@ public class StartScreen {
     
     public void run(Graphics g) {
         gifFire(g);
+        g.drawImage(Runner.blueArr, -100, 1000, null);
+        g.drawImage(Runner.redArr, -100, 1000, null);
+        g.drawImage(Runner.reverseArr, -100, 1000, null);
         if(frameCounter1 != 251)
             ++frameCounter1;
         if(frameCounter1 > 100) {
@@ -119,6 +131,8 @@ public class StartScreen {
                 zToStart(g);
                 hardButton(g);
                 easyButton(g);
+                survivalButton(g);
+                g.drawImage(buttons, 0, 0, null);
                 heartMouse(g);
             }
         }
@@ -205,7 +219,7 @@ public class StartScreen {
     
     public void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
-        isOnHard = (heartX > 78 && heartX < 231 && heartY < 57 + shift && heartY > -11 + shift);
+        isOnHard = (heartX > 78+ 37 && heartX < 231 + 37 && heartY < 57 + shift && heartY > -11 + shift);
         if(hardButtonCount % 6 == 0) {
             if(isOnHard) {
                 if(hardButtonRect < 60) {
@@ -220,6 +234,7 @@ public class StartScreen {
                     }
                     hardButtonRectRed = true;
                     easyButtonRectRed = false;
+                    survivalButtonRectRed = false;
                 }
             }
             else if(hardButtonRect > 0 && !hardButtonRectRed) {
@@ -231,18 +246,17 @@ public class StartScreen {
         if(hardButtonCount == 6)
             hardButtonCount = 0;
         if(!hardButtonRectRed)
-            g.fillRect(380, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
+            g.fillRect(380 + 37, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
         else {
             fire2 = true;
             g.setColor(Color.RED);
-            g.fillRect(380, 300 + shift, 140, 60);
+            g.fillRect(380 + 37, 300 + shift, 140, 60);
         }
-        g.drawImage(hard, 0, 0 + shift, null);
     }
     
     public void easyButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
-        isOnEasy = (heartX > -220 && heartX < -70 && heartY < 57 + shift && heartY > -11 + shift);
+        isOnEasy = (heartX > -220 - 37 && heartX < -70 - 37 && heartY < 57 + shift && heartY > -11 + shift);
         if(easyButtonCount % 6 == 0) {
             if(isOnEasy) {
                 if(easyButtonRect < 60) {
@@ -257,6 +271,7 @@ public class StartScreen {
                     }
                     easyButtonRectRed = true;
                     hardButtonRectRed = false;
+                    survivalButtonRectRed = false;
                 }
             }
             else {
@@ -270,12 +285,49 @@ public class StartScreen {
         if(easyButtonCount == 6)
             easyButtonCount = 0;
         if(!easyButtonRectRed)
-            g.fillRect(80, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
+            g.fillRect(80 - 37, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
         else {
             g.setColor(new Color(0, 234 - 30, 77 - 30));
-            g.fillRect(80, 300 + shift, 140, 60);
+            g.fillRect(80 - 37, 300 + shift, 140, 60);
         }
-        g.drawImage(easy, 0, 0 + shift, null);
+    }
+    
+    public void survivalButton(Graphics g) {
+        g.setColor(new Color(246, 138, 21));
+        isOnSurvival = (heartX > -68 && heartX < 80 && heartY < 57 + shift && heartY > -11 + shift);
+        if(survivalButtonCount % 6 == 0) {
+            if(isOnSurvival) {
+                if(survivalButtonRect < 60) {
+                    survivalButtonRect += 5;
+                    playSpear = true;
+                }
+                else {
+                    if(playSpear) {
+//                        spearSound.changeVolume(volume);
+//                        spearSound.play();
+                        playSpear = false;
+                    }
+                    easyButtonRectRed = false;
+                    hardButtonRectRed = false;
+                    survivalButtonRectRed = true;
+                }
+            }
+            else {
+                if(survivalButtonRect > 0 && !survivalButtonRectRed) {
+                    survivalButtonRect -= 5;
+                    playSpear = true;
+                }
+            }
+        }
+        ++survivalButtonCount;
+        if(survivalButtonCount == 6)
+            survivalButtonCount = 0;
+        if(!survivalButtonRectRed)
+            g.fillRect(80 - 37 + 148 + 39, 360 - (300 - (Math.abs(300 - survivalButtonRect))) + shift, 140, survivalButtonRect);
+        else {
+            g.setColor(new Color(220, 220, 36));
+            g.fillRect(80 - 37 + 148 + 39, 300 + shift, 140, 60);
+        }
     }
     
     public void heartMouse(Graphics g) {
@@ -288,10 +340,10 @@ public class StartScreen {
         ++frameCounter;
         if(frameCounter == 4)
             frameCounter = 0;
-        if(count2 == 25)
+        if(count2 == 38)
             count2 = 0;
         if(fire2 && count2 >= 0 && hardButtonRectRed)
-            g.drawImage(fire[count2], 379, 194 + shift, null);
+            g.drawImage(fire[count2], 330 + 39, 160 + shift, null);
     }
     
     public void gifDog(Graphics g) {
@@ -304,7 +356,7 @@ public class StartScreen {
                     dogFrame = 0;
                 dogCount = 0;
             }
-            g.drawImage(dog[dogFrame], 130, 261 + shift, null);
+            g.drawImage(dog[dogFrame], 130 - 39, 261 + shift, null);
         }
     }
     
@@ -344,6 +396,10 @@ public class StartScreen {
         return hardButtonRectRed;
     }
     
+    public boolean isSurvival() {
+        return survivalButtonRectRed;
+    }
+    
     public void openCreditsLink() {
         try {
             Desktop.getDesktop().browse(new URI("http://athena.edenpr.org/~chawlan/undyne.html"));
@@ -358,30 +414,31 @@ public class StartScreen {
         fadeStart = 0;
         undyne = null;
         start = null;
-        hard = null;
-        easy = null;
         heartMouse = null;
         select = null;
         subtitle = null;
-        fire = new BufferedImage[25];
+        buttons = null;
+        fire = new BufferedImage[38];
         dog = new BufferedImage[2];
         speed = 2;
         zCounter = 0;
-        heartX = 0;
+        heartX = 5;
         hardButtonRect = 0;
         easyButtonRect = 0;
+        survivalButtonRect = 0;
         frameCounter = 0;
         count2 = -100;
         undyneCount = 0;
         flashCount = 0;
         hardButtonCount = 0;
         easyButtonCount = 0;
+        survivalButtonCount = 0;
         dogCount = 0;
         dogFrame = 0;
         scaleSub = 10;
         scale = 500;
         shift = 0;
-        heartY = 0 + shift;
+        heartY = 100 + shift;
         frameCounter1 = 0;
         right = false;
         left = false;
@@ -390,13 +447,15 @@ public class StartScreen {
         switchFade = false;
         hardButtonRectRed = false;
         easyButtonRectRed = false;
+        survivalButtonRectRed = false;
         fire2 = false;
         playFire = true;
-        playBark = true;      
+        playBark = true;
+        playSpear = true;
     }
     
     public boolean shouldStart() {
-        return !isOnLink() && !isOnHelp() && (hardButtonRectRed && !isOnEasy || easyButtonRectRed && !isOnHard);
+        return !isOnLink() && !isOnHelp() && (hardButtonRectRed && !isOnEasy && !isOnSurvival || easyButtonRectRed && !isOnHard && !isOnSurvival || survivalButtonRectRed && !isOnHard && !isOnEasy);
     }
     
     public boolean shouldShow() {
@@ -408,11 +467,11 @@ public class StartScreen {
     }
     
   public boolean isOnLink() {
-      return (heartX + 288 + 16 >= 76 && heartX + 288 <= 224 && heartY + 300 <= 442 && heartY + 300 + 16 >= 380);
+      return (heartX + 288 + 16 >= 76 && heartX + 288 <= 224 && heartY + 300 <= 442 + 20 && heartY + 300 + 16 >= 380 + 20);
   }
   
   public boolean isOnHelp() {
-      return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 442 && heartY + 300 + 16 >= 380);
+      return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 442 + 20 && heartY + 300 + 16 >= 380 + 20);
   }
     
 }

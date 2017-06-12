@@ -226,4 +226,13 @@ public class Player {
         angle = 0;
     }
     
+    public void convertHealth() {
+        health += 40;
+        maxHealth = 60;
+    }
+    
+    public void healthBoost() {
+        health = Math.min(health + 40, 60);
+    }
+    
 }
