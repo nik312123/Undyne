@@ -193,7 +193,6 @@ public class Attack {
                 a.notNewAttack();
                 attackDelay = 0;
             }
-            System.out.println(a.getCurrentAttack());
             if(Runner.isSurvival() && (a.getCurrentAttack() == 8 && lastImportantAttack != 8 || a.getCurrentAttack() == 43 && lastImportantAttack != 43 || a.getCurrentAttack() == 79 && lastImportantAttack != 79) && attackPattern.size() == 0 && attackDelay == 100) {
                 if(a.getCurrentAttack() == 8)
                     lastImportantAttack = 8;
