@@ -62,7 +62,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static int speechCounterPrev = 0;
     private static int speechDelayCounter = 0;
     private static int speechX, speechY;
-    public static int keyCounter = 0;
     private static int mainIndex = 0;
     private static int levelIndex = 0;
     private static int score = 0;
@@ -121,7 +120,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static GradientButton helpButton;
     
     private static Font deteFontNorm;
-    private static Font deteFontSpeech;
+    public static Font deteFontSpeech;
     private static Font deteFontScore;
     
     private static Attack a1;
@@ -129,7 +128,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static StartScreen stage = new StartScreen();
     private static Player p = new Player();
     private static Help helper = new Help();
-    private static KeyboardAnimations keyboardAnimations = new KeyboardAnimations();
     
     private static JFrame frame;
     
@@ -992,6 +990,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         return survival;
     }
     
+    public static boolean getHelpStarter() {
+        return helpStarter;
+    }
+    
     public void restartApplication() {
         timer.stop();
         allStopped = true;
@@ -1101,7 +1103,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     @Override
     public void keyPressed(KeyEvent e) {
-        keyCounter = 20;
         switch(e.getKeyCode()) {
             case KeyEvent.VK_UP:
             case KeyEvent.VK_W:

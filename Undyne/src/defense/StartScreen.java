@@ -143,7 +143,7 @@ public class StartScreen {
     }
     
     public void moveHeart() {
-        if(zCounter > 10) {
+        if(zCounter > 10 && !Runner.getHelpStarter()) {
             ++moveCounter;
             if(moveCounter > 2) {
                 if(right)
