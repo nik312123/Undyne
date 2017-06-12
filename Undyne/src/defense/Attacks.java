@@ -47,6 +47,8 @@ public class Attacks {
             normalAttackEighteen();
         }
         else {
+
+          
             genocideAttackOne();
             genocideAttackTwo();
             genocideAttackThreeAndTen(18, 2);
