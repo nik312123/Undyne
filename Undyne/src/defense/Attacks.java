@@ -27,7 +27,7 @@ public class Attacks {
         for(int i = 0; i < 13000; ++i)
             undyneAttacks.add(new ArrayList<Arrow>());
         if(survival) {
-            //Super Easy
+            // Super Easy
             normalAttackOne();
             normalAttackTwo();
             survivalAttackThree();
@@ -36,7 +36,7 @@ public class Attacks {
             survivalAttackSix();
             survivalAttackSeven();
             
-            //Easy
+            // Easy
             ArrayList<Integer> easyAttacks = new ArrayList<Integer>();
             for(int i = 0; i < 7; ++i)
                 easyAttacks.add(i);
@@ -135,7 +135,7 @@ public class Attacks {
             }
             easyAttacks = null;
             
-            //Hard
+            // Hard
             ArrayList<Integer> hardAttacks = new ArrayList<Integer>();
             base = 42;
             for(int i = 0; i < 3; ++i) {
@@ -186,7 +186,7 @@ public class Attacks {
             }
             hardAttacks = null;
             
-            //WTH
+            // WTH
             ArrayList<Integer> superHardAttacks = new ArrayList<Integer>();
             base = 78;
             for(int i = 0; i < 1000; ++i) {
@@ -1581,64 +1581,84 @@ public class Attacks {
     private void survivalAttackTwentySeven(int index, int shift, boolean isLastHard) {
         switch(shift) {
             case 0:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, false, 'r', 25);
-                    addArrow(index, 2, false, 'l', 25);
-                    addArrow(index, 2, false, 'd', 25);
-                    addArrow(index, 2, true, 'u', 25);
-                    addArrow(index, 2, false, 'r', 25);
-                    addArrow(index, 2, false, 'l', 25);
-                    addArrow(index, 2, false, 'u', 25);
-                    addArrow(index, 2, true, 'd', 25);
-                }
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, true, 'u', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, true, 'd', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, true, 'u', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'u', 25);
                 if(isLastHard)
                     addArrow(index, 2, true, 'd', 120);
                 else
                     addArrow(index, 2, true, 'd', 25);
                 break;
             case 1:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, false, 'd', 25);
-                    addArrow(index, 2, false, 'u', 25);
-                    addArrow(index, 2, false, 'l', 25);
-                    addArrow(index, 2, true, 'r', 25);
-                    addArrow(index, 2, false, 'd', 25);
-                    addArrow(index, 2, false, 'u', 25);
-                    addArrow(index, 2, false, 'r', 25);
-                    addArrow(index, 2, true, 'l', 25);
-                }
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, true, 'r', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, true, 'l', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, true, 'r', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'r', 25);
                 if(isLastHard)
                     addArrow(index, 2, true, 'l', 120);
                 else
                     addArrow(index, 2, true, 'l', 25);
                 break;
             case 2:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, false, 'l', 25);
-                    addArrow(index, 2, false, 'r', 25);
-                    addArrow(index, 2, false, 'u', 25);
-                    addArrow(index, 2, true, 'd', 25);
-                    addArrow(index, 2, false, 'l', 25);
-                    addArrow(index, 2, false, 'r', 25);
-                    addArrow(index, 2, false, 'd', 25);
-                    addArrow(index, 2, true, 'u', 25);
-                }
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, true, 'd', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, true, 'u', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, true, 'd', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, false, 'd', 25);
                 if(isLastHard)
                     addArrow(index, 2, true, 'u', 120);
                 else
                     addArrow(index, 2, true, 'u', 25);
                 break;
             case 3:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, false, 'u', 25);
-                    addArrow(index, 2, false, 'd', 25);
-                    addArrow(index, 2, false, 'r', 25);
-                    addArrow(index, 2, true, 'l', 25);
-                    addArrow(index, 2, false, 'u', 25);
-                    addArrow(index, 2, false, 'd', 25);
-                    addArrow(index, 2, false, 'l', 25);
-                    addArrow(index, 2, true, 'r', 25);
-                }
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, true, 'l', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'l', 25);
+                addArrow(index, 2, true, 'r', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'r', 25);
+                addArrow(index, 2, true, 'l', 25);
+                addArrow(index, 2, false, 'u', 25);
+                addArrow(index, 2, false, 'd', 25);
+                addArrow(index, 2, false, 'l', 25);
                 if(isLastHard)
                     addArrow(index, 2, true, 'r', 120);
                 else
@@ -1885,22 +1905,22 @@ public class Attacks {
     private void survivalAttackThirtyOne(int index, int shift, boolean isLastHard) {
         switch(shift) {
             case 0:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'r', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'd', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'd', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'd', 40);
@@ -1911,22 +1931,22 @@ public class Attacks {
                     addArrow(index, 2, true, 'u', 45);
                 break;
             case 1:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'd', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'l', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'l', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'l', 40);
@@ -1937,22 +1957,22 @@ public class Attacks {
                     addArrow(index, 2, true, 'r', 45);
                 break;
             case 2:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'l', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'u', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'u', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'u', 40);
@@ -1963,22 +1983,22 @@ public class Attacks {
                     addArrow(index, 2, true, 'd', 45);
                 break;
             case 3:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'r', 40);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'u', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'l', 40);
                 addArrow(index, 2, true, 'r', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'u', 40);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'r', 40);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'd', 40);
                 addArrow(index, 2, true, 'r', 40);
@@ -2082,7 +2102,7 @@ public class Attacks {
     }
     
     private void survivalAttackThirtyFour(int index, int shift) {
-        switch(shift){
+        switch(shift) {
             case 0:
                 addArrow(index, 4, false, 'r', 20);
                 addArrow(index, 4, false, 'l', 20);
@@ -2227,7 +2247,7 @@ public class Attacks {
             prevChar = curChar;
             addArrow(index, 2, false, curChar, 23);
         }
-            addArrow(index, 2, false, DIRS[rand.nextInt(4)], 110);
+        addArrow(index, 2, false, DIRS[rand.nextInt(4)], 110);
     }
     
     private void survivalAttackThirtySeven(int index, int shift) {
@@ -2312,10 +2332,10 @@ public class Attacks {
             addArrow(index, 4, false, DIRS[rand.nextInt(4)], 20);
     }
     
-      private void directionFour(char dir, int index) {
-      for(int i = 0; i < 3; ++i)
-          addArrow(index, 4, false, dir, 10);
-      addArrow(index, 4, false, dir, 25);
+    private void directionFour(char dir, int index) {
+        for(int i = 0; i < 3; ++i)
+            addArrow(index, 4, false, dir, 10);
+        addArrow(index, 4, false, dir, 25);
     }
     
     private void survivalAttackThirtyNine(int index) {
@@ -2355,29 +2375,29 @@ public class Attacks {
                 current = DIRS[rand.nextInt(4)];
             prev = current;
             addArrow(index, 1, true, DIRS[rand.nextInt(4)], 50);
-        
+            
         }
     }
     
     private void survivalAttackFortyTwo(int index, int shift) {
         switch(shift) {
             case 0:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 25);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'r', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 25);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'd', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 25);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'd', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 25);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'd', 30);
@@ -2385,22 +2405,22 @@ public class Attacks {
                 addArrow(index, 2, true, 'u', 45);
                 break;
             case 1:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 25);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'd', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 25);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'l', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 25);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'l', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 25);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'l', 30);
@@ -2408,22 +2428,22 @@ public class Attacks {
                 addArrow(index, 2, true, 'r', 45);
                 break;
             case 2:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 25);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'l', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 25);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'u', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 25);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'u', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 25);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'u', 30);
@@ -2431,22 +2451,22 @@ public class Attacks {
                 addArrow(index, 2, true, 'd', 45);
                 break;
             case 3:
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'r', 25);
                 addArrow(index, 2, true, 'r', 30);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'u', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'd', 25);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'l', 30);
                 addArrow(index, 2, true, 'r', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'u', 25);
                 addArrow(index, 2, true, 'u', 30);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'r', 30);
-                for(int i = 0; i < 15; ++ i)
+                for(int i = 0; i < 15; ++i)
                     addArrow(index, 2, true, 'l', 25);
                 addArrow(index, 2, true, 'd', 30);
                 addArrow(index, 2, true, 'r', 30);
@@ -2897,22 +2917,22 @@ public class Attacks {
     }
     
     private void genocideAttackThirteen() {
-        for(int i = 0; i < 15; ++ i)
+        for(int i = 0; i < 15; ++i)
             addArrow(12, 2, true, 'd', 30);
         addArrow(12, 2, true, 'd', 40);
         addArrow(12, 2, true, 'u', 40);
         addArrow(12, 2, true, 'r', 40);
-        for(int i = 0; i < 15; ++ i)
+        for(int i = 0; i < 15; ++i)
             addArrow(12, 2, true, 'l', 30);
         addArrow(12, 2, true, 'l', 40);
         addArrow(12, 2, true, 'u', 40);
         addArrow(12, 2, true, 'd', 40);
-        for(int i = 0; i < 15; ++ i)
+        for(int i = 0; i < 15; ++i)
             addArrow(12, 2, true, 'r', 30);
         addArrow(12, 2, true, 'r', 40);
         addArrow(12, 2, true, 'l', 40);
         addArrow(12, 2, true, 'd', 40);
-        for(int i = 0; i < 15; ++ i)
+        for(int i = 0; i < 15; ++i)
             addArrow(12, 2, true, 'u', 30);
         addArrow(12, 2, true, 'l', 40);
         addArrow(12, 2, true, 'd', 40);

@@ -29,13 +29,23 @@ public class Attack {
     private boolean isDamaged = false;
     
     private Attacks a;
-        
+    
+    private NewerSound block;
+    private NewerSound damage;
+    
     /*
      * Constructor for constant delay
      */
     public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
+        try {
+            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
+        }
+        catch(IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
     }
     
     public void tick() {
@@ -101,10 +111,7 @@ public class Attack {
                     }
                     break;
             }
-            if(tempArrow.getDirectionNotSwitched() && ((tempArrow.getDir() == 'l' && tempArrow.getX() + xShift - 300 <= 72 && tempArrow.getX() + xShift - 300 > 0)
-                    || (tempArrow.getDir() == 'r' && 300 - (tempArrow.getX() + xShift) <= 72 && 300 - (tempArrow.getX() + xShift) > 0)
-                    || (tempArrow.getDir() == 'd' && 300 - (tempArrow.getY() + yShift) <= 72 && 300 - (tempArrow.getY() + yShift) > 0)
-                    || (tempArrow.getDir() == 'u' && (tempArrow.getY() + yShift) - 300 <= 72 && (tempArrow.getY() + yShift) - 300 > 0)))
+            if(tempArrow.getDirectionNotSwitched() && ((tempArrow.getDir() == 'l' && tempArrow.getX() + xShift - 300 <= 72 && tempArrow.getX() + xShift - 300 > 0) || (tempArrow.getDir() == 'r' && 300 - (tempArrow.getX() + xShift) <= 72 && 300 - (tempArrow.getX() + xShift) > 0) || (tempArrow.getDir() == 'd' && 300 - (tempArrow.getY() + yShift) <= 72 && 300 - (tempArrow.getY() + yShift) > 0) || (tempArrow.getDir() == 'u' && (tempArrow.getY() + yShift) - 300 <= 72 && (tempArrow.getY() + yShift) - 300 > 0)))
                 tempArrow.switchDir();
             int angle = p.getAngle();
             switch(tempArrow.getDir()) {
@@ -217,15 +224,6 @@ public class Attack {
             counter = 0;
         }
         hit = removeArrow(p.getDir(), p);
-        NewerSound block = null;
-        NewerSound damage = null;
-        try {
-            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
-            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
-        }
-        catch(UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        }
         block.changeVolume(volume);
         damage.changeVolume(volume);
         if(hit.equals("H")) {

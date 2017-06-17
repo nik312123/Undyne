@@ -22,8 +22,8 @@ public class Player {
     private boolean hit = false;
     
     private int red = 30;
-    private int time = 75;
-    private int timeoutCounter = time;
+    private static final int TIME = 75;
+    private int timeoutCounter = TIME;
     private int elementPosition = 0;
     private int baseDamage;
     private int damageOffset;
@@ -45,7 +45,7 @@ public class Player {
      * How much the player is currently rotated by
      */
     private int angle = 0;
-        
+    
     public Player() {
         try {
             shields[0] = ImageIO.read(Runner.class.getResource("/shieldH.png"));
@@ -76,7 +76,7 @@ public class Player {
         g.setColor(Color.RED);
         g.fillRect(430, 530 + 40, 70, 20);
         g.setColor(Color.YELLOW);
-        g.fillRect(430, 530 + 40, (int) (70 * ((double) health/maxHealth)), 20);
+        g.fillRect(430, 530 + 40, (int) (70 * ((double) health / maxHealth)), 20);
         Graphics2D g3 = (Graphics2D) g;
         g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g3.setFont(undyneFont);
@@ -106,7 +106,7 @@ public class Player {
         }
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), shield.getMinX() + 71/2, shield.getMinY() + 71/2);
+        tx.rotate(Math.toRadians(angle), shield.getMinX() + 71 / 2, shield.getMinY() + 71 / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         shield = op.filter(shield, null);
         g.translate(-300, -300);
@@ -198,7 +198,7 @@ public class Player {
     }
     
     public void resetTimeoutCounter() {
-        timeoutCounter = time;
+        timeoutCounter = TIME;
     }
     
     public void decreaseCounter() {

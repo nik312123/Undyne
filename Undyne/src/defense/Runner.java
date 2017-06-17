@@ -98,19 +98,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
-
+    
     private static BufferedImage[] gif;
     private static BufferedImage[] gif2;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
-        
+    
     private static NewerSound main;
     private static NewerSound gameDone;
     private static NewerSound startScreen;
     private static NewerSound undyne;
     private static NewerSound undying;
     private static NewerSound heal;
+    private static NewerSound block;
     
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
@@ -131,13 +132,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static JFrame frame;
     
-    public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException,
-            LineUnavailableException, FontFormatException {
+    public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
         startScreen = new NewerSound(Runner.class.getResource("/WF.wav"), true);
         undyne = new NewerSound(Runner.class.getResource("/undyne.wav"), false);
         undying = new NewerSound(Runner.class.getResource("/undying.wav"), false);
         heal = new NewerSound(Runner.class.getResource("/heal.wav"), false);
+        block = new NewerSound(Runner.class.getResource("/block.wav"), false);
         heart = ImageIO.read(Runner.class.getResource("/heart.png"));
         heartBreak = new BufferedImage[49];
         for(int i = 0; i <= 48; ++i)
@@ -233,8 +234,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             
             @Override
             public void mouseDragged(MouseEvent e) {
-                frame.setLocation((int) (frame.getLocation().getX() + e.getX() - xPos),
-                        (int) (frame.getLocation().getY() + e.getY() - yPos));
+                frame.setLocation((int) (frame.getLocation().getX() + e.getX() - xPos), (int) (frame.getLocation().getY() + e.getY() - yPos));
             }
             
             @Override
@@ -260,6 +260,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         startScreen.changeVolume(1);
                     }
                     catch(NullPointerException e1) {}
+                    try {
+                        stage.changeMusicVol(1);
+                    }
+                    catch(NullPointerException e1) {}
                 }
                 else {
                     musicVolume = 0;
@@ -273,6 +277,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     catch(NullPointerException e1) {}
                     try {
                         gameDone.changeVolume(0);
+                    }
+                    catch(NullPointerException e1) {}
+                    try {
+                        stage.changeMusicVol(0);
                     }
                     catch(NullPointerException e1) {}
                 }
@@ -316,18 +324,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             public void mouseClicked(MouseEvent e) {
                 if(sfxMuted) {
                     Attack.changeVol(1);
-                    StartScreen.changeVol(1);
+                    StartScreen.changeSfxVol(1);
                     undyne.changeVolume(1);
                     undying.changeVolume(1);
                     heal.changeVolume(1);
+                    block.changeVolume(1);
                     sfxVolume = 1;
                 }
                 else {
                     Attack.changeVol(0);
-                    StartScreen.changeVol(0);
+                    StartScreen.changeSfxVol(0);
                     undyne.changeVolume(0);
                     undying.changeVolume(0);
                     heal.changeVolume(0);
+                    block.changeVolume(0);
                     sfxVolume = 0;
                 }
                 sfxMuted = !sfxMuted;
@@ -482,6 +492,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     creditsButton.setVisible(true);
                     helpButton.draw(g);
                     helpButton.setVisible(true);
+                    if(stage.heartsActivated())
+                        startScreen.stop();
+                    else if(beginning && startScreen.isStopped())
+                        startScreen.play();
                 }
                 stage.run(g);
                 try {
@@ -570,7 +584,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
         }
         if(a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10))
-            undyneSpeech(g);
+        undyneSpeech(g);
         closeButton.draw(g);
         draggableButton.draw(g);
         musicButton.draw(g);
@@ -645,8 +659,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public void gif(Graphics g) {
-        if(a == null || !a.getIsFinished()
-                || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
+        if(a == null || !a.getIsFinished() || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
             int maxCount;
             int gifChange;
             if(isGenocide) {
@@ -769,8 +782,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         ++gameOverCount;
         if(gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
-            if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99
-                    || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
+            if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
                 try {
                     NewerSound asgore = new NewerSound(Runner.class.getResource("/asgore.wav"), false);
                     asgore.changeVolume(sfxVolume);
@@ -804,8 +816,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
         while(size > 72) {
-            g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(),
-                    getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
+            g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(), getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
             --size;
         }
     }
@@ -818,8 +829,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
-        g.drawImage(heart, getWidth() / 2 - width / 2 + 1 + p.getElementPosition() + flickeringHeart,
-                getHeight() / 2 - height / 2 + p.getElementPosition(), null);
+        g.drawImage(heart, getWidth() / 2 - width / 2 + 1 + p.getElementPosition() + flickeringHeart, getHeight() / 2 - height / 2 + p.getElementPosition(), null);
     }
     
     public void drawCircle(Graphics g) {
@@ -864,18 +874,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             else if(speechCounter < easyMessage[1].length() + easyMessage[0].length() + 2) {
                 print = easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1));
                 g.drawString(easyMessage[0], speechX + 30, speechY + 20);
-                g.drawString(easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1)), speechX + 30,
-                        speechY + 40);
+                g.drawString(easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1)), speechX + 30, speechY + 40);
             }
             else if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3) {
-                print = easyMessage[2].substring(0,
-                        speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2));
+                print = easyMessage[2].substring(0, speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2));
                 g.drawString(easyMessage[0], speechX + 30, speechY + 20);
                 g.drawString(easyMessage[1], speechX + 30, speechY + 40);
-                g.drawString(
-                        easyMessage[2].substring(0,
-                                speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2)),
-                        speechX + 30, speechY + 60);
+                g.drawString(easyMessage[2].substring(0, speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2)), speechX + 30, speechY + 60);
             }
             else {
                 g.drawString(easyMessage[0], speechX + 30, speechY + 20);
@@ -886,8 +891,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ')
                 undyne.play();
             speechCounterPrev = speechCounter;
-            if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3
-                    && speechDelayCounter % 6 == 0)
+            if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
                 ++speechCounter;
         }
         if(isGenocide) {
@@ -899,18 +903,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             else if(speechCounter < hardMessage[1].length() + hardMessage[0].length() + 2) {
                 print = hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1));
                 g.drawString(hardMessage[0], speechX + 30, speechY + 20);
-                g.drawString(hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1)), speechX + 30,
-                        speechY + 40);
+                g.drawString(hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1)), speechX + 30, speechY + 40);
             }
             else if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3) {
-                print = hardMessage[2].substring(0,
-                        speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2));
+                print = hardMessage[2].substring(0, speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2));
                 g.drawString(hardMessage[0], speechX + 30, speechY + 20);
                 g.drawString(hardMessage[1], speechX + 30, speechY + 40);
-                g.drawString(
-                        hardMessage[2].substring(0,
-                                speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2)),
-                        speechX + 30, speechY + 60);
+                g.drawString(hardMessage[2].substring(0, speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2)), speechX + 30, speechY + 60);
             }
             else {
                 g.drawString(hardMessage[0], speechX + 30, speechY + 20);
@@ -921,8 +920,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ')
                 undying.play();
             speechCounterPrev = speechCounter;
-            if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3
-                    && speechDelayCounter % 6 == 0)
+            if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
                 ++speechCounter;
         }
         ++speechDelayCounter;
@@ -948,8 +946,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     break;
             }
         }
-        g.setColor(Color.YELLOW);
         g.setFont(deteFontScore);
+        g.setColor(Color.YELLOW);
         g.drawString("Score: " + score, 5, 590);
     }
     
@@ -1065,6 +1063,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         heal = null;
         undyne = null;
         undying = null;
+        block = null;
         closeButton = null;
         draggableButton = null;
         musicButton = null;
@@ -1087,8 +1086,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         try {
             main();
         }
-        catch(IOException | UnsupportedAudioFileException | InterruptedException | LineUnavailableException
-                | FontFormatException e) {
+        catch(IOException | UnsupportedAudioFileException | InterruptedException | LineUnavailableException | FontFormatException e) {
             e.printStackTrace();
         }
     }
@@ -1134,8 +1132,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 if(beginning) {
                     if(stage.isOnLink() && creditsButton.isDisplayable())
                         stage.openCreditsLink();
-                    if(stage.isOnHelp() && helpButton.isDisplayable())
+                    else if(stage.isOnHelp() && helpButton.isDisplayable())
                         helpStarter = true;
+                    else if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
+                        block.changeVolume(sfxVolume);
+                        block.play();
+                        stage.activateHeartOne();
+                    }
+                    else if(stage.isOnHeartTwo() && !stage.heartTwoActivated()) {
+                        block.changeVolume(sfxVolume);
+                        block.play();
+                        stage.activateHeartTwo();
+                    }
+                    else if(stage.isOnHeartThree() && !stage.heartThreeActivated()) {
+                        block.changeVolume(sfxVolume);
+                        block.play();
+                        stage.activateHeartThree();
+                    }
                     else if(stage.shouldStart()) {
                         isGenocide = stage.isHard();
                         survival = stage.isSurvival();
