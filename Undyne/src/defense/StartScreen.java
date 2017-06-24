@@ -22,6 +22,8 @@ public class StartScreen {
     private static double sfxVolume = 1;
     private static double musicVolume = 1;
     
+    private static float blueHeartOpacity = 0.02f;
+    
     private BufferedImage undyne;
     private BufferedImage undyneBlue;
     private BufferedImage start;
@@ -32,6 +34,7 @@ public class StartScreen {
     private BufferedImage subtitleBlue;
     private BufferedImage buttons;
     private BufferedImage bones;
+    private BufferedImage blueHeartFlash;
     private BufferedImage[] keys = new BufferedImage[2];
     private BufferedImage[] fire = new BufferedImage[38];
     private BufferedImage[] dog = new BufferedImage[2];
@@ -66,6 +69,7 @@ public class StartScreen {
     private static int flickerCounter = 0;
     private static int flickerChangeY = 0;
     private static int flickeringCountdown = 75;
+    private static int blueHeartFlashCounter = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -134,6 +138,7 @@ public class StartScreen {
             bones = ImageIO.read(Runner.class.getResource("/bones.png"));
             for(int i = 0; i <= 9; ++i)
                 sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
+            blueHeartFlash = ImageIO.read(Runner.class.getResource("/blueHeartFlash.png"));
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -163,6 +168,7 @@ public class StartScreen {
                 easyButton(g);
                 survivalButton(g);
                 g.drawImage(buttons, 0, 0, null);
+                drawBlueHeartFlash(g);
                 heartMouse(g);
                 if(heartsActivated()) {
                     drawSans(g);
@@ -470,6 +476,20 @@ public class StartScreen {
             sansCount = 0;
     }
     
+    public void drawBlueHeartFlash(Graphics g) {
+        if(heartsActivated())
+            blueHeartOpacity = 1f;
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, blueHeartOpacity));
+        g2d.drawImage(blueHeartFlash, 0 - scale, 0 - scale, null);
+        g2d.dispose();
+        if(blueHeartOpacity > 0.02f && blueHeartFlashCounter % 2 == 0)
+            blueHeartOpacity -= 0.02f;
+        ++blueHeartFlashCounter;
+        if(blueHeartFlashCounter == 2)
+            blueHeartFlashCounter = 0;
+    }
+    
     public void flickeringHeart() {
         if(flickering) {
             --flickeringCountdown;
@@ -498,6 +518,7 @@ public class StartScreen {
         flickerCounter = 0;
         flickerChangeY = 0;
         flickeringCountdown = 75;
+        blueHeartOpacity = 0f;
         flickering = false;
         hitGround = false;
         showBones = false;
@@ -589,6 +610,10 @@ public class StartScreen {
         return true;
     }
     
+    public void activateBlueHeartFlash() {
+        blueHeartOpacity = 1f;
+    }
+    
     public void openCreditsLink() {
         try {
             Desktop.getDesktop().browse(new URI("http://athena.edenpr.org/~chawlan/undyne.html"));
@@ -612,6 +637,7 @@ public class StartScreen {
         bones = null;
         damage = null;
         megalovania = null;
+        blueHeartFlash = null;
         fire = new BufferedImage[38];
         dog = new BufferedImage[2];
         sans = new BufferedImage[10];
@@ -642,6 +668,8 @@ public class StartScreen {
         flickerCounter = 0;
         flickerChangeY = 0;
         flickeringCountdown = 75;
+        blueHeartFlashCounter = 0;
+        blueHeartOpacity = 0.02f;
         right = false;
         left = false;
         up = false;

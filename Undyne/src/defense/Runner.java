@@ -40,7 +40,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
-    private static final String[] mainSounds = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
+    private static final String[] MAIN_SOUNDS = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
     
     private static double fadeStart = 0;
     private static double sfxVolume = 1;
@@ -962,7 +962,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             heal.play();
         main.stop();
         try {
-            main = new NewerSound(Runner.class.getResource(mainSounds[++mainIndex]), true);
+            main = new NewerSound(Runner.class.getResource(MAIN_SOUNDS[++mainIndex]), true);
         }
         catch(UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
@@ -1138,16 +1138,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         block.changeVolume(sfxVolume);
                         block.play();
                         stage.activateHeartOne();
+                        stage.activateBlueHeartFlash();
                     }
                     else if(stage.isOnHeartTwo() && !stage.heartTwoActivated()) {
                         block.changeVolume(sfxVolume);
                         block.play();
                         stage.activateHeartTwo();
+                        stage.activateBlueHeartFlash();
                     }
                     else if(stage.isOnHeartThree() && !stage.heartThreeActivated()) {
                         block.changeVolume(sfxVolume);
                         block.play();
                         stage.activateHeartThree();
+                        stage.activateBlueHeartFlash();
                     }
                     else if(stage.shouldStart()) {
                         isGenocide = stage.isHard();
