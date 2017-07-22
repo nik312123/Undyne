@@ -70,6 +70,7 @@ public class StartScreen {
     private static int flickerChangeY = 0;
     private static int flickeringCountdown = 75;
     private static int blueHeartFlashCounter = 0;
+    private static int gifOneIndex = 0, gifTwoIndex = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -148,6 +149,7 @@ public class StartScreen {
     public void run(Graphics g) {
         gifFire(g);
         drawArrows(g);
+        drawGif(g);
         if(frameCounter1 != 251)
             ++frameCounter1;
         if(frameCounter1 > 100) {
@@ -191,6 +193,17 @@ public class StartScreen {
         g.drawImage(Runner.reverseArr, -100, 1000, null);
     }
     
+    public void drawGif(Graphics g) {
+        if(gifOneIndex > 31)
+            gifOneIndex = 0;
+        if(gifTwoIndex > 79)
+            gifTwoIndex = 0;
+        g.drawImage(Runner.gif[gifOneIndex], -100, 1000, null);
+        g.drawImage(Runner.gif2[gifTwoIndex], -100, 1000, null);
+        ++gifOneIndex;
+        ++gifTwoIndex;
+    }
+    
     public void drawSubtitle(Graphics g) {
         if(heartsActivated())
             g.drawImage(subtitleBlue, 0 - scale, 0 - scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
@@ -211,6 +224,12 @@ public class StartScreen {
                 if(down && !heartsActivated() || down && hitGround)
                     heartY += speed;
                 if(heartsActivated() && heartY == 281 && !hitGround) {
+                    try {
+                        wall = new NewerSound(Runner.class.getResource("/wall.wav"), false);
+                    }
+                    catch(UnsupportedAudioFileException | IOException e) {
+                        e.printStackTrace();
+                    }
                     wall.changeVolume(sfxVolume);
                     wall.play();
                     hitGround = true;
@@ -299,6 +318,12 @@ public class StartScreen {
                 else {
                     if(playFire) {
                         playFire = false;
+                        try {
+                            flare = new NewerSound(Runner.class.getResource("/fire.wav"), false);
+                        }
+                        catch(UnsupportedAudioFileException | IOException e) {
+                            e.printStackTrace();
+                        }
                         flare.changeVolume(sfxVolume);
                         flare.play();
                     }
@@ -335,6 +360,12 @@ public class StartScreen {
                 }
                 else {
                     if(playBark) {
+                        try {
+                            bark = new NewerSound(Runner.class.getResource("/bark.wav"), false);
+                        }
+                        catch(UnsupportedAudioFileException | IOException e) {
+                            e.printStackTrace();
+                        }
                         bark.changeVolume(sfxVolume);
                         bark.play();
                         playBark = false;
@@ -437,6 +468,12 @@ public class StartScreen {
         ++boneCounter;
         if(boneCounter > 50) {
             if(!showBones) {
+                try {
+                    boneSound = new NewerSound(Runner.class.getResource("/bones.wav"), false);
+                }
+                catch(UnsupportedAudioFileException | IOException e) {
+                    e.printStackTrace();
+                }
                 boneSound.changeVolume(sfxVolume);
                 boneSound.play();
             }
@@ -451,6 +488,12 @@ public class StartScreen {
                 boneY -= 3;
             if(heartY + 300 >= boneY) {
                 if(flickering == false) {
+                    try {
+                        damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
+                    }
+                    catch(UnsupportedAudioFileException | IOException e) {
+                        e.printStackTrace();
+                    }
                     damage.changeVolume(sfxVolume);
                     damage.play();
                 }

@@ -8,19 +8,18 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Help {
-    
-    private int incrementer = 10;
     private int frameCounter = 0;
     private int dynamicSize = 0;
     private int counter = 0;
-    private static final int size = 450;
+    private static final int INCREMENTER = 10;
+    private static final int SIZE = 450;
     
-    private BufferedImage[] helpGif = new BufferedImage[465];
+    private BufferedImage[] helpGif = new BufferedImage[739];
     
     public Help() {
         try {
-            for(int i = 0; i <= 464; ++i)
-                helpGif[i] = ImageIO.read(Runner.class.getResource("/help/frame" + i + ".png"));
+            for(int i = 0; i <= 738; ++i)
+                helpGif[i] = ImageIO.read(Runner.class.getResource("/help/help" + i + ".jpg"));
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -31,8 +30,11 @@ public class Help {
         ++frameCounter;
         if(start)
             grow();
-        else
+        else {
             shrink();
+            frameCounter = 1;
+            counter = 0;
+        }
         g.setColor(Color.ORANGE);
         g.setFont(Runner.deteFontSpeech);
         if(dynamicSize > 0) {
@@ -40,22 +42,24 @@ public class Help {
             g.drawImage(helpGif[counter], 300 - dynamicSize / 2, 300 - dynamicSize / 2, dynamicSize, dynamicSize, null);
         }
         g.setColor(Color.WHITE);
-        if(dynamicSize >= size)
+        if(dynamicSize >= SIZE)
             g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - dynamicSize / 4 + 37);
-        if(frameCounter % 3 == 0)
-            counter++;
-        if(counter == 464)
+        if(frameCounter % 3 == 0) {
+            ++counter;
+            frameCounter = 0;
+        }
+        if(counter == 739)
             counter = 0;
     }
     
     public void grow() {
-        if(dynamicSize <= size)
-            dynamicSize += incrementer;
+        if(dynamicSize <= SIZE)
+            dynamicSize += INCREMENTER;
     }
     
     public void shrink() {
         if(dynamicSize > 0)
-            dynamicSize -= incrementer * 2;
+            dynamicSize -= INCREMENTER * 2;
     }
     
 }
