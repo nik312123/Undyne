@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
@@ -13,6 +14,8 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
+import com.sun.medialib.mlib.Image;
 
 import nikunj.classes.NewerSound;
 
@@ -35,6 +38,8 @@ public class StartScreen {
     private BufferedImage buttons;
     private BufferedImage bones;
     private BufferedImage blueHeartFlash;
+    private BufferedImage spear;
+    private BufferedImage arrows;
     private BufferedImage[] keys = new BufferedImage[2];
     private BufferedImage[] fire = new BufferedImage[38];
     private BufferedImage[] dog = new BufferedImage[2];
@@ -71,6 +76,8 @@ public class StartScreen {
     private static int flickeringCountdown = 75;
     private static int blueHeartFlashCounter = 0;
     private static int gifOneIndex = 0, gifTwoIndex = 0;
+    private static int spearCounter = 1, spearFrame = 0;
+    private static int arrowsCounter = 1;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -91,6 +98,11 @@ public class StartScreen {
     private static boolean showBones = false;
     private static boolean hideSans = false;
     private static boolean flickering = false;
+    private static boolean activateSpears = false;
+    private static boolean spearAppearPlayed = false;
+    private static boolean spearHitPlayed = false;
+    private static boolean heartMoved = false;
+    private static boolean arrowsShouldShow = true;
     private static boolean[] heartsActivated = new boolean[3];
     
     private NewerSound flare;
@@ -102,6 +114,10 @@ public class StartScreen {
     private NewerSound spearAppear;
     private NewerSound spearFly;
     private NewerSound spearHit;
+    
+    private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
+    private static final Point2D SPEAR_END = new Point2D.Double(250, 197);;
+    private static Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
     
@@ -140,6 +156,8 @@ public class StartScreen {
             for(int i = 0; i <= 9; ++i)
                 sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
             blueHeartFlash = ImageIO.read(Runner.class.getResource("/blueHeartFlash.png"));
+            spear = ImageIO.read(Runner.class.getResource("/spear.png"));
+            arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -169,8 +187,10 @@ public class StartScreen {
                 hardButton(g);
                 easyButton(g);
                 survivalButton(g);
+                startArrows(g);
                 g.drawImage(buttons, 0, 0, null);
                 drawBlueHeartFlash(g);
+                drawSpears(g);
                 heartMouse(g);
                 if(heartsActivated()) {
                     drawSans(g);
@@ -215,14 +235,22 @@ public class StartScreen {
         if(zCounter > 10 && !Runner.getHelpStarter()) {
             ++moveCounter;
             if(moveCounter > 2) {
-                if(right)
+                if(right) {
                     heartX += speed;
-                if(left)
+                    heartMoved = true;
+                }
+                if(left) {
                     heartX -= speed;
-                if(up && !heartsActivated() || up && hitGround)
+                    heartMoved = true;
+                }
+                if(up && !heartsActivated() || up && hitGround) {
                     heartY -= speed;
-                if(down && !heartsActivated() || down && hitGround)
+                    heartMoved = true;
+                }
+                if(down && !heartsActivated() || down && hitGround) {
                     heartY += speed;
+                    heartMoved = true;
+                }
                 if(heartsActivated() && heartY == 281 && !hitGround) {
                     try {
                         wall = new NewerSound(Runner.class.getResource("/wall.wav"), false);
@@ -401,11 +429,11 @@ public class StartScreen {
                 if(survivalButtonRect < 60) {
                     survivalButtonRect += 5;
                     playSpear = true;
+                    activateSpears = false;
                 }
                 else {
                     if(playSpear) {
-                        // spearSound.changeVolume(volume);
-                        // spearSound.play();
+                        activateSpears = true;
                         playSpear = false;
                     }
                     easyButtonRectRed = false;
@@ -417,6 +445,7 @@ public class StartScreen {
                 if(survivalButtonRect > 0 && !survivalButtonRectRed) {
                     survivalButtonRect -= 5;
                     playSpear = true;
+                    activateSpears = false;
                 }
             }
         }
@@ -462,6 +491,74 @@ public class StartScreen {
             }
             g.drawImage(dog[dogFrame], 130 - 39, 261 + shift, null);
         }
+    }
+    
+    public void drawSpears(Graphics g) {
+        if(activateSpears) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            if(!spearAppearPlayed) {
+                spearLocation = (Point2D) SPEAR_SPAWN.clone();
+                try {
+                    spearAppear = new NewerSound(Runner.class.getResource("/spearAppear.wav"), false);
+                }
+                catch(UnsupportedAudioFileException | IOException e) {
+                    e.printStackTrace();
+                }
+                spearAppear.changeVolume(sfxVolume);
+                spearAppear.play();
+                spearAppearPlayed = true;
+            }
+            if(spearFrame <= 30) {
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, spearFrame / 30f));
+                g2d.drawImage(spear, (int) Math.round(SPEAR_SPAWN.getX()), (int) Math.round(SPEAR_SPAWN.getY()), null);
+            }
+            else if(!spearLocation.equals(SPEAR_END)){
+                spearLocation = new Point2D.Double(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX())/20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY())/20);
+                g2d.drawImage(spear, (int) Math.round(spearLocation.getX()), (int) Math.round(spearLocation.getY()), null);
+            }
+            else {
+                if(!spearHitPlayed) {
+                    try {
+                        spearHit = new NewerSound(Runner.class.getResource("/spearHit.wav"), false);
+                    }
+                    catch(UnsupportedAudioFileException | IOException e) {
+                        e.printStackTrace();
+                    }
+                    spearHit.changeVolume(sfxVolume);
+                    spearHit.play();
+                    spearHitPlayed = true;
+                }
+                g2d.drawImage(spear, (int) Math.round(SPEAR_END.getX()), (int) Math.round(SPEAR_END.getY()), null);
+            }
+            if(spearFrame == 30) {
+                spearFly.play();
+            }
+            if(spearCounter % 3 == 0) {
+                ++spearFrame;
+                spearCounter = 1;
+            }
+            ++spearCounter;
+            g2d.dispose();
+        }
+        else {
+            spearCounter = 1;
+            spearFrame = 0;
+            spearAppearPlayed = false;
+            spearHitPlayed = false;
+        }
+    }
+    
+    public void startArrows(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+        if(!heartMoved && arrowsShouldShow)
+            g2d.drawImage(arrows, 5, 100, null);
+        if(arrowsCounter % 85 == 0) {
+            arrowsShouldShow = !arrowsShouldShow;
+            arrowsCounter = 1;
+        }
+        ++arrowsCounter;
+        g2d.dispose();
     }
     
     public void drawBones(Graphics g) {
