@@ -39,6 +39,13 @@ public class Attack {
     public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
+        try {
+            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
+        }
+        catch(UnsupportedAudioFileException | IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void tick() {
@@ -217,13 +224,6 @@ public class Attack {
             counter = 0;
         }
         hit = removeArrow(p.getDir(), p);
-        try {
-            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
-            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
-        }
-        catch(UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        }
         block.changeVolume(volume);
         damage.changeVolume(volume);
         if(hit.equals("H")) {
