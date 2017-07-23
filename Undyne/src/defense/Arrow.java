@@ -221,7 +221,7 @@ public class Arrow {
                 break;
         }
         AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth()/2, arr.getMinY() + arr.getHeight()/2);
+        tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth() / 2, arr.getMinY() + arr.getHeight() / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         arr = op.filter(arr, null);
         g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
@@ -274,7 +274,7 @@ public class Arrow {
         }
     }
     
-    public boolean getInside(){
+    public boolean getInside() {
         return inside;
     }
     
