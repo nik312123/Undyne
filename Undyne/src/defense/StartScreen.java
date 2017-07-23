@@ -766,24 +766,11 @@ public class StartScreen {
     public void resetVars() {
         fadeIn = 0;
         fadeStart = 0;
-        undyne = null;
-        start = null;
-        heartMouse = null;
-        select = null;
-        subtitle = null;
-        buttons = null;
-        undyneBlue = null;
-        subtitleBlue = null;
-        bones = null;
-        damage = null;
-        megalovania = null;
-        blueHeartFlash = null;
-        fire = new BufferedImage[38];
-        dog = new BufferedImage[2];
-        sans = new BufferedImage[10];
+        sfxVolume = 1;
+        musicVolume = 1;
+        blueHeartOpacity = 0.02f;
         speed = 2;
         zCounter = 0;
-        heartX = 5;
         hardButtonRect = 0;
         easyButtonRect = 0;
         survivalButtonRect = 0;
@@ -799,8 +786,10 @@ public class StartScreen {
         scaleSub = 10;
         scale = 500;
         shift = 0;
+        heartX = 5;
         heartY = 100 + shift;
         frameCounter1 = 0;
+        moveCounter = 1;
         boneCounter = 0;
         boneY = 600;
         sansCount = 0;
@@ -809,7 +798,11 @@ public class StartScreen {
         flickerChangeY = 0;
         flickeringCountdown = 75;
         blueHeartFlashCounter = 0;
-        blueHeartOpacity = 0.02f;
+        gifOneIndex = 0;
+        gifTwoIndex = 0;
+        spearCounter = 1;
+        spearFrame = 0;
+        arrowsCounter = 1;
         right = false;
         left = false;
         up = false;
@@ -826,9 +819,13 @@ public class StartScreen {
         showBones = false;
         hideSans = false;
         flickering = false;
-        heartsActivated[0] = false;
-        heartsActivated[1] = false;
-        heartsActivated[2] = false;
+        activateSpears = false;
+        spearAppearPlayed = false;
+        spearHitPlayed = false;
+        heartMoved = false;
+        arrowsShouldShow = true;
+        heartsActivated = new boolean[3];
+        spearLocation = (Point2D) SPEAR_SPAWN.clone();
     }
     
     public boolean shouldStart() {
