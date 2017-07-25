@@ -116,7 +116,7 @@ public class StartScreen {
     private NewerSound spearHit;
     
     private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
-    private static final Point2D SPEAR_END = new Point2D.Double(250, 197);;
+    private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
     private static Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
