@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import nikunj.classes.NewerSound;
+import nikunj.classes.Sound;
 
 public class Attack {
     private int counter = 0;
@@ -30,8 +30,8 @@ public class Attack {
     
     private Attacks a;
     
-    private NewerSound block;
-    private NewerSound damage;
+    private Sound block;
+    private Sound damage;
     
     /*
      * Constructor for constant delay
@@ -40,8 +40,8 @@ public class Attack {
         this.attackPattern = attackPattern;
         this.a = a;
         try {
-            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
-            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
+            block = new Sound(Runner.class.getResource("/block.wav"), false);
+            damage = new Sound(Runner.class.getResource("/damage.wav"), false);
         }
         catch(UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public class Attack {
         boolean damage = false;
         if(attackPattern.size() == 0)
             return "";
-        for(int i = 0; i < attackPattern.size() && !hit && !damage; i++) {
+        for(int i = 0; i < attackPattern.size() && !hit && !damage; ++i) {
             Arrow tempArrow = attackPattern.get(i);
             int xShift = 0, yShift = 0;
             switch(tempArrow.getDir()) {
@@ -185,11 +185,11 @@ public class Attack {
     }
     
     public void draw(Graphics g) throws IOException {
-        if(attackPattern.size() == 0)
-            return;
-        attackPattern.get(0).draw(g, Color.RED);
-        for(int i = 1; i < attackPattern.size(); ++i) {
-            attackPattern.get(i).draw(g, Color.BLUE);
+        if(attackPattern.size() != 0) {
+            attackPattern.get(0).draw(g, Color.RED);
+            for(int i = 1; i < attackPattern.size(); ++i) {
+                attackPattern.get(i).draw(g, Color.BLUE);
+            }
         }
     }
     
@@ -230,12 +230,10 @@ public class Attack {
             p.setRed(0);
             block.play();
         }
-        else if(hit.equals("D")) {
-            if(!p.getHit()) {
-                isDamaged = true;
-                damage.play();
-                p.setHit(true);
-            }
+        else if(hit.equals("D") && !p.getHit()) {
+            isDamaged = true;
+            damage.play();
+            p.setHit(true);
         }
         if(isDamaged) {
             p.setElementPosition(move);

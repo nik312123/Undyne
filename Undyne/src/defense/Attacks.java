@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Attacks {
-    
     private boolean isNewAttack = true;
     private boolean loopDone = false;
     private boolean isFinished = false;

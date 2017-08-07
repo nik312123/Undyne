@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -15,9 +16,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import com.sun.medialib.mlib.Image;
-
-import nikunj.classes.NewerSound;
+import nikunj.classes.Sound;
 
 public class StartScreen {
     private static double fadeIn = 0;
@@ -78,6 +77,8 @@ public class StartScreen {
     private static int gifOneIndex = 0, gifTwoIndex = 0;
     private static int spearCounter = 1, spearFrame = 0;
     private static int arrowsCounter = 1;
+    private static int nameStringX = 610;
+    private static int nameStringCounter = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -105,33 +106,33 @@ public class StartScreen {
     private static boolean arrowsShouldShow = true;
     private static boolean[] heartsActivated = new boolean[3];
     
-    private NewerSound flare;
-    private NewerSound bark;
-    private NewerSound wall;
-    private NewerSound boneSound;
-    private NewerSound damage;
-    private NewerSound megalovania;
-    private NewerSound spearAppear;
-    private NewerSound spearFly;
-    private NewerSound spearHit;
+    private Sound flare;
+    private Sound bark;
+    private Sound wall;
+    private Sound boneSound;
+    private Sound damage;
+    private Sound megalovania;
+    private Sound spearAppear;
+    private Sound spearFly;
+    private Sound spearHit;
     
     private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
-    private static final Point2D SPEAR_END = new Point2D.Double(250, 197);;
+    private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
     private static Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
     
     public StartScreen() {
         try { // Credit to wjl from goo.gl/ofAZRS
-            flare = new NewerSound(Runner.class.getResource("/fire.wav"), false);
-            bark = new NewerSound(Runner.class.getResource("/bark.wav"), false);
-            spearAppear = new NewerSound(Runner.class.getResource("/spearAppear.wav"), false);
-            spearFly = new NewerSound(Runner.class.getResource("/spearFly.wav"), false);
-            spearHit = new NewerSound(Runner.class.getResource("/spearHit.wav"), false);
-            wall = new NewerSound(Runner.class.getResource("/wall.wav"), false);
-            boneSound = new NewerSound(Runner.class.getResource("/bones.wav"), false);
-            damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
-            megalovania = new NewerSound(Runner.class.getResource("/megalovania.wav"), true);
+            flare = new Sound(Runner.class.getResource("/fire.wav"), false);
+            bark = new Sound(Runner.class.getResource("/bark.wav"), false);
+            spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
+            spearFly = new Sound(Runner.class.getResource("/spearFly.wav"), false);
+            spearHit = new Sound(Runner.class.getResource("/spearHit.wav"), false);
+            wall = new Sound(Runner.class.getResource("/wall.wav"), false);
+            boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
+            damage = new Sound(Runner.class.getResource("/damage.wav"), false);
+            megalovania = new Sound(Runner.class.getResource("/megalovania.wav"), true);
         }
         catch(UnsupportedAudioFileException | IOException e1) {
             e1.printStackTrace();
@@ -191,6 +192,7 @@ public class StartScreen {
                 g.drawImage(buttons, 0, 0, null);
                 drawBlueHeartFlash(g);
                 drawSpears(g);
+                drawNames(g);
                 heartMouse(g);
                 if(heartsActivated()) {
                     drawSans(g);
@@ -253,7 +255,7 @@ public class StartScreen {
                 }
                 if(heartsActivated() && heartY == 281 && !hitGround) {
                     try {
-                        wall = new NewerSound(Runner.class.getResource("/wall.wav"), false);
+                        wall = new Sound(Runner.class.getResource("/wall.wav"), false);
                     }
                     catch(UnsupportedAudioFileException | IOException e) {
                         e.printStackTrace();
@@ -347,7 +349,7 @@ public class StartScreen {
                     if(playFire) {
                         playFire = false;
                         try {
-                            flare = new NewerSound(Runner.class.getResource("/fire.wav"), false);
+                            flare = new Sound(Runner.class.getResource("/fire.wav"), false);
                         }
                         catch(UnsupportedAudioFileException | IOException e) {
                             e.printStackTrace();
@@ -389,7 +391,7 @@ public class StartScreen {
                 else {
                     if(playBark) {
                         try {
-                            bark = new NewerSound(Runner.class.getResource("/bark.wav"), false);
+                            bark = new Sound(Runner.class.getResource("/bark.wav"), false);
                         }
                         catch(UnsupportedAudioFileException | IOException e) {
                             e.printStackTrace();
@@ -499,7 +501,7 @@ public class StartScreen {
             if(!spearAppearPlayed) {
                 spearLocation = (Point2D) SPEAR_SPAWN.clone();
                 try {
-                    spearAppear = new NewerSound(Runner.class.getResource("/spearAppear.wav"), false);
+                    spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
                 }
                 catch(UnsupportedAudioFileException | IOException e) {
                     e.printStackTrace();
@@ -519,7 +521,7 @@ public class StartScreen {
             else {
                 if(!spearHitPlayed) {
                     try {
-                        spearHit = new NewerSound(Runner.class.getResource("/spearHit.wav"), false);
+                        spearHit = new Sound(Runner.class.getResource("/spearHit.wav"), false);
                     }
                     catch(UnsupportedAudioFileException | IOException e) {
                         e.printStackTrace();
@@ -566,7 +568,7 @@ public class StartScreen {
         if(boneCounter > 50) {
             if(!showBones) {
                 try {
-                    boneSound = new NewerSound(Runner.class.getResource("/bones.wav"), false);
+                    boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
                 }
                 catch(UnsupportedAudioFileException | IOException e) {
                     e.printStackTrace();
@@ -586,7 +588,7 @@ public class StartScreen {
             if(heartY + 300 >= boneY) {
                 if(flickering == false) {
                     try {
-                        damage = new NewerSound(Runner.class.getResource("/damage.wav"), false);
+                        damage = new Sound(Runner.class.getResource("/damage.wav"), false);
                     }
                     catch(UnsupportedAudioFileException | IOException e) {
                         e.printStackTrace();
@@ -628,6 +630,21 @@ public class StartScreen {
         ++blueHeartFlashCounter;
         if(blueHeartFlashCounter == 2)
             blueHeartFlashCounter = 0;
+    }
+    
+    public void drawNames(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setFont(Runner.deteFontScore);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Made by Nikunj Chawla and Aaron Kandikatla", nameStringX, 575);
+        g2d.dispose();
+        if(++nameStringCounter % 2 == 0) {
+            --nameStringX;
+            nameStringCounter = 0;
+            if(nameStringX == -560)
+                nameStringX = 610;
+        }
     }
     
     public void flickeringHeart() {

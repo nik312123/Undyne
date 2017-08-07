@@ -16,7 +16,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 public class Player {
-    
     private char dir = 'u';
     
     private boolean hit = false;
