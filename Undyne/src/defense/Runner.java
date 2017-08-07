@@ -29,10 +29,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import nikunj.classes.GradientButton;
-import nikunj.classes.NewerSound;
+import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
-    
     private static final long serialVersionUID = 1L;
     
     private static char dir = 'u';
@@ -40,7 +39,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
-    private static final String[] MAIN_SOUNDS = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
+    private static final String[] MAIN_SOUND_NAMES = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
     
     private static double fadeStart = 0;
     private static double sfxVolume = 1;
@@ -105,13 +104,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
     
-    private static NewerSound main;
-    private static NewerSound gameDone;
-    private static NewerSound startScreen;
-    private static NewerSound undyne;
-    private static NewerSound undying;
-    private static NewerSound heal;
-    private static NewerSound block;
+    private static Sound main;
+    private static Sound gameDone;
+    private static Sound startScreen;
+    private static Sound undyne;
+    private static Sound undying;
+    private static Sound heal;
+    private static Sound block;
+    private static Sound[] mainSounds = new Sound[4];
     
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
@@ -122,7 +122,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static Font deteFontNorm;
     public static Font deteFontSpeech;
-    private static Font deteFontScore;
+    public static Font deteFontScore;
     
     private static Attack a1;
     private static Attacks a;
@@ -134,11 +134,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
-        startScreen = new NewerSound(Runner.class.getResource("/WF.wav"), true);
-        undyne = new NewerSound(Runner.class.getResource("/undyne.wav"), false);
-        undying = new NewerSound(Runner.class.getResource("/undying.wav"), false);
-        heal = new NewerSound(Runner.class.getResource("/heal.wav"), false);
-        block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+        startScreen = new Sound(Runner.class.getResource("/WF.wav"), true);
+        undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
+        undying = new Sound(Runner.class.getResource("/undying.wav"), false);
+        heal = new Sound(Runner.class.getResource("/heal.wav"), false);
+        block = new Sound(Runner.class.getResource("/block.wav"), false);
         heart = ImageIO.read(Runner.class.getResource("/heart.png"));
         heartBreak = new BufferedImage[49];
         for(int i = 0; i <= 48; ++i)
@@ -167,6 +167,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         speech = ImageIO.read(Runner.class.getResource("/speech.png"));
         credits = ImageIO.read(Runner.class.getResource("/credits.png"));
         help = ImageIO.read(Runner.class.getResource("/help.png"));
+        for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
+            mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
         URL fontUrl = Runner.class.getResource("/dete.otf");
         deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
         deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
@@ -562,7 +564,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     else if(secondEnd) {
                         secondEnd = false;
                         try {
-                            gameDone = new NewerSound(Runner.class.getResource("/dt.wav"), true);
+                            gameDone = new Sound(Runner.class.getResource("/dt.wav"), true);
                         }
                         catch(UnsupportedAudioFileException | IOException e) {
                             e.printStackTrace();
@@ -734,9 +736,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
             ++breakFrame;
             if(breakFrame == 25) {
-                NewerSound split;
+                Sound split;
                 try {
-                    split = new NewerSound(Runner.class.getResource("/split.wav"), false);
+                    split = new Sound(Runner.class.getResource("/split.wav"), false);
                     split.changeVolume(sfxVolume);
                     split.play();
                 }
@@ -767,9 +769,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     if(breakCount % 8 == 0) {
                         ++breakFrame;
                         if(breakFrame == 9) {
-                            NewerSound broke;
+                            Sound broke;
                             try {
-                                broke = new NewerSound(Runner.class.getResource("/heartBreak.wav"), false);
+                                broke = new Sound(Runner.class.getResource("/heartBreak.wav"), false);
                                 broke.changeVolume(sfxVolume);
                                 broke.play();
                             }
@@ -790,7 +792,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             ++gameOverFrame;
             if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
                 try {
-                    NewerSound asgore = new NewerSound(Runner.class.getResource("/asgore.wav"), false);
+                    Sound asgore = new Sound(Runner.class.getResource("/asgore.wav"), false);
                     asgore.changeVolume(sfxVolume);
                     asgore.play();
                 }
@@ -896,7 +898,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
                 try {
-                    undyne = new NewerSound(Runner.class.getResource("/undyne.wav"), false);
+                    undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
                 }
                 catch(UnsupportedAudioFileException | IOException e) {
                     e.printStackTrace();
@@ -933,7 +935,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
                 try {
-                    undyne = new NewerSound(Runner.class.getResource("/undying.wav"), false);
+                    undyne = new Sound(Runner.class.getResource("/undying.wav"), false);
                 }
                 catch(UnsupportedAudioFileException | IOException e) {
                     e.printStackTrace();
@@ -982,7 +984,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         ++levelIndex;
         if(levelIndex > 1) {
             try {
-                heal = new NewerSound(Runner.class.getResource("/heal.wav"), false);
+                heal = new Sound(Runner.class.getResource("/heal.wav"), false);
             }
             catch(UnsupportedAudioFileException | IOException e) {
                 e.printStackTrace();
@@ -991,12 +993,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             heal.play();
         }
         main.stop();
-        try {
-            main = new NewerSound(Runner.class.getResource(MAIN_SOUNDS[++mainIndex]), true);
-        }
-        catch(UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
-        }
+        main = mainSounds[++mainIndex];
         main.changeVolume(musicVolume);
         main.play();
     }
@@ -1011,7 +1008,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     public static void finalBoost() {
         try {
-            heal = new NewerSound(Runner.class.getResource("/heal.wav"), false);
+            heal = new Sound(Runner.class.getResource("/heal.wav"), false);
         }
         catch(UnsupportedAudioFileException | IOException e) {
             e.printStackTrace();
@@ -1173,7 +1170,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         helpStarter = true;
                     else if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
                         try {
-                            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+                            block = new Sound(Runner.class.getResource("/block.wav"), false);
                         }
                         catch(UnsupportedAudioFileException | IOException e1) {
                             e1.printStackTrace();
@@ -1185,7 +1182,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
                     else if(stage.isOnHeartTwo() && !stage.heartTwoActivated()) {
                         try {
-                            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+                            block = new Sound(Runner.class.getResource("/block.wav"), false);
                         }
                         catch(UnsupportedAudioFileException | IOException e1) {
                             e1.printStackTrace();
@@ -1197,7 +1194,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
                     else if(stage.isOnHeartThree() && !stage.heartThreeActivated()) {
                         try {
-                            block = new NewerSound(Runner.class.getResource("/block.wav"), false);
+                            block = new Sound(Runner.class.getResource("/block.wav"), false);
                         }
                         catch(UnsupportedAudioFileException | IOException e1) {
                             e1.printStackTrace();
@@ -1226,7 +1223,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         if(isGenocide) {
                             try {
-                                main = new NewerSound(Runner.class.getResource("/bath.wav"), true);
+                                main = new Sound(Runner.class.getResource("/bath.wav"), true);
                             }
                             catch(UnsupportedAudioFileException | IOException e1) {
                                 e1.printStackTrace();
@@ -1237,7 +1234,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         else {
                             try {
-                                main = new NewerSound(Runner.class.getResource("/soj.wav"), true);
+                                main = new Sound(Runner.class.getResource("/soj.wav"), true);
                             }
                             catch(UnsupportedAudioFileException | IOException e1) {
                                 e1.printStackTrace();
