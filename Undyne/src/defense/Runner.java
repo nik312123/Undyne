@@ -4,11 +4,13 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,12 +22,14 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
 import nikunj.classes.GradientButton;
@@ -42,7 +46,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final String[] MAIN_SOUND_NAMES = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
     
     private static double fadeStart = 0;
-    private static double sfxVolume = 1;
     private static double musicVolume = 1;
     
     private static int nothingCounter = 0;
@@ -77,11 +80,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean isGameOver = false;
     private static boolean switchFade = false;
     private static boolean allStopped = false;
-    private static boolean isFirstTime = true;
     private static boolean musicMuted = false;
     private static boolean sfxMuted = false;
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
+    public static boolean isFirstTime = true;
     
     private static Timer timer;
     
@@ -97,7 +100,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
-    
     public static BufferedImage[] gif;
     public static BufferedImage[] gif2;
     private static BufferedImage[] heartBreak;
@@ -111,6 +113,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Sound undying;
     private static Sound heal;
     private static Sound block;
+    private static Sound split;
+    private static Sound broke;
+    private static Sound asgore;
     private static Sound[] mainSounds = new Sound[4];
     
     private static GradientButton closeButton;
@@ -130,49 +135,85 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Player p = new Player();
     private static Help helper = new Help();
     
+    private static SplashScreen loading;
+    
     private static JFrame frame;
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
-        startScreen = new Sound(Runner.class.getResource("/WF.wav"), true);
-        undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
-        undying = new Sound(Runner.class.getResource("/undying.wav"), false);
-        heal = new Sound(Runner.class.getResource("/heal.wav"), false);
-        block = new Sound(Runner.class.getResource("/block.wav"), false);
-        heart = ImageIO.read(Runner.class.getResource("/heart.png"));
-        heartBreak = new BufferedImage[49];
-        for(int i = 0; i <= 48; ++i)
-            heartBreak[i] = ImageIO.read(Runner.class.getResource("/gif/heartBreak" + i + ".png"));
-        gameOver = new BufferedImage[226];
-        for(int i = 0; i <= 225; ++i)
-            gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
-        gif = new BufferedImage[32];
-        for(int i = 0; i <= 31; ++i)
-            gif[i] = ImageIO.read(Runner.class.getResource("/gif/frame" + i + ".png"));
-        gif2 = new BufferedImage[80];
-        for(int i = 0; i <= 79; ++i)
-            gif2[i] = ImageIO.read(Runner.class.getResource("/gif/undying" + i + ".png"));
-        levels[0] = ImageIO.read(Runner.class.getResource("/levelOne.png"));
-        levels[1] = ImageIO.read(Runner.class.getResource("/levelTwo.png"));
-        levels[2] = ImageIO.read(Runner.class.getResource("/levelThree.png"));
-        levels[3] = ImageIO.read(Runner.class.getResource("/levelFour.png"));
-        blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
-        redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
-        reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
-        replay = ImageIO.read(Runner.class.getResource("/replay.png"));
-        close = ImageIO.read(Runner.class.getResource("/close.png"));
-        draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
-        music = ImageIO.read(Runner.class.getResource("/music.png"));
-        sfx = ImageIO.read(Runner.class.getResource("/sfx.png"));
-        speech = ImageIO.read(Runner.class.getResource("/speech.png"));
-        credits = ImageIO.read(Runner.class.getResource("/credits.png"));
-        help = ImageIO.read(Runner.class.getResource("/help.png"));
-        for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
-            mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
-        URL fontUrl = Runner.class.getResource("/dete.otf");
-        deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
-        deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
-        deteFontScore = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(22.0f);
+        if(isFirstTime) {
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
+                        @Override
+                        protected Object doInBackground() throws InterruptedException {
+                            loading = SplashScreen.getSplashScreen();
+                            int height = 210, width = 410;
+                            Graphics2D g2d = loading.createGraphics();
+                            g2d.setComposite(AlphaComposite.Clear);
+                            g2d.fillRect(0, 0, width, height);
+                            g2d.setPaintMode();
+                            loading.update();
+                            loading.close();
+                            return null;
+                        }
+                    };
+                    worker.execute();
+                    try {
+                        worker.get();
+                    }
+                    catch(InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            startScreen = new Sound(Runner.class.getResource("/WF.wav"), true);
+            undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
+            undying = new Sound(Runner.class.getResource("/undying.wav"), false);
+            heal = new Sound(Runner.class.getResource("/heal.wav"), false);
+            block = new Sound(Runner.class.getResource("/block.wav"), false);
+            gameDone = new Sound(Runner.class.getResource("/dt.wav"), true);
+            split = new Sound(Runner.class.getResource("/split.wav"), false);
+            broke = new Sound(Runner.class.getResource("/heartBreak.wav"), false);
+            asgore = new Sound(Runner.class.getResource("/asgore.wav"), false);
+            heart = ImageIO.read(Runner.class.getResource("/heart.png"));
+            heartBreak = new BufferedImage[49];
+            for(int i = 0; i <= 48; ++i)
+                heartBreak[i] = ImageIO.read(Runner.class.getResource("/gif/heartBreak" + i + ".png"));
+            gameOver = new BufferedImage[226];
+            for(int i = 0; i <= 225; ++i)
+                gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
+            gif2 = new BufferedImage[80];
+            for(int i = 0; i <= 79; ++i)
+                gif2[i] = ImageIO.read(Runner.class.getResource("/gif/undying" + i + ".png"));
+            levels[0] = ImageIO.read(Runner.class.getResource("/levelOne.png"));
+            levels[1] = ImageIO.read(Runner.class.getResource("/levelTwo.png"));
+            levels[2] = ImageIO.read(Runner.class.getResource("/levelThree.png"));
+            levels[3] = ImageIO.read(Runner.class.getResource("/levelFour.png"));
+            blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
+            redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
+            reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
+            replay = ImageIO.read(Runner.class.getResource("/replay.png"));
+            close = ImageIO.read(Runner.class.getResource("/close.png"));
+            draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
+            music = ImageIO.read(Runner.class.getResource("/music.png"));
+            sfx = ImageIO.read(Runner.class.getResource("/sfx.png"));
+            speech = ImageIO.read(Runner.class.getResource("/speech.png"));
+            credits = ImageIO.read(Runner.class.getResource("/credits.png"));
+            help = ImageIO.read(Runner.class.getResource("/help.png"));
+            for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
+                mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
+            URL fontUrl = Runner.class.getResource("/dete.otf");
+            deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
+            deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
+            deteFontScore = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(22.0f);
+        }
+        if(gif == null || gif.length != 32) {
+            gif = new BufferedImage[32];
+            for(int i = 0; i <= 31; ++i)
+                gif[i] = ImageIO.read(Runner.class.getResource("/gif/frame" + i + ".png"));
+        }
         @SuppressWarnings("unused")
         Runner a = new Runner("Undyne: Absolute");
         startScreen.changeVolume(musicVolume);
@@ -337,7 +378,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     undying.changeVolume(1);
                     heal.changeVolume(1);
                     block.changeVolume(1);
-                    sfxVolume = 1;
+                    split.changeVolume(1);
+                    broke.changeVolume(1);
+                    asgore.changeVolume(1);
+                    heal.changeVolume(1);
                 }
                 else {
                     Attack.changeVol(0);
@@ -346,7 +390,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     undying.changeVolume(0);
                     heal.changeVolume(0);
                     block.changeVolume(0);
-                    sfxVolume = 0;
+                    split.changeVolume(0);
+                    broke.changeVolume(0);
+                    asgore.changeVolume(0);
+                    heal.changeVolume(0);
                 }
                 sfxMuted = !sfxMuted;
             }
@@ -563,13 +610,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     }
                     else if(secondEnd) {
                         secondEnd = false;
-                        try {
-                            gameDone = new Sound(Runner.class.getResource("/dt.wav"), true);
-                        }
-                        catch(UnsupportedAudioFileException | IOException e) {
-                            e.printStackTrace();
-                        }
-                        gameDone.changeVolume(musicVolume);
                         gameDone.play();
                     }
                     else if(!gameOverDone)
@@ -736,15 +776,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
             ++breakFrame;
             if(breakFrame == 25) {
-                Sound split;
-                try {
-                    split = new Sound(Runner.class.getResource("/split.wav"), false);
-                    split.changeVolume(sfxVolume);
-                    split.play();
-                }
-                catch(UnsupportedAudioFileException | IOException e) {
-                    e.printStackTrace();
-                }
+                split.play();
             }
             if(breakFrame == 48)
                 heartDone = true;
@@ -768,17 +800,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 default:
                     if(breakCount % 8 == 0) {
                         ++breakFrame;
-                        if(breakFrame == 9) {
-                            Sound broke;
-                            try {
-                                broke = new Sound(Runner.class.getResource("/heartBreak.wav"), false);
-                                broke.changeVolume(sfxVolume);
-                                broke.play();
-                            }
-                            catch(UnsupportedAudioFileException | IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        if(breakFrame == 9)
+                            broke.play();
                         breakCount = 0;
                     }
             }
@@ -790,16 +813,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         ++gameOverCount;
         if(gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
-            if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192)) {
-                try {
-                    Sound asgore = new Sound(Runner.class.getResource("/asgore.wav"), false);
-                    asgore.changeVolume(sfxVolume);
+            if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192))
                     asgore.play();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
             if(gameOverFrame >= 225)
                 gameOverDone = true;
             gameOverCount = 0;
@@ -897,13 +912,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 speechDone = true;
             }
             if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
-                try {
-                    undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
-                }
-                catch(UnsupportedAudioFileException | IOException e) {
-                    e.printStackTrace();
-                }
-                undyne.changeVolume(sfxVolume);
                 undyne.play();
             }
             speechCounterPrev = speechCounter;
@@ -933,16 +941,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 g.drawString(hardMessage[2], speechX + 30, speechY + 60);
                 speechDone = true;
             }
-            if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
-                try {
-                    undyne = new Sound(Runner.class.getResource("/undying.wav"), false);
-                }
-                catch(UnsupportedAudioFileException | IOException e) {
-                    e.printStackTrace();
-                }
-                undyne.changeVolume(sfxVolume);
+            if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ')
                 undying.play();
-            }
             speechCounterPrev = speechCounter;
             if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
                 ++speechCounter;
@@ -982,16 +982,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     public static void changeMain() {
         ++levelIndex;
-        if(levelIndex > 1) {
-            try {
-                heal = new Sound(Runner.class.getResource("/heal.wav"), false);
-            }
-            catch(UnsupportedAudioFileException | IOException e) {
-                e.printStackTrace();
-            }
-            heal.changeVolume(sfxVolume);
+        if(levelIndex > 1)
             heal.play();
-        }
         main.stop();
         main = mainSounds[++mainIndex];
         main.changeVolume(musicVolume);
@@ -1007,13 +999,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     public static void finalBoost() {
-        try {
-            heal = new Sound(Runner.class.getResource("/heal.wav"), false);
-        }
-        catch(UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
-        }
-        heal.changeVolume(sfxVolume);
         heal.play();
         p.healthBoost();
     }
@@ -1040,7 +1025,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         typed = "";
         activated = "";
         fadeStart = 0;
-        sfxVolume = 1;
         musicVolume = 1;
         nothingCounter = 0;
         breakCount = 0;
@@ -1060,6 +1044,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         mainIndex = 0;
         levelIndex = 0;
         lastAttack = 1;
+        startScreen.changeVolume(1);
+        undyne.changeVolume(1);
+        undying.changeVolume(1);
+        heal.changeVolume(1);
+        block.changeVolume(1);
+        Attack.changeVol(1);
+        StartScreen.changeSfxVol(1);
         isGenocide = false;
         survival = false;
         heartDone = false;
@@ -1077,34 +1068,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         speechDone = false;
         timer = null;
         gif = null;
-        gif2 = null;
-        heartBreak = null;
-        gameOver = null;
-        levels = new BufferedImage[4];
-        heart = null;
-        replay = null;
-        close = null;
-        draggable = null;
-        music = null;
-        sfx = null;
-        speech = null;
-        blueArr = null;
-        redArr = null;
-        reverseArr = null;
         main = null;
         gameDone = null;
-        startScreen = null;
-        heal = null;
-        undyne = null;
-        undying = null;
-        block = null;
         closeButton = null;
         draggableButton = null;
         musicButton = null;
         sfxButton = null;
-        credits = null;
         creditsButton = null;
-        help = null;
         helpButton = null;
         deteFontNorm = null;
         deteFontSpeech = null;
@@ -1169,37 +1139,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     else if(stage.isOnHelp() && helpButton.isDisplayable())
                         helpStarter = true;
                     else if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
-                        try {
-                            block = new Sound(Runner.class.getResource("/block.wav"), false);
-                        }
-                        catch(UnsupportedAudioFileException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        block.changeVolume(sfxVolume);
                         block.play();
                         stage.activateHeartOne();
                         stage.activateBlueHeartFlash();
                     }
                     else if(stage.isOnHeartTwo() && !stage.heartTwoActivated()) {
-                        try {
-                            block = new Sound(Runner.class.getResource("/block.wav"), false);
-                        }
-                        catch(UnsupportedAudioFileException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        block.changeVolume(sfxVolume);
                         block.play();
                         stage.activateHeartTwo();
                         stage.activateBlueHeartFlash();
                     }
                     else if(stage.isOnHeartThree() && !stage.heartThreeActivated()) {
-                        try {
-                            block = new Sound(Runner.class.getResource("/block.wav"), false);
-                        }
-                        catch(UnsupportedAudioFileException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        block.changeVolume(sfxVolume);
                         block.play();
                         stage.activateHeartThree();
                         stage.activateBlueHeartFlash();
@@ -1222,23 +1171,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                             p.setDamageOffset(2);
                         }
                         if(isGenocide) {
-                            try {
-                                main = new Sound(Runner.class.getResource("/bath.wav"), true);
-                            }
-                            catch(UnsupportedAudioFileException | IOException e1) {
-                                e1.printStackTrace();
-                            }
+                            main = mainSounds[2];
                             speechX = 310;
                             speechY = 60;
                             gif = gif2;
                         }
                         else {
-                            try {
-                                main = new Sound(Runner.class.getResource("/soj.wav"), true);
-                            }
-                            catch(UnsupportedAudioFileException | IOException e1) {
-                                e1.printStackTrace();
-                            }
+                            main = mainSounds[0];
                             speechX = 305;
                             speechY = 50;
                         }
