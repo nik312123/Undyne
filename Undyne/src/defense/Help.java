@@ -14,17 +14,15 @@ public class Help {
     private static final int INCREMENTER = 10;
     private static final int SIZE = 450;
     
-    private static BufferedImage[] helpGif = new BufferedImage[739];
+    private BufferedImage[] helpGif = new BufferedImage[739];
     
     public Help() {
-        if(Runner.isFirstTime) {
-            try {
-                for(int i = 0; i <= 738; ++i)
-                    helpGif[i] = ImageIO.read(Runner.class.getResource("/help/help" + i + ".jpg"));
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            for(int i = 0; i <= 738; ++i)
+                helpGif[i] = ImageIO.read(Runner.class.getResource("/help/help" + i + ".jpg"));
+        }
+        catch(IOException e) {
+            e.printStackTrace();
         }
     }
     
