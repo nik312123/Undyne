@@ -26,23 +26,23 @@ public class StartScreen {
     
     private static float blueHeartOpacity = 0.02f;
     
-    private BufferedImage undyne;
-    private BufferedImage undyneBlue;
-    private BufferedImage start;
-    private BufferedImage heartMouse;
-    private BufferedImage heartMouseBlue;
-    private BufferedImage select;
-    private BufferedImage subtitle;
-    private BufferedImage subtitleBlue;
-    private BufferedImage buttons;
-    private BufferedImage bones;
-    private BufferedImage blueHeartFlash;
-    private BufferedImage spear;
-    private BufferedImage arrows;
-    private BufferedImage[] keys = new BufferedImage[2];
-    private BufferedImage[] fire = new BufferedImage[38];
-    private BufferedImage[] dog = new BufferedImage[2];
-    private BufferedImage[] sans = new BufferedImage[10];
+    private static BufferedImage undyne;
+    private static BufferedImage undyneBlue;
+    private static BufferedImage start;
+    private static BufferedImage heartMouse;
+    private static BufferedImage heartMouseBlue;
+    private static BufferedImage select;
+    private static BufferedImage subtitle;
+    private static BufferedImage subtitleBlue;
+    private static BufferedImage buttons;
+    private static BufferedImage bones;
+    private static BufferedImage blueHeartFlash;
+    private static BufferedImage spear;
+    private static BufferedImage arrows;
+    private static BufferedImage[] keys = new BufferedImage[2];
+    private static BufferedImage[] fire = new BufferedImage[38];
+    private static BufferedImage[] dog = new BufferedImage[2];
+    private static BufferedImage[] sans = new BufferedImage[10];
     
     private static int speed = 2;
     private static int zCounter = 0;
@@ -106,15 +106,15 @@ public class StartScreen {
     private static boolean arrowsShouldShow = true;
     private static boolean[] heartsActivated = new boolean[3];
     
-    private Sound flare;
-    private Sound bark;
-    private Sound wall;
-    private Sound boneSound;
-    private Sound damage;
-    private Sound megalovania;
-    private Sound spearAppear;
-    private Sound spearFly;
-    private Sound spearHit;
+    private static Sound flare;
+    private static Sound bark;
+    private static Sound wall;
+    private static Sound boneSound;
+    private static Sound damage;
+    private static Sound megalovania;
+    private static Sound spearAppear;
+    private static Sound spearFly;
+    private static Sound spearHit;
     
     private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
     private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
@@ -123,45 +123,47 @@ public class StartScreen {
     private Random rand = new Random();
     
     public StartScreen() {
-        try { // Credit to wjl from goo.gl/ofAZRS
-            flare = new Sound(Runner.class.getResource("/fire.wav"), false);
-            bark = new Sound(Runner.class.getResource("/bark.wav"), false);
-            spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
-            spearFly = new Sound(Runner.class.getResource("/spearFly.wav"), false);
-            spearHit = new Sound(Runner.class.getResource("/spearHit.wav"), false);
-            wall = new Sound(Runner.class.getResource("/wall.wav"), false);
-            boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
-            damage = new Sound(Runner.class.getResource("/damage.wav"), false);
-            megalovania = new Sound(Runner.class.getResource("/megalovania.wav"), true);
-        }
-        catch(UnsupportedAudioFileException | IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            subtitle = ImageIO.read(Runner.class.getResource("/sub.png"));
-            keys[0] = ImageIO.read(Runner.class.getResource("/keysRed.png"));
-            keys[1] = ImageIO.read(Runner.class.getResource("/keys.png"));
-            undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
-            start = ImageIO.read(Runner.class.getResource("/start.png"));
-            select = ImageIO.read(Runner.class.getResource("/select.png"));
-            heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
-            heartMouseBlue = ImageIO.read(Runner.class.getResource("/heartMouseBlue.png"));
-            buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
-            for(int i = 0; i <= 37; ++i) // Credit: nevit from goo.gl/QR3vVj
-                fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
-            dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
-            dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
-            subtitleBlue = ImageIO.read(Runner.class.getResource("/subBlue.png"));
-            undyneBlue = ImageIO.read(Runner.class.getResource("/undyneBlue.png"));
-            bones = ImageIO.read(Runner.class.getResource("/bones.png"));
-            for(int i = 0; i <= 9; ++i)
-                sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
-            blueHeartFlash = ImageIO.read(Runner.class.getResource("/blueHeartFlash.png"));
-            spear = ImageIO.read(Runner.class.getResource("/spear.png"));
-            arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
-        }
-        catch(IOException e) {
-            e.printStackTrace();
+        if(Runner.isFirstTime) {
+            try { // Credit to wjl from goo.gl/ofAZRS
+                flare = new Sound(Runner.class.getResource("/fire.wav"), false);
+                bark = new Sound(Runner.class.getResource("/bark.wav"), false);
+                spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
+                spearFly = new Sound(Runner.class.getResource("/spearFly.wav"), false);
+                spearHit = new Sound(Runner.class.getResource("/spearHit.wav"), false);
+                wall = new Sound(Runner.class.getResource("/wall.wav"), false);
+                boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
+                damage = new Sound(Runner.class.getResource("/damage.wav"), false);
+                megalovania = new Sound(Runner.class.getResource("/megalovania.wav"), true);
+            }
+            catch(UnsupportedAudioFileException | IOException e1) {
+                e1.printStackTrace();
+            }
+            try {
+                subtitle = ImageIO.read(Runner.class.getResource("/sub.png"));
+                keys[0] = ImageIO.read(Runner.class.getResource("/keysRed.png"));
+                keys[1] = ImageIO.read(Runner.class.getResource("/keys.png"));
+                undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
+                start = ImageIO.read(Runner.class.getResource("/start.png"));
+                select = ImageIO.read(Runner.class.getResource("/select.png"));
+                heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
+                heartMouseBlue = ImageIO.read(Runner.class.getResource("/heartMouseBlue.png"));
+                buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
+                for(int i = 0; i <= 37; ++i) // Credit: nevit from goo.gl/QR3vVj
+                    fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
+                dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
+                dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
+                subtitleBlue = ImageIO.read(Runner.class.getResource("/subBlue.png"));
+                undyneBlue = ImageIO.read(Runner.class.getResource("/undyneBlue.png"));
+                bones = ImageIO.read(Runner.class.getResource("/bones.png"));
+                for(int i = 0; i <= 9; ++i)
+                    sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
+                blueHeartFlash = ImageIO.read(Runner.class.getResource("/blueHeartFlash.png"));
+                spear = ImageIO.read(Runner.class.getResource("/spear.png"));
+                arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -254,12 +256,6 @@ public class StartScreen {
                     heartMoved = true;
                 }
                 if(heartsActivated() && heartY == 281 && !hitGround) {
-                    try {
-                        wall = new Sound(Runner.class.getResource("/wall.wav"), false);
-                    }
-                    catch(UnsupportedAudioFileException | IOException e) {
-                        e.printStackTrace();
-                    }
                     wall.changeVolume(sfxVolume);
                     wall.play();
                     hitGround = true;
@@ -348,12 +344,6 @@ public class StartScreen {
                 else {
                     if(playFire) {
                         playFire = false;
-                        try {
-                            flare = new Sound(Runner.class.getResource("/fire.wav"), false);
-                        }
-                        catch(UnsupportedAudioFileException | IOException e) {
-                            e.printStackTrace();
-                        }
                         flare.changeVolume(sfxVolume);
                         flare.play();
                     }
@@ -390,12 +380,6 @@ public class StartScreen {
                 }
                 else {
                     if(playBark) {
-                        try {
-                            bark = new Sound(Runner.class.getResource("/bark.wav"), false);
-                        }
-                        catch(UnsupportedAudioFileException | IOException e) {
-                            e.printStackTrace();
-                        }
                         bark.changeVolume(sfxVolume);
                         bark.play();
                         playBark = false;
@@ -500,12 +484,6 @@ public class StartScreen {
             Graphics2D g2d = (Graphics2D) g.create();
             if(!spearAppearPlayed) {
                 spearLocation = (Point2D) SPEAR_SPAWN.clone();
-                try {
-                    spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
-                }
-                catch(UnsupportedAudioFileException | IOException e) {
-                    e.printStackTrace();
-                }
                 spearAppear.changeVolume(sfxVolume);
                 spearAppear.play();
                 spearAppearPlayed = true;
@@ -520,12 +498,6 @@ public class StartScreen {
             }
             else {
                 if(!spearHitPlayed) {
-                    try {
-                        spearHit = new Sound(Runner.class.getResource("/spearHit.wav"), false);
-                    }
-                    catch(UnsupportedAudioFileException | IOException e) {
-                        e.printStackTrace();
-                    }
                     spearHit.changeVolume(sfxVolume);
                     spearHit.play();
                     spearHitPlayed = true;
@@ -567,12 +539,6 @@ public class StartScreen {
         ++boneCounter;
         if(boneCounter > 50) {
             if(!showBones) {
-                try {
-                    boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
-                }
-                catch(UnsupportedAudioFileException | IOException e) {
-                    e.printStackTrace();
-                }
                 boneSound.changeVolume(sfxVolume);
                 boneSound.play();
             }
@@ -587,12 +553,6 @@ public class StartScreen {
                 boneY -= 3;
             if(heartY + 300 >= boneY) {
                 if(flickering == false) {
-                    try {
-                        damage = new Sound(Runner.class.getResource("/damage.wav"), false);
-                    }
-                    catch(UnsupportedAudioFileException | IOException e) {
-                        e.printStackTrace();
-                    }
                     damage.changeVolume(sfxVolume);
                     damage.play();
                 }
