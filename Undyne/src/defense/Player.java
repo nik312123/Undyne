@@ -20,8 +20,8 @@ public class Player {
     
     private boolean hit = false;
     
-    private int red = 30;
     private static final int TIME = 75;
+    private int red = 30;
     private int timeoutCounter = TIME;
     private int elementPosition = 0;
     private int baseDamage;
@@ -30,9 +30,9 @@ public class Player {
     
     private Random random = new Random();
     
-    private BufferedImage shield;
+    private static BufferedImage shield;
     
-    private BufferedImage[] shields = new BufferedImage[2];
+    private static BufferedImage[] shields = new BufferedImage[2];
     
     Font undyneFont;
     
@@ -46,12 +46,14 @@ public class Player {
     private int angle = 0;
     
     public Player() {
-        try {
-            shields[0] = ImageIO.read(Runner.class.getResource("/shieldH.png"));
-            shields[1] = ImageIO.read(Runner.class.getResource("/shield.png"));
-        }
-        catch(IOException e) {
-            e.printStackTrace();
+        if(Runner.isFirstTime) {
+            try {
+                shields[0] = ImageIO.read(Runner.class.getResource("/shieldH.png"));
+                shields[1] = ImageIO.read(Runner.class.getResource("/shield.png"));
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+            }
         }
         URL fontUrl;
         try {

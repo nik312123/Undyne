@@ -30,8 +30,8 @@ public class Attack {
     
     private Attacks a;
     
-    private Sound block;
-    private Sound damage;
+    private static Sound block;
+    private static Sound damage;
     
     /*
      * Constructor for constant delay
@@ -39,12 +39,14 @@ public class Attack {
     public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
-        try {
-            block = new Sound(Runner.class.getResource("/block.wav"), false);
-            damage = new Sound(Runner.class.getResource("/damage.wav"), false);
-        }
-        catch(UnsupportedAudioFileException | IOException e) {
-            e.printStackTrace();
+        if(Runner.isFirstTime) {
+            try {
+                block = new Sound(Runner.class.getResource("/block.wav"), false);
+                damage = new Sound(Runner.class.getResource("/damage.wav"), false);
+            }
+            catch(UnsupportedAudioFileException | IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     
