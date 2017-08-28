@@ -105,7 +105,6 @@ public class StartScreen {
     private static boolean spearHitPlayed = false;
     private static boolean heartMoved = false;
     private static boolean arrowsShouldShow = true;
-    private static boolean warning = false;
     public static boolean isLoaded = false;
     private static boolean[] heartsActivated = new boolean[3];
     
@@ -313,7 +312,7 @@ public class StartScreen {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
             if(!easyButtonRectRed && !hardButtonRectRed && !survivalButtonRectRed) {
                 g2d.drawImage(select, 0, 50 + shift, null);
-                if(!warning)
+                if(warningCounter == 0)
                     g2d.drawImage(keys[0], 0, 50 - 20, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
@@ -321,7 +320,7 @@ public class StartScreen {
                 }
             }
             else {
-                if(!warning)
+                if(warningCounter == 0)
                     g2d.drawImage(start, 0, 50 + shift, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
@@ -332,8 +331,6 @@ public class StartScreen {
             }
             if(warningCounter != 0)
                 --warningCounter;
-            else
-                warning = false;
             g2d.dispose();
         }
         if(flashCount % 2 == 0) {
@@ -850,7 +847,6 @@ public class StartScreen {
     }
     
     public void warningOn() {
-        warning = true;
         warningCounter = 50;
     }
     
