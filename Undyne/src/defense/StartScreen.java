@@ -79,6 +79,7 @@ public class StartScreen {
     private static int arrowsCounter = 1;
     private static int nameStringX = 610;
     private static int nameStringCounter = 0;
+    private static int warningCounter = 0;
     
     private static boolean right = false;
     private static boolean left = false;
@@ -104,6 +105,8 @@ public class StartScreen {
     private static boolean spearHitPlayed = false;
     private static boolean heartMoved = false;
     private static boolean arrowsShouldShow = true;
+    private static boolean warning = false;
+    public static boolean isLoaded = false;
     private static boolean[] heartsActivated = new boolean[3];
     
     private static Sound flare;
@@ -196,6 +199,7 @@ public class StartScreen {
                 drawSpears(g);
                 drawNames(g);
                 heartMouse(g);
+                isLoaded = true;
                 if(heartsActivated()) {
                     drawSans(g);
                     ++flickerCounter;
@@ -307,14 +311,29 @@ public class StartScreen {
             float opacity = (float) fadeStart;
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-            if(!easyButtonRectRed && !hardButtonRectRed) {
+            if(!easyButtonRectRed && !hardButtonRectRed && !survivalButtonRectRed) {
                 g2d.drawImage(select, 0, 50 + shift, null);
-                g2d.drawImage(keys[0], 0, 50 - 20, null);
+                if(!warning)
+                    g2d.drawImage(keys[0], 0, 50 - 20, null);
+                else {
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                    g2d.drawImage(keys[0], 0 - 150, -220, (int) (1.5 * keys[0].getWidth()), (int) (1.5 * keys[0].getHeight()), null);
+                }
             }
             else {
-                g2d.drawImage(start, 0, 50 + shift, null);
-                g2d.drawImage(keys[1], 0, 50 - 20, null);
+                if(!warning)
+                    g2d.drawImage(start, 0, 50 + shift, null);
+                else {
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                    g2d.drawImage(start, 0 - 150, -175, (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
+                }
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+                g2d.drawImage(keys[0], 0, 50 - 20, null);
             }
+            if(warningCounter != 0)
+                --warningCounter;
+            else
+                warning = false;
             g2d.dispose();
         }
         if(flashCount % 2 == 0) {
@@ -828,6 +847,11 @@ public class StartScreen {
     
     public boolean isOnHelp() {
         return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 442 + 20 && heartY + 300 + 16 >= 380 + 20 && !heartsActivated());
+    }
+    
+    public void warningOn() {
+        warning = true;
+        warningCounter = 50;
     }
     
 }
