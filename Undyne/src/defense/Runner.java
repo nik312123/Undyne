@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -116,6 +117,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Sound split;
     private static Sound broke;
     private static Sound asgore;
+    private static Sound error;
     private static Sound[] mainSounds = new Sound[4];
     
     private static GradientButton closeButton;
@@ -177,6 +179,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             split = new Sound(Runner.class.getResource("/split.wav"), false);
             broke = new Sound(Runner.class.getResource("/heartBreak.wav"), false);
             asgore = new Sound(Runner.class.getResource("/asgore.wav"), false);
+            error = new Sound(Runner.class.getResource("/error.wav"), false);
             heart = ImageIO.read(Runner.class.getResource("/heart.png"));
             heartBreak = new BufferedImage[49];
             for(int i = 0; i <= 48; ++i)
@@ -382,6 +385,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     broke.changeVolume(1);
                     asgore.changeVolume(1);
                     heal.changeVolume(1);
+                    error.changeVolume(1);
                 }
                 else {
                     Attack.changeVol(0);
@@ -394,6 +398,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     broke.changeVolume(0);
                     asgore.changeVolume(0);
                     heal.changeVolume(0);
+                    error.changeVolume(0);
                 }
                 sfxMuted = !sfxMuted;
             }
@@ -494,6 +499,33 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.add(sfxButton);
         frame.add(creditsButton);
         frame.add(helpButton);
+        MouseListener errorListener = new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(beginning && StartScreen.isLoaded) {
+                    if(error.isFinished())
+                        error.play();
+                    stage.warningOn();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+            
+        };
+        frame.addMouseListener(errorListener);
+        creditsButton.addMouseListener(errorListener);
+        helpButton.addMouseListener(errorListener);
         frame.addKeyListener(this);
         frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1069,16 +1101,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         timer = null;
         gif = null;
         main = null;
-        gameDone = null;
         closeButton = null;
         draggableButton = null;
         musicButton = null;
         sfxButton = null;
         creditsButton = null;
         helpButton = null;
-        deteFontNorm = null;
-        deteFontSpeech = null;
-        deteFontScore = null;
         a1 = null;
         a = null;
         frame.dispose();
