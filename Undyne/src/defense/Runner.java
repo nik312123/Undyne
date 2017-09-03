@@ -34,6 +34,7 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
 import nikunj.classes.GradientButton;
+import nikunj.classes.Slider;
 import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
@@ -48,6 +49,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static double fadeStart = 0;
     private static double musicVolume = 1;
+    private static double sfxVolume = 1;
     
     private static int nothingCounter = 0;
     private static final int DELAY = 10;
@@ -127,6 +129,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
     
+    private static Slider musicSlider;
+    private static Slider sfxSlider;
+    
     private static Font deteFontNorm;
     public static Font deteFontSpeech;
     public static Font deteFontScore;
@@ -149,7 +154,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 public void run() {
                     SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
                         @Override
-                        protected Object doInBackground() throws InterruptedException {
+                        protected Object doInBackground() throws InterruptedException, NullPointerException, IllegalStateException, IOException {
                             loading = SplashScreen.getSplashScreen();
                             int height = 210, width = 410;
                             Graphics2D g2d = loading.createGraphics();
@@ -299,26 +304,27 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(musicMuted) {
-                    musicVolume = 1;
+                    musicSlider.setPercentage(musicVolume);
                     try {
-                        main.changeVolume(1);
+                        main.changeVolume(musicVolume);
                     }
                     catch(NullPointerException e1) {}
                     try {
-                        gameDone.changeVolume(1);
+                        gameDone.changeVolume(musicVolume);
                     }
                     catch(NullPointerException e1) {}
                     try {
-                        startScreen.changeVolume(1);
+                        startScreen.changeVolume(musicVolume);
                     }
                     catch(NullPointerException e1) {}
                     try {
-                        stage.changeMusicVol(1);
+                        stage.changeMusicVol(musicVolume);
                     }
                     catch(NullPointerException e1) {}
                 }
                 else {
-                    musicVolume = 0;
+                    musicVolume = musicSlider.getPercentage();
+                    musicSlider.setPercentage(0);
                     try {
                         main.changeVolume(0);
                     }
@@ -360,10 +366,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             @Override
             public void afterDraw(Graphics g) {
                 if(musicMuted) {
-                    Graphics2D g2d = (Graphics2D) g;
-                    g2d.setColor(Color.WHITE);
-                    g2d.setStroke(new BasicStroke(2));
-                    g2d.draw(new Line2D.Float(549, 22, 565, 4));
+                    if(musicSlider.getPercentage() > 0)
+                        musicMuted = false;
+                    else {
+                        Graphics2D g2d = (Graphics2D) g;
+                        g2d.setColor(Color.WHITE);
+                        g2d.setStroke(new BasicStroke(2));
+                        g2d.draw(new Line2D.Float(549, 22, 565, 4));
+                    }
+                }
+                else if(musicSlider.getPercentage() == 0) {
+                    musicMuted = true;
+                    musicVolume = 0;
                 }
             }
             
@@ -375,19 +389,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(sfxMuted) {
-                    Attack.changeVol(1);
-                    StartScreen.changeSfxVol(1);
-                    undyne.changeVolume(1);
-                    undying.changeVolume(1);
-                    heal.changeVolume(1);
-                    block.changeVolume(1);
-                    split.changeVolume(1);
-                    broke.changeVolume(1);
-                    asgore.changeVolume(1);
-                    heal.changeVolume(1);
-                    error.changeVolume(1);
+                    sfxSlider.setPercentage(sfxVolume);
+                    Attack.changeVol(sfxVolume);
+                    StartScreen.changeSfxVol(sfxVolume);
+                    undyne.changeVolume(sfxVolume);
+                    undying.changeVolume(sfxVolume);
+                    heal.changeVolume(sfxVolume);
+                    block.changeVolume(sfxVolume);
+                    split.changeVolume(sfxVolume);
+                    broke.changeVolume(sfxVolume);
+                    asgore.changeVolume(sfxVolume);
+                    heal.changeVolume(sfxVolume);
+                    error.changeVolume(sfxVolume);
                 }
                 else {
+                    sfxVolume = sfxSlider.getPercentage();
+                    sfxSlider.setPercentage(0);
                     Attack.changeVol(0);
                     StartScreen.changeSfxVol(0);
                     undyne.changeVolume(0);
@@ -424,10 +441,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             @Override
             public void afterDraw(Graphics g) {
                 if(sfxMuted) {
-                    Graphics2D g2d = (Graphics2D) g;
-                    g2d.setColor(Color.WHITE);
-                    g2d.setStroke(new BasicStroke(2));
-                    g2d.draw(new Line2D.Float(577, 22, 593, 4));
+                    if(sfxSlider.getPercentage() > 0)
+                        sfxMuted = false;
+                    else {
+                        Graphics2D g2d = (Graphics2D) g;
+                        g2d.setColor(Color.WHITE);
+                        g2d.setStroke(new BasicStroke(2));
+                        g2d.draw(new Line2D.Float(577, 22, 593, 4));
+                    }
+                }
+                else if(sfxSlider.getPercentage() == 0) {
+                    sfxMuted = true;
+                    sfxVolume = 0;
                 }
             }
             
@@ -493,12 +518,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
+        musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), false, true, 553, 30, 10, 50);
+        musicSlider.setVisible(true);
+        sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, false, true, 581, 30, 10, 50);
+        sfxSlider.setVisible(true);
         frame.add(closeButton);
         frame.add(draggableButton);
         frame.add(musicButton);
         frame.add(sfxButton);
         frame.add(creditsButton);
         frame.add(helpButton);
+        frame.add(musicSlider);
+        frame.add(sfxSlider);
         MouseListener errorListener = new MouseListener() {
 
             @Override
@@ -569,6 +600,33 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
             }
+            try {
+                main.changeVolume(musicSlider.getPercentage());
+            }
+            catch(NullPointerException e1) {}
+            try {
+                gameDone.changeVolume(musicSlider.getPercentage());
+            }
+            catch(NullPointerException e1) {}
+            try {
+                startScreen.changeVolume(musicSlider.getPercentage());
+            }
+            catch(NullPointerException e1) {}
+            try {
+                stage.changeMusicVol(musicSlider.getPercentage());
+            }
+            catch(NullPointerException e1) {}
+            Attack.changeVol(sfxSlider.getPercentage());
+            StartScreen.changeSfxVol(sfxSlider.getPercentage());
+            undyne.changeVolume(sfxSlider.getPercentage());
+            undying.changeVolume(sfxSlider.getPercentage());
+            heal.changeVolume(sfxSlider.getPercentage());
+            block.changeVolume(sfxSlider.getPercentage());
+            split.changeVolume(sfxSlider.getPercentage());
+            broke.changeVolume(sfxSlider.getPercentage());
+            asgore.changeVolume(sfxSlider.getPercentage());
+            heal.changeVolume(sfxSlider.getPercentage());
+            error.changeVolume(sfxSlider.getPercentage());
             ++frameCounter;
             if(frameCounter == 1000)
                 frameCounter = 0;
@@ -668,7 +726,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         closeButton.draw(g);
         draggableButton.draw(g);
         musicButton.draw(g);
+        musicSlider.draw(g);
         sfxButton.draw(g);
+        sfxSlider.draw(g);
         if(speechDone)
             drawReplay(g, 10);
         helper.initiate(g, helpStarter);
