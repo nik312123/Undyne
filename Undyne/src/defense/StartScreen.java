@@ -27,7 +27,6 @@ public class StartScreen {
     private static float blueHeartOpacity = 0.02f;
     
     private static BufferedImage undyne;
-    private static BufferedImage undyneBlue;
     private static BufferedImage start;
     private static BufferedImage heartMouse;
     private static BufferedImage heartMouseBlue;
@@ -155,7 +154,6 @@ public class StartScreen {
                 dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
                 dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
                 subtitleBlue = ImageIO.read(Runner.class.getResource("/subBlue.png"));
-                undyneBlue = ImageIO.read(Runner.class.getResource("/undyneBlue.png"));
                 bones = ImageIO.read(Runner.class.getResource("/bones.png"));
                 for(int i = 0; i <= 9; ++i)
                     sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
@@ -283,10 +281,7 @@ public class StartScreen {
             }
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fadeIn));
-            if(heartsActivated())
-                g2d.drawImage(undyneBlue, randX, -100 + randY, null);
-            else
-                g2d.drawImage(undyne, randX, -100 + randY, null);
+            g2d.drawImage(undyne, randX, -100 + randY, null);
             g2d.dispose();
             ++undyneCount;
             if(undyneCount == 7)
