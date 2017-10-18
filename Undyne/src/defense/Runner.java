@@ -518,9 +518,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
-        musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), false, true, 553, 30, 10, 50);
+        musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), true, 553, 30, 10, 50);
         musicSlider.setVisible(true);
-        sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, false, true, 581, 30, 10, 50);
+        sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, true, 581, 30, 10, 50);
         sfxSlider.setVisible(true);
         frame.add(closeButton);
         frame.add(draggableButton);
@@ -558,7 +558,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         creditsButton.addMouseListener(errorListener);
         helpButton.addMouseListener(errorListener);
         frame.addKeyListener(this);
-        frame.setSize(600, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
         frame.setLocation(dim.width / 2 - frame.getWidth() / 2, dim.height / 2 - frame.getHeight() / 2);
@@ -1118,6 +1117,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         activated = "";
         fadeStart = 0;
         musicVolume = 1;
+        sfxVolume = 1;
         nothingCounter = 0;
         breakCount = 0;
         breakFrame = 0;
