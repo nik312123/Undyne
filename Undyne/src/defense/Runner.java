@@ -9,6 +9,9 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
@@ -725,9 +728,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         closeButton.draw(g);
         draggableButton.draw(g);
         musicButton.draw(g);
-        musicSlider.draw(g);
         sfxButton.draw(g);
-        sfxSlider.draw(g);
+        if(musicButton.onButton() || musicSlider.isVisible() && onMusicSlider() || musicSlider.actionPerforming()) {
+            musicSlider.setVisible(true);
+            musicSlider.draw(g);
+        }
+        else
+            musicSlider.setVisible(false);
+        if(sfxButton.onButton() || sfxSlider.isVisible() && onSfxSlider() || musicSlider.actionPerforming()) {
+            sfxSlider.setVisible(true);
+            sfxSlider.draw(g);
+        }
+        else
+            sfxSlider.setVisible(false);
         if(speechDone)
             drawReplay(g, 10);
         helper.initiate(g, helpStarter);
@@ -1309,6 +1322,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 stage.setLeftf();
                 break;
         }
+    }
+    
+    public static boolean onMusicSlider() {
+        Point mousePos = MouseInfo.getPointerInfo().getLocation();
+        mousePos = new Point((int) (mousePos.getX() - musicSlider.getLocationOnScreen().getX()), (int) (mousePos.getY() - musicSlider.getLocationOnScreen().getY()));
+        Rectangle bounds = musicSlider.getBounds();
+        bounds.setBounds(0, -6, (int) bounds.getWidth(), (int) bounds.getHeight() + 6);
+        return bounds.contains(mousePos);
+    }
+    
+    public static boolean onSfxSlider() {
+        Point mousePos = MouseInfo.getPointerInfo().getLocation();
+        mousePos = new Point((int) (mousePos.getX() - sfxSlider.getLocationOnScreen().getX()), (int) (mousePos.getY() - sfxSlider.getLocationOnScreen().getY()));
+        Rectangle bounds = sfxSlider.getBounds();
+        bounds.setBounds(0, -6, (int) bounds.getWidth(), (int) bounds.getHeight() + 6);
+        return bounds.contains(mousePos);
     }
     
 }
