@@ -19,6 +19,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import nikunj.classes.Sound;
 
 public class StartScreen {
+
 	private static double fadeIn = 0;
 	private static double fadeStart = 0;
 	private static double sfxVolume = 1;

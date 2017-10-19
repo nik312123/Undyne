@@ -107,7 +107,7 @@ public class Player {
         }
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), shield.getMinX() + 71 / 2, shield.getMinY() + 71 / 2);
+        tx.rotate(Math.toRadians(angle), 71 / 2, 71 / 2);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         shield = op.filter(shield, null);
         g.translate(-300, -300);
