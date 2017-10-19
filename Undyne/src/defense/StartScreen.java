@@ -516,6 +516,7 @@ public class StartScreen {
                 g2d.drawImage(spear, (int) Math.round(SPEAR_END.getX()), (int) Math.round(SPEAR_END.getY()), null);
             }
             if(spearFrame == 30) {
+                spearFly.changeVolume(sfxVolume);
                 spearFly.play();
             }
             if(spearCounter % 3 == 0) {
