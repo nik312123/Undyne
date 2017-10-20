@@ -148,8 +148,7 @@ public class StartScreen {
                 heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
                 heartMouseBlue = ImageIO.read(Runner.class.getResource("/heartMouseBlue.png"));
                 buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
-                for(int i = 0; i <= 37; ++i) // Credit: nevit from
-                                             // goo.gl/QR3vVj
+                for(int i = 0; i <= 37; ++i) // Credit: nevit from goo.gl/QR3vVj
                     fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
                 dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
                 dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
@@ -176,7 +175,7 @@ public class StartScreen {
         if(frameCounter1 > 100) {
             if(frameCounter1 > 100 && frameCounter1 != 251)
                 ++frameCounter1;
-            if(scale > -1) // Okay
+            if(scale > 0)
                 scale -= 80;
             gifDog(g);
             starterTitle(g);
