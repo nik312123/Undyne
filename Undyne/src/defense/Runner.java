@@ -1307,10 +1307,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_A:
                 stage.setLeftf();
-                break;
-            case KeyEvent.VK_K:
-            	StartScreen.scale = 24000;
-            	break;
         }
     }
     
