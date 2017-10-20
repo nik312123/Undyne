@@ -58,12 +58,11 @@ public class StartScreen {
     private static int survivalButtonCount = 0;
     private static int dogCount = 0;
     private static int dogFrame = 0;
-    private static int scaleSub = 10;
-    private static int scale = 500;
     private static int shift = 0;
     private static int heartX = 5;
     private static int heartY = 100 + shift;
     private static int frameCounter1 = 0;
+    public static int scale = 2400;
     private static int moveCounter = 1;
     private static int boneCounter = 0;
     private static int boneY = 600;
@@ -176,13 +175,11 @@ public class StartScreen {
         if(frameCounter1 > 100) {
             if(frameCounter1 > 100 && frameCounter1 != 251)
                 ++frameCounter1;
-            if(frameCounter1 > 200) {
-                if(scale > 1)
-                    scale -= scaleSub;
-                drawSubtitle(g);
-            }
+            if(scale > 0)
+                scale -= 80;
             gifDog(g);
             starterTitle(g);
+            drawSubtitle(g);
             if(frameCounter1 > 250) {
                 moveHeart();
                 constrain();
@@ -231,9 +228,9 @@ public class StartScreen {
     
     public void drawSubtitle(Graphics g) {
         if(heartsActivated())
-            g.drawImage(subtitleBlue, 0 - scale, 0 - scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g.drawImage(subtitleBlue, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
         else
-            g.drawImage(subtitle, 0 - scale, 0 - scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g.drawImage(subtitle, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
     }
     
     public void moveHeart() {
@@ -275,7 +272,7 @@ public class StartScreen {
                 fadeIn += 0.02;
             else if(zCounter < 11)
                 ++zCounter;
-            if(undyneCount % 7 == 0 && scale < 1) {
+            if(undyneCount % 7 == 0) {
                 randX = rand.nextInt(3);
                 randY = rand.nextInt(3);
             }
@@ -503,8 +500,8 @@ public class StartScreen {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, spearFrame / 30f));
                 g2d.drawImage(spear, (int) Math.round(SPEAR_SPAWN.getX()), (int) Math.round(SPEAR_SPAWN.getY()), null);
             }
-            else if(!spearLocation.equals(SPEAR_END)){
-                spearLocation = new Point2D.Double(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX())/20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY())/20);
+            else if(!spearLocation.equals(SPEAR_END)) {
+                spearLocation = new Point2D.Double(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX()) / 20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY()) / 20);
                 g2d.drawImage(spear, (int) Math.round(spearLocation.getX()), (int) Math.round(spearLocation.getY()), null);
             }
             else {
@@ -595,7 +592,7 @@ public class StartScreen {
             blueHeartOpacity = 1f;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, blueHeartOpacity));
-        g2d.drawImage(blueHeartFlash, 0 - scale, 0 - scale, null);
+        g2d.drawImage(blueHeartFlash, 0, 0, null);
         g2d.dispose();
         if(blueHeartOpacity > 0.02f && blueHeartFlashCounter % 2 == 0)
             blueHeartOpacity -= 0.02f;
@@ -772,12 +769,11 @@ public class StartScreen {
         survivalButtonCount = 0;
         dogCount = 0;
         dogFrame = 0;
-        scaleSub = 10;
-        scale = 500;
         shift = 0;
         heartX = 5;
         heartY = 100 + shift;
         frameCounter1 = 0;
+        scale = 2400;
         moveCounter = 1;
         boneCounter = 0;
         boneY = 600;
