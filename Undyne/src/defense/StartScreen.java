@@ -124,7 +124,7 @@ public class StartScreen {
     
     public StartScreen() {
         if(Runner.isFirstTime) {
-            try { // Credit to wjl from goo.gl/ofAZRS
+            try {
                 flare = new Sound(Runner.class.getResource("/fire.wav"), false);
                 bark = new Sound(Runner.class.getResource("/bark.wav"), false);
                 spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
