@@ -735,7 +735,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         else
             musicSlider.setVisible(false);
-        if(sfxButton.onButton() || sfxSlider.isVisible() && onSfxSlider() || musicSlider.actionPerforming()) {
+        if(sfxButton.onButton() || sfxSlider.isVisible() && onSfxSlider() || sfxSlider.actionPerforming()) {
             sfxSlider.setVisible(true);
             sfxSlider.draw(g);
         }
@@ -1328,7 +1328,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Point mousePos = MouseInfo.getPointerInfo().getLocation();
         mousePos = new Point((int) (mousePos.getX() - musicSlider.getLocationOnScreen().getX()), (int) (mousePos.getY() - musicSlider.getLocationOnScreen().getY()));
         Rectangle bounds = musicSlider.getBounds();
-        bounds.setBounds(0, -6, (int) bounds.getWidth(), (int) bounds.getHeight() + 6);
+        bounds.setBounds(musicButton.getX() - musicSlider.getX(), -6, musicButton.getWidth(), musicSlider.getHeight() + 6);
         return bounds.contains(mousePos);
     }
     
@@ -1336,7 +1336,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Point mousePos = MouseInfo.getPointerInfo().getLocation();
         mousePos = new Point((int) (mousePos.getX() - sfxSlider.getLocationOnScreen().getX()), (int) (mousePos.getY() - sfxSlider.getLocationOnScreen().getY()));
         Rectangle bounds = sfxSlider.getBounds();
-        bounds.setBounds(0, -6, (int) bounds.getWidth(), (int) bounds.getHeight() + 6);
+        bounds.setBounds(sfxButton.getX() - sfxSlider.getX(), -6, sfxButton.getWidth(), sfxSlider.getHeight() + 6);
         return bounds.contains(mousePos);
     }
     
