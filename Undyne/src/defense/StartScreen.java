@@ -3,28 +3,34 @@ package defense;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.AttributedString;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import nikunj.classes.PopUp;
 import nikunj.classes.Sound;
 
 public class StartScreen {
-    private static double fadeIn = 0;
-    private static double fadeStart = 0;
+    private double fadeIn = 0;
+    private double fadeStart = 0;
     private static double sfxVolume = 1;
-    private static double musicVolume = 1;
+    private double musicVolume = 1;
     
-    private static float blueHeartOpacity = 0.02f;
+    private float blueHeartOpacity = 0.02f;
     
     private static BufferedImage undyne;
     private static BufferedImage start;
@@ -43,69 +49,69 @@ public class StartScreen {
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
     
-    private static int speed = 2;
-    private static int zCounter = 0;
-    private static int hardButtonRect = 0;
-    private static int easyButtonRect = 0;
-    private static int survivalButtonRect = 0;
-    private static int frameCounter = 0;
-    private static int count2 = -100;
-    private static int undyneCount = 0;
-    private static int randX, randY;
-    private static int flashCount = 0;
-    private static int hardButtonCount = 0;
-    private static int easyButtonCount = 0;
-    private static int survivalButtonCount = 0;
-    private static int dogCount = 0;
-    private static int dogFrame = 0;
-    private static int scaleSub = 10;
-    private static int scale = 500;
-    private static int shift = 0;
-    private static int heartX = 5;
-    private static int heartY = 100 + shift;
-    private static int frameCounter1 = 0;
-    private static int moveCounter = 1;
-    private static int boneCounter = 0;
-    private static int boneY = 600;
-    private static int sansCount = 0;
-    private static int sansFrame = 0;
-    private static int flickerCounter = 0;
-    private static int flickerChangeY = 0;
-    private static int flickeringCountdown = 75;
-    private static int blueHeartFlashCounter = 0;
-    private static int gifOneIndex = 0, gifTwoIndex = 0;
-    private static int spearCounter = 1, spearFrame = 0;
-    private static int arrowsCounter = 1;
-    private static int nameStringX = 610;
-    private static int nameStringCounter = 0;
-    private static int warningCounter = 0;
+    private int speed = 2;
+    private int zCounter = 0;
+    private int hardButtonRect = 0;
+    private int easyButtonRect = 0;
+    private int survivalButtonRect = 0;
+    private int frameCounter = 0;
+    private int count2 = -100;
+    private int undyneCount = 0;
+    private int randX, randY;
+    private int flashCount = 0;
+    private int hardButtonCount = 0;
+    private int easyButtonCount = 0;
+    private int survivalButtonCount = 0;
+    private int dogCount = 0;
+    private int dogFrame = 0;
+    private int scaleSub = 10;
+    private int scale = 500;
+    private int shift = 0;
+    private int heartX = 5;
+    private int heartY = 100 + shift;
+    private int frameCounter1 = 0;
+    private int moveCounter = 1;
+    private int boneCounter = 0;
+    private int boneY = 600;
+    private int sansCount = 0;
+    private int sansFrame = 0;
+    private int flickerCounter = 0;
+    private int flickerChangeY = 0;
+    private int flickeringCountdown = 75;
+    private int blueHeartFlashCounter = 0;
+    private int gifOneIndex = 0, gifTwoIndex = 0;
+    private int spearCounter = 1, spearFrame = 0;
+    private int arrowsCounter = 1;
+    private int nameStringX = 610;
+    private int nameStringCounter = 0;
+    private int warningCounter = 0;
     
-    private static boolean right = false;
-    private static boolean left = false;
-    private static boolean up = false;
-    private static boolean down = false;
-    private static boolean switchFade = false;
-    private static boolean hardButtonRectRed = false;
-    private static boolean easyButtonRectRed = false;
-    private static boolean survivalButtonRectRed = false;
-    private static boolean fire2 = false;
-    private static boolean playFire = true;
-    private static boolean playBark = true;
-    private static boolean playSpear = true;
-    private static boolean isOnHard;
-    private static boolean isOnEasy;
-    private static boolean isOnSurvival;
-    private static boolean hitGround = false;
-    private static boolean showBones = false;
-    private static boolean hideSans = false;
-    private static boolean flickering = false;
-    private static boolean activateSpears = false;
-    private static boolean spearAppearPlayed = false;
-    private static boolean spearHitPlayed = false;
-    private static boolean heartMoved = false;
-    private static boolean arrowsShouldShow = true;
+    private boolean right = false;
+    private boolean left = false;
+    private boolean up = false;
+    private boolean down = false;
+    private boolean switchFade = false;
+    private boolean hardButtonRectRed = false;
+    private boolean easyButtonRectRed = false;
+    private boolean survivalButtonRectRed = false;
+    private boolean fire2 = false;
+    private boolean playFire = true;
+    private boolean playBark = true;
+    private boolean playSpear = true;
+    private boolean isOnHard;
+    private boolean isOnEasy;
+    private boolean isOnSurvival;
+    private boolean hitGround = false;
+    private boolean showBones = false;
+    private boolean hideSans = false;
+    private boolean flickering = false;
+    private boolean activateSpears = false;
+    private boolean spearAppearPlayed = false;
+    private boolean spearHitPlayed = false;
+    private boolean heartMoved = false;
+    private boolean arrowsShouldShow = true;
     public static boolean isLoaded = false;
-    private static boolean[] heartsActivated = new boolean[3];
+    private boolean[] heartsActivated = new boolean[3];
     
     private static Sound flare;
     private static Sound bark;
@@ -117,11 +123,15 @@ public class StartScreen {
     private static Sound spearFly;
     private static Sound spearHit;
     
+    private PopUp creditsList;
+    
     private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
     private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
-    private static Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
+    private Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
+    
+    private AttributedString[] creditsText = new AttributedString[8];
     
     public StartScreen() {
         if(Runner.isFirstTime) {
@@ -141,30 +151,86 @@ public class StartScreen {
             }
             try {
                 subtitle = ImageIO.read(Runner.class.getResource("/sub.png"));
+                subtitle = Runner.getCompatibleImage(subtitle);
                 keys[0] = ImageIO.read(Runner.class.getResource("/keysRed.png"));
+                keys[0] = Runner.getCompatibleImage(keys[0]);
                 keys[1] = ImageIO.read(Runner.class.getResource("/keys.png"));
+                keys[1] = Runner.getCompatibleImage(keys[1]);
                 undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
+                undyne = Runner.getCompatibleImage(undyne);
                 start = ImageIO.read(Runner.class.getResource("/start.png"));
+                start = Runner.getCompatibleImage(start);
                 select = ImageIO.read(Runner.class.getResource("/select.png"));
+                select = Runner.getCompatibleImage(select);
                 heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
+                heartMouse = Runner.getCompatibleImage(heartMouse);
                 heartMouseBlue = ImageIO.read(Runner.class.getResource("/heartMouseBlue.png"));
+                heartMouseBlue = Runner.getCompatibleImage(heartMouseBlue);
                 buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
-                for(int i = 0; i <= 37; ++i) // Credit: nevit from goo.gl/QR3vVj
+                buttons = Runner.getCompatibleImage(buttons);
+                for(int i = 0; i <= 37; ++i) {
                     fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
+                    fire[i] = Runner.getCompatibleImage(fire[i]);
+                }
                 dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
+                dog[0] = Runner.getCompatibleImage(dog[0]);
                 dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
+                dog[1] = Runner.getCompatibleImage(dog[1]);
                 subtitleBlue = ImageIO.read(Runner.class.getResource("/subBlue.png"));
+                subtitleBlue = Runner.getCompatibleImage(subtitleBlue);
                 bones = ImageIO.read(Runner.class.getResource("/bones.png"));
-                for(int i = 0; i <= 9; ++i)
+                bones = Runner.getCompatibleImage(bones);
+                for(int i = 0; i <= 9; ++i) {
                     sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
+                    sans[i] = Runner.getCompatibleImage(sans[i]);
+                }
                 blueHeartFlash = ImageIO.read(Runner.class.getResource("/blueHeartFlash.png"));
+                blueHeartFlash = Runner.getCompatibleImage(blueHeartFlash);
                 spear = ImageIO.read(Runner.class.getResource("/spear.png"));
+                spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
+                arrows = Runner.getCompatibleImage(arrows);
             }
             catch(IOException e) {
                 e.printStackTrace();
             }
         }
+        creditsList = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            
+        };
+        creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
+        addLinkFormatting(0, 0, 9);
+        creditsText[1] = new AttributedString("wjl: Fire sound effect");
+        addLinkFormatting(1, 0, 4);
+        creditsText[2] = new AttributedString("fins: Error sound effect");
+        addLinkFormatting(2, 0, 5);
+        creditsText[3] = new AttributedString("Klemens Wöhrer: Fire gif");
+        addLinkFormatting(3, 0, 15);
+        creditsText[4] = new AttributedString("Sayonara Maxwell: Spear of Justice Remix");
+        addLinkFormatting(4, 0, 17);
+        creditsText[5] = new AttributedString("Kamex: Battle Against A True Hero Remix");
+        addLinkFormatting(5, 0, 6);
+        creditsText[6] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
+        addLinkFormatting(6, 0, 13);
+        addLinkFormatting(6, 18, 35);
+        creditsText[7] = new AttributedString("And most importantly, thanks to you for enjoying our");
+        for(AttributedString a : creditsText) {
+            try {
+                a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
+            }
+            catch(FontFormatException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    private void addLinkFormatting(int creditsIndex, int beginningIndex, int lastIndex) {
+        creditsText[creditsIndex].addAttribute(TextAttribute.FOREGROUND, new Color(0, 82, 232), beginningIndex, lastIndex);
+        creditsText[creditsIndex].addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, beginningIndex, lastIndex);
     }
     
     public void run(Graphics g) {
@@ -196,6 +262,21 @@ public class StartScreen {
                 drawSpears(g);
                 drawNames(g);
                 heartMouse(g);
+                creditsList.draw(g);
+                if(creditsList.percentageExpanded() == 1.0) {
+                    TextAttribute[] t = {TextAttribute.FONT};
+                    int originalY = 85 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight()/2;
+                    int x = 85, y = originalY;
+                    g.setColor(Color.WHITE);
+                    for(AttributedString a : creditsText) {
+                        g.drawString(a.getIterator(), x, y);
+                        y += 40;
+                    }
+                    g.setFont(Runner.deteFontSpeech);
+                    g.drawString("Undertale SFX, and creating Undertale", x, originalY + 15);
+                    g.drawString("and code", x, originalY + 15 + 40 * 6);
+                    g.drawString("game! :)", x, originalY + 15 + 40 * 7);
+                }
                 isLoaded = true;
                 if(heartsActivated()) {
                     drawSans(g);
@@ -237,7 +318,7 @@ public class StartScreen {
     }
     
     public void moveHeart() {
-        if(zCounter > 10 && !Runner.getHelpStarter()) {
+        if(zCounter > 10 && !Runner.getHelpStarter() && !creditsList.getExpanding()) {
             ++moveCounter;
             if(moveCounter > 2) {
                 if(right) {
@@ -609,7 +690,7 @@ public class StartScreen {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(Runner.deteFontScore);
         g2d.setColor(Color.WHITE);
-        g2d.drawString("Made by Nikunj Chawla and Aaron Kandikatla", nameStringX, 575);
+        g2d.drawString("Made by Nikunj Chawla and Aaron Kandikatla", nameStringX, 580);
         g2d.dispose();
         if(++nameStringCounter % 2 == 0) {
             --nameStringX;
@@ -753,68 +834,7 @@ public class StartScreen {
     }
     
     public void resetVars() {
-        fadeIn = 0;
-        fadeStart = 0;
-        sfxVolume = 1;
-        musicVolume = 1;
-        blueHeartOpacity = 0.02f;
-        speed = 2;
-        zCounter = 0;
-        hardButtonRect = 0;
-        easyButtonRect = 0;
-        survivalButtonRect = 0;
-        frameCounter = 0;
-        count2 = -100;
-        undyneCount = 0;
-        flashCount = 0;
-        hardButtonCount = 0;
-        easyButtonCount = 0;
-        survivalButtonCount = 0;
-        dogCount = 0;
-        dogFrame = 0;
-        scaleSub = 10;
-        scale = 500;
-        shift = 0;
-        heartX = 5;
-        heartY = 100 + shift;
-        frameCounter1 = 0;
-        moveCounter = 1;
-        boneCounter = 0;
-        boneY = 600;
-        sansCount = 0;
-        sansFrame = 0;
-        flickerCounter = 0;
-        flickerChangeY = 0;
-        flickeringCountdown = 75;
-        blueHeartFlashCounter = 0;
-        gifOneIndex = 0;
-        gifTwoIndex = 0;
-        spearCounter = 1;
-        spearFrame = 0;
-        arrowsCounter = 1;
-        right = false;
-        left = false;
-        up = false;
-        down = false;
-        switchFade = false;
-        hardButtonRectRed = false;
-        easyButtonRectRed = false;
-        survivalButtonRectRed = false;
-        fire2 = false;
-        playFire = true;
-        playBark = true;
-        playSpear = true;
-        hitGround = false;
-        showBones = false;
-        hideSans = false;
-        flickering = false;
-        activateSpears = false;
-        spearAppearPlayed = false;
-        spearHitPlayed = false;
-        heartMoved = false;
-        arrowsShouldShow = true;
-        heartsActivated = new boolean[3];
-        spearLocation = (Point2D) SPEAR_SPAWN.clone();
+        isLoaded = false;
     }
     
     public boolean shouldStart() {
@@ -844,6 +864,10 @@ public class StartScreen {
     
     public void warningOn() {
         warningCounter = 50;
+    }
+    
+    public PopUp getCreditsList() {
+        return creditsList;
     }
     
 }

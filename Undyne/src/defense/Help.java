@@ -7,12 +7,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import nikunj.classes.PopUp;
+
 public class Help {
     private int frameCounter = 0;
-    private int dynamicSize = 0;
-    private int counter = 0;
-    private static final int INCREMENTER = 10;
-    private static final int SIZE = 450;
+    private int helpFrame = 0;
+    
+    private PopUp helpPopUp;
     
     private static BufferedImage[] helpGif = new BufferedImage[739];
     
@@ -26,42 +27,33 @@ public class Help {
                 e.printStackTrace();
             }
         }
+        helpPopUp = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5);
+        helpPopUp.setVisible(true);
     }
     
     public void initiate(Graphics g, boolean start) {
-        ++frameCounter;
         if(start)
-            grow();
+            helpPopUp.setExpanding(true);
         else {
-            shrink();
-            frameCounter = 1;
-            counter = 0;
+            helpPopUp.setExpanding(false);
+            frameCounter = 0;
+            helpFrame = 0;
         }
-        g.setColor(Color.ORANGE);
+        int heightWidth = Math.min(helpPopUp.getWidth(), 460);
         g.setFont(Runner.deteFontSpeech);
-        if(dynamicSize > 0) {
-            g.fillRect(300 - (dynamicSize + 10) / 2, 300 - (dynamicSize + 10) / 2, dynamicSize + 10, dynamicSize + 10);
-            g.drawImage(helpGif[counter], 300 - dynamicSize / 2, 300 - dynamicSize / 2, dynamicSize, dynamicSize, null);
+        if(helpPopUp.getExpanding() || helpPopUp.getWidth() > 0) {
+            helpPopUp.draw(g);
+            g.drawImage(helpGif[helpFrame], 300 - heightWidth / 2, 300 - heightWidth / 2, heightWidth, heightWidth, null);
         }
         g.setColor(Color.WHITE);
-        if(dynamicSize >= SIZE)
-            g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - dynamicSize / 4 + 37);
-        if(frameCounter % 3 == 0) {
-            ++counter;
+        if(helpPopUp.getWidth() == helpPopUp.getExpandedWidth())
+            g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - heightWidth / 4 + 37);
+        if(++frameCounter % 3 == 0) {
+            ++helpFrame;
             frameCounter = 0;
         }
-        if(counter == 739)
-            counter = 0;
-    }
-    
-    public void grow() {
-        if(dynamicSize <= SIZE)
-            dynamicSize += INCREMENTER;
-    }
-    
-    public void shrink() {
-        if(dynamicSize > 0)
-            dynamicSize -= INCREMENTER * 2;
+        if(helpFrame == 739)
+            helpFrame = 0;
     }
     
 }
