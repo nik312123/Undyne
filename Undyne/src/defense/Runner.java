@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -37,6 +39,7 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
 import nikunj.classes.GradientButton;
+import nikunj.classes.PopUp;
 import nikunj.classes.Slider;
 import nikunj.classes.Sound;
 
@@ -106,11 +109,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static BufferedImage blueArr;
     public static BufferedImage redArr;
     public static BufferedImage reverseArr;
-    public static BufferedImage[] gif;
-    public static BufferedImage[] gif2;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
+    public static BufferedImage[] gif;
+    public static BufferedImage[] gif2;
     
     private static Sound main;
     private static Sound gameDone;
@@ -135,6 +138,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Slider musicSlider;
     private static Slider sfxSlider;
     
+    private static PopUp creditsList;
+    
     private static Font deteFontNorm;
     public static Font deteFontSpeech;
     public static Font deteFontScore;
@@ -149,6 +154,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static JFrame frame;
     
+    //-Dsun.java2d.noddraw=true -Dsun.java2d.opengl=true, -Dsun.java2d.translaccel=true, -Xms2048M
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
         if(isFirstTime) {
@@ -189,30 +195,50 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             asgore = new Sound(Runner.class.getResource("/asgore.wav"), false);
             error = new Sound(Runner.class.getResource("/error.wav"), false);
             heart = ImageIO.read(Runner.class.getResource("/heart.png"));
+            heart = getCompatibleImage(heart);
             heartBreak = new BufferedImage[49];
-            for(int i = 0; i <= 48; ++i)
+            for(int i = 0; i <= 48; ++i) {
                 heartBreak[i] = ImageIO.read(Runner.class.getResource("/gif/heartBreak" + i + ".png"));
+                heartBreak[i] = getCompatibleImage(heartBreak[i]);
+            }
             gameOver = new BufferedImage[226];
-            for(int i = 0; i <= 225; ++i)
+            for(int i = 0; i <= 225; ++i) {
                 gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
+                gameOver[i] = getCompatibleImage(gameOver[i]);
+            }
             gif2 = new BufferedImage[80];
-            for(int i = 0; i <= 79; ++i)
+            for(int i = 0; i <= 79; ++i) {
                 gif2[i] = ImageIO.read(Runner.class.getResource("/gif/undying" + i + ".png"));
+                gif2[i] = getCompatibleImage(gif2[i]);
+            }
             levels[0] = ImageIO.read(Runner.class.getResource("/levelOne.png"));
             levels[1] = ImageIO.read(Runner.class.getResource("/levelTwo.png"));
             levels[2] = ImageIO.read(Runner.class.getResource("/levelThree.png"));
             levels[3] = ImageIO.read(Runner.class.getResource("/levelFour.png"));
+            for(int i = 0; i < levels.length; ++i)
+                levels[i] = getCompatibleImage(levels[i]);
             blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
+            blueArr = getCompatibleImage(blueArr);
             redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
+            redArr = getCompatibleImage(redArr);
             reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
+            reverseArr = getCompatibleImage(reverseArr);
             replay = ImageIO.read(Runner.class.getResource("/replay.png"));
+            replay = getCompatibleImage(replay);
             close = ImageIO.read(Runner.class.getResource("/close.png"));
+            close = getCompatibleImage(close);
             draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
+            draggable = getCompatibleImage(draggable);
             music = ImageIO.read(Runner.class.getResource("/music.png"));
+            music = getCompatibleImage(music);
             sfx = ImageIO.read(Runner.class.getResource("/sfx.png"));
+            sfx = getCompatibleImage(sfx);
             speech = ImageIO.read(Runner.class.getResource("/speech.png"));
+            speech = getCompatibleImage(speech);
             credits = ImageIO.read(Runner.class.getResource("/credits.png"));
+            credits = getCompatibleImage(credits);
             help = ImageIO.read(Runner.class.getResource("/help.png"));
+            help = getCompatibleImage(help);
             for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
                 mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
             URL fontUrl = Runner.class.getResource("/dete.otf");
@@ -222,8 +248,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         if(gif == null || gif.length != 32) {
             gif = new BufferedImage[32];
-            for(int i = 0; i <= 31; ++i)
+            for(int i = 0; i <= 31; ++i) {
                 gif[i] = ImageIO.read(Runner.class.getResource("/gif/frame" + i + ".png"));
+                gif[i] = getCompatibleImage(gif[i]);
+            }
         }
         @SuppressWarnings("unused")
         Runner a = new Runner("Undyne: Absolute");
@@ -533,6 +561,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.add(helpButton);
         frame.add(musicSlider);
         frame.add(sfxSlider);
+        creditsList = stage.getCreditsList();
+        frame.add(creditsList);
+        creditsList.setVisible(true);
         MouseListener errorListener = new MouseListener() {
 
             @Override
@@ -560,6 +591,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.addMouseListener(errorListener);
         creditsButton.addMouseListener(errorListener);
         helpButton.addMouseListener(errorListener);
+        creditsList.addMouseListener(errorListener);
         frame.addKeyListener(this);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
@@ -577,27 +609,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         timer.start();
     }
     
-    public void drawCheat(Graphics g) throws FontFormatException, IOException {
-        if(automatic)
-            activated = "Cheat Activated";
-        else {
-            activated = "";
-            nothingCounter = 0;
-        }
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setFont(deteFontNorm);
-        g2.setColor(Color.GREEN);
-        if(!activated.equals(""))
-            g2.drawString(activated.substring(0, nothingCounter), 0, 13 + 30);
-        if(frameCounter % 7 == 0 && nothingCounter < activated.length())
-            nothingCounter++;
+    public static BufferedImage getCompatibleImage(BufferedImage current) {
+        GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        if(current.getColorModel().equals(gfxConfig.getColorModel()))
+            return current;
+        BufferedImage optimized = gfxConfig.createCompatibleImage(current.getWidth(), current.getHeight(), current.getTransparency());
+        Graphics2D g2d = optimized.createGraphics();
+        g2d.drawImage(current, 0, 0, null);
+        return optimized;
     }
-    
+        
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         if(!allStopped) {
-            super.paintComponent(g);
             if(++alwaysOnTopCounter >= 20) {
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
@@ -747,6 +772,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(survival && !beginning)
             printScore(g);
         g.dispose();
+    }
+    
+    public void drawCheat(Graphics g) throws FontFormatException, IOException {
+        if(automatic)
+            activated = "Cheat Activated";
+        else {
+            activated = "";
+            nothingCounter = 0;
+        }
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setFont(deteFontNorm);
+        g2.setColor(Color.GREEN);
+        if(!activated.equals(""))
+            g2.drawString(activated.substring(0, nothingCounter), 0, 13 + 30);
+        if(frameCounter % 7 == 0 && nothingCounter < activated.length())
+            nothingCounter++;
     }
     
     private void automatic() {
@@ -1129,8 +1171,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         typed = "";
         activated = "";
         fadeStart = 0;
-        musicVolume = 1;
-        sfxVolume = 1;
         nothingCounter = 0;
         breakCount = 0;
         breakFrame = 0;
@@ -1232,11 +1272,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_X:
                 helpStarter = false;
+                creditsList.setExpanding(false);
                 break;
             case KeyEvent.VK_Z:
                 if(beginning) {
                     if(stage.isOnLink() && creditsButton.isDisplayable())
-                        stage.openCreditsLink();
+                        creditsList.setExpanding(true);
                     else if(stage.isOnHelp() && helpButton.isDisplayable())
                         helpStarter = true;
                     else if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
