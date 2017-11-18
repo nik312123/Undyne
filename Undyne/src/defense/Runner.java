@@ -1004,65 +1004,40 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(deteFontSpeech);
         g2d.setColor(Color.BLACK);
-        if(!isGenocide) {
-            String print = "";
-            if(speechCounter < easyMessage[0].length() + 1) {
-                print = easyMessage[0].substring(0, speechCounter);
-                g.drawString(easyMessage[0].substring(0, speechCounter), speechX + 30, speechY + 20);
-            }
-            else if(speechCounter < easyMessage[1].length() + easyMessage[0].length() + 2) {
-                print = easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1));
-                g.drawString(easyMessage[0], speechX + 30, speechY + 20);
-                g.drawString(easyMessage[1].substring(0, speechCounter - (easyMessage[0].length() + 1)), speechX + 30, speechY + 40);
-            }
-            else if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3) {
-                print = easyMessage[2].substring(0, speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2));
-                g.drawString(easyMessage[0], speechX + 30, speechY + 20);
-                g.drawString(easyMessage[1], speechX + 30, speechY + 40);
-                g.drawString(easyMessage[2].substring(0, speechCounter - (easyMessage[0].length() + easyMessage[1].length() + 2)), speechX + 30, speechY + 60);
-            }
-            else {
-                g.drawString(easyMessage[0], speechX + 30, speechY + 20);
-                g.drawString(easyMessage[1], speechX + 30, speechY + 40);
-                g.drawString(easyMessage[2], speechX + 30, speechY + 60);
-                speechDone = true;
-            }
-            if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
-                undyne.play();
-            }
-            speechCounterPrev = speechCounter;
-            if(speechCounter < easyMessage[2].length() + easyMessage[1].length() + easyMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
-                ++speechCounter;
+        String[] message;
+        if(!isGenocide)
+            message = easyMessage;
+        else
+            message = hardMessage;
+        String print = "";
+        if(speechCounter < message[0].length() + 1) {
+            print = message[0].substring(0, speechCounter);
+            g.drawString(message[0].substring(0, speechCounter), speechX + 30, speechY + 20);
         }
-        if(isGenocide) {
-            String print = "";
-            if(speechCounter < hardMessage[0].length() + 1) {
-                print = hardMessage[0].substring(0, speechCounter);
-                g.drawString(hardMessage[0].substring(0, speechCounter), speechX + 30, speechY + 20);
-            }
-            else if(speechCounter < hardMessage[1].length() + hardMessage[0].length() + 2) {
-                print = hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1));
-                g.drawString(hardMessage[0], speechX + 30, speechY + 20);
-                g.drawString(hardMessage[1].substring(0, speechCounter - (hardMessage[0].length() + 1)), speechX + 30, speechY + 40);
-            }
-            else if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3) {
-                print = hardMessage[2].substring(0, speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2));
-                g.drawString(hardMessage[0], speechX + 30, speechY + 20);
-                g.drawString(hardMessage[1], speechX + 30, speechY + 40);
-                g.drawString(hardMessage[2].substring(0, speechCounter - (hardMessage[0].length() + hardMessage[1].length() + 2)), speechX + 30, speechY + 60);
-            }
-            else {
-                g.drawString(hardMessage[0], speechX + 30, speechY + 20);
-                g.drawString(hardMessage[1], speechX + 30, speechY + 40);
-                g.drawString(hardMessage[2], speechX + 30, speechY + 60);
-                speechDone = true;
-            }
-            if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ')
+        else if(speechCounter < message[1].length() + message[0].length() + 2) {
+            print = message[1].substring(0, speechCounter - (message[0].length() + 1));
+            g.drawString(message[0], speechX + 30, speechY + 20);
+            g.drawString(message[1].substring(0, speechCounter - (message[0].length() + 1)), speechX + 30, speechY + 40);
+        }
+        else if(speechCounter < message[2].length() + message[1].length() + message[0].length() + 3) {
+            print = message[2].substring(0, speechCounter - (message[0].length() + message[1].length() + 2));
+            g.drawString(message[0], speechX + 30, speechY + 20);
+            g.drawString(message[1], speechX + 30, speechY + 40);
+            g.drawString(message[2].substring(0, speechCounter - (message[0].length() + message[1].length() + 2)), speechX + 30, speechY + 60);
+        }
+        else {
+            g.drawString(message[0], speechX + 30, speechY + 20);
+            g.drawString(message[1], speechX + 30, speechY + 40);
+            g.drawString(message[2], speechX + 30, speechY + 60);
+            speechDone = true;
+        }
+        if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
+            if(isGenocide)
                 undying.play();
-            speechCounterPrev = speechCounter;
-            if(speechCounter < hardMessage[2].length() + hardMessage[1].length() + hardMessage[0].length() + 3 && speechDelayCounter % 6 == 0)
-                ++speechCounter;
+            else
+                undyne.play();
         }
+        speechCounterPrev = speechCounter;
         ++speechDelayCounter;
         if(speechDelayCounter == 6)
             speechDelayCounter = 0;
