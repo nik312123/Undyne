@@ -248,6 +248,7 @@ public class StartScreen {
             }
             gifDog(g);
             starterTitle(g);
+            drawSubtitle(g);
             if(frameCounter1 > 250) {
                 moveHeart();
                 constrain();
@@ -311,9 +312,9 @@ public class StartScreen {
     
     private void drawSubtitle(Graphics g) {
         if(heartsActivated())
-            g.drawImage(subtitleBlue, 0 - scale, 0 - scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g.drawImage(subtitleBlue, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
         else
-            g.drawImage(subtitle, 0 - scale, 0 - scale, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g.drawImage(subtitle, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
     }
     
     private void moveHeart() {
@@ -356,7 +357,7 @@ public class StartScreen {
                 fadeIn += 0.02;
             else if(zCounter < 11)
                 ++zCounter;
-            if(undyneCount % 7 == 0 && scale < 1) {
+            if(undyneCount % 7 == 0) {
                 randX = rand.nextInt(3);
                 randY = rand.nextInt(3);
             }
@@ -584,8 +585,8 @@ public class StartScreen {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, spearFrame / 30f));
                 g2d.drawImage(spear, (int) Math.round(SPEAR_SPAWN.getX()), (int) Math.round(SPEAR_SPAWN.getY()), null);
             }
-            else if(!spearLocation.equals(SPEAR_END)){
-                spearLocation = new Point2D.Double(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX())/20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY())/20);
+            else if(!spearLocation.equals(SPEAR_END)) {
+                spearLocation = new Point2D.Double(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX()) / 20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY()) / 20);
                 g2d.drawImage(spear, (int) Math.round(spearLocation.getX()), (int) Math.round(spearLocation.getY()), null);
             }
             else {
@@ -676,7 +677,7 @@ public class StartScreen {
             blueHeartOpacity = 1f;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, blueHeartOpacity));
-        g2d.drawImage(blueHeartFlash, 0 - scale, 0 - scale, null);
+        g2d.drawImage(blueHeartFlash, 0, 0, null);
         g2d.dispose();
         if(blueHeartOpacity > 0.02f && blueHeartFlashCounter % 2 == 0)
             blueHeartOpacity -= 0.02f;
