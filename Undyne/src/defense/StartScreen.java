@@ -48,8 +48,7 @@ public class StartScreen {
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
-    
-    private int speed = 2;
+
     private int zCounter = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
@@ -64,7 +63,6 @@ public class StartScreen {
     private int survivalButtonCount = 0;
     private int dogCount = 0;
     private int dogFrame = 0;
-    private int scaleSub = 10;
     private int scale = 500;
     private int shift = 0;
     private int heartX = 5;
@@ -110,7 +108,7 @@ public class StartScreen {
     private boolean spearHitPlayed = false;
     private boolean heartMoved = false;
     private boolean arrowsShouldShow = true;
-    public static boolean isLoaded = false;
+    static boolean isLoaded = false;
     private boolean[] heartsActivated = new boolean[3];
     
     private static Sound flare;
@@ -133,7 +131,7 @@ public class StartScreen {
     
     private AttributedString[] creditsText = new AttributedString[8];
     
-    public StartScreen() {
+    StartScreen() {
         if(Runner.isFirstTime) {
             try {
                 flare = new Sound(Runner.class.getResource("/fire.wav"), false);
@@ -233,17 +231,21 @@ public class StartScreen {
         creditsText[creditsIndex].addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, beginningIndex, lastIndex);
     }
     
-    public void run(Graphics g) {
+    void run(Graphics g) {
         gifFire(g);
         drawArrows(g);
         drawGif(g);
         if(frameCounter1 != 251)
             ++frameCounter1;
         if(frameCounter1 > 100) {
-            if(frameCounter1 > 100 && frameCounter1 != 251)
+            if(frameCounter1 != 251)
                 ++frameCounter1;
-            if(scale > 0)
-                scale -= 80;
+            if(frameCounter1 > 200) {
+                int scaleSub = 10;
+                if(scale > 1)
+                    scale -= scaleSub;
+                drawSubtitle(g);
+            }
             gifDog(g);
             starterTitle(g);
             drawSubtitle(g);
@@ -291,13 +293,13 @@ public class StartScreen {
         }
     }
     
-    public void drawArrows(Graphics g) {
+    private void drawArrows(Graphics g) {
         g.drawImage(Runner.blueArr, -100, 1000, null);
         g.drawImage(Runner.redArr, -100, 1000, null);
         g.drawImage(Runner.reverseArr, -100, 1000, null);
     }
     
-    public void drawGif(Graphics g) {
+    private void drawGif(Graphics g) {
         if(gifOneIndex > 31)
             gifOneIndex = 0;
         if(gifTwoIndex > 79)
@@ -308,17 +310,18 @@ public class StartScreen {
         ++gifTwoIndex;
     }
     
-    public void drawSubtitle(Graphics g) {
+    private void drawSubtitle(Graphics g) {
         if(heartsActivated())
             g.drawImage(subtitleBlue, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
         else
             g.drawImage(subtitle, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
     }
     
-    public void moveHeart() {
+    private void moveHeart() {
         if(zCounter > 10 && !Runner.getHelpStarter() && !creditsList.getExpanding()) {
             ++moveCounter;
             if(moveCounter > 2) {
+                final int speed = 2;
                 if(right) {
                     heartX += speed;
                     heartMoved = true;
@@ -348,7 +351,7 @@ public class StartScreen {
         }
     }
     
-    public void starterTitle(Graphics g) {
+    private void starterTitle(Graphics g) {
         if(!heartsActivated()) {
             if(fadeIn < 1)
                 fadeIn += 0.02;
@@ -368,7 +371,7 @@ public class StartScreen {
         }
     }
     
-    public void constrain() {
+    private void constrain() {
         if(heartX < -288)
             heartX = -288;
         else if(heartX > 296)
@@ -379,7 +382,7 @@ public class StartScreen {
             heartY = 281;
     }
     
-    public void zToStart(Graphics g) {
+    private void zToStart(Graphics g) {
         if(!heartsActivated()) {
             float opacity = (float) fadeStart;
             Graphics2D g2d = (Graphics2D) g.create();
@@ -422,7 +425,7 @@ public class StartScreen {
             flashCount = 0;
     }
     
-    public void hardButton(Graphics g) {
+    private void hardButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         isOnHard = (heartX > 78 + 37 && heartX < 231 + 37 && heartY < 57 + shift && heartY > -11 + shift);
         if(hardButtonCount % 6 == 0) {
@@ -459,7 +462,7 @@ public class StartScreen {
         }
     }
     
-    public void easyButton(Graphics g) {
+    private void easyButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         isOnEasy = (heartX > -220 - 37 && heartX < -70 - 37 && heartY < 57 + shift && heartY > -11 + shift);
         if(easyButtonCount % 6 == 0) {
@@ -497,7 +500,7 @@ public class StartScreen {
         }
     }
     
-    public void survivalButton(Graphics g) {
+    private void survivalButton(Graphics g) {
         g.setColor(new Color(246, 138, 21));
         isOnSurvival = (heartX > -68 && heartX < 80 && heartY < 57 + shift && heartY > -11 + shift);
         if(survivalButtonCount % 6 == 0) {
@@ -536,14 +539,14 @@ public class StartScreen {
         }
     }
     
-    public void heartMouse(Graphics g) {
+    private void heartMouse(Graphics g) {
         if(heartsActivated() && !hitGround)
             g.drawImage(heartMouseBlue, heartX, heartY, null);
         else
             g.drawImage(heartMouse, heartX, heartY + flickerChangeY, null);
     }
     
-    public void gifFire(Graphics g) {
+    private void gifFire(Graphics g) {
         if(frameCounter % 4 == 0 || count2 < 0)
             ++count2;
         ++frameCounter;
@@ -555,7 +558,7 @@ public class StartScreen {
             g.drawImage(fire[count2], 330 + 39, 160 + shift, null);
     }
     
-    public void gifDog(Graphics g) {
+    private void gifDog(Graphics g) {
         if(easyButtonRectRed) {
             ++dogCount;
             if(dogCount != 0 && dogCount % 20 == 0) {
@@ -569,7 +572,7 @@ public class StartScreen {
         }
     }
     
-    public void drawSpears(Graphics g) {
+    private void drawSpears(Graphics g) {
         if(activateSpears) {
             Graphics2D g2d = (Graphics2D) g.create();
             if(!spearAppearPlayed) {
@@ -613,7 +616,7 @@ public class StartScreen {
         }
     }
     
-    public void startArrows(Graphics g) {
+    private void startArrows(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
         if(!heartMoved && arrowsShouldShow)
@@ -626,7 +629,7 @@ public class StartScreen {
         g2d.dispose();
     }
     
-    public void drawBones(Graphics g) {
+    private void drawBones(Graphics g) {
         ++boneCounter;
         if(boneCounter > 50) {
             if(!showBones) {
@@ -643,7 +646,7 @@ public class StartScreen {
             if(boneY > 510)
                 boneY -= 3;
             if(heartY + 300 >= boneY) {
-                if(flickering == false) {
+                if(!flickering) {
                     damage.changeVolume(sfxVolume);
                     damage.play();
                 }
@@ -652,7 +655,7 @@ public class StartScreen {
         }
     }
     
-    public void drawSans(Graphics g) {
+    private void drawSans(Graphics g) {
         if(sansCount % 10 == 0) {
             if(sansFrame < 4 || hitGround)
                 ++sansFrame;
@@ -669,7 +672,7 @@ public class StartScreen {
             sansCount = 0;
     }
     
-    public void drawBlueHeartFlash(Graphics g) {
+    private void drawBlueHeartFlash(Graphics g) {
         if(heartsActivated())
             blueHeartOpacity = 1f;
         Graphics2D g2d = (Graphics2D) g.create();
@@ -683,7 +686,7 @@ public class StartScreen {
             blueHeartFlashCounter = 0;
     }
     
-    public void drawNames(Graphics g) {
+    private void drawNames(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(Runner.deteFontScore);
@@ -698,7 +701,7 @@ public class StartScreen {
         }
     }
     
-    public void flickeringHeart() {
+    private void flickeringHeart() {
         if(flickering) {
             --flickeringCountdown;
             if(flickerCounter % 16 == 0) {
@@ -715,7 +718,7 @@ public class StartScreen {
         }
     }
     
-    public void resetEgg() {
+    private void resetEgg() {
         heartsActivated[0] = false;
         heartsActivated[1] = false;
         heartsActivated[2] = false;
@@ -734,27 +737,27 @@ public class StartScreen {
         megalovania.stop();
     }
     
-    public void setRightf() {
+    void setRightf() {
         right = false;
     }
     
-    public void setLeftf() {
+    void setLeftf() {
         left = false;
     }
     
-    public void setUpf() {
+    void setUpf() {
         up = false;
     }
     
-    public void setDownf() {
+    void setDownf() {
         down = false;
     }
     
-    public void setRight() {
+    void setRight() {
         right = true;
     }
     
-    public void setLeft() {
+    void setLeft() {
         left = true;
     }
     
@@ -762,109 +765,109 @@ public class StartScreen {
         up = true;
     }
     
-    public void setDown() {
+    void setDown() {
         down = true;
     }
     
-    public boolean isHard() {
+    boolean isHard() {
         return hardButtonRectRed;
     }
     
-    public boolean isSurvival() {
+    boolean isSurvival() {
         return survivalButtonRectRed;
     }
     
-    public boolean isOnHeartOne() {
+    boolean isOnHeartOne() {
         return heartX >= -33 && heartX <= -9 && heartY >= -100 && heartY <= -80;
     }
     
-    public boolean isOnHeartTwo() {
+    boolean isOnHeartTwo() {
         return heartX >= -186 && heartX <= -167 && heartY >= -106 && heartY <= -84;
     }
     
-    public boolean isOnHeartThree() {
+    boolean isOnHeartThree() {
         return heartX >= -47 && heartX <= -19 && heartY >= -218 && heartY <= -190;
     }
     
-    public void activateHeartOne() {
+    void activateHeartOne() {
         heartsActivated[0] = true;
     }
     
-    public void activateHeartTwo() {
+    void activateHeartTwo() {
         heartsActivated[1] = true;
     }
     
-    public void activateHeartThree() {
+    void activateHeartThree() {
         heartsActivated[2] = true;
     }
     
-    public boolean heartOneActivated() {
+    boolean heartOneActivated() {
         return heartsActivated[0];
     }
     
-    public boolean heartTwoActivated() {
+    boolean heartTwoActivated() {
         return heartsActivated[1];
     }
     
-    public boolean heartThreeActivated() {
+    boolean heartThreeActivated() {
         return heartsActivated[2];
     }
     
-    public boolean heartsActivated() {
+    boolean heartsActivated() {
         for(boolean heartActivated : heartsActivated) {
-            if(heartActivated == false)
+            if(!heartActivated)
                 return false;
         }
         return true;
     }
     
-    public void activateBlueHeartFlash() {
+    void activateBlueHeartFlash() {
         blueHeartOpacity = 1f;
     }
     
-    public void openCreditsLink() {
+    public void openCreditsLink(String url) {
         try {
-            Desktop.getDesktop().browse(new URI("http://athena.edenpr.org/~chawlan/undyne.html"));
+            Desktop.getDesktop().browse(new URI(url));
         }
         catch(IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
     
-    public void resetVars() {
+    void resetVars() {
         isLoaded = false;
     }
     
-    public boolean shouldStart() {
+    boolean shouldStart() {
         return !isOnLink() && !isOnHelp() && !heartsActivated() && (hardButtonRectRed && !isOnEasy && !isOnSurvival || easyButtonRectRed && !isOnHard && !isOnSurvival || survivalButtonRectRed && !isOnHard && !isOnEasy);
     }
     
-    public boolean shouldShow() {
+    boolean shouldShow() {
         return frameCounter1 > 250;
     }
     
-    public static void changeSfxVol(double change) {
+    static void changeSfxVol(double change) {
         sfxVolume = change;
     }
     
-    public void changeMusicVol(double change) {
+    void changeMusicVol(double change) {
         musicVolume = change;
         megalovania.changeVolume(change);
     }
     
-    public boolean isOnLink() {
+    boolean isOnLink() {
         return (heartX + 288 + 16 >= 76 && heartX + 288 <= 224 && heartY + 300 <= 442 + 20 && heartY + 300 + 16 >= 380 + 20 && !heartsActivated());
     }
     
-    public boolean isOnHelp() {
+    boolean isOnHelp() {
         return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 442 + 20 && heartY + 300 + 16 >= 380 + 20 && !heartsActivated());
     }
     
-    public void warningOn() {
+    void warningOn() {
         warningCounter = 50;
     }
     
-    public PopUp getCreditsList() {
+    PopUp getCreditsList() {
         return creditsList;
     }
     

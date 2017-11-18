@@ -3,7 +3,7 @@ package defense;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Attacks {
+class Attacks {
     private boolean isNewAttack = true;
     private boolean loopDone = false;
     private boolean isFinished = false;
@@ -20,11 +20,11 @@ public class Attacks {
     private Random rand = new Random();
     private Attack att;
     
-    private ArrayList<ArrayList<Arrow>> undyneAttacks = new ArrayList<ArrayList<Arrow>>();
+    private ArrayList<ArrayList<Arrow>> undyneAttacks = new ArrayList<>();
     
-    public Attacks(boolean isGenocide, boolean survival) {
+    Attacks(boolean isGenocide, boolean survival) {
         for(int i = 0; i < 13000; ++i)
-            undyneAttacks.add(new ArrayList<Arrow>());
+            undyneAttacks.add(new ArrayList<>());
         if(survival) {
             // Super Easy
             normalAttackOne();
@@ -36,7 +36,7 @@ public class Attacks {
             survivalAttackSeven();
             
             // Easy
-            ArrayList<Integer> easyAttacks = new ArrayList<Integer>();
+            ArrayList<Integer> easyAttacks = new ArrayList<>();
             for(int i = 0; i < 7; ++i)
                 easyAttacks.add(i);
             for(int i = 7; i <= 13; ++i) {
@@ -132,10 +132,9 @@ public class Attacks {
                 }
                 base += 12;
             }
-            easyAttacks = null;
-            
+
             // Hard
-            ArrayList<Integer> hardAttacks = new ArrayList<Integer>();
+            ArrayList<Integer> hardAttacks = new ArrayList<>();
             base = 42;
             for(int i = 0; i < 3; ++i) {
                 for(int j = 0; j < 12; ++j)
@@ -183,10 +182,9 @@ public class Attacks {
                 }
                 base += 12;
             }
-            hardAttacks = null;
-            
+
             // WTH
-            ArrayList<Integer> superHardAttacks = new ArrayList<Integer>();
+            ArrayList<Integer> superHardAttacks = new ArrayList<>();
             base = 78;
             for(int i = 0; i < 1000; ++i) {
                 for(int j = 0; j < 12; ++j)
@@ -234,7 +232,6 @@ public class Attacks {
                 }
                 base += 12;
             }
-            superHardAttacks = null;
         }
         else if(!isGenocide) {
             normalAttackOne();
@@ -273,7 +270,7 @@ public class Attacks {
         }
     }
     
-    public Arrow getCurrentArrow() {
+    Arrow getCurrentArrow() {
         for(int i = 0; i < undyneAttacks.size() && !loopDone; ++i) {
             if(undyneAttacks.get(i).size() != 0) {
                 currentAttack = i + 1;
@@ -302,21 +299,20 @@ public class Attacks {
         ArrayList<Arrow> attackPattern = att.getList();
         if(attackPattern.size() != 0)
             return false;
-        for(int i = 0; i < undyneAttacks.size(); ++i) {
-            for(int j = 0; j < undyneAttacks.get(i).size(); ++j) {
-                Arrow temp = undyneAttacks.get(i).get(j);
-                if(temp != null && temp.getSpeed() != 0)
+        for(ArrayList<Arrow> arrowList : undyneAttacks) {
+            for(Arrow a : arrowList) {
+                if(a != null && a.getSpeed() != 0)
                     return false;
             }
         }
         return true;
     }
     
-    public boolean isNewAttack() {
+    boolean isNewAttack() {
         return isNewAttack;
     }
     
-    public void notNewAttack() {
+    void notNewAttack() {
         isNewAttack = false;
     }
     
@@ -2338,7 +2334,7 @@ public class Attacks {
     }
     
     private void survivalAttackThirtyNine(int index) {
-        char four = DIRS[rand.nextInt(4)];
+        char four;
         char extra = DIRS[rand.nextInt(4)];
         for(int i = 0; i < 4; ++i) {
             do {
@@ -2353,7 +2349,7 @@ public class Attacks {
     }
     
     private void survivalAttackForty(int index) {
-        char direction = 'u';
+        char direction;
         char prevDirection = 'u';
         for(int i = 0; i < 10; ++i) {
             direction = DIRS[rand.nextInt(4)];
@@ -2366,7 +2362,7 @@ public class Attacks {
     }
     
     private void survivalAttackFortyOne(int index) {
-        char current = 'u';
+        char current;
         char prev = 'u';
         for(int i = 0; i < 20; ++i) {
             current = DIRS[rand.nextInt(4)];
@@ -2939,19 +2935,19 @@ public class Attacks {
         addArrow(12, 2, true, 'u', 45);
     }
     
-    public void setAttack(Attack att) {
+    void setAttack(Attack att) {
         this.att = att;
     }
     
-    public boolean getIsFinished() {
+    boolean getIsFinished() {
         return isFinished;
     }
     
-    public int getCurrentAttack() {
+    int getCurrentAttack() {
         return currentAttack;
     }
     
-    public void resetVars() {
+    void resetVars() {
         isNewAttack = true;
         loopDone = false;
         isFinished = false;
@@ -2960,7 +2956,7 @@ public class Attacks {
         position = 0;
         counter = 0;
         prevChar = 'u';
-        undyneAttacks = new ArrayList<ArrayList<Arrow>>();
+        undyneAttacks = new ArrayList<>();
         att = null;
     }
     

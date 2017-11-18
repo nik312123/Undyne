@@ -42,7 +42,7 @@ public class Arrow {
     private boolean switchDir = false;
     private boolean directionNotSwitched;
     
-    public Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
+    Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
         directionNotSwitched = reverse;
@@ -90,17 +90,17 @@ public class Arrow {
             case 'd':
                 if(reverse) {
                     x = 285;
-                    y = 0 + 11 + 8 + 11;
+                    y = 11 + 8 + 11;
                 }
                 else {
                     x = 285;
-                    y = 0 + 11;
+                    y = 11;
                 }
                 break;
         }
     }
     
-    public void switchDir() {
+    void switchDir() {
         switchDir = true;
         if(radius == 0) {
             switch(direction) {
@@ -121,8 +121,8 @@ public class Arrow {
         }
     }
     
-    public void tick() {
-        if(speed != 1 || speed == 1 && isOne || !isSlow) {
+    void tick() {
+        if(speed != 1 || isOne || !isSlow) {
             switch(direction) {
                 case 'l':
                     x -= speed;
@@ -185,7 +185,7 @@ public class Arrow {
         }
     }
     
-    public void draw(Graphics g, Color c) throws IOException {
+    void draw(Graphics g, Color c) throws IOException {
         BufferedImage arr;
         if(reverse)
             arr = Runner.reverseArr;
@@ -225,84 +225,68 @@ public class Arrow {
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         arr = op.filter(arr, null);
         g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
-        int xShift = 0, yShift = 0;
+        int xShift, yShift;
         switch(direction) {
             case 'r':
-                if(reverse) {
+                if(reverse)
                     xShift = 22;
-                    yShift = 15;
-                }
-                else {
+                else
                     xShift = 30;
-                    yShift = 17;
-                }
                 inside = x + xShift >= 277 && (!reverse || !directionNotSwitched);
                 break;
             case 'l':
-                if(reverse) {
-                    yShift = 17;
+                if(reverse)
                     xShift = 10;
-                }
-                else {
-                    yShift = 17;
+                else
                     xShift = 1;
-                }
                 inside = x + xShift <= 322 && (!reverse || !directionNotSwitched);
                 break;
             case 'd':
-                if(reverse) {
-                    xShift = 17;
+                if(reverse)
                     yShift = 22;
-                }
-                else {
-                    xShift = 17;
+                else
                     yShift = 30;
-                }
                 inside = y + yShift >= 277 && (!reverse || !directionNotSwitched);
                 break;
             case 'u':
-                if(reverse) {
+                if(reverse)
                     yShift = 10;
-                    xShift = 15;
-                }
-                else {
+                else
                     yShift = 1;
-                    xShift = 17;
-                }
                 inside = y + yShift <= 323 && (!reverse || !directionNotSwitched);
                 break;
         }
     }
     
-    public boolean getInside() {
+    boolean getInside() {
         return inside;
     }
     
-    public int getX() {
+    int getX() {
         return x;
     }
     
-    public int getY() {
+    int getY() {
         return y;
     }
     
-    public char getDir() {
+    char getDir() {
         return direction;
     }
     
-    public int getDelay() {
+    int getDelay() {
         return delay;
     }
     
-    public int getSpeed() {
+    int getSpeed() {
         return speed;
     }
     
-    public boolean getReverse() {
+    boolean getReverse() {
         return reverse;
     }
     
-    public boolean getDirectionNotSwitched() {
+    boolean getDirectionNotSwitched() {
         return directionNotSwitched;
     }
     
