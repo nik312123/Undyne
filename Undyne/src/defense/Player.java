@@ -15,7 +15,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class Player {
+class Player {
     private char dir = 'u';
     
     private boolean hit = false;
@@ -29,12 +29,10 @@ public class Player {
     private int maxHealth;
     
     private Random random = new Random();
-    
-    private static BufferedImage shield;
-    
+
     private static BufferedImage[] shields = new BufferedImage[2];
     
-    Font undyneFont;
+    private Font undyneFont;
     
     /*
      * Initial player health
@@ -45,7 +43,7 @@ public class Player {
      */
     private int angle = 0;
     
-    public Player() {
+    Player() {
         if(Runner.isFirstTime) {
             try {
                 shields[0] = ImageIO.read(Runner.class.getResource("/shieldH.png"));
@@ -65,7 +63,7 @@ public class Player {
         }
     }
     
-    public void damage() {
+    void damage() {
         health -= (int) (Math.random() * baseDamage + damageOffset);
         if(baseDamage == 0 && random.nextInt(10) < 7)
             health -= 1;
@@ -73,7 +71,7 @@ public class Player {
             health = 0;
     }
     
-    public void drawHealth(Graphics g) throws FontFormatException, IOException {
+    void drawHealth(Graphics g) throws FontFormatException, IOException {
         g.setColor(Color.RED);
         g.fillRect(430, 530 + 40, 70, 20);
         g.setColor(Color.YELLOW);
@@ -91,13 +89,14 @@ public class Player {
         
     }
     
-    public void shield(Graphics g, char dir) {
+    void shield(Graphics g, char dir) {
         this.dir = dir;
         shieldDir();
         drawShield(g);
     }
     
-    public void drawShield(Graphics g) {
+    private void drawShield(Graphics g) {
+        BufferedImage shield;
         if(red < 15) {
             shield = shields[0];
             ++red;
@@ -114,7 +113,7 @@ public class Player {
         g.drawImage(shield, 265 + elementPosition, 254 + 11 + elementPosition, null);
     }
     
-    public void shieldDir() {
+    private void shieldDir() {
         switch(dir) {
             case 'r':
                 if(angle == 90)
@@ -157,69 +156,69 @@ public class Player {
             angle = 0;
     }
     
-    public char getDir() {
+    char getDir() {
         return dir;
     }
     
-    public int getAngle() {
+    int getAngle() {
         return angle;
     }
     
-    public void setRed(int red) {
-        this.red = red;
+    void setRedZero() {
+        red = 0;
     }
     
-    public int getHealth() {
+    int getHealth() {
         return health;
     }
     
-    public void setHealth(int health) {
+    void setHealth(int health) {
         this.health = health;
         maxHealth = health;
     }
     
-    public int getElementPosition() {
+    int getElementPosition() {
         return elementPosition;
     }
     
-    public void setElementPosition(int x) {
+    void setElementPosition(int x) {
         elementPosition = x;
     }
     
-    public void setHit(boolean hit) {
+    void setHit(boolean hit) {
         this.hit = hit;
     }
     
-    public boolean getHit() {
+    boolean getHit() {
         return hit;
     }
     
-    public int getTimeoutCounter() {
+    int getTimeoutCounter() {
         return timeoutCounter;
     }
     
-    public void resetTimeoutCounter() {
+    void resetTimeoutCounter() {
         timeoutCounter = TIME;
     }
     
-    public void decreaseCounter() {
+    void decreaseCounter() {
         --timeoutCounter;
     }
     
-    public void setDamageOffset(int damageOffset) {
+    void setDamageOffset(int damageOffset) {
         this.damageOffset = damageOffset;
     }
     
-    public void setBaseDamage(int baseDamage) {
+    void setBaseDamage(int baseDamage) {
         this.baseDamage = baseDamage;
     }
     
-    public void convertHealth() {
+    void convertHealth() {
         health += 40;
         maxHealth = 60;
     }
     
-    public void healthBoost() {
+    void healthBoost() {
         health = Math.min(health + 40, 60);
     }
     

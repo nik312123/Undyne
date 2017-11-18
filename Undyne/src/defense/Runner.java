@@ -1,47 +1,22 @@
 package defense;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.SplashScreen;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import nikunj.classes.GradientButton;
+import nikunj.classes.PopUp;
+import nikunj.classes.Slider;
+import nikunj.classes.Sound;
+
+import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
-import javax.imageio.ImageIO;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-import javax.swing.Timer;
-
-import nikunj.classes.GradientButton;
-import nikunj.classes.PopUp;
-import nikunj.classes.Slider;
-import nikunj.classes.Sound;
 
 public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final long serialVersionUID = 1L;
@@ -93,7 +68,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean sfxMuted = false;
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
-    public static boolean isFirstTime = true;
+    static boolean isFirstTime = true;
     
     private static Timer timer;
     
@@ -106,14 +81,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage speech;
     private static BufferedImage credits;
     private static BufferedImage help;
-    public static BufferedImage blueArr;
-    public static BufferedImage redArr;
-    public static BufferedImage reverseArr;
+    static BufferedImage blueArr;
+    static BufferedImage redArr;
+    static BufferedImage reverseArr;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
-    public static BufferedImage[] gif;
-    public static BufferedImage[] gif2;
+    static BufferedImage[] gif;
+    static BufferedImage[] gif2;
     
     private static Sound main;
     private static Sound gameDone;
@@ -141,8 +116,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static PopUp creditsList;
     
     private static Font deteFontNorm;
-    public static Font deteFontSpeech;
-    public static Font deteFontScore;
+    static Font deteFontSpeech;
+    static Font deteFontScore;
     
     private static Attack a1;
     private static Attacks a;
@@ -158,30 +133,27 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
         if(isFirstTime) {
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
-                        @Override
-                        protected Object doInBackground() throws InterruptedException, NullPointerException, IllegalStateException, IOException {
-                            loading = SplashScreen.getSplashScreen();
-                            int height = 210, width = 410;
-                            Graphics2D g2d = loading.createGraphics();
-                            g2d.setComposite(AlphaComposite.Clear);
-                            g2d.fillRect(0, 0, width, height);
-                            g2d.setPaintMode();
-                            loading.update();
-                            loading.close();
-                            return null;
-                        }
-                    };
-                    worker.execute();
-                    try {
-                        worker.get();
+            EventQueue.invokeLater(() -> {
+                SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
+                    @Override
+                    protected Object doInBackground() throws InterruptedException, NullPointerException, IllegalStateException, IOException {
+                        loading = SplashScreen.getSplashScreen();
+                        int height = 210, width = 410;
+                        Graphics2D g2d = loading.createGraphics();
+                        g2d.setComposite(AlphaComposite.Clear);
+                        g2d.fillRect(0, 0, width, height);
+                        g2d.setPaintMode();
+                        loading.update();
+                        loading.close();
+                        return null;
                     }
-                    catch(InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                };
+                worker.execute();
+                try {
+                    worker.get();
+                }
+                catch(InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             });
             startScreen = new Sound(Runner.class.getResource("/WF.wav"), true);
@@ -253,15 +225,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 gif[i] = getCompatibleImage(gif[i]);
             }
         }
-        @SuppressWarnings("unused")
-        Runner a = new Runner("Undyne: Absolute");
+        new Runner("Undyne: Absolute");
         startScreen.changeVolume(musicVolume);
         startScreen.play();
     }
     
-    public Runner(String s) {
+    private Runner(String s) {
         frame = new JFrame(s);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
@@ -604,12 +575,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.requestFocus();
     }
     
-    public Runner() {
+    private Runner() {
         timer = new Timer(DELAY, this);
         timer.start();
     }
     
-    public static BufferedImage getCompatibleImage(BufferedImage current) {
+    static BufferedImage getCompatibleImage(BufferedImage current) {
         GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         if(current.getColorModel().equals(gfxConfig.getColorModel()))
             return current;
@@ -754,13 +725,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         draggableButton.draw(g);
         musicButton.draw(g);
         sfxButton.draw(g);
-        if(musicButton.onButton() || musicSlider.isVisible() && onMusicSlider() || musicSlider.actionPerforming()) {
+        if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming()) {
             musicSlider.setVisible(true);
             musicSlider.draw(g);
         }
         else
             musicSlider.setVisible(false);
-        if(sfxButton.onButton() || sfxSlider.isVisible() && onSfxSlider() || sfxSlider.actionPerforming()) {
+        if(sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming()) {
             sfxSlider.setVisible(true);
             sfxSlider.draw(g);
         }
@@ -774,7 +745,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g.dispose();
     }
     
-    public void drawCheat(Graphics g) throws FontFormatException, IOException {
+    private void drawCheat(Graphics g) throws FontFormatException, IOException {
         if(automatic)
             activated = "Cheat Activated";
         else {
@@ -796,40 +767,39 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             ArrayList<Arrow> arrows = a1.getList();
             double time = Integer.MAX_VALUE;
             char pointTowards = 'u';
-            for(int i = 0; i < arrows.size(); ++i) {
-                Arrow tempArrow = arrows.get(i);
-                switch(tempArrow.getDir()) {
+            for(Arrow a : arrows) {
+                switch(a.getDir()) {
                     case 'l':
-                        if(time > (tempArrow.getX() - 308) / (double) tempArrow.getSpeed()) {
-                            time = (tempArrow.getX() - 308) / (double) tempArrow.getSpeed();
-                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                        if(time > (a.getX() - 308) / (double) a.getSpeed()) {
+                            time = (a.getX() - 308) / (double) a.getSpeed();
+                            if(a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'l';
                             else
                                 pointTowards = 'r';
                         }
                         break;
                     case 'r':
-                        if(time > (261 - tempArrow.getX()) / (double) tempArrow.getSpeed()) {
-                            time = (261 - tempArrow.getX()) / (double) tempArrow.getSpeed();
-                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                        if(time > (261 - a.getX()) / (double) a.getSpeed()) {
+                            time = (261 - a.getX()) / (double) a.getSpeed();
+                            if(a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'r';
                             else
                                 pointTowards = 'l';
                         }
                         break;
                     case 'u':
-                        if(time > (tempArrow.getY() - 295) / (double) tempArrow.getSpeed()) {
-                            time = (tempArrow.getY() - 295) / (double) tempArrow.getSpeed();
-                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                        if(time > (a.getY() - 295) / (double) a.getSpeed()) {
+                            time = (a.getY() - 295) / (double) a.getSpeed();
+                            if(a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'u';
                             else
                                 pointTowards = 'd';
                         }
                         break;
                     case 'd':
-                        if(time > (252 - tempArrow.getY()) / (double) tempArrow.getSpeed()) {
-                            time = (252 - tempArrow.getY()) / (double) tempArrow.getSpeed();
-                            if(tempArrow.getDirectionNotSwitched() && tempArrow.getReverse())
+                        if(time > (252 - a.getY()) / (double) a.getSpeed()) {
+                            time = (252 - a.getY()) / (double) a.getSpeed();
+                            if(a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'd';
                             else
                                 pointTowards = 'u';
@@ -841,7 +811,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
     }
     
-    public void nothing() {
+    private void nothing() {
         if(typed.length() > NOTHING.length())
             typed = typed.substring(typed.length() - NOTHING.length(), typed.length());
         if(typed.length() == NOTHING.length()) {
@@ -852,7 +822,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
     }
     
-    public void gif(Graphics g) {
+    private void gif(Graphics g) {
         if(a == null || !a.getIsFinished() || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
             int maxCount;
             int gifChange;
@@ -890,7 +860,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         float opacity = 0.3f;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        int gifXShift = 0;
+        int gifXShift;
         if(isGenocide)
             gifXShift = 198;
         else
@@ -899,7 +869,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g2d.dispose();
     }
     
-    public boolean breakHeartException(int breakFrame) {
+    private boolean breakHeartException(int breakFrame) {
         int[] exceptions = {2, 6, 8, 12, 14, 18, 20, 22, 23};
         for(int exception : exceptions) {
             if(breakFrame == exception)
@@ -908,7 +878,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         return false;
     }
     
-    public void makeBreakHeart(Graphics g, int breakFrame) {
+    private void makeBreakHeart(Graphics g, int breakFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak[breakFrame].getWidth();
         int height = heartBreak[breakFrame].getHeight();
@@ -916,7 +886,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g2d.dispose();
     }
     
-    public void breakHeart(Graphics g) {
+    private void breakHeart(Graphics g) {
         ++breakCount;
         boolean exception = breakHeartException(breakFrame);
         if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
@@ -955,7 +925,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         makeBreakHeart(g, breakFrame);
     }
     
-    public void gameOver(Graphics g) {
+    private void gameOver(Graphics g) {
         ++gameOverCount;
         if(gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
@@ -968,7 +938,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         drawGameOver(g, gameOverFrame);
     }
     
-    public void drawGameOver(Graphics g, int gameOverFrame) {
+    private void drawGameOver(Graphics g, int gameOverFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
         if(gameOverFrame > 225)
             gameOverFrame = 225;
@@ -980,7 +950,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             isGameOver = true;
     }
     
-    public void drawSqu(Graphics g) {
+    private void drawSqu(Graphics g) {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
@@ -990,23 +960,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
     }
     
-    public void drawBG(Graphics g) {
+    private void drawBG(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
     }
     
-    public void drawHeart(Graphics g) {
+    private void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
         g.drawImage(heart, getWidth() / 2 - width / 2 + 1 + p.getElementPosition() + flickeringHeart, getHeight() / 2 - height / 2 + p.getElementPosition(), null);
     }
     
-    public void drawCircle(Graphics g) {
+    private void drawCircle(Graphics g) {
         g.setColor(Color.GREEN);
         g.drawOval(getWidth() / 2 - 25 + p.getElementPosition(), getHeight() / 2 - 25 + p.getElementPosition(), 50, 50);
     }
     
-    public void drawReplay(Graphics g, int xShift) {
+    private void drawReplay(Graphics g, int xShift) {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
@@ -1027,7 +997,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             flashCount = 0;
     }
     
-    public void undyneSpeech(Graphics g) {
+    private void undyneSpeech(Graphics g) {
         String[] easyMessage = {"Not bad, punk!", "Let me go", "harder on you."};
         String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
         Graphics2D g2d = (Graphics2D) g;
@@ -1098,7 +1068,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             speechDelayCounter = 0;
     }
     
-    public static void printScore(Graphics g) {
+    private static void printScore(Graphics g) {
         if(a != null && a.isNewAttack() && a.getCurrentAttack() != lastAttack && a1.getList().size() == 0) {
             lastAttack = a.getCurrentAttack();
             switch(levelIndex) {
@@ -1121,12 +1091,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g.drawString("Score: " + score, 5, 590);
     }
     
-    public static void hideButtons() {
+    private static void hideButtons() {
         creditsButton.setVisible(false);
         helpButton.setVisible(false);
     }
     
-    public static void changeMain() {
+    static void changeMain() {
         ++levelIndex;
         if(levelIndex > 1)
             heal.play();
@@ -1136,7 +1106,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         main.play();
     }
     
-    public static void changeGif() {
+    static void changeGif() {
         isGenocide = true;
         gif = gif2;
         p.setBaseDamage(2);
@@ -1144,20 +1114,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         p.convertHealth();
     }
     
-    public static void finalBoost() {
+    static void finalBoost() {
         heal.play();
         p.healthBoost();
     }
     
-    public static boolean isSurvival() {
+    static boolean isSurvival() {
         return survival;
     }
     
-    public static boolean getHelpStarter() {
+    static boolean getHelpStarter() {
         return helpStarter;
     }
     
-    public void restartApplication() {
+    private void restartApplication() {
         timer.stop();
         allStopped = true;
         stage.resetVars();
@@ -1299,7 +1269,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         isGenocide = stage.isHard();
                         survival = stage.isSurvival();
                         a = new Attacks(isGenocide, survival);
-                        a1 = new Attack(new ArrayList<Arrow>(), a);
+                        a1 = new Attack(new ArrayList<>(), a);
                         a.setAttack(a1);
                         hideButtons();
                         if(isGenocide) {
@@ -1337,6 +1307,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 else if(isGameOver && !allStopped || speechDone && !allStopped)
                     restartApplication();
                 break;
+            case KeyEvent.VK_V:
+                if(timer.getDelay() != 1)
+                    timer.setDelay(1);
+                else
+                    timer.setDelay(10);
+                break;
         }
         if(e.getKeyChar() != '￿')
             typed += e.getKeyChar();
@@ -1364,20 +1340,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
         }
     }
-    
-    public static boolean onMusicSlider() {
+
+    private static boolean onSlider(String slider) {
+        Slider s;
+        GradientButton gb;
+        if(slider.equals("music")) {
+            s = musicSlider;
+            gb = musicButton;
+        }
+        else {
+            s = sfxSlider;
+            gb = sfxButton;
+        }
         Point mousePos = MouseInfo.getPointerInfo().getLocation();
-        mousePos = new Point((int) (mousePos.getX() - musicSlider.getLocationOnScreen().getX()), (int) (mousePos.getY() - musicSlider.getLocationOnScreen().getY()));
-        Rectangle bounds = musicSlider.getBounds();
-        bounds.setBounds(musicButton.getX() - musicSlider.getX(), -6, musicButton.getWidth(), musicSlider.getHeight() + 6);
-        return bounds.contains(mousePos);
-    }
-    
-    public static boolean onSfxSlider() {
-        Point mousePos = MouseInfo.getPointerInfo().getLocation();
-        mousePos = new Point((int) (mousePos.getX() - sfxSlider.getLocationOnScreen().getX()), (int) (mousePos.getY() - sfxSlider.getLocationOnScreen().getY()));
-        Rectangle bounds = sfxSlider.getBounds();
-        bounds.setBounds(sfxButton.getX() - sfxSlider.getX(), -6, sfxButton.getWidth(), sfxSlider.getHeight() + 6);
+        mousePos = new Point((int) (mousePos.getX() - s.getLocationOnScreen().getX()), (int) (mousePos.getY() - s.getLocationOnScreen().getY()));
+        Rectangle bounds = s.getBounds();
+        bounds.setBounds(gb.getX() - s.getX(), -6, gb.getWidth(), s.getHeight() + 6);
         return bounds.contains(mousePos);
     }
     

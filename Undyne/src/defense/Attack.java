@@ -9,13 +9,13 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import nikunj.classes.Sound;
 
-public class Attack {
+class Attack {
     private int counter = 0;
     private static boolean isFirst = true;
     /*
      * List of Arrow objects that make up one attack
      */
-    private ArrayList<Arrow> attackPattern = new ArrayList<Arrow>();
+    private ArrayList<Arrow> attackPattern = new ArrayList<>();
     
     private static String hit = "";
     private int adder = 1;
@@ -36,7 +36,7 @@ public class Attack {
     /*
      * Constructor for constant delay
      */
-    public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
+    Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
         if(Runner.isFirstTime) {
@@ -50,20 +50,17 @@ public class Attack {
         }
     }
     
-    public void tick() {
+    private void tick() {
         for(Arrow a : attackPattern)
             a.tick();
     }
     
-    public void addArrow(Arrow a) {
+    private void addArrow(Arrow a) {
         attackPattern.add(a);
     }
+
     
-    public void removeArrow(Arrow a) {
-        attackPattern.remove(a);
-    }
-    
-    public String removeArrow(char dir, Player p) {
+    private String removeArrow(char dir, Player p) {
         boolean hit = false;
         boolean damage = false;
         if(attackPattern.size() == 0)
@@ -186,7 +183,7 @@ public class Attack {
         return "";
     }
     
-    public void draw(Graphics g) throws IOException {
+    private void draw(Graphics g) throws IOException {
         if(attackPattern.size() != 0) {
             attackPattern.get(0).draw(g, Color.RED);
             for(int i = 1; i < attackPattern.size(); ++i) {
@@ -195,7 +192,7 @@ public class Attack {
         }
     }
     
-    public void spawnArrows(Graphics g, Player p) throws IOException {
+    void spawnArrows(Graphics g, Player p) throws IOException {
         tick();
         if(a.isNewAttack()) {
             if(++attackDelay == 125) {
@@ -229,7 +226,7 @@ public class Attack {
         block.changeVolume(volume);
         damage.changeVolume(volume);
         if(hit.equals("H")) {
-            p.setRed(0);
+            p.setRedZero();
             block.play();
         }
         else if(hit.equals("D") && !p.getHit()) {
@@ -256,17 +253,17 @@ public class Attack {
         draw(g);
     }
     
-    public ArrayList<Arrow> getList() {
+    ArrayList<Arrow> getList() {
         return attackPattern;
     }
     
-    public void resetVars() {
+    void resetVars() {
         isFirst = true;
         hit = "";
         volume = 1;
     }
     
-    public static void changeVol(double change) {
+    static void changeVol(double change) {
         volume = change;
     }
     

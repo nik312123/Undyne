@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 
 import nikunj.classes.PopUp;
 
-public class Help {
+class Help {
     private int frameCounter = 0;
     private int helpFrame = 0;
     
@@ -17,7 +17,7 @@ public class Help {
     
     private static BufferedImage[] helpGif = new BufferedImage[739];
     
-    public Help() {
+    Help() {
         if(Runner.isFirstTime) {
             try {
                 for(int i = 0; i <= 738; ++i)
@@ -31,7 +31,7 @@ public class Help {
         helpPopUp.setVisible(true);
     }
     
-    public void initiate(Graphics g, boolean start) {
+    void initiate(Graphics g, boolean start) {
         if(start)
             helpPopUp.setExpanding(true);
         else {
