@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project Undyne">
     <property name="dir.buildfile" value="."/>
-    <property name="dir.workspace" value="/Users/90301551/Code"/>
+    <property name="dir.workspace" value="${user.home}/git"/>
     <property name="dir.jarfile" value="${dir.buildfile}"/>
     <target name="create_run_jar">
-        <jar destfile="/Users/90301551/Desktop/Undyne - Absolute.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="${user.home}/Desktop/Undyne - Absolute.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="defense.Runner"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="SplashScreen-Image" value="loading.gif"/>
             </manifest>
             <fileset dir="/Users/90301551/git/Undyne/Undyne/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="/Users/90301551/git/Undyne/Undyne/lib/jl1.0.1.jar"/>
@@ -17,7 +16,7 @@
             <zipfileset excludes="META-INF/*.SF" src="/Users/90301551/git/Undyne/Undyne/lib/mp3spi1.9.5.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="/Users/90301551/git/Undyne/Undyne/lib/tritonus-share-0.3.7.4.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="/Users/90301551/git/Undyne/Undyne/lib/vorbisspi1.0.3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/Users/90301551/nikunj_classes.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${user.home}/nikunj_classes.jar"/>
         </jar>
     </target>
 </project>
