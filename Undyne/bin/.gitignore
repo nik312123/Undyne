@@ -1,0 +1,4 @@
+# Ignores all files in bin directory, except for this .gitignore #
+##################################################################
+*
+!.gitignore
