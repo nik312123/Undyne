@@ -63,7 +63,7 @@ public class StartScreen {
     private int survivalButtonCount = 0;
     private int dogCount = 0;
     private int dogFrame = 0;
-    private int scale = 500;
+    private int scale = 4000;
     private int shift = 0;
     private int heartX = 5;
     private int heartY = 100 + shift;
@@ -241,7 +241,7 @@ public class StartScreen {
             if(frameCounter1 != 251)
                 ++frameCounter1;
             if(frameCounter1 > 200) {
-                int scaleSub = 10;
+                int scaleSub = 60;
                 if(scale > 1)
                     scale -= scaleSub;
                 drawSubtitle(g);
