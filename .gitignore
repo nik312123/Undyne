@@ -35,6 +35,6 @@
 ehthumbs.db
 Thumbs.db
 
-# IntelliJ Idea module file #
-#############################
-.idea/
+
+workspace.xml
+tasks.xml
