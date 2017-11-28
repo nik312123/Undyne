@@ -191,8 +191,8 @@ public class StartScreen {
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
                 for(int i = 0; i < 4; ++i) {
-                		cracks[i] = ImageIO.read(Runner.class.getResource("/cracks"+3+".png"));
-                		cracks[i] = Runner.getCompatibleImage(cracks[i]);
+                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks"+ i +".png"));
+                        cracks[i] = Runner.getCompatibleImage(cracks[i]);
                 }
             }
             catch(IOException e) {
@@ -295,9 +295,9 @@ public class StartScreen {
                         drawBones(g);
                 }
                 if(scale <= 1) {
-	                	g.drawImage(cracks[crackFrame], 0, 0, null);
-	                	if(crackFrame < 3)
-	                		++crackFrame;
+                        g.drawImage(cracks[crackFrame], 0, 0, null);
+                        if(crackFrame < 3)
+                            ++crackFrame;
                 }
             }
         }
