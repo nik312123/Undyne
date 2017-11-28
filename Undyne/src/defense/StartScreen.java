@@ -44,14 +44,14 @@ public class StartScreen {
     private static BufferedImage blueHeartFlash;
     private static BufferedImage spear;
     private static BufferedImage arrows;
-    private static BufferedImage cracks;
+    private static BufferedImage[] cracks = new BufferedImage[4];
     private static BufferedImage[] keys = new BufferedImage[2];
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
 
     private int zCounter = 0;
-    private int string = 0;
+    private int crackFrame = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
     private int survivalButtonRect = 0;
@@ -190,8 +190,10 @@ public class StartScreen {
                 spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
-                cracks = ImageIO.read(Runner.class.getResource("/cracks"+3+".png"));
-                cracks = Runner.getCompatibleImage(cracks);
+                for(int i = 0; i < 4; ++i) {
+                		cracks[i] = ImageIO.read(Runner.class.getResource("/cracks"+3+".png"));
+                		cracks[i] = Runner.getCompatibleImage(cracks[i]);
+                }
             }
             catch(IOException e) {
                 e.printStackTrace();
@@ -292,10 +294,10 @@ public class StartScreen {
                     if(hitGround)
                         drawBones(g);
                 }
-                if(scale<=1) {
-                	g.drawImage(cracks, 0, 0, null);
-                	if(string<3)
-                		string++;
+                if(scale <= 1) {
+	                	g.drawImage(cracks[crackFrame], 0, 0, null);
+	                	if(crackFrame < 3)
+	                		++crackFrame;
                 }
             }
         }
