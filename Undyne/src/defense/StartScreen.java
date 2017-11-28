@@ -44,12 +44,14 @@ public class StartScreen {
     private static BufferedImage blueHeartFlash;
     private static BufferedImage spear;
     private static BufferedImage arrows;
+    private static BufferedImage[] cracks = new BufferedImage[4];
     private static BufferedImage[] keys = new BufferedImage[2];
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
 
     private int zCounter = 0;
+    private int crackFrame = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
     private int survivalButtonRect = 0;
@@ -63,7 +65,7 @@ public class StartScreen {
     private int survivalButtonCount = 0;
     private int dogCount = 0;
     private int dogFrame = 0;
-    private int scale = 4000;
+    private int scale = 3990;
     private int shift = 0;
     private int heartX = 5;
     private int heartY = 100 + shift;
@@ -188,6 +190,10 @@ public class StartScreen {
                 spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
+                for(int i = 0; i < 4; ++i) {
+                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks"+ i +".png"));
+                        cracks[i] = Runner.getCompatibleImage(cracks[i]);
+                }
             }
             catch(IOException e) {
                 e.printStackTrace();
@@ -241,9 +247,8 @@ public class StartScreen {
             if(frameCounter1 != 251)
                 ++frameCounter1;
             if(frameCounter1 > 200) {
-                int scaleSub = 60;
-                if(scale > 1)
-                    scale -= scaleSub;
+                if(scale > 0)
+                    scale -= 70;
                 drawSubtitle(g);
             }
             gifDog(g);
@@ -288,6 +293,11 @@ public class StartScreen {
                     }
                     if(hitGround)
                         drawBones(g);
+                }
+                if(scale <= 1) {
+                        g.drawImage(cracks[crackFrame], 0, 0, null);
+                        if(crackFrame < 3)
+                            ++crackFrame;
                 }
             }
         }
