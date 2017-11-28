@@ -129,7 +129,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static JFrame frame;
     
-    //-Dsun.java2d.noddraw=true -Dsun.java2d.opengl=true, -Dsun.java2d.translaccel=true, -Xms2048M
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
         Arrow.p = p;
         if(isFirstTime) {
@@ -587,9 +586,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         BufferedImage optimized = gfxConfig.createCompatibleImage(current.getWidth(), current.getHeight(), current.getTransparency());
         Graphics2D g2d = optimized.createGraphics();
         g2d.drawImage(current, 0, 0, null);
+        optimized.setAccelerationPriority(1);
         return optimized;
     }
-        
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
