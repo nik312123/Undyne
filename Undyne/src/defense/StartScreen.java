@@ -44,12 +44,14 @@ public class StartScreen {
     private static BufferedImage blueHeartFlash;
     private static BufferedImage spear;
     private static BufferedImage arrows;
+    private static BufferedImage cracks;
     private static BufferedImage[] keys = new BufferedImage[2];
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
 
     private int zCounter = 0;
+    private int string = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
     private int survivalButtonRect = 0;
@@ -63,7 +65,7 @@ public class StartScreen {
     private int survivalButtonCount = 0;
     private int dogCount = 0;
     private int dogFrame = 0;
-    private int scale = 4000;
+    private int scale = 3990;
     private int shift = 0;
     private int heartX = 5;
     private int heartY = 100 + shift;
@@ -188,6 +190,8 @@ public class StartScreen {
                 spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
+                cracks = ImageIO.read(Runner.class.getResource("/cracks"+3+".png"));
+                cracks = Runner.getCompatibleImage(cracks);
             }
             catch(IOException e) {
                 e.printStackTrace();
@@ -200,36 +204,36 @@ public class StartScreen {
             public void mouseClicked(MouseEvent e) {}
             
         };
-        creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
-        addLinkFormatting(0, 0, 9);
-        creditsText[1] = new AttributedString("wjl: Fire sound effect");
-        addLinkFormatting(1, 0, 4);
-        creditsText[2] = new AttributedString("fins: Error sound effect");
-        addLinkFormatting(2, 0, 5);
-        creditsText[3] = new AttributedString("Klemens Wöhrer: Fire gif");
-        addLinkFormatting(3, 0, 15);
-        creditsText[4] = new AttributedString("Sayonara Maxwell: Spear of Justice Remix");
-        addLinkFormatting(4, 0, 17);
-        creditsText[5] = new AttributedString("Kamex: Battle Against A True Hero Remix");
-        addLinkFormatting(5, 0, 6);
-        creditsText[6] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
-        addLinkFormatting(6, 0, 13);
-        addLinkFormatting(6, 18, 35);
-        creditsText[7] = new AttributedString("And most importantly, thanks to you for enjoying our");
-        for(AttributedString a : creditsText) {
-            try {
-                a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
-            }
-            catch(FontFormatException | IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
+//        addLinkFormatting(0, 0, 9);
+//        creditsText[1] = new AttributedString("wjl: Fire sound effect");
+//        addLinkFormatting(1, 0, 4);
+//        creditsText[2] = new AttributedString("fins: Error sound effect");
+//        addLinkFormatting(2, 0, 5);
+//        creditsText[3] = new AttributedString("Klemens Wöhrer: Fire gif");
+//        addLinkFormatting(3, 0, 15);
+//        creditsText[4] = new AttributedString("Sayonara Maxwell: Spear of Justice Remix");
+//        addLinkFormatting(4, 0, 17);
+//        creditsText[5] = new AttributedString("Kamex: Battle Against A True Hero Remix");
+//        addLinkFormatting(5, 0, 6);
+//        creditsText[6] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
+//        addLinkFormatting(6, 0, 13);
+//        addLinkFormatting(6, 18, 35);
+//        creditsText[7] = new AttributedString("And most importantly, thanks to you for enjoying our");
+//        for(AttributedString a : creditsText) {
+//            try {
+//                a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
+//            }
+//            catch(FontFormatException | IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
     
-    private void addLinkFormatting(int creditsIndex, int beginningIndex, int lastIndex) {
-        creditsText[creditsIndex].addAttribute(TextAttribute.FOREGROUND, new Color(0, 82, 232), beginningIndex, lastIndex);
-        creditsText[creditsIndex].addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, beginningIndex, lastIndex);
-    }
+//    private void addLinkFormatting(int creditsIndex, int beginningIndex, int lastIndex) {
+//        creditsText[creditsIndex].addAttribute(TextAttribute.FOREGROUND, new Color(0, 82, 232), beginningIndex, lastIndex);
+//        creditsText[creditsIndex].addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, beginningIndex, lastIndex);
+//    }
     
     void run(Graphics g) {
         gifFire(g);
@@ -241,9 +245,8 @@ public class StartScreen {
             if(frameCounter1 != 251)
                 ++frameCounter1;
             if(frameCounter1 > 200) {
-                int scaleSub = 60;
-                if(scale > 1)
-                    scale -= scaleSub;
+                if(scale > 0)
+                    scale -= 70;
                 drawSubtitle(g);
             }
             gifDog(g);
@@ -288,6 +291,11 @@ public class StartScreen {
                     }
                     if(hitGround)
                         drawBones(g);
+                }
+                if(scale<=1) {
+                	g.drawImage(cracks, 0, 0, null);
+                	if(string<3)
+                		string++;
                 }
             }
         }
