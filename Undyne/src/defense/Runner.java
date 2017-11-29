@@ -26,6 +26,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
+    private static final String[] easyMessage = {"Not bad, punk!", "Let me go", "harder on you."};
+    private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
     private static final String[] MAIN_SOUND_NAMES = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
     
     private static double fadeStart = 0;
@@ -998,8 +1000,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     private void undyneSpeech(Graphics g) {
-        String[] easyMessage = {"Not bad, punk!", "Let me go", "harder on you."};
-        String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(deteFontSpeech);
@@ -1038,6 +1038,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 undyne.play();
         }
         speechCounterPrev = speechCounter;
+        if(speechCounter < message[2].length() + message[1].length() + message[0].length() + 3 && speechDelayCounter % 6 == 0)
+            ++speechCounter;
         ++speechDelayCounter;
         if(speechDelayCounter == 6)
             speechDelayCounter = 0;
