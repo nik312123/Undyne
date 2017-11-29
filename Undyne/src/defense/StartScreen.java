@@ -266,6 +266,7 @@ public class StartScreen {
                 drawBlueHeartFlash(g);
                 drawSpears(g);
                 drawNames(g);
+                drawCracks(g);
                 heartMouse(g);
                 creditsList.draw(g);
                 if(creditsList.percentageExpanded() == 1.0) {
@@ -294,15 +295,18 @@ public class StartScreen {
                     if(hitGround)
                         drawBones(g);
                 }
-                if(scale <= 1) {
-                        g.drawImage(cracks[crackFrame], 0, 0, null);
-                        if(crackFrame < 3)
-                            ++crackFrame;
-                }
             }
         }
     }
-    
+
+    private void drawCracks(Graphics g) {
+        if(scale <= 1) {
+            g.drawImage(cracks[crackFrame], 0, 0, null);
+            if(crackFrame < 3)
+                ++crackFrame;
+        }
+    }
+
     private void drawArrows(Graphics g) {
         g.drawImage(Runner.blueArr, -100, 1000, null);
         g.drawImage(Runner.redArr, -100, 1000, null);
