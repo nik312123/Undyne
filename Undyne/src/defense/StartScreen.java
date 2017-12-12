@@ -1,7 +1,14 @@
 package defense;
 
+import nikunj.classes.PopUp;
+import nikunj.classes.Sound;
+
+import javax.imageio.ImageIO;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JPanel;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -9,6 +16,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -17,12 +25,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.AttributedString;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import nikunj.classes.PopUp;
-import nikunj.classes.Sound;
 
 public class StartScreen {
     private double fadeIn = 0;
@@ -52,6 +54,7 @@ public class StartScreen {
 
     private int zCounter = 0;
     private int crackFrame = 0;
+    private int crackCounter = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
     private int survivalButtonRect = 0;
@@ -110,6 +113,7 @@ public class StartScreen {
     private boolean spearHitPlayed = false;
     private boolean heartMoved = false;
     private boolean arrowsShouldShow = true;
+    private boolean slammed = false;
     static boolean isLoaded = false;
     private boolean[] heartsActivated = new boolean[3];
     
@@ -122,16 +126,20 @@ public class StartScreen {
     private static Sound spearAppear;
     private static Sound spearFly;
     private static Sound spearHit;
+    private static Sound slam;
+    private static Sound cracking;
     
     private PopUp creditsList;
-    
+
+    private static JPanel[] clickableNames = new JPanel[11];
+
     private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
     private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
     private Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
     
-    private AttributedString[] creditsText = new AttributedString[8];
+    private AttributedString[] creditsText = new AttributedString[10];
     
     StartScreen() {
         if(Runner.isFirstTime) {
@@ -145,6 +153,8 @@ public class StartScreen {
                 boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
                 damage = new Sound(Runner.class.getResource("/damage.wav"), false);
                 megalovania = new Sound(Runner.class.getResource("/megalovania.wav"), true);
+                slam = new Sound(Runner.class.getResource("/slam.wav"), false);
+                cracking = new Sound(Runner.class.getResource("/cracking.wav"), false);
             }
             catch(UnsupportedAudioFileException | IOException e1) {
                 e1.printStackTrace();
@@ -207,21 +217,25 @@ public class StartScreen {
             
         };
         creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
-        addLinkFormatting(0, 0, 9);
+        addLinkFormatting(0, 0,9);
         creditsText[1] = new AttributedString("wjl: Fire sound effect");
-        addLinkFormatting(1, 0, 4);
+        addLinkFormatting(1, 0,4);
         creditsText[2] = new AttributedString("fins: Error sound effect");
-        addLinkFormatting(2, 0, 5);
+        addLinkFormatting(2, 0,5);
         creditsText[3] = new AttributedString("Klemens Wöhrer: Fire gif");
-        addLinkFormatting(3, 0, 15);
+        addLinkFormatting(3, 0,15);
         creditsText[4] = new AttributedString("Sayonara Maxwell: Spear of Justice Remix");
-        addLinkFormatting(4, 0, 17);
+        addLinkFormatting(4, 0,17);
         creditsText[5] = new AttributedString("Kamex: Battle Against A True Hero Remix");
         addLinkFormatting(5, 0, 6);
-        creditsText[6] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
+        creditsText[6] = new AttributedString("Sound Bible: Sub-title slamming SFX");
         addLinkFormatting(6, 0, 13);
-        addLinkFormatting(6, 18, 35);
-        creditsText[7] = new AttributedString("And most importantly, thanks to you for enjoying our");
+        creditsText[7] = new AttributedString("Sound Bible: Subtitle cracking SFX");
+        addLinkFormatting(7, 0, 13);
+        creditsText[8] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
+        addLinkFormatting(8, 0, 13);
+        addLinkFormatting(8, 18, 35);
+        creditsText[9] = new AttributedString("And most importantly, thanks to you for enjoying our");
         for(AttributedString a : creditsText) {
             try {
                 a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
@@ -230,6 +244,103 @@ public class StartScreen {
                 e.printStackTrace();
             }
         }
+        for(int i = 0, y = 82; i < clickableNames.length; ++i, y += 40) {
+            clickableNames[i] = new JPanel();
+            JPanel b = clickableNames[i];
+            b.setLocation((int) (85 - creditsList.getExpandedX()), (int) (y - creditsList.getExpandedY()));
+            if(i == 10)
+                b.setLocation((int) (230 - creditsList.getExpandedX()), (int) (85 + 40 * 8 - creditsList.getExpandedY()));
+            b.setOpaque(false);
+            b.setName(Integer.toString(i));
+            b.addMouseListener(new MouseListener() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    String url = "";
+                    String name = ((JPanel) e.getSource()).getName();
+                    int nameInt = Integer.parseInt(name);
+                    switch(nameInt) {
+                        case 0:
+                            url = "http://undertale.com/";
+                            break;
+                        case 1:
+                            url = "https://goo.gl/ofAZRS";
+                            break;
+                        case 2:
+                            url = "https://goo.gl/YuLmCt";
+                            break;
+                        case 3:
+                            url = "https://goo.gl/uNnWl8";
+                            break;
+                        case 4:
+                            url = "https://goo.gl/H2By5H";
+                            break;
+                        case 5:
+                            url = "https://goo.gl/DY0LJB";
+                            break;
+                        case 6:
+                            url = "http://soundbible.com/992-Right-Cross.html";
+                            break;
+                        case 7:
+                            url = "http://soundbible.com/970-Cracking-Chest-Open.html";
+                            break;
+                        case 8:
+                            url = "mailto:nikchawla312@gmail.com";
+                            break;
+                        case 9:
+                            url = "";
+                            break;
+                        case 10:
+                            url = "mailto:aaron4game@gmail.com";
+                            break;
+                    }
+                    try {
+                        if(!url.equals(""))
+                            Desktop.getDesktop().browse(new URI(url));
+                    }
+                    catch(IOException | URISyntaxException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {}
+
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if(b.isVisible()) {
+                        Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    }
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    b.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+
+            });
+        }
+        clickableNames[0].setSize(69, 13);
+        clickableNames[1].setSize(29, 13);
+        clickableNames[2].setSize(37, 13);
+        clickableNames[3].setSize(117, 13);
+        clickableNames[4].setSize(133, 13);
+        clickableNames[5].setSize(45, 13);
+        clickableNames[6].setSize(93, 13);
+        clickableNames[7].setSize(103, 13);
+        clickableNames[8].setSize(103, 13);
+        clickableNames[9].setSize(0, 13);
+        clickableNames[10].setSize(132, 13);
+        for(JPanel b : clickableNames)
+            creditsList.add(b);
+        creditsList.setLayout(null);
     }
     
     private void addLinkFormatting(int creditsIndex, int beginningIndex, int lastIndex) {
@@ -249,6 +360,19 @@ public class StartScreen {
             if(frameCounter1 > 200) {
                 if(scale > 0)
                     scale -= 70;
+                else if(!slammed) {
+                    slam.play();
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(200);
+                        }
+                        catch(InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        cracking.play();
+                    }).start();
+                    slammed = true;
+                }
                 drawSubtitle(g);
             }
             gifDog(g);
@@ -270,6 +394,7 @@ public class StartScreen {
                 heartMouse(g);
                 creditsList.draw(g);
                 if(creditsList.percentageExpanded() == 1.0) {
+                    Runner.moveButtons(true);
                     TextAttribute[] t = {TextAttribute.FONT};
                     int originalY = 85 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight()/2;
                     int x = 85, y = originalY;
@@ -280,8 +405,15 @@ public class StartScreen {
                     }
                     g.setFont(Runner.deteFontSpeech);
                     g.drawString("Undertale SFX, and creating Undertale", x, originalY + 15);
-                    g.drawString("and code", x, originalY + 15 + 40 * 6);
-                    g.drawString("game! :)", x, originalY + 15 + 40 * 7);
+                    g.drawString("and code", x, originalY + 15 + 40 * 8);
+                    g.drawString("game! :)", x, originalY + 15 + 40 * 9);
+                    for(JPanel b : clickableNames)
+                        b.setVisible(true);
+                }
+                else {
+                    for(JPanel b : clickableNames)
+                        b.setVisible(false);
+                    Runner.moveButtons(false);
                 }
                 isLoaded = true;
                 if(heartsActivated()) {
@@ -302,8 +434,10 @@ public class StartScreen {
     private void drawCracks(Graphics g) {
         if(scale <= 1) {
             g.drawImage(cracks[crackFrame], 0, 0, null);
-            if(crackFrame < 3)
+            if(crackFrame != 3 && ++crackCounter % 10 == 0) {
                 ++crackFrame;
+                crackCounter = 0;
+            }
         }
     }
 
@@ -634,7 +768,7 @@ public class StartScreen {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
         if(!heartMoved && arrowsShouldShow)
-            g2d.drawImage(arrows, 5, 100, null);
+            g2d.drawImage(arrows, 271, 380, null);
         if(arrowsCounter % 85 == 0) {
             arrowsShouldShow = !arrowsShouldShow;
             arrowsCounter = 1;
@@ -691,7 +825,7 @@ public class StartScreen {
             blueHeartOpacity = 1f;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, blueHeartOpacity));
-        g2d.drawImage(blueHeartFlash, 0, 0, null);
+        g2d.drawImage(blueHeartFlash, 163, 205, null);
         g2d.dispose();
         if(blueHeartOpacity > 0.02f && blueHeartFlashCounter % 2 == 0)
             blueHeartOpacity -= 0.02f;
@@ -837,15 +971,6 @@ public class StartScreen {
     
     void activateBlueHeartFlash() {
         blueHeartOpacity = 1f;
-    }
-    
-    public void openCreditsLink(String url) {
-        try {
-            Desktop.getDesktop().browse(new URI(url));
-        }
-        catch(IOException | URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
     
     void resetVars() {

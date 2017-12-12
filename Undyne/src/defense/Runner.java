@@ -8,9 +8,34 @@ import nikunj.classes.Sound;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import javax.swing.Timer;
+import javax.swing.WindowConstants;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.SplashScreen;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -308,42 +333,26 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             public void mouseClicked(MouseEvent e) {
                 if(musicMuted) {
                     musicSlider.setPercentage(musicVolume);
-                    try {
+                    if(main != null)
                         main.changeVolume(musicVolume);
-                    }
-                    catch(NullPointerException e1) {}
-                    try {
+                    if(gameDone != null)
                         gameDone.changeVolume(musicVolume);
-                    }
-                    catch(NullPointerException e1) {}
-                    try {
+                    if(startScreen != null)
                         startScreen.changeVolume(musicVolume);
-                    }
-                    catch(NullPointerException e1) {}
-                    try {
+                    if(stage != null)
                         stage.changeMusicVol(musicVolume);
-                    }
-                    catch(NullPointerException e1) {}
                 }
                 else {
                     musicVolume = musicSlider.getPercentage();
                     musicSlider.setPercentage(0);
-                    try {
+                    if(main != null)
                         main.changeVolume(0);
-                    }
-                    catch(NullPointerException e1) {}
-                    try {
-                        startScreen.changeVolume(0);
-                    }
-                    catch(NullPointerException e1) {}
-                    try {
+                    if(gameDone != null)
                         gameDone.changeVolume(0);
-                    }
-                    catch(NullPointerException e1) {}
-                    try {
+                    if(startScreen != null)
+                        startScreen.changeVolume(0);
+                    if(stage != null)
                         stage.changeMusicVol(0);
-                    }
-                    catch(NullPointerException e1) {}
                 }
                 musicMuted = !musicMuted;
             }
@@ -563,7 +572,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.addMouseListener(errorListener);
         creditsButton.addMouseListener(errorListener);
         helpButton.addMouseListener(errorListener);
-        creditsList.addMouseListener(errorListener);
         frame.addKeyListener(this);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
@@ -600,22 +608,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
             }
-            try {
-                main.changeVolume(musicSlider.getPercentage());
-            }
-            catch(NullPointerException e1) {}
-            try {
-                gameDone.changeVolume(musicSlider.getPercentage());
-            }
-            catch(NullPointerException e1) {}
-            try {
-                startScreen.changeVolume(musicSlider.getPercentage());
-            }
-            catch(NullPointerException e1) {}
-            try {
-                stage.changeMusicVol(musicSlider.getPercentage());
-            }
-            catch(NullPointerException e1) {}
+            if(main != null)
+                main.changeVolume(musicVolume);
+            if(gameDone != null)
+                gameDone.changeVolume(musicVolume);
+            if(startScreen != null)
+                startScreen.changeVolume(musicVolume);
+            if(stage != null)
+                stage.changeMusicVol(musicVolume);
             Attack.changeVol(sfxSlider.getPercentage());
             StartScreen.changeSfxVol(sfxSlider.getPercentage());
             undyne.changeVolume(sfxSlider.getPercentage());
@@ -714,10 +714,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         if(a != null && a.getIsFinished()) {
             if(isGenocide && count == 19 || !isGenocide && count == 10) {
-                try {
+                if(main != null)
                     main.stop();
-                }
-                catch(NullPointerException e) {}
                 g.drawImage(speech, speechX, speechY, null);
             }
         }
@@ -1072,6 +1070,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         creditsButton.setVisible(false);
         helpButton.setVisible(false);
     }
+
+    static void moveButtons(boolean shouldMove) {
+        if(shouldMove) {
+            creditsButton.setY(600);
+            helpButton.setY(600);
+        }
+        else {
+            creditsButton.setY(400);
+            helpButton.setY(400);
+        }
+    }
     
     static void changeMain() {
         ++levelIndex;
@@ -1103,6 +1112,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean getHelpStarter() {
         return helpStarter;
     }
+
+    static JFrame getFrame() {
+        return frame;
+    }
     
     private void restartApplication() {
         timer.stop();
@@ -1110,10 +1123,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         stage.resetVars();
         a.resetVars();
         a1.resetVars();
-        try {
+        if(gameDone != null)
             gameDone.stop();
-        }
-        catch(NullPointerException e) {}
         dir = 'u';
         typed = "";
         activated = "";
