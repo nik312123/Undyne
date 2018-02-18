@@ -6,8 +6,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
-import java.io.IOException;
-
 /*
  * Composes an arrow to be implemented in the Attack class
  */
@@ -185,7 +183,7 @@ public class Arrow {
         }
     }
     
-    void draw(Graphics g, Color c) throws IOException {
+    void draw(Graphics g, Color c) {
         BufferedImage arr;
         if(reverse)
             arr = Runner.reverseArr;

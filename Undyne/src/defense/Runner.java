@@ -6,7 +6,6 @@ import nikunj.classes.Slider;
 import nikunj.classes.Sound;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -141,7 +140,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Slider sfxSlider;
     
     private static PopUp creditsList;
-    
+
     private static Font deteFontNorm;
     static Font deteFontSpeech;
     static Font deteFontScore;
@@ -156,13 +155,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     private static JFrame frame;
     
-    public static void main(String... args) throws IOException, UnsupportedAudioFileException, InterruptedException, LineUnavailableException, FontFormatException {
+    public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
         Arrow.p = p;
         if(isFirstTime) {
             EventQueue.invokeLater(() -> {
                 SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
                     @Override
-                    protected Object doInBackground() throws InterruptedException, NullPointerException, IllegalStateException, IOException {
+                    protected Object doInBackground() throws NullPointerException, IllegalStateException {
                         loading = SplashScreen.getSplashScreen();
                         int height = 210, width = 410;
                         Graphics2D g2d = loading.createGraphics();
@@ -543,8 +542,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.add(musicSlider);
         frame.add(sfxSlider);
         creditsList = stage.getCreditsList();
+        PopUp helpPopUp = helper.getHelpPopUp();
         frame.add(creditsList);
+        frame.add(helpPopUp);
         creditsList.setVisible(true);
+        helpPopUp.setVisible(true);
         MouseListener errorListener = new MouseListener() {
 
             @Override
@@ -600,6 +602,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         return optimized;
     }
 
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -609,13 +612,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 frame.setAlwaysOnTop(false);
             }
             if(main != null)
-                main.changeVolume(musicVolume);
+                main.changeVolume(musicSlider.getPercentage());
             if(gameDone != null)
-                gameDone.changeVolume(musicVolume);
+                gameDone.changeVolume(musicSlider.getPercentage());
             if(startScreen != null)
-                startScreen.changeVolume(musicVolume);
+                startScreen.changeVolume(musicSlider.getPercentage());
             if(stage != null)
-                stage.changeMusicVol(musicVolume);
+                stage.changeMusicVol(musicSlider.getPercentage());
             Attack.changeVol(sfxSlider.getPercentage());
             StartScreen.changeSfxVol(sfxSlider.getPercentage());
             undyne.changeVolume(sfxSlider.getPercentage());
@@ -643,12 +646,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         startScreen.play();
                 }
                 stage.run(g);
-                try {
-                    drawCheat(g);
-                }
-                catch(FontFormatException | IOException e1) {
-                    e1.printStackTrace();
-                }
+                drawCheat(g);
             }
             else {
                 if(p.getHit()) {
@@ -667,12 +665,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 }
                 if(p.getHealth() != 0) {
                     drawBG(g);
-                    try {
-                        drawCheat(g);
-                    }
-                    catch(FontFormatException | IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    drawCheat(g);
                     drawSqu(g);
                     drawCircle(g);
                     drawHeart(g);
@@ -680,14 +673,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     gif(g);
                     if(survival)
                         g.drawImage(levels[levelIndex], 433, 4, null);
-                    try {
-                        a1.spawnArrows(g, p);
-                        p.drawHealth(g);
-                        automatic();
-                    }
-                    catch(FontFormatException | IOException e) {
-                        e.printStackTrace();
-                    }
+                    a1.spawnArrows(g, p);
+                    p.drawHealth(g);
+                    automatic();
                 }
                 else {
                     drawBG(g);
@@ -745,7 +733,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g.dispose();
     }
     
-    private void drawCheat(Graphics g) throws FontFormatException, IOException {
+    private void drawCheat(Graphics g) {
         if(automatic)
             activated = "Cheat Activated";
         else {
@@ -980,7 +968,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        g2d.drawImage(replay, 3 + xShift, -40, null);
+        g2d.drawImage(replay, 187 + xShift, 421, null);
         g2d.dispose();
         if(flashCount % 2 == 0) {
             if(fadeStart <= 1 && !switchFade)
@@ -1189,7 +1177,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         try {
             main();
         }
-        catch(IOException | UnsupportedAudioFileException | InterruptedException | LineUnavailableException | FontFormatException e) {
+        catch(IOException | UnsupportedAudioFileException | FontFormatException e) {
             e.printStackTrace();
         }
     }

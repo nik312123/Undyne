@@ -1,13 +1,12 @@
 package defense;
 
+import nikunj.classes.Sound;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import nikunj.classes.Sound;
 
 class Attack {
     private int counter = 0;
@@ -15,7 +14,7 @@ class Attack {
     /*
      * List of Arrow objects that make up one attack
      */
-    private ArrayList<Arrow> attackPattern = new ArrayList<>();
+    private ArrayList<Arrow> attackPattern;
     
     private static String hit = "";
     private int adder = 1;
@@ -183,7 +182,7 @@ class Attack {
         return "";
     }
     
-    private void draw(Graphics g) throws IOException {
+    private void draw(Graphics g) {
         if(attackPattern.size() != 0) {
             attackPattern.get(0).draw(g, Color.RED);
             for(int i = 1; i < attackPattern.size(); ++i) {
@@ -192,7 +191,7 @@ class Attack {
         }
     }
     
-    void spawnArrows(Graphics g, Player p) throws IOException {
+    void spawnArrows(Graphics g, Player p) {
         tick();
         if(a.isNewAttack()) {
             if(++attackDelay == 125) {

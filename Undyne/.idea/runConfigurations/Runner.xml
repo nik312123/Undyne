@@ -7,7 +7,7 @@
       </pattern>
     </extension>
     <option name="MAIN_CLASS_NAME" value="defense.Runner" />
-    <option name="VM_PARAMETERS" value="-Xmx3072M -XX:+UseConcMarkSweepGC -Dsun.java2d.opengl=true -splash:images/loading.gif -verbose:gc" />
+    <option name="VM_PARAMETERS" value="-Xmx3072M -XX:+UseConcMarkSweepGC -splash:images/loading.gif" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />

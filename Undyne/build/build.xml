@@ -8,6 +8,7 @@
             <manifest>
                 <attribute name="Main-Class" value="defense.Runner"/>
                 <attribute name="Class-Path" value="."/>
+                <attribute name="SplashScreen-Image" value="loading.gif"/>
             </manifest>
             <fileset dir="${user.home}/git/Undyne/Undyne/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="${user.home}/git/Undyne/Undyne/lib/jl1.0.1.jar"/>
