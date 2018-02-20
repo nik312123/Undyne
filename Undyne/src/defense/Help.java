@@ -55,7 +55,7 @@ class Help {
         g.setColor(Color.WHITE);
         if(helpPopUp.getWidth() == helpPopUp.getExpandedWidth())
             g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - heightWidth / 4 + 37);
-        if(++frameCounter % 5 == 0) {
+        if(++frameCounter % 3 == 0) {
             ++helpFrame;
             frameCounter = 0;
         }
