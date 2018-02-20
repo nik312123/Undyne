@@ -410,6 +410,9 @@ public class StartScreen {
                     g.drawString("game! :)", x, originalY + 15 + 40 * 9);
                     for(JPanel b : clickableNames)
                         b.setVisible(true);
+                    g.setFont(Runner.deteFontSpeech);
+
+                    g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - Math.min(creditsList.getWidth(), 460) / 4 + 37);
                 }
                 else {
                     for(JPanel b : clickableNames)
