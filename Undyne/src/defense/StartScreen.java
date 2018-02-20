@@ -18,6 +18,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class StartScreen {
     private static BufferedImage blueHeartFlash;
     private static BufferedImage spear;
     private static BufferedImage arrows;
-    private static BufferedImage[] cracks = new BufferedImage[4];
-    private static BufferedImage[] keys = new BufferedImage[2];
+    private static BufferedImage[] cracks = new BufferedImage[14];
+    private static BufferedImage keys;
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
@@ -68,7 +69,7 @@ public class StartScreen {
     private int survivalButtonCount = 0;
     private int dogCount = 0;
     private int dogFrame = 0;
-    private int scale = 3990;
+    private int scale = 800;
     private int shift = 0;
     private int heartX = 5;
     private int heartY = 100 + shift;
@@ -162,10 +163,8 @@ public class StartScreen {
             try {
                 subtitle = ImageIO.read(Runner.class.getResource("/sub.png"));
                 subtitle = Runner.getCompatibleImage(subtitle);
-                keys[0] = ImageIO.read(Runner.class.getResource("/keysRed.png"));
-                keys[0] = Runner.getCompatibleImage(keys[0]);
-                keys[1] = ImageIO.read(Runner.class.getResource("/keys.png"));
-                keys[1] = Runner.getCompatibleImage(keys[1]);
+                keys = ImageIO.read(Runner.class.getResource("/keys.png"));
+                keys = Runner.getCompatibleImage(keys);
                 undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
                 undyne = Runner.getCompatibleImage(undyne);
                 start = ImageIO.read(Runner.class.getResource("/start.png"));
@@ -200,8 +199,8 @@ public class StartScreen {
                 spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
-                for(int i = 0; i < 4; ++i) {
-                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks"+ i +".png"));
+                for(int i = 0; i < 14; ++i) {
+                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks/cracks"+ i +".png"));
                         cracks[i] = Runner.getCompatibleImage(cracks[i]);
                 }
             }
@@ -349,7 +348,6 @@ public class StartScreen {
     }
     
     void run(Graphics g) {
-        gifFire(g);
         drawArrows(g);
         drawGif(g);
         if(frameCounter1 != 251)
@@ -359,7 +357,7 @@ public class StartScreen {
                 ++frameCounter1;
             if(frameCounter1 > 200) {
                 if(scale > 0)
-                    scale -= 70;
+                    scale -= 20;
                 else if(!slammed) {
                     slam.play();
                     new Thread(() -> {
@@ -376,6 +374,7 @@ public class StartScreen {
                 drawSubtitle(g);
             }
             gifDog(g);
+            gifFire(g);
             starterTitle(g);
             drawSubtitle(g);
             if(frameCounter1 > 250) {
@@ -386,11 +385,13 @@ public class StartScreen {
                 easyButton(g);
                 survivalButton(g);
                 startArrows(g);
-                g.drawImage(buttons, 0, 0, null);
+                g.drawImage(buttons, 39, 300, null);
                 drawBlueHeartFlash(g);
                 drawSpears(g);
                 drawNames(g);
                 drawCracks(g);
+                if(heartsActivated())
+                    drawSans(g);
                 heartMouse(g);
                 creditsList.draw(g);
                 if(creditsList.percentageExpanded() == 1.0) {
@@ -409,6 +410,9 @@ public class StartScreen {
                     g.drawString("game! :)", x, originalY + 15 + 40 * 9);
                     for(JPanel b : clickableNames)
                         b.setVisible(true);
+                    g.setFont(Runner.deteFontSpeech);
+
+                    g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - Math.min(creditsList.getWidth(), 460) / 4 + 37);
                 }
                 else {
                     for(JPanel b : clickableNames)
@@ -417,7 +421,6 @@ public class StartScreen {
                 }
                 isLoaded = true;
                 if(heartsActivated()) {
-                    drawSans(g);
                     ++flickerCounter;
                     flickeringHeart();
                     if(megalovania.isStopped()) {
@@ -433,8 +436,8 @@ public class StartScreen {
 
     private void drawCracks(Graphics g) {
         if(scale <= 1) {
-            g.drawImage(cracks[crackFrame], 0, 0, null);
-            if(crackFrame != 3 && ++crackCounter % 10 == 0) {
+            g.drawImage(cracks[crackFrame], 56, 159, null);
+            if(crackFrame != 13 && ++crackCounter % 2 == 0) {
                 ++crackFrame;
                 crackCounter = 0;
             }
@@ -459,10 +462,14 @@ public class StartScreen {
     }
     
     private void drawSubtitle(Graphics g) {
+        AffineTransform trans = new AffineTransform();
+        trans.translate(96 - scale/2.0, 195 - scale/2.0);
+        trans.scale((subtitle.getWidth() + scale)/(double) subtitle.getWidth(), (subtitle.getHeight() + scale * 49.0/460.0)/(double) subtitle.getHeight());
+        Graphics2D g2d = (Graphics2D) g;
         if(heartsActivated())
             g.drawImage(subtitleBlue, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
         else
-            g.drawImage(subtitle, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g2d.drawImage(subtitle, trans, null);
     }
     
     private void moveHeart() {
@@ -511,7 +518,7 @@ public class StartScreen {
             }
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fadeIn));
-            g2d.drawImage(undyne, randX, -100 + randY, null);
+            g2d.drawImage(undyne, 62 + randX, 69 + randY, null);
             g2d.dispose();
             ++undyneCount;
             if(undyneCount == 7)
@@ -536,23 +543,23 @@ public class StartScreen {
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
             if(!easyButtonRectRed && !hardButtonRectRed && !survivalButtonRectRed) {
-                g2d.drawImage(select, 0, 50 + shift, null);
+                g2d.drawImage(select, 174, 486 + shift, null);
                 if(warningCounter == 0)
-                    g2d.drawImage(keys[0], 0, 50 - 20, null);
+                    g2d.drawImage(keys, 179, 490 + 50 - 20, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-                    g2d.drawImage(keys[0], 0 - 150, -220, (int) (1.5 * keys[0].getWidth()), (int) (1.5 * keys[0].getHeight()), null);
+                    g2d.drawImage(keys, (int) (179 - 0.5 * keys.getWidth()/2), (int) (490 + 50 - 20 - 0.5 * keys.getHeight()/2), (int) (1.5 * keys.getWidth()), (int) (1.5 * keys.getHeight()), null);
                 }
             }
             else {
                 if(warningCounter == 0)
-                    g2d.drawImage(start, 0, 50 + shift, null);
+                    g2d.drawImage(start, 174, 485 + shift, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-                    g2d.drawImage(start, 0 - 150, -175, (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
+                    g2d.drawImage(start, (int) (0 - start.getWidth() * 0.25), (int) (486 +  shift - 0.25 * start.getWidth()), (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
                 }
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-                g2d.drawImage(keys[0], 0, 50 - 20, null);
+                g2d.drawImage(keys, 179, 490 + 50 - 20, null);
             }
             if(warningCounter != 0)
                 --warningCounter;
@@ -689,9 +696,9 @@ public class StartScreen {
     
     private void heartMouse(Graphics g) {
         if(heartsActivated() && !hitGround)
-            g.drawImage(heartMouseBlue, heartX, heartY, null);
+            g.drawImage(heartMouseBlue, heartX + 283, heartY + 298, null);
         else
-            g.drawImage(heartMouse, heartX, heartY + flickerChangeY, null);
+            g.drawImage(heartMouse, heartX + 283, heartY + 298 + flickerChangeY, null);
     }
     
     private void gifFire(Graphics g) {
@@ -703,7 +710,7 @@ public class StartScreen {
         if(count2 == 38)
             count2 = 0;
         if(fire2 && count2 >= 0 && hardButtonRectRed)
-            g.drawImage(fire[count2], 330 + 39, 160 + shift, null);
+            g.drawImage(fire[count2], 432, 173 + shift, null);
     }
     
     private void gifDog(Graphics g) {

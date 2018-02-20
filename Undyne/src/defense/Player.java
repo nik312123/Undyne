@@ -1,5 +1,6 @@
 package defense;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -12,8 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 class Player {
     private char dir = 'u';
@@ -71,7 +70,7 @@ class Player {
             health = 0;
     }
     
-    void drawHealth(Graphics g) throws FontFormatException, IOException {
+    void drawHealth(Graphics g) {
         g.setColor(Color.RED);
         g.fillRect(430, 530 + 40, 70, 20);
         g.setColor(Color.YELLOW);
