@@ -47,7 +47,7 @@ public class StartScreen {
     private static BufferedImage blueHeartFlash;
     private static BufferedImage spear;
     private static BufferedImage arrows;
-    private static BufferedImage[] cracks = new BufferedImage[4];
+    private static BufferedImage[] cracks = new BufferedImage[14];
     private static BufferedImage keys;
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
@@ -199,8 +199,8 @@ public class StartScreen {
                 spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
-                for(int i = 0; i < 4; ++i) {
-                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks"+ i +".png"));
+                for(int i = 0; i < 14; ++i) {
+                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks/cracks"+ i +".png"));
                         cracks[i] = Runner.getCompatibleImage(cracks[i]);
                 }
             }
@@ -434,7 +434,7 @@ public class StartScreen {
     private void drawCracks(Graphics g) {
         if(scale <= 1) {
             g.drawImage(cracks[crackFrame], 56, 159, null);
-            if(crackFrame != 3 && ++crackCounter % 10 == 0) {
+            if(crackFrame != 13 && ++crackCounter % 2 == 0) {
                 ++crackFrame;
                 crackCounter = 0;
             }
