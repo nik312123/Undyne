@@ -18,6 +18,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class StartScreen {
     private int survivalButtonCount = 0;
     private int dogCount = 0;
     private int dogFrame = 0;
-    private int scale = 3990;
+    private int scale = 800;
     private int shift = 0;
     private int heartX = 5;
     private int heartY = 100 + shift;
@@ -347,7 +348,6 @@ public class StartScreen {
     }
     
     void run(Graphics g) {
-        gifFire(g);
         drawArrows(g);
         drawGif(g);
         if(frameCounter1 != 251)
@@ -357,7 +357,7 @@ public class StartScreen {
                 ++frameCounter1;
             if(frameCounter1 > 200) {
                 if(scale > 0)
-                    scale -= 70;
+                    scale -= 20;
                 else if(!slammed) {
                     slam.play();
                     new Thread(() -> {
@@ -374,6 +374,7 @@ public class StartScreen {
                 drawSubtitle(g);
             }
             gifDog(g);
+            gifFire(g);
             starterTitle(g);
             drawSubtitle(g);
             if(frameCounter1 > 250) {
@@ -458,10 +459,14 @@ public class StartScreen {
     }
     
     private void drawSubtitle(Graphics g) {
+        AffineTransform trans = new AffineTransform();
+        trans.translate(96 - scale/2.0, 195 - scale/2.0);
+        trans.scale((subtitle.getWidth() + scale)/(double) subtitle.getWidth(), (subtitle.getHeight() + scale * 49.0/460.0)/(double) subtitle.getHeight());
+        Graphics2D g2d = (Graphics2D) g;
         if(heartsActivated())
             g.drawImage(subtitleBlue, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
         else
-            g.drawImage(subtitle, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g2d.drawImage(subtitle, trans, null);
     }
     
     private void moveHeart() {
@@ -510,7 +515,7 @@ public class StartScreen {
             }
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) fadeIn));
-            g2d.drawImage(undyne, randX, -100 + randY, null);
+            g2d.drawImage(undyne, 62 + randX, 69 + randY, null);
             g2d.dispose();
             ++undyneCount;
             if(undyneCount == 7)
@@ -702,7 +707,7 @@ public class StartScreen {
         if(count2 == 38)
             count2 = 0;
         if(fire2 && count2 >= 0 && hardButtonRectRed)
-            g.drawImage(fire[count2], 330 + 39, 160 + shift, null);
+            g.drawImage(fire[count2], 432, 173 + shift, null);
     }
     
     private void gifDog(Graphics g) {

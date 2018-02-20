@@ -930,9 +930,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2d = (Graphics2D) g.create();
         if(gameOverFrame > 225)
             gameOverFrame = 225;
-        int width = gameOver[gameOverFrame].getWidth();
-        int height = gameOver[gameOverFrame].getHeight();
-        g2d.drawImage(gameOver[gameOverFrame], getWidth() / 2 - width / 2 + 1, getHeight() / 2 - height / 2, null);
+        g2d.drawImage(gameOver[gameOverFrame], 154 + getWidth() / 2 - 600 / 2 + 1, 25 + getHeight() / 2 - 338 / 2, null);
         g2d.dispose();
         if(gameOverFrame == 225)
             isGameOver = true;
