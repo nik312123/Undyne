@@ -57,7 +57,6 @@ class Attack {
     private void addArrow(Arrow a) {
         attackPattern.add(a);
     }
-
     
     private String removeArrow(char dir, Player p) {
         boolean hit = false;

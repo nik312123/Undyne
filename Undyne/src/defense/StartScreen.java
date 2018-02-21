@@ -47,12 +47,13 @@ public class StartScreen {
     private static BufferedImage blueHeartFlash;
     private static BufferedImage spear;
     private static BufferedImage arrows;
-    private static BufferedImage[] cracks = new BufferedImage[14];
     private static BufferedImage keys;
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] sans = new BufferedImage[10];
-
+    private static BufferedImage[] cracks = new BufferedImage[14];
+    private static BufferedImage[] dots = new BufferedImage[4];
+    
     private int zCounter = 0;
     private int crackFrame = 0;
     private int crackCounter = 0;
@@ -131,9 +132,9 @@ public class StartScreen {
     private static Sound cracking;
     
     private PopUp creditsList;
-
+    
     private static JPanel[] clickableNames = new JPanel[11];
-
+    
     private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
     private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
     private Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
@@ -200,8 +201,12 @@ public class StartScreen {
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
                 for(int i = 0; i < 14; ++i) {
-                        cracks[i] = ImageIO.read(Runner.class.getResource("/cracks/cracks"+ i +".png"));
-                        cracks[i] = Runner.getCompatibleImage(cracks[i]);
+                    cracks[i] = ImageIO.read(Runner.class.getResource("/cracks/cracks" + i + ".png"));
+                    cracks[i] = Runner.getCompatibleImage(cracks[i]);
+                }
+                for(int i = 0; i < 4; ++i) {
+                    dots[i] = ImageIO.read(Runner.class.getResource("/dots/dots" + i + ".png"));
+                    dots[i] = Runner.getCompatibleImage(dots[i]);
                 }
             }
             catch(IOException e) {
@@ -210,21 +215,21 @@ public class StartScreen {
         }
         creditsList = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
             private static final long serialVersionUID = 1L;
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {}
             
         };
         creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
-        addLinkFormatting(0, 0,9);
+        addLinkFormatting(0, 0, 9);
         creditsText[1] = new AttributedString("wjl: Fire sound effect");
-        addLinkFormatting(1, 0,4);
+        addLinkFormatting(1, 0, 4);
         creditsText[2] = new AttributedString("fins: Error sound effect");
-        addLinkFormatting(2, 0,5);
+        addLinkFormatting(2, 0, 5);
         creditsText[3] = new AttributedString("Klemens Wöhrer: Fire gif");
-        addLinkFormatting(3, 0,15);
+        addLinkFormatting(3, 0, 15);
         creditsText[4] = new AttributedString("Sayonara Maxwell: Spear of Justice Remix");
-        addLinkFormatting(4, 0,17);
+        addLinkFormatting(4, 0, 17);
         creditsText[5] = new AttributedString("Kamex: Battle Against A True Hero Remix");
         addLinkFormatting(5, 0, 6);
         creditsText[6] = new AttributedString("Sound Bible: Sub-title slamming SFX");
@@ -252,7 +257,7 @@ public class StartScreen {
             b.setOpaque(false);
             b.setName(Integer.toString(i));
             b.addMouseListener(new MouseListener() {
-
+                
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     String url = "";
@@ -301,13 +306,13 @@ public class StartScreen {
                         e1.printStackTrace();
                     }
                 }
-
+                
                 @Override
                 public void mousePressed(MouseEvent e) {}
-
+                
                 @Override
                 public void mouseReleased(MouseEvent e) {}
-
+                
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     if(b.isVisible()) {
@@ -316,14 +321,14 @@ public class StartScreen {
                         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     }
                 }
-
+                
                 @Override
                 public void mouseExited(MouseEvent e) {
                     Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     b.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
-
+                
             });
         }
         clickableNames[0].setSize(69, 13);
@@ -371,7 +376,6 @@ public class StartScreen {
                     }).start();
                     slammed = true;
                 }
-                drawSubtitle(g);
             }
             gifDog(g);
             gifFire(g);
@@ -390,6 +394,7 @@ public class StartScreen {
                 drawSpears(g);
                 drawNames(g);
                 drawCracks(g);
+                drawDots(g);
                 if(heartsActivated())
                     drawSans(g);
                 heartMouse(g);
@@ -397,7 +402,7 @@ public class StartScreen {
                 if(creditsList.percentageExpanded() == 1.0) {
                     Runner.moveButtons(true);
                     TextAttribute[] t = {TextAttribute.FONT};
-                    int originalY = 85 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight()/2;
+                    int originalY = 85 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight() / 2;
                     int x = 85, y = originalY;
                     g.setColor(Color.WHITE);
                     for(AttributedString a : creditsText) {
@@ -411,7 +416,7 @@ public class StartScreen {
                     for(JPanel b : clickableNames)
                         b.setVisible(true);
                     g.setFont(Runner.deteFontSpeech);
-
+                    
                     g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - Math.min(creditsList.getWidth(), 460) / 4 + 37);
                 }
                 else {
@@ -433,9 +438,13 @@ public class StartScreen {
             }
         }
     }
-
+    
+    private void drawDots(Graphics g) {
+        g.drawImage(dots[numHeartsActivated()], 4, 588, null);
+    }
+    
     private void drawCracks(Graphics g) {
-        if(scale <= 1) {
+        if(scale <= 1 && !heartsActivated()) {
             g.drawImage(cracks[crackFrame], 56, 159, null);
             if(crackFrame != 13 && ++crackCounter % 2 == 0) {
                 ++crackFrame;
@@ -443,7 +452,7 @@ public class StartScreen {
             }
         }
     }
-
+    
     private void drawArrows(Graphics g) {
         g.drawImage(Runner.blueArr, -100, 1000, null);
         g.drawImage(Runner.redArr, -100, 1000, null);
@@ -463,11 +472,11 @@ public class StartScreen {
     
     private void drawSubtitle(Graphics g) {
         AffineTransform trans = new AffineTransform();
-        trans.translate(96 - scale/2.0, 195 - scale/2.0);
-        trans.scale((subtitle.getWidth() + scale)/(double) subtitle.getWidth(), (subtitle.getHeight() + scale * 49.0/460.0)/(double) subtitle.getHeight());
+        trans.translate(96 - scale / 2.0, 195 - scale / 2.0);
+        trans.scale((subtitle.getWidth() + scale) / (double) subtitle.getWidth(), (subtitle.getHeight() + scale * 49.0 / 460.0) / (double) subtitle.getHeight());
         Graphics2D g2d = (Graphics2D) g;
         if(heartsActivated())
-            g.drawImage(subtitleBlue, 0 - scale / 2, 0 - scale / 2, subtitle.getWidth() + scale, subtitle.getHeight() + scale, null);
+            g2d.drawImage(subtitleBlue, trans, null);
         else
             g2d.drawImage(subtitle, trans, null);
     }
@@ -548,7 +557,7 @@ public class StartScreen {
                     g2d.drawImage(keys, 179, 490 + 50 - 20, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-                    g2d.drawImage(keys, (int) (179 - 0.5 * keys.getWidth()/2), (int) (490 + 50 - 20 - 0.5 * keys.getHeight()/2), (int) (1.5 * keys.getWidth()), (int) (1.5 * keys.getHeight()), null);
+                    g2d.drawImage(keys, (int) (179 - 0.5 * keys.getWidth() / 2), (int) (490 + 50 - 20 - 0.5 * keys.getHeight() / 2), (int) (1.5 * keys.getWidth()), (int) (1.5 * keys.getHeight()), null);
                 }
             }
             else {
@@ -556,7 +565,7 @@ public class StartScreen {
                     g2d.drawImage(start, 174, 485 + shift, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-                    g2d.drawImage(start, (int) (0 - start.getWidth() * 0.25), (int) (486 +  shift - 0.25 * start.getWidth()), (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
+                    g2d.drawImage(start, (int) (0 - start.getWidth() * 0.25), (int) (486 + shift - 0.25 * start.getWidth()), (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
                 }
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 g2d.drawImage(keys, 179, 490 + 50 - 20, null);
@@ -956,6 +965,12 @@ public class StartScreen {
         heartsActivated[2] = true;
     }
     
+    void deactivateHearts() {
+        heartsActivated[0] = false;
+        heartsActivated[1] = false;
+        heartsActivated[2] = false;
+    }
+    
     boolean heartOneActivated() {
         return heartsActivated[0];
     }
@@ -969,11 +984,16 @@ public class StartScreen {
     }
     
     boolean heartsActivated() {
-        for(boolean heartActivated : heartsActivated) {
-            if(!heartActivated)
-                return false;
+        return heartsActivated[0] && heartsActivated[1] && heartsActivated[2];
+    }
+    
+    int numHeartsActivated() {
+        int activatedHearts = 0;
+        for(boolean activated : heartsActivated) {
+            if(activated)
+                activatedHearts += 1;
         }
-        return true;
+        return activatedHearts;
     }
     
     void activateBlueHeartFlash() {
@@ -1015,6 +1035,11 @@ public class StartScreen {
     
     PopUp getCreditsList() {
         return creditsList;
+    }
+    
+    void playDamage() {
+        damage.changeVolume(sfxVolume);
+        damage.play();
     }
     
 }
