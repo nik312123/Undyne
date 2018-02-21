@@ -140,7 +140,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Slider sfxSlider;
     
     private static PopUp creditsList;
-
+    
     private static Font deteFontNorm;
     static Font deteFontSpeech;
     static Font deteFontScore;
@@ -548,7 +548,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         creditsList.setVisible(true);
         helpPopUp.setVisible(true);
         MouseListener errorListener = new MouseListener() {
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(beginning && StartScreen.isLoaded) {
@@ -557,16 +557,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     stage.warningOn();
                 }
             }
-
+            
             @Override
             public void mousePressed(MouseEvent e) {}
-
+            
             @Override
             public void mouseReleased(MouseEvent e) {}
-
+            
             @Override
             public void mouseEntered(MouseEvent e) {}
-
+            
             @Override
             public void mouseExited(MouseEvent e) {}
             
@@ -601,8 +601,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         optimized.setAccelerationPriority(1);
         return optimized;
     }
-
-
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -708,7 +707,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
         }
         if(a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10))
-        undyneSpeech(g);
+            undyneSpeech(g);
         closeButton.draw(g);
         draggableButton.draw(g);
         musicButton.draw(g);
@@ -918,7 +917,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
             if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192))
-                    asgore.play();
+                asgore.play();
             if(gameOverFrame >= 225)
                 gameOverDone = true;
             gameOverCount = 0;
@@ -1056,7 +1055,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         creditsButton.setVisible(false);
         helpButton.setVisible(false);
     }
-
+    
     static void moveButtons(boolean shouldMove) {
         if(shouldMove) {
             creditsButton.setY(600);
@@ -1098,7 +1097,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean getHelpStarter() {
         return helpStarter;
     }
-
+    
     static JFrame getFrame() {
         return frame;
     }
@@ -1273,6 +1272,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         main.play();
                         dir = 'u';
                     }
+                    else if(stage.numHeartsActivated() > 0) {
+                        stage.deactivateHearts();
+                        stage.playDamage();
+                    }
                 }
                 else if(!secondEnd && !isGameOver && !isFirstTime) {
                     gameOverFrame = 225;
@@ -1314,7 +1317,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
         }
     }
-
+    
     private static boolean onSlider(String slider) {
         Slider s;
         GradientButton gb;

@@ -132,7 +132,7 @@ class Attacks {
                 }
                 base += 12;
             }
-
+            
             // Hard
             ArrayList<Integer> hardAttacks = new ArrayList<>();
             base = 42;
@@ -182,7 +182,7 @@ class Attacks {
                 }
                 base += 12;
             }
-
+            
             // WTH
             ArrayList<Integer> superHardAttacks = new ArrayList<>();
             base = 78;

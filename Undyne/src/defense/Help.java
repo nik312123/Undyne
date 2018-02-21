@@ -31,10 +31,10 @@ class Help {
         }
         helpPopUp = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
             private static final long serialVersionUID = 1L;
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {}
-
+            
         };
         helpPopUp.setLayout(null);
     }
@@ -62,7 +62,7 @@ class Help {
         if(helpFrame == 534)
             helpFrame = 0;
     }
-
+    
     PopUp getHelpPopUp() {
         return helpPopUp;
     }

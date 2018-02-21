@@ -28,7 +28,7 @@ class Player {
     private int maxHealth;
     
     private Random random = new Random();
-
+    
     private static BufferedImage[] shields = new BufferedImage[2];
     
     private Font undyneFont;

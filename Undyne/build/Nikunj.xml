@@ -1,9 +1,16 @@
-<code_scheme name="Nikunj">
+<code_scheme name="Nikunj" version="173">
   <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
   <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
   <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
     <value />
   </option>
+  <JavaCodeStyleSettings>
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+    <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+      <value />
+    </option>
+  </JavaCodeStyleSettings>
   <codeStyleSettings language="JAVA">
     <option name="KEEP_LINE_BREAKS" value="false" />
     <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
@@ -24,12 +31,13 @@
     <option name="SPACE_BEFORE_SWITCH_PARENTHESES" value="false" />
     <option name="SPACE_BEFORE_SYNCHRONIZED_PARENTHESES" value="false" />
     <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
-    <option name="SPACE_BEFORE_WHILE_KEYWORD" value="false" />
     <option name="EXTENDS_KEYWORD_WRAP" value="1" />
     <option name="THROWS_KEYWORD_WRAP" value="1" />
     <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
-    <option name="METHOD_ANNOTATION_WRAP" value="0" />
-    <option name="CLASS_ANNOTATION_WRAP" value="0" />
-    <option name="FIELD_ANNOTATION_WRAP" value="0" />
+    <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+    <indentOptions>
+      <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
+    </indentOptions>
   </codeStyleSettings>
 </code_scheme>
