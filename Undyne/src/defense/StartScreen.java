@@ -1005,7 +1005,7 @@ public class StartScreen {
     }
     
     boolean shouldStart() {
-        return !isOnLink() && !isOnHelp() && !heartsActivated() && (hardButtonRectRed && !isOnEasy && !isOnSurvival || easyButtonRectRed && !isOnHard && !isOnSurvival || survivalButtonRectRed && !isOnHard && !isOnEasy);
+        return !isOnLink() && !isOnHelp() && !heartsActivated() && (hardButtonRectRed && isOnHard || easyButtonRectRed && isOnEasy || survivalButtonRectRed && isOnSurvival);
     }
     
     boolean shouldShow() {

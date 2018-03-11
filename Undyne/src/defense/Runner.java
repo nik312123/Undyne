@@ -1272,7 +1272,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         main.play();
                         dir = 'u';
                     }
-                    else if(stage.numHeartsActivated() > 0) {
+                    else if(stage.numHeartsActivated() > 0 && !stage.heartsActivated()) {
                         stage.deactivateHearts();
                         stage.playDamage();
                     }
@@ -1285,8 +1285,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     restartApplication();
                 break;
             case KeyEvent.VK_V:
-                if(timer.getDelay() != 1)
-                    timer.setDelay(1);
+                if(timer.getDelay() != 0)
+                    timer.setDelay(0);
                 else
                     timer.setDelay(10);
                 break;
