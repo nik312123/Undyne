@@ -1,5 +1,6 @@
 package defense;
 
+import customAttackMaker.CustomAttacks;
 import nikunj.classes.GradientButton;
 import nikunj.classes.PopUp;
 import nikunj.classes.Slider;
@@ -97,7 +98,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     static boolean isFirstTime = true;
     
     private static Timer timer;
-    
+
+    public static BufferedImage addAttack;
+    public static BufferedImage deleteArrow;
+    public static BufferedImage deleteAttack;
+    public static BufferedImage droppedDown;
+    public static BufferedImage droppedClosed;
+    public static BufferedImage newArrow;
+    public static BufferedImage exit;
+    public static BufferedImage arrowImg;
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -115,7 +124,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage[] levels = new BufferedImage[4];
     static BufferedImage[] gif;
     static BufferedImage[] gif2;
-    
+
     private static Sound main;
     private static Sound gameDone;
     private static Sound startScreen;
@@ -128,33 +137,35 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Sound asgore;
     private static Sound error;
     private static Sound[] mainSounds = new Sound[4];
-    
+
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
     private static GradientButton musicButton;
     private static GradientButton sfxButton;
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
-    
+
     private static Slider musicSlider;
     private static Slider sfxSlider;
-    
+
     private static PopUp creditsList;
-    
-    private static Font deteFontNorm;
+
+    public static Font deteFontNorm;
     static Font deteFontSpeech;
     static Font deteFontScore;
-    
+
     private static Attack a1;
     private static Attacks a;
     private static StartScreen stage = new StartScreen();
     private static Player p = new Player();
     private static Help helper = new Help();
-    
+
+
     private static SplashScreen loading;
-    
-    private static JFrame frame;
-    
+
+    public static JFrame frame;
+
+
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
         Arrow.p = p;
         if(isFirstTime) {
@@ -216,6 +227,31 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 levels[i] = getCompatibleImage(levels[i]);
             blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
             blueArr = getCompatibleImage(blueArr);
+
+            exit = ImageIO.read(Runner.class.getResource("/exit.png"));
+            exit = getCompatibleImage(exit);
+
+            arrowImg = ImageIO.read(Runner.class.getResource("/Group 16.png"));
+            arrowImg = getCompatibleImage(arrowImg);
+
+            addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
+            addAttack = getCompatibleImage(addAttack);
+
+            deleteAttack = ImageIO.read(Runner.class.getResource("/delete attack.png"));
+            deleteAttack = getCompatibleImage(deleteAttack);
+
+            newArrow = ImageIO.read(Runner.class.getResource("/new arrow.png"));
+            newArrow = getCompatibleImage(newArrow);
+
+            droppedDown = ImageIO.read(Runner.class.getResource("/droppedDown.png"));
+            droppedDown = getCompatibleImage(droppedDown);
+
+            droppedClosed = ImageIO.read(Runner.class.getResource("/droppedClosed.png"));
+            droppedClosed = getCompatibleImage(droppedClosed);
+
+            deleteArrow = ImageIO.read(Runner.class.getResource("/deleteArrow.png"));
+            deleteArrow = getCompatibleImage(deleteArrow);
+
             redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
             redArr = getCompatibleImage(redArr);
             reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
@@ -251,6 +287,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
         }
         new Runner("Undyne: Absolute");
+        new CustomAttacks("Custom Attack Maker");
         startScreen.changeVolume(musicVolume);
         startScreen.play();
     }
@@ -261,6 +298,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
+
         closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
@@ -319,6 +357,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             @Override
             public void mouseDragged(MouseEvent e) {
                 frame.setLocation((int) (frame.getLocation().getX() + e.getX() - xPos), (int) (frame.getLocation().getY() + e.getY() - yPos));
+
             }
             
             @Override
@@ -584,6 +623,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.getContentPane().setLayout(null);
         frame.setVisible(true);
         frame.requestFocus();
+
+
     }
     
     private Runner() {
@@ -855,7 +896,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g2d.drawImage(gif[count], gifXShift + p.getElementPosition(), 10 + p.getElementPosition(), null);
         g2d.dispose();
     }
-    
+
     private boolean breakHeartException(int breakFrame) {
         int[] exceptions = {2, 6, 8, 12, 14, 18, 20, 22, 23};
         for(int exception : exceptions) {
@@ -1212,6 +1253,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_Q:
                 System.exit(0);
+                break;
+            case KeyEvent.VK_U:
+                CustomAttacks.anotherOne.setVisible(!CustomAttacks.anotherOne.isVisible());
                 break;
             case KeyEvent.VK_X:
                 helpStarter = false;

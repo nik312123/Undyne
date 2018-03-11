@@ -8,7 +8,7 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
 
-class Attack {
+public class Attack {
     private int counter = 0;
     private static boolean isFirst = true;
     /*
@@ -35,7 +35,7 @@ class Attack {
     /*
      * Constructor for constant delay
      */
-    Attack(ArrayList<Arrow> attackPattern, Attacks a) {
+   public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
         if(Runner.isFirstTime) {

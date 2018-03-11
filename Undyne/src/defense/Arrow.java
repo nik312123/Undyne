@@ -33,14 +33,14 @@ public class Arrow {
     private int radius = 0;
     
     static Player p;
-    
+
     private boolean inside = false;
     private boolean isOne = true;
     private boolean isSlow;
     private boolean switchDir = false;
     private boolean directionNotSwitched;
     
-    Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
+    public Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
         directionNotSwitched = reverse;
