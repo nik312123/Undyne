@@ -30,12 +30,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -43,7 +38,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class Runner extends JPanel implements ActionListener, KeyListener {
+public class Runner extends JPanel
+        implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
     private static final long serialVersionUID = 1L;
     
     private static char dir = 'u';
@@ -60,7 +56,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static double sfxVolume = 1;
     
     private static int nothingCounter = 0;
-    private static final int DELAY = 10;
+    private static int DELAY = 10;
     private static int breakCount = 0;
     private static int breakFrame = 0;
     private static int flickeringHeart = 0;
@@ -96,10 +92,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
     static boolean isFirstTime = true;
+    public static boolean isCustomAttack = false;
     
     private static Timer timer;
-
+    
     public static BufferedImage addAttack;
+    public static BufferedImage ticked;
     public static BufferedImage deleteArrow;
     public static BufferedImage deleteAttack;
     public static BufferedImage droppedDown;
@@ -124,7 +122,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static BufferedImage[] levels = new BufferedImage[4];
     static BufferedImage[] gif;
     static BufferedImage[] gif2;
-
+    
     private static Sound main;
     private static Sound gameDone;
     private static Sound startScreen;
@@ -137,35 +135,34 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static Sound asgore;
     private static Sound error;
     private static Sound[] mainSounds = new Sound[4];
-
+    
     private static GradientButton closeButton;
     private static GradientButton draggableButton;
     private static GradientButton musicButton;
     private static GradientButton sfxButton;
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
-
+    
     private static Slider musicSlider;
     private static Slider sfxSlider;
-
+    
     private static PopUp creditsList;
-
+    
     public static Font deteFontNorm;
     static Font deteFontSpeech;
     static Font deteFontScore;
-
+    
     private static Attack a1;
     private static Attacks a;
     private static StartScreen stage = new StartScreen();
+    private static CustomAttacks customAttackMaker = new CustomAttacks();
     private static Player p = new Player();
     private static Help helper = new Help();
-
-
+    
     private static SplashScreen loading;
-
+    
     public static JFrame frame;
-
-
+    
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
         Arrow.p = p;
         if(isFirstTime) {
@@ -227,31 +224,34 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 levels[i] = getCompatibleImage(levels[i]);
             blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
             blueArr = getCompatibleImage(blueArr);
-
+            
             exit = ImageIO.read(Runner.class.getResource("/exit.png"));
             exit = getCompatibleImage(exit);
-
-            arrowImg = ImageIO.read(Runner.class.getResource("/Group 16.png"));
+            
+            arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
             arrowImg = getCompatibleImage(arrowImg);
-
+    
+            ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
+            ticked = getCompatibleImage(ticked);
+            
             addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
             addAttack = getCompatibleImage(addAttack);
-
+            
             deleteAttack = ImageIO.read(Runner.class.getResource("/delete attack.png"));
             deleteAttack = getCompatibleImage(deleteAttack);
-
+            
             newArrow = ImageIO.read(Runner.class.getResource("/new arrow.png"));
             newArrow = getCompatibleImage(newArrow);
-
+            
             droppedDown = ImageIO.read(Runner.class.getResource("/droppedDown.png"));
             droppedDown = getCompatibleImage(droppedDown);
-
+            
             droppedClosed = ImageIO.read(Runner.class.getResource("/droppedClosed.png"));
             droppedClosed = getCompatibleImage(droppedClosed);
-
+            
             deleteArrow = ImageIO.read(Runner.class.getResource("/deleteArrow.png"));
             deleteArrow = getCompatibleImage(deleteArrow);
-
+            
             redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
             redArr = getCompatibleImage(redArr);
             reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
@@ -287,7 +287,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
         }
         new Runner("Undyne: Absolute");
-        new CustomAttacks("Custom Attack Maker");
         startScreen.changeVolume(musicVolume);
         startScreen.play();
     }
@@ -298,7 +297,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
-
+        
         closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
@@ -357,7 +356,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             @Override
             public void mouseDragged(MouseEvent e) {
                 frame.setLocation((int) (frame.getLocation().getX() + e.getX() - xPos), (int) (frame.getLocation().getY() + e.getY() - yPos));
-
+                
             }
             
             @Override
@@ -612,6 +611,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         };
         frame.addMouseListener(errorListener);
         creditsButton.addMouseListener(errorListener);
+        frame.addMouseMotionListener(this);
+        frame.addMouseListener(this);
+        frame.addMouseWheelListener(this);
         helpButton.addMouseListener(errorListener);
         frame.addKeyListener(this);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -623,8 +625,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         frame.getContentPane().setLayout(null);
         frame.setVisible(true);
         frame.requestFocus();
-
-
+        
     }
     
     private Runner() {
@@ -687,6 +688,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 }
                 stage.run(g);
                 drawCheat(g);
+            }
+            else if(isCustomAttack) {
+                customAttackMaker.perform(g);
             }
             else {
                 if(p.getHit()) {
@@ -896,7 +900,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g2d.drawImage(gif[count], gifXShift + p.getElementPosition(), 10 + p.getElementPosition(), null);
         g2d.dispose();
     }
-
+    
     private boolean breakHeartException(int breakFrame) {
         int[] exceptions = {2, 6, 8, 12, 14, 18, 20, 22, 23};
         for(int exception : exceptions) {
@@ -1230,6 +1234,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     
     @Override
     public void keyPressed(KeyEvent e) {
+        customAttackMaker.keyPressed(e);
         switch(e.getKeyCode()) {
             case KeyEvent.VK_UP:
             case KeyEvent.VK_W:
@@ -1255,7 +1260,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 System.exit(0);
                 break;
             case KeyEvent.VK_U:
-                CustomAttacks.anotherOne.setVisible(!CustomAttacks.anotherOne.isVisible());
+                isCustomAttack ^= true;
+                beginning ^= true;
+                if(DELAY == 10)
+                    DELAY = 0;
+                else
+                    DELAY = 10;
                 break;
             case KeyEvent.VK_X:
                 helpStarter = false;
@@ -1380,4 +1390,48 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         return bounds.contains(mousePos);
     }
     
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        customAttackMaker.mouseClicked(e);
+        
+    }
+    
+    @Override
+    public void mousePressed(MouseEvent e) {
+        customAttackMaker.mousePressed(e);
+        
+    }
+    
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        customAttackMaker.mouseReleased(e);
+    }
+    
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        customAttackMaker.mouseEntered(e);
+    }
+    
+    @Override
+    public void mouseExited(MouseEvent e) {
+        customAttackMaker.mouseExited(e);
+        
+    }
+    
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        customAttackMaker.mouseDragged(e);
+        
+    }
+    
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        customAttackMaker.mouseMoved(e);
+        
+    }
+    
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        customAttackMaker.mouseWheelMoved(e);
+    }
 }
