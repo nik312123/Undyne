@@ -8,7 +8,9 @@ import nikunj.classes.Sound;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -56,11 +58,12 @@ public class Runner extends JPanel
     private static double sfxVolume = 1;
     
     private static int nothingCounter = 0;
+    public static int customAttacksCounter = 0;
     private static int DELAY = 10;
     private static int breakCount = 0;
     private static int breakFrame = 0;
     private static int flickeringHeart = 0;
-    private static int count = 0;
+    public static int count = 0;
     private static int gifCount = 0;
     private static int gameOverCount = 0;
     private static int gameOverFrame = 0;
@@ -96,8 +99,14 @@ public class Runner extends JPanel
     
     private static Timer timer;
     
+    public static BufferedImage dragArrowIcon;
+    public static BufferedImage blackBackground;
     public static BufferedImage addAttack;
     public static BufferedImage ticked;
+    public static BufferedImage arrowDown;
+    public static BufferedImage arrowLeft;
+    public static BufferedImage arrowRight;
+    public static BufferedImage arrowUp;
     public static BufferedImage deleteArrow;
     public static BufferedImage deleteAttack;
     public static BufferedImage droppedDown;
@@ -227,12 +236,30 @@ public class Runner extends JPanel
             
             exit = ImageIO.read(Runner.class.getResource("/exit.png"));
             exit = getCompatibleImage(exit);
+    
+            dragArrowIcon = ImageIO.read(Runner.class.getResource("/DragArrowIcon.png"));
+            dragArrowIcon = getCompatibleImage(dragArrowIcon);
             
             arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
             arrowImg = getCompatibleImage(arrowImg);
     
             ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
             ticked = getCompatibleImage(ticked);
+    
+            blackBackground = ImageIO.read(Runner.class.getResource("/blackBackground.png"));
+            blackBackground = getCompatibleImage(blackBackground);
+    
+            arrowUp = ImageIO.read(Runner.class.getResource("/arrowUp.png"));
+            arrowUp = getCompatibleImage(arrowUp);
+    
+            arrowDown = ImageIO.read(Runner.class.getResource("/arrowDown.png"));
+            arrowDown = getCompatibleImage(arrowDown);
+    
+            arrowLeft = ImageIO.read(Runner.class.getResource("/arrowLeft.png"));
+            arrowLeft = getCompatibleImage(arrowLeft);
+    
+            arrowRight = ImageIO.read(Runner.class.getResource("/arrowRight.png"));
+            arrowRight = getCompatibleImage(arrowRight);
             
             addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
             addAttack = getCompatibleImage(addAttack);
@@ -287,6 +314,10 @@ public class Runner extends JPanel
             }
         }
         new Runner("Undyne: Absolute");
+    
+        musicSlider.setPercentage(0);
+        sfxSlider.setPercentage(0);
+        
         startScreen.changeVolume(musicVolume);
         startScreen.play();
     }
@@ -298,6 +329,20 @@ public class Runner extends JPanel
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
         
+        JPanel panel = new JPanel();
+        panel.setBounds(0,0,100,100);
+        panel.setBackground(Color.WHITE);
+    
+        JLabel label = new JLabel("I'm on fire");
+        label.setFont(label.getFont().deriveFont(Font.BOLD, 48));
+        label.setForeground(Color.GREEN);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        
+        panel.add(label);
+        frame.add(panel);
+    
+    
+    
         closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
@@ -647,6 +692,11 @@ public class Runner extends JPanel
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        customAttacksCounter++;
+        if(customAttacksCounter > 500)
+            customAttacksCounter = 0;
+        
         if(!allStopped) {
             if(++alwaysOnTopCounter >= 20) {
                 alwaysOnTopCounter = 20;
@@ -774,6 +824,8 @@ public class Runner extends JPanel
         helper.initiate(g, helpStarter);
         if(survival && !beginning)
             printScore(g);
+        
+        
         g.dispose();
     }
     

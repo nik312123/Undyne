@@ -1,7 +1,9 @@
 package customAttackMaker;
 
+import defense.Attack;
 import defense.Runner;
 
+import javax.swing.JComponent;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -9,6 +11,7 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 public class CustomAttacks {
+    
     
     public static ArrayList<AttackBar> attacks = new ArrayList<>();
     
@@ -21,9 +24,12 @@ public class CustomAttacks {
     public static Rectangle mouse = new Rectangle();
     
     public CustomAttacks() {
-    }
+        }
     
-    public void perform(Graphics g) {
+    public void perform(Graphics g2) {
+        Graphics2D g = (Graphics2D)g2;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         bg(g);
         
         dynamicLength = scrollValue;
@@ -58,8 +64,47 @@ public class CustomAttacks {
         g.fillRect(0, 0, 600, 600);
     }
     
+    public static ArrayList<AttackBar> getAttacks() {
+        return attacks;
+    }
+    
+    public static void setAttacks(ArrayList<AttackBar> attacks) {
+        CustomAttacks.attacks = attacks;
+    }
+    
+    public static Rectangle getAddAttack() {
+        return addAttack;
+    }
+    
+    public static void setAddAttack(Rectangle addAttack) {
+        CustomAttacks.addAttack = addAttack;
+    }
+    
+    public static int getScrollValue() {
+        return scrollValue;
+    }
+    
+    public static void setScrollValue(int scrollValue) {
+        CustomAttacks.scrollValue = scrollValue;
+    }
+    
+    public static int getDynamicLength() {
+        return dynamicLength;
+    }
+    
+    public static void setDynamicLength(int dynamicLength) {
+        CustomAttacks.dynamicLength = dynamicLength;
+    }
+    
+    public static Rectangle getMouse() {
+        return mouse;
+    }
+    
+    public static void setMouse(Rectangle mouse) {
+        CustomAttacks.mouse = mouse;
+    }
+    
     public void keyPressed(KeyEvent e) {
-        System.out.println();
         switch(e.getKeyCode()) {
             case KeyEvent.VK_L:
                 for(AttackBar a : attacks) {
@@ -75,8 +120,10 @@ public class CustomAttacks {
                 }
             
         }
+        for(AttackBar a : attacks)
+            a.keyBoardWork(e);
     }
-    
+
     public void mouseWheelMoved(MouseWheelEvent e) {
         scrollValue += e.getWheelRotation() * -1;
     }
@@ -85,22 +132,34 @@ public class CustomAttacks {
     }
     
     public void mouseDragged(MouseEvent e) {
+        mouse.setBounds(e.getX(), e.getY(), 1, 1);
+        for(AttackBar a : attacks)
+            a.mouseDragWork();
     }
     
     public void mouseEntered(MouseEvent e) {
     }
     
     public void mouseReleased(MouseEvent e) {
+        for(AttackBar a: attacks)
+            a.mouseReleased();
+    
     }
     
     public void mousePressed(MouseEvent e) {
+        mouse.setBounds(e.getX(), e.getY(), 1, 1);
+        for(AttackBar a : attacks){
+            a.mousePressed();
+        }
+    
     }
     
     public void mouseClicked(MouseEvent e) {
+        
         mouse.setBounds(e.getX(), e.getY(), 1, 1);
         
         for(AttackBar a : attacks) {
-            if(a.mouseWork() == 1) {
+            if(a.mouseClickWork() == 1) {
                 reassignNumbers();
                 break;
             }
@@ -110,6 +169,7 @@ public class CustomAttacks {
             addAttack();
         
     }
+    
     
     public void mouseExited(MouseEvent e) {
     }

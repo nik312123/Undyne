@@ -2,7 +2,7 @@
   <configuration default="false" name="Runner" type="Application" factoryName="Application" nameIsGenerated="true">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
-        <option name="PATTERN" value="defense.*" />
+        <option name="PATTERN" value="customAttackMaker.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
