@@ -18,6 +18,9 @@ public class AttackBar {
     private Rectangle newArrowButton = new Rectangle();
     private Rectangle topBound = new Rectangle();
     private Rectangle bottomBound = new Rectangle();
+    private Rectangle upScrollRect = new Rectangle(0,0,600,5);
+    private Rectangle downScrollRect = new Rectangle(0,595-10,600,5);
+    
     
     private ArrayList<ArrowBar> arrows = new ArrayList<>();
     
@@ -40,6 +43,7 @@ public class AttackBar {
     public void draw(Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.GREEN);
+        
         
         drawString(g, x, y);
         
@@ -118,6 +122,10 @@ public class AttackBar {
             g.setColor(Color.BLACK);
             g.fillRect(41, arrows.get(beingDragged).getY() + 3, 415, 22);
             arrows.get(beingDragged).draw(g, x + 10, y);
+            if(arrows.get(beingDragged).getOrderIntersecton().intersects(upScrollRect))
+                CustomAttacks.scrollValue++;
+            if(arrows.get(beingDragged).getOrderIntersecton().intersects(downScrollRect))
+                CustomAttacks.scrollValue--;
         }
         
         

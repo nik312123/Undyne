@@ -17,7 +17,7 @@ public class CustomAttacks {
     
     public static Rectangle addAttack = new Rectangle();
     
-    private static int scrollValue = 70;
+    public static int scrollValue = 70;
     
     public static int dynamicLength = 0;
     

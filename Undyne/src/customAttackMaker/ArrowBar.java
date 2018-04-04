@@ -61,6 +61,8 @@ public class ArrowBar {
             this.y = y;
     
         orderIntersecton.setBounds(x, this.y, 100, 10);
+        
+        Graphics2D g2 = (Graphics2D)g;
     
         g.drawImage(Runner.arrowImg, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);
