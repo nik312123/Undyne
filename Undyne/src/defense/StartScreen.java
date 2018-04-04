@@ -37,6 +37,7 @@ public class StartScreen {
     
     private static BufferedImage undyne;
     private static BufferedImage start;
+    private static BufferedImage zSelect;
     private static BufferedImage heartMouse;
     private static BufferedImage heartMouseBlue;
     private static BufferedImage select;
@@ -48,8 +49,10 @@ public class StartScreen {
     private static BufferedImage spear;
     private static BufferedImage arrows;
     private static BufferedImage keys;
+    private static BufferedImage survival;
     private static BufferedImage[] fire = new BufferedImage[38];
     private static BufferedImage[] dog = new BufferedImage[2];
+    private static BufferedImage[] greaterDog = new BufferedImage[3];
     private static BufferedImage[] sans = new BufferedImage[10];
     private static BufferedImage[] cracks = new BufferedImage[14];
     private static BufferedImage[] dots = new BufferedImage[4];
@@ -59,6 +62,7 @@ public class StartScreen {
     private int crackCounter = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
+    private int mediumButtonRect = 0;
     private int survivalButtonRect = 0;
     private int frameCounter = 0;
     private int count2 = -100;
@@ -68,12 +72,16 @@ public class StartScreen {
     private int hardButtonCount = 0;
     private int easyButtonCount = 0;
     private int survivalButtonCount = 0;
+    private int mediumButtonCount = 0;
     private int dogCount = 0;
+    private int greaterDogCount = 0;
     private int dogFrame = 0;
+    private int greaterDogFrame = 1;
+    private int greaterDogDirection = 1;
     private int scale = 800;
     private int shift = 0;
     private int heartX = 5;
-    private int heartY = 100 + shift;
+    private int heartY = 72 + shift;
     private int frameCounter1 = 0;
     private int moveCounter = 1;
     private int boneCounter = 0;
@@ -96,16 +104,15 @@ public class StartScreen {
     private boolean up = false;
     private boolean down = false;
     private boolean switchFade = false;
-    private boolean hardButtonRectRed = false;
-    private boolean easyButtonRectRed = false;
-    private boolean survivalButtonRectRed = false;
     private boolean fire2 = false;
     private boolean playFire = true;
     private boolean playBark = true;
+    private boolean playBork = true;
     private boolean playSpear = true;
     private boolean isOnHard;
     private boolean isOnEasy;
     private boolean isOnSurvival;
+    private boolean isOnMedium;
     private boolean hitGround = false;
     private boolean showBones = false;
     private boolean hideSans = false;
@@ -116,6 +123,11 @@ public class StartScreen {
     private boolean heartMoved = false;
     private boolean arrowsShouldShow = true;
     private boolean slammed = false;
+    private boolean playChosen = false;
+    private static boolean hardButtonRectRed = false;
+    private static boolean easyButtonRectRed = false;
+    private static boolean survivalButtonRectRed = false;
+    private static boolean mediumButtonRectRed = false;
     static boolean isLoaded = false;
     private boolean[] heartsActivated = new boolean[3];
     
@@ -130,18 +142,20 @@ public class StartScreen {
     private static Sound spearHit;
     private static Sound slam;
     private static Sound cracking;
+    private static Sound bork;
+    private static Sound click;
     
     private PopUp creditsList;
     
-    private static JPanel[] clickableNames = new JPanel[11];
+    private static JPanel[] clickableNames = new JPanel[12];
     
-    private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 - 60 * Math.tan(Math.toRadians(75)));
-    private static final Point2D SPEAR_END = new Point2D.Double(250, 197);
+    private static final Point2D SPEAR_SPAWN = new Point2D.Double(310, 197 + 110 - 60 * Math.tan(Math.toRadians(75)));
+    private static final Point2D SPEAR_END = new Point2D.Double(250, 197 + 110);
     private Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
     
-    private AttributedString[] creditsText = new AttributedString[10];
+    private AttributedString[] creditsText = new AttributedString[11];
     
     StartScreen() {
         if(Runner.isFirstTime) {
@@ -157,6 +171,8 @@ public class StartScreen {
                 megalovania = new Sound(Runner.class.getResource("/megalovania.wav"), true);
                 slam = new Sound(Runner.class.getResource("/slam.wav"), false);
                 cracking = new Sound(Runner.class.getResource("/cracking.wav"), false);
+                bork = new Sound(Runner.class.getResource("/bork.wav"), false);
+                click = new Sound(Runner.class.getResource("/click.wav"), false);
             }
             catch(UnsupportedAudioFileException | IOException e1) {
                 e1.printStackTrace();
@@ -170,6 +186,8 @@ public class StartScreen {
                 undyne = Runner.getCompatibleImage(undyne);
                 start = ImageIO.read(Runner.class.getResource("/start.png"));
                 start = Runner.getCompatibleImage(start);
+                zSelect = ImageIO.read(Runner.class.getResource("/zSelect.png"));
+                zSelect = Runner.getCompatibleImage(zSelect);
                 select = ImageIO.read(Runner.class.getResource("/select.png"));
                 select = Runner.getCompatibleImage(select);
                 heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
@@ -178,6 +196,8 @@ public class StartScreen {
                 heartMouseBlue = Runner.getCompatibleImage(heartMouseBlue);
                 buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
                 buttons = Runner.getCompatibleImage(buttons);
+                survival = ImageIO.read(Runner.class.getResourceAsStream("/survival.png"));
+                survival = Runner.getCompatibleImage(survival);
                 for(int i = 0; i <= 37; ++i) {
                     fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
                     fire[i] = Runner.getCompatibleImage(fire[i]);
@@ -186,6 +206,12 @@ public class StartScreen {
                 dog[0] = Runner.getCompatibleImage(dog[0]);
                 dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
                 dog[1] = Runner.getCompatibleImage(dog[1]);
+                greaterDog[0] = ImageIO.read(Runner.class.getResourceAsStream("/greaterDog/greaterDogRight.png"));
+                greaterDog[0] = Runner.getCompatibleImage(greaterDog[0]);
+                greaterDog[1] = ImageIO.read(Runner.class.getResourceAsStream("/greaterDog/greaterDogMid.png"));
+                greaterDog[1] = Runner.getCompatibleImage(greaterDog[1]);
+                greaterDog[2] = ImageIO.read(Runner.class.getResourceAsStream("/greaterDog/greaterDogLeft.png"));
+                greaterDog[2] = Runner.getCompatibleImage(greaterDog[2]);
                 subtitleBlue = ImageIO.read(Runner.class.getResource("/subBlue.png"));
                 subtitleBlue = Runner.getCompatibleImage(subtitleBlue);
                 bones = ImageIO.read(Runner.class.getResource("/bones.png"));
@@ -213,6 +239,10 @@ public class StartScreen {
                 e.printStackTrace();
             }
         }
+        else {
+            heartMoved = true;
+            playChosen = true;
+        }
         creditsList = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
             private static final long serialVersionUID = 1L;
             
@@ -236,10 +266,12 @@ public class StartScreen {
         addLinkFormatting(6, 0, 13);
         creditsText[7] = new AttributedString("Sound Bible: Subtitle cracking SFX");
         addLinkFormatting(7, 0, 13);
-        creditsText[8] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
-        addLinkFormatting(8, 0, 13);
-        addLinkFormatting(8, 18, 35);
-        creditsText[9] = new AttributedString("And most importantly, thanks to you for enjoying our");
+        creditsText[8] = new AttributedString("Free SFX: Button click SFX");
+        addLinkFormatting(8, 0, 10);
+        creditsText[9] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
+        addLinkFormatting(9, 0, 13);
+        addLinkFormatting(9, 18, 35);
+        creditsText[10] = new AttributedString("And most importantly, thanks to you for enjoying our");
         for(AttributedString a : creditsText) {
             try {
                 a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
@@ -252,8 +284,8 @@ public class StartScreen {
             clickableNames[i] = new JPanel();
             JPanel b = clickableNames[i];
             b.setLocation((int) (85 - creditsList.getExpandedX()), (int) (y - creditsList.getExpandedY()));
-            if(i == 10)
-                b.setLocation((int) (230 - creditsList.getExpandedX()), (int) (85 + 40 * 8 - creditsList.getExpandedY()));
+            if(i == 11)
+                b.setLocation((int) (230 - creditsList.getExpandedX()), (int) (85 + 40 * 9 - creditsList.getExpandedY()));
             b.setOpaque(false);
             b.setName(Integer.toString(i));
             b.addMouseListener(new MouseListener() {
@@ -289,12 +321,15 @@ public class StartScreen {
                             url = "http://soundbible.com/970-Cracking-Chest-Open.html";
                             break;
                         case 8:
-                            url = "mailto:nikchawla312@gmail.com";
+                            url = "http://www.freesfx.co.uk/sfx/button";
                             break;
                         case 9:
-                            url = "";
+                            url = "mailto:nikchawla312@gmail.com";
                             break;
                         case 10:
+                            url = "";
+                            break;
+                        case 11:
                             url = "mailto:aaron4game@gmail.com";
                             break;
                     }
@@ -339,9 +374,10 @@ public class StartScreen {
         clickableNames[5].setSize(45, 13);
         clickableNames[6].setSize(93, 13);
         clickableNames[7].setSize(103, 13);
-        clickableNames[8].setSize(103, 13);
-        clickableNames[9].setSize(0, 13);
-        clickableNames[10].setSize(132, 13);
+        clickableNames[8].setSize(69, 13);
+        clickableNames[9].setSize(103, 13);
+        clickableNames[10].setSize(0, 13);
+        clickableNames[11].setSize(132, 13);
         for(JPanel b : clickableNames)
             creditsList.add(b);
         creditsList.setLayout(null);
@@ -364,6 +400,7 @@ public class StartScreen {
                 if(scale > 0)
                     scale -= 20;
                 else if(!slammed) {
+                    slam.changeVolume(sfxVolume);
                     slam.play();
                     new Thread(() -> {
                         try {
@@ -372,28 +409,32 @@ public class StartScreen {
                         catch(InterruptedException e) {
                             e.printStackTrace();
                         }
+                        cracking.changeVolume(sfxVolume);
                         cracking.play();
                     }).start();
                     slammed = true;
                 }
             }
-            gifDog(g);
-            gifFire(g);
             starterTitle(g);
             drawSubtitle(g);
             if(frameCounter1 > 250) {
                 moveHeart();
                 constrain();
                 zToStart(g);
-                hardButton(g);
+                startArrows(g);
+                drawCracks(g);
+                gifDog(g);
+                gifFire(g);
+                gifGreaterDog(g);
                 easyButton(g);
                 survivalButton(g);
-                startArrows(g);
-                g.drawImage(buttons, 39, 300, null);
+                mediumButton(g);
+                hardButton(g);
+                drawButtons(g);
+                drawBackMessage(g);
                 drawBlueHeartFlash(g);
                 drawSpears(g);
                 drawNames(g);
-                drawCracks(g);
                 drawDots(g);
                 if(heartsActivated())
                     drawSans(g);
@@ -410,9 +451,9 @@ public class StartScreen {
                         y += 40;
                     }
                     g.setFont(Runner.deteFontSpeech);
-                    g.drawString("Undertale SFX, and creating Undertale", x, originalY + 15);
-                    g.drawString("and code", x, originalY + 15 + 40 * 8);
-                    g.drawString("game! :)", x, originalY + 15 + 40 * 9);
+                    g.drawString("Undertale SFX & music, and creating Undertale", x, originalY + 15);
+                    g.drawString("and code", x, originalY + 15 + 40 * 9);
+                    g.drawString("game!", x, originalY + 15 + 40 * 10);
                     for(JPanel b : clickableNames)
                         b.setVisible(true);
                     g.setFont(Runner.deteFontSpeech);
@@ -422,7 +463,8 @@ public class StartScreen {
                 else {
                     for(JPanel b : clickableNames)
                         b.setVisible(false);
-                    Runner.moveButtons(false);
+                    if(!playChosen)
+                        Runner.moveButtons(false);
                 }
                 isLoaded = true;
                 if(heartsActivated()) {
@@ -438,6 +480,8 @@ public class StartScreen {
             }
         }
     }
+    
+
     
     private void drawDots(Graphics g) {
         g.drawImage(dots[numHeartsActivated()], 4, 588, null);
@@ -540,10 +584,10 @@ public class StartScreen {
             heartX = -288;
         else if(heartX > 296)
             heartX = 296;
-        if(heartY < -300)
-            heartY = -300;
-        else if(heartY > 281)
-            heartY = 281;
+        if(heartY < -301)
+            heartY = -301;
+        else if(heartY > 283)
+            heartY = 283;
     }
     
     private void zToStart(Graphics g) {
@@ -551,8 +595,20 @@ public class StartScreen {
             float opacity = (float) fadeStart;
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-            if(!easyButtonRectRed && !hardButtonRectRed && !survivalButtonRectRed) {
-                g2d.drawImage(select, 174, 486 + shift, null);
+            if(Runner.onFrontButton() && !playChosen) {
+                if(warningCounter == 0)
+                    g2d.drawImage(zSelect, 166, 485 + shift, null);
+                else {
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                    g2d.drawImage(zSelect, (int) (166 - zSelect.getWidth() * 0.25), (int) (485 + shift - 0.25 * zSelect.getHeight()), (int) (1.5 * zSelect.getWidth()), (int) (1.5 * zSelect.getHeight()), null);
+                }
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+                g2d.drawImage(keys, 179, 490 + 50 - 20, null);
+            }
+            else if((!easyButtonRectRed || !isOnEasy) && (!hardButtonRectRed || !isOnHard) && (!survivalButtonRectRed || !isOnSurvival)&& (!mediumButtonRectRed || !isOnMedium) ) {
+                AffineTransform trans = new AffineTransform();
+                trans.translate(174.5, 486 + shift);
+                g2d.drawImage(select, trans, null);
                 if(warningCounter == 0)
                     g2d.drawImage(keys, 179, 490 + 50 - 20, null);
                 else {
@@ -565,7 +621,7 @@ public class StartScreen {
                     g2d.drawImage(start, 174, 485 + shift, null);
                 else {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-                    g2d.drawImage(start, (int) (0 - start.getWidth() * 0.25), (int) (486 + shift - 0.25 * start.getWidth()), (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
+                    g2d.drawImage(start, (int) (174 - start.getWidth() * 0.25), (int) (485 + shift - 0.25 * start.getHeight()), (int) (1.5 * start.getWidth()), (int) (1.5 * start.getHeight()), null);
                 }
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 g2d.drawImage(keys, 179, 490 + 50 - 20, null);
@@ -590,116 +646,178 @@ public class StartScreen {
     }
     
     private void hardButton(Graphics g) {
-        g.setColor(new Color(246, 138, 21));
-        isOnHard = (heartX > 78 + 37 && heartX < 231 + 37 && heartY < 57 + shift && heartY > -11 + shift);
-        if(hardButtonCount % 6 == 0) {
-            if(isOnHard) {
-                if(hardButtonRect < 60) {
-                    hardButtonRect += 5;
+        if(playChosen) {
+            g.setColor(new Color(246, 138, 21));
+            isOnHard = (heartX + 288 + 16 >= 413 && heartX + 288 <= 561 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
+            if(hardButtonCount % 6 == 0) {
+                if(isOnHard) {
+                    if(hardButtonRect < 60) {
+                        hardButtonRect += 5;
+                        playFire = true;
+                    }
+                    else {
+                        if(playFire) {
+                            playFire = false;
+                            flare.changeVolume(sfxVolume);
+                            flare.play();
+                        }
+                        hardButtonRectRed = true;
+                        easyButtonRectRed = false;
+                        survivalButtonRectRed = false;
+                        mediumButtonRectRed = false;
+                    }
+                }
+                else if(hardButtonRect > 0 && !hardButtonRectRed) {
+                    hardButtonRect -= 5;
                     playFire = true;
                 }
-                else {
-                    if(playFire) {
-                        playFire = false;
-                        flare.changeVolume(sfxVolume);
-                        flare.play();
-                    }
-                    hardButtonRectRed = true;
-                    easyButtonRectRed = false;
-                    survivalButtonRectRed = false;
-                }
             }
-            else if(hardButtonRect > 0 && !hardButtonRectRed) {
-                hardButtonRect -= 5;
-                playFire = true;
+            ++hardButtonCount;
+            if(hardButtonCount == 6)
+                hardButtonCount = 0;
+            if(!hardButtonRectRed)
+                g.fillRect(380 + 37, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
+            else {
+                fire2 = true;
+                g.setColor(Color.RED);
+                g.fillRect(380 + 37, 300 + shift, 140, 60);
             }
         }
-        ++hardButtonCount;
-        if(hardButtonCount == 6)
-            hardButtonCount = 0;
-        if(!hardButtonRectRed)
-            g.fillRect(380 + 37, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
         else {
-            fire2 = true;
-            g.setColor(Color.RED);
-            g.fillRect(380 + 37, 300 + shift, 140, 60);
+            hardButtonRect = 0;
+            hardButtonRectRed = false;
+        }
+    }
+    
+    private void mediumButton(Graphics g) {
+        if(playChosen) {
+            g.setColor(new Color(246, 138, 21));
+            isOnMedium= (heartX + 288 + 16 >= 226 && heartX + 288 <= 374 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
+            if(mediumButtonCount % 6 == 0) {
+                if(isOnMedium) {
+                    if(mediumButtonRect < 60) {
+                        mediumButtonRect += 5;
+                        playBork = true;
+                    }
+                    else {
+                        if(playBork) {
+                            playBork = false;
+                            bork.changeVolume(sfxVolume);
+                            bork.play();
+                        }
+                        mediumButtonRectRed = true;
+                        easyButtonRectRed = false;
+                        hardButtonRectRed = false;
+                        survivalButtonRectRed = false;
+                    }
+                }
+                else if(mediumButtonRect > 0 && !mediumButtonRectRed) {
+                    mediumButtonRect -= 5;
+                    playBork = true;
+                }
+            }
+            ++mediumButtonCount;
+            if(mediumButtonCount == 6)
+                mediumButtonCount = 0;
+            if(!mediumButtonRectRed)
+                g.fillRect(380 + 37 - 187, 360 - (300 - (Math.abs(300 - mediumButtonRect))) + shift, 140, mediumButtonRect);
+            else {
+                g.setColor(Color.ORANGE);
+                g.fillRect(380 + 37 - 187, 300 + shift, 140, 60);
+            }
+        }
+        else {
+            mediumButtonRect = 0;
+            mediumButtonRectRed = false;
         }
     }
     
     private void easyButton(Graphics g) {
-        g.setColor(new Color(246, 138, 21));
-        isOnEasy = (heartX > -220 - 37 && heartX < -70 - 37 && heartY < 57 + shift && heartY > -11 + shift);
-        if(easyButtonCount % 6 == 0) {
-            if(isOnEasy) {
-                if(easyButtonRect < 60) {
-                    easyButtonRect += 5;
-                    playBark = true;
-                }
-                else {
-                    if(playBark) {
-                        bark.changeVolume(sfxVolume);
-                        bark.play();
-                        playBark = false;
+        if(playChosen) {
+            g.setColor(new Color(246, 138, 21));
+            isOnEasy = (heartX + 288 + 16 >= 39 && heartX + 288 <= 187 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
+            if(easyButtonCount % 6 == 0) {
+                if(isOnEasy) {
+                    if(easyButtonRect < 60) {
+                        easyButtonRect += 5;
+                        playBark = true;
                     }
-                    easyButtonRectRed = true;
-                    hardButtonRectRed = false;
-                    survivalButtonRectRed = false;
+                    else {
+                        if(playBark) {
+                            bark.changeVolume(sfxVolume);
+                            bark.play();
+                            playBark = false;
+                        }
+                        easyButtonRectRed = true;
+                        hardButtonRectRed = false;
+                        survivalButtonRectRed = false;
+                        mediumButtonRectRed = false;
+                    }
                 }
-            }
-            else {
-                if(easyButtonRect > 0 && !easyButtonRectRed) {
+                else if(easyButtonRect > 0 && !easyButtonRectRed) {
                     easyButtonRect -= 5;
                     playBark = true;
                 }
             }
+            ++easyButtonCount;
+            if(easyButtonCount == 6)
+                easyButtonCount = 0;
+            if(!easyButtonRectRed)
+                g.fillRect(80 - 37, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
+            else {
+                g.setColor(new Color(0, 234 - 30, 77 - 30));
+                g.fillRect(80 - 37, 300 + shift, 140, 60);
+            }
         }
-        ++easyButtonCount;
-        if(easyButtonCount == 6)
-            easyButtonCount = 0;
-        if(!easyButtonRectRed)
-            g.fillRect(80 - 37, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
         else {
-            g.setColor(new Color(0, 234 - 30, 77 - 30));
-            g.fillRect(80 - 37, 300 + shift, 140, 60);
+            easyButtonRect = 0;
+            easyButtonRectRed = false;
         }
     }
     
     private void survivalButton(Graphics g) {
-        g.setColor(new Color(246, 138, 21));
-        isOnSurvival = (heartX > -68 && heartX < 80 && heartY < 57 + shift && heartY > -11 + shift);
-        if(survivalButtonCount % 6 == 0) {
-            if(isOnSurvival) {
-                if(survivalButtonRect < 60) {
-                    survivalButtonRect += 5;
-                    playSpear = true;
-                    activateSpears = false;
+        if(playChosen) {
+            g.setColor(new Color(246, 138, 21));
+            isOnSurvival = (heartX + 288 + 16 >= 226 && heartX + 288 <= 374 && heartY + 300 <= 468 + shift && heartY + 300 + 16 >= 405 + shift);
+            if(survivalButtonCount % 6 == 0) {
+                if(isOnSurvival) {
+                    if(survivalButtonRect < 60) {
+                        survivalButtonRect += 5;
+                        playSpear = true;
+                        activateSpears = false;
+                    }
+                    else {
+                        if(playSpear) {
+                            activateSpears = true;
+                            playSpear = false;
+                        }
+                        easyButtonRectRed = false;
+                        hardButtonRectRed = false;
+                        survivalButtonRectRed = true;
+                        mediumButtonRectRed = false;
+                    }
                 }
                 else {
-                    if(playSpear) {
-                        activateSpears = true;
-                        playSpear = false;
+                    if(survivalButtonRect > 0 && !survivalButtonRectRed) {
+                        survivalButtonRect -= 5;
+                        playSpear = true;
+                        activateSpears = false;
                     }
-                    easyButtonRectRed = false;
-                    hardButtonRectRed = false;
-                    survivalButtonRectRed = true;
                 }
             }
+            ++survivalButtonCount;
+            if(survivalButtonCount == 6)
+                survivalButtonCount = 0;
+            if(!survivalButtonRectRed)
+                g.fillRect(80 - 37 + 148 + 39, 360 + 105 - (300 - (Math.abs(300 - survivalButtonRect))) + shift, 140, survivalButtonRect);
             else {
-                if(survivalButtonRect > 0 && !survivalButtonRectRed) {
-                    survivalButtonRect -= 5;
-                    playSpear = true;
-                    activateSpears = false;
-                }
+                g.setColor(new Color(0, 191, 255));
+                g.fillRect(80 - 37 + 148 + 39, 300 + 105 + shift, 140, 60);
             }
         }
-        ++survivalButtonCount;
-        if(survivalButtonCount == 6)
-            survivalButtonCount = 0;
-        if(!survivalButtonRectRed)
-            g.fillRect(80 - 37 + 148 + 39, 360 - (300 - (Math.abs(300 - survivalButtonRect))) + shift, 140, survivalButtonRect);
         else {
-            g.setColor(new Color(220, 220, 36));
-            g.fillRect(80 - 37 + 148 + 39, 300 + shift, 140, 60);
+            survivalButtonRect = 0;
+            survivalButtonRectRed = false;
         }
     }
     
@@ -725,7 +843,7 @@ public class StartScreen {
     private void gifDog(Graphics g) {
         if(easyButtonRectRed) {
             ++dogCount;
-            if(dogCount != 0 && dogCount % 20 == 0) {
+            if(dogCount % 20 == 0) {
                 if(dogFrame == 0)
                     dogFrame = 1;
                 else
@@ -733,6 +851,26 @@ public class StartScreen {
                 dogCount = 0;
             }
             g.drawImage(dog[dogFrame], 130 - 39, 261 + shift, null);
+        }
+    }
+    
+    private void gifGreaterDog(Graphics g) {
+        if(mediumButtonRectRed) {
+            ++greaterDogCount;
+            if(greaterDogCount % 20 == 0) {
+                if(greaterDogFrame != 1)
+                    greaterDogFrame = 1;
+                else if(greaterDogDirection == 1) {
+                    greaterDogFrame = 2;
+                    greaterDogDirection = -1;
+                }
+                else {
+                    greaterDogFrame = 0;
+                    greaterDogDirection = 1;
+                }
+                greaterDogCount = 0;
+            }
+            g.drawImage(greaterDog[greaterDogFrame], 259, 164 + shift, null);
         }
     }
     
@@ -784,13 +922,31 @@ public class StartScreen {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
         if(!heartMoved && arrowsShouldShow)
-            g2d.drawImage(arrows, 271, 380, null);
+            g2d.drawImage(arrows, 271, 352, null);
         if(arrowsCounter % 85 == 0) {
             arrowsShouldShow = !arrowsShouldShow;
             arrowsCounter = 1;
         }
         ++arrowsCounter;
         g2d.dispose();
+    }
+    
+    private void drawButtons(Graphics g) {
+        if(playChosen) {
+            g.drawImage(buttons, 39, 300, null);
+            g.drawImage(survival, 226, 405, null);
+        }
+    }
+    
+    private void drawBackMessage(Graphics g) {
+        if(playChosen) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setFont(Runner.deteFontScore);
+            g2d.setColor(Color.WHITE);
+            String backMessage = "Press X to go back";
+            g2d.drawString(backMessage, (Runner.getFrame().getWidth() - g.getFontMetrics(Runner.deteFontScore).stringWidth(backMessage))/2, 30);
+        }
     }
     
     private void drawBones(Graphics g) {
@@ -809,7 +965,7 @@ public class StartScreen {
             }
             if(boneY > 510)
                 boneY -= 3;
-            if(heartY + 300 >= boneY) {
+            if(heartY + 300 + 20 >= boneY) {
                 if(!flickering) {
                     damage.changeVolume(sfxVolume);
                     damage.play();
@@ -941,6 +1097,10 @@ public class StartScreen {
         return survivalButtonRectRed;
     }
     
+    boolean isMedium() {
+        return mediumButtonRectRed;
+    }
+    
     boolean isOnHeartOne() {
         return heartX >= -33 && heartX <= -9 && heartY >= -100 && heartY <= -80;
     }
@@ -1000,12 +1160,19 @@ public class StartScreen {
         blueHeartOpacity = 1f;
     }
     
-    void resetVars() {
+    void resetVars(boolean isReplaying) {
         isLoaded = false;
+        if(!isReplaying) {
+            hardButtonRectRed = false;
+            easyButtonRectRed = false;
+            mediumButtonRectRed = false;
+            survivalButtonRectRed = false;
+        }
+        
     }
     
     boolean shouldStart() {
-        return !isOnLink() && !isOnHelp() && !heartsActivated() && (hardButtonRectRed && !isOnEasy && !isOnSurvival || easyButtonRectRed && !isOnHard && !isOnSurvival || survivalButtonRectRed && !isOnHard && !isOnEasy);
+        return !isOnLink() && !isOnHelp() && !heartsActivated() && (hardButtonRectRed && isOnHard || easyButtonRectRed && isOnEasy || survivalButtonRectRed && isOnSurvival || mediumButtonRectRed && isOnMedium);
     }
     
     boolean shouldShow() {
@@ -1029,6 +1196,14 @@ public class StartScreen {
         return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 442 + 20 && heartY + 300 + 16 >= 380 + 20 && !heartsActivated());
     }
     
+    boolean isOnPlay() {
+        return (heartX + 288 + 16 >= 76 && heartX + 288 <= 224 && heartY + 300 <= 342 + 20 && heartY + 300 + 16 >= 280 + 20 && !heartsActivated());
+    }
+    
+    boolean isOnCreator() {
+        return (heartX + 288 + 16 >= 376 && heartX + 288 <= 524 && heartY + 300 <= 342 + 20 && heartY + 300 + 16 >= 280 + 20 && !heartsActivated());
+    }
+    
     void warningOn() {
         warningCounter = 50;
     }
@@ -1040,6 +1215,31 @@ public class StartScreen {
     void playDamage() {
         damage.changeVolume(sfxVolume);
         damage.play();
+    }
+    
+    void playChosen(boolean play) {
+        playChosen = play;
+    }
+    
+    void deactivateSpears() {
+        activateSpears = false;
+    }
+    
+    boolean isPlayChosen() {
+        return playChosen;
+    }
+    
+    void setHeartX(int x) {
+        heartX = x;
+    }
+    
+    void setHeartY(int y) {
+        heartY = y;
+    }
+    
+    void playClick() {
+        click.changeVolume(sfxVolume);
+        click.play();
     }
     
 }

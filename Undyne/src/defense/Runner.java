@@ -49,13 +49,14 @@ public class Runner extends JPanel
     private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
-    private static final String[] easyMessage = {"Not bad, punk!", "Let me go", "harder on you."};
+    private static final String[] easyMessage = {"You did well...      ", "only because", "I went easy."};
+    private static final String[] mediumMessage = {"Not bad, punk!", "Let me go", "harder on you."};
     private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
     private static final String[] MAIN_SOUND_NAMES = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
     
     private static double fadeStart = 0;
-    private static double musicVolume = 1;
-    private static double sfxVolume = 1;
+    private static double musicMutedVolume = 1;
+    private static double sfxMutedVolume = 1;
     
     private static int nothingCounter = 0;
     public static int customAttacksCounter = 0;
@@ -94,11 +95,13 @@ public class Runner extends JPanel
     private static boolean sfxMuted = false;
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
+    private static boolean isReplaying = false;
     static boolean isFirstTime = true;
     public static boolean isCustomAttack = false;
     
     private static Timer timer;
     
+
     public static BufferedImage dragArrowIcon;
     public static BufferedImage blackBackground;
     public static BufferedImage addAttack;
@@ -114,6 +117,10 @@ public class Runner extends JPanel
     public static BufferedImage newArrow;
     public static BufferedImage exit;
     public static BufferedImage arrowImg;
+
+    private static FocusListener checkFocus;
+    
+
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -123,6 +130,8 @@ public class Runner extends JPanel
     private static BufferedImage speech;
     private static BufferedImage credits;
     private static BufferedImage help;
+    private static BufferedImage play;
+    private static BufferedImage creator;
     static BufferedImage blueArr;
     static BufferedImage redArr;
     static BufferedImage reverseArr;
@@ -133,6 +142,7 @@ public class Runner extends JPanel
     static BufferedImage[] gif2;
     
     private static Sound main;
+    private static Sound sojSlow;
     private static Sound gameDone;
     private static Sound startScreen;
     private static Sound undyne;
@@ -151,6 +161,8 @@ public class Runner extends JPanel
     private static GradientButton sfxButton;
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
+    private static GradientButton playButton;
+    private static GradientButton creatorButton;
     
     private static Slider musicSlider;
     private static Slider sfxSlider;
@@ -198,6 +210,7 @@ public class Runner extends JPanel
                     e.printStackTrace();
                 }
             });
+            sojSlow = new Sound(Runner.class.getResource("/sojSlow.wav"), true);
             startScreen = new Sound(Runner.class.getResource("/WF.wav"), true);
             undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
             undying = new Sound(Runner.class.getResource("/undying.wav"), false);
@@ -299,6 +312,10 @@ public class Runner extends JPanel
             credits = getCompatibleImage(credits);
             help = ImageIO.read(Runner.class.getResource("/help.png"));
             help = getCompatibleImage(help);
+            play = ImageIO.read(Runner.class.getResourceAsStream("/play.png"));
+            play = Runner.getCompatibleImage(play);
+            creator = ImageIO.read(Runner.class.getResourceAsStream("/creator.png"));
+            creator = Runner.getCompatibleImage(creator);
             for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
                 mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
             URL fontUrl = Runner.class.getResource("/dete.otf");
@@ -314,12 +331,12 @@ public class Runner extends JPanel
             }
         }
         new Runner("Undyne: Absolute");
-    
-        musicSlider.setPercentage(0);
-        sfxSlider.setPercentage(0);
-        
-        startScreen.changeVolume(musicVolume);
-        startScreen.play();
+
+        startScreen.changeVolume(musicMutedVolume);
+        if(!isReplaying)
+            startScreen.play();
+        isReplaying = false;
+
     }
     
     private Runner(String s) {
@@ -414,18 +431,18 @@ public class Runner extends JPanel
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(musicMuted) {
-                    musicSlider.setPercentage(musicVolume);
+                    musicSlider.setPercentage(musicMutedVolume);
                     if(main != null)
-                        main.changeVolume(musicVolume);
+                        main.changeVolume(musicMutedVolume);
                     if(gameDone != null)
-                        gameDone.changeVolume(musicVolume);
+                        gameDone.changeVolume(musicMutedVolume);
                     if(startScreen != null)
-                        startScreen.changeVolume(musicVolume);
+                        startScreen.changeVolume(musicMutedVolume);
                     if(stage != null)
-                        stage.changeMusicVol(musicVolume);
+                        stage.changeMusicVol(musicMutedVolume);
                 }
                 else {
-                    musicVolume = musicSlider.getPercentage();
+                    musicMutedVolume = musicSlider.getPercentage();
                     musicSlider.setPercentage(0);
                     if(main != null)
                         main.changeVolume(0);
@@ -471,7 +488,7 @@ public class Runner extends JPanel
                 }
                 else if(musicSlider.getPercentage() == 0) {
                     musicMuted = true;
-                    musicVolume = 0;
+                    musicMutedVolume = 0;
                 }
             }
             
@@ -483,21 +500,21 @@ public class Runner extends JPanel
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(sfxMuted) {
-                    sfxSlider.setPercentage(sfxVolume);
-                    Attack.changeVol(sfxVolume);
-                    StartScreen.changeSfxVol(sfxVolume);
-                    undyne.changeVolume(sfxVolume);
-                    undying.changeVolume(sfxVolume);
-                    heal.changeVolume(sfxVolume);
-                    block.changeVolume(sfxVolume);
-                    split.changeVolume(sfxVolume);
-                    broke.changeVolume(sfxVolume);
-                    asgore.changeVolume(sfxVolume);
-                    heal.changeVolume(sfxVolume);
-                    error.changeVolume(sfxVolume);
+                    sfxSlider.setPercentage(sfxMutedVolume);
+                    Attack.changeVol(sfxMutedVolume);
+                    StartScreen.changeSfxVol(sfxMutedVolume);
+                    undyne.changeVolume(sfxMutedVolume);
+                    undying.changeVolume(sfxMutedVolume);
+                    heal.changeVolume(sfxMutedVolume);
+                    block.changeVolume(sfxMutedVolume);
+                    split.changeVolume(sfxMutedVolume);
+                    broke.changeVolume(sfxMutedVolume);
+                    asgore.changeVolume(sfxMutedVolume);
+                    heal.changeVolume(sfxMutedVolume);
+                    error.changeVolume(sfxMutedVolume);
                 }
                 else {
-                    sfxVolume = sfxSlider.getPercentage();
+                    sfxMutedVolume = sfxSlider.getPercentage();
                     sfxSlider.setPercentage(0);
                     Attack.changeVol(0);
                     StartScreen.changeSfxVol(0);
@@ -546,11 +563,12 @@ public class Runner extends JPanel
                 }
                 else if(sfxSlider.getPercentage() == 0) {
                     sfxMuted = true;
-                    sfxVolume = 0;
+                    sfxMutedVolume = 0;
                 }
             }
             
         };
+        
         creditsButton = new GradientButton(credits, Color.BLACK, new Color(148, 0, 211), 76, 380 + 20, 148, 62) {
             private static final long serialVersionUID = 1L;
             
@@ -612,33 +630,101 @@ public class Runner extends JPanel
             }
             
         };
-        musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), true, 553, 30, 10, 50);
-        musicSlider.setVisible(true);
-        sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, true, 581, 30, 10, 50);
-        sfxSlider.setVisible(true);
+        
+        playButton = new GradientButton(play, Color.BLACK, new Color(148, 0, 211), 76, 300, 148, 62) {
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseExited(MouseEvent e) {}
+            
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+            
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public boolean onButton() {
+                return isDisplayable() && stage.isOnPlay();
+            }
+            
+        };
+        
+        creatorButton = new GradientButton(creator, Color.BLACK, new Color(148, 0, 211), 376, 300, 148, 62) {
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseExited(MouseEvent e) {}
+            
+            @Override
+            public void mouseDragged(MouseEvent e) {}
+            
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+            
+            @Override
+            public boolean onButton() {
+                return isDisplayable() && stage.isOnCreator();
+            }
+            
+        };
+        
+        checkFocus = new FocusListener();
+        
+        if(isFirstTime) {
+            musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), true, 553, 30, 10, 50);
+            sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, true, 581, 30, 10, 50);
+        }
+        
+        creditsList = stage.getCreditsList();
+        PopUp helpPopUp = helper.getHelpPopUp();
+        
         frame.add(closeButton);
         frame.add(draggableButton);
         frame.add(musicButton);
         frame.add(sfxButton);
         frame.add(creditsButton);
         frame.add(helpButton);
+        frame.add(playButton);
+        frame.add(creatorButton);
         frame.add(musicSlider);
         frame.add(sfxSlider);
-        creditsList = stage.getCreditsList();
-        PopUp helpPopUp = helper.getHelpPopUp();
         frame.add(creditsList);
         frame.add(helpPopUp);
-        creditsList.setVisible(true);
-        helpPopUp.setVisible(true);
+        
         MouseListener errorListener = new MouseListener() {
             
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(beginning && StartScreen.isLoaded) {
+                if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
                     if(error.isFinished())
                         error.play();
                     stage.warningOn();
                 }
+                else if(checkFocus.isJustFocused())
+                    checkFocus.deactivateJustFocused();
             }
             
             @Override
@@ -654,22 +740,69 @@ public class Runner extends JPanel
             public void mouseExited(MouseEvent e) {}
             
         };
+        
         frame.addMouseListener(errorListener);
         creditsButton.addMouseListener(errorListener);
         frame.addMouseMotionListener(this);
         frame.addMouseListener(this);
         frame.addMouseWheelListener(this);
         helpButton.addMouseListener(errorListener);
+        playButton.addMouseListener(errorListener);
+        creatorButton.addMouseListener(errorListener);
         frame.addKeyListener(this);
+        frame.addWindowListener(checkFocus);
+    
+        musicSlider.setVisible(true);
+        sfxSlider.setVisible(true);
+        creditsList.setVisible(true);
+        helpPopUp.setVisible(true);
+        
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
-        frame.setLocation(dim.width / 2 - frame.getWidth() / 2, dim.height / 2 - frame.getHeight() / 2);
+        frame.setLocation((dim.width - frame.getWidth()) / 2, (dim.height - frame.getHeight()) / 2);
         frame.setResizable(false);
         frame.setAlwaysOnTop(true);
         frame.setUndecorated(true);
         frame.getContentPane().setLayout(null);
-        frame.setVisible(true);
         frame.requestFocus();
+
+        frame.setVisible(true);
+    }
+    
+    private class FocusListener implements WindowListener {
+        private boolean justFocused = false;
+        
+        @Override
+        public void windowOpened(WindowEvent e) {}
+        
+        @Override
+        public void windowClosing(WindowEvent e) {}
+        
+        @Override
+        public void windowClosed(WindowEvent e) {}
+        
+        @Override
+        public void windowIconified(WindowEvent e) {}
+        
+        @Override
+        public void windowDeiconified(WindowEvent e) {}
+        
+        @Override
+        public void windowActivated(WindowEvent e) {
+            justFocused = true;
+        }
+        
+        @Override
+        public void windowDeactivated(WindowEvent e) {}
+        
+        boolean isJustFocused() {
+            return justFocused;
+        }
+        
+        void deactivateJustFocused() {
+            justFocused = false;
+        }
+
         
     }
     
@@ -727,10 +860,18 @@ public class Runner extends JPanel
             if(beginning) {
                 drawBG(g);
                 if(stage.shouldShow()) {
-                    creditsButton.draw(g);
-                    creditsButton.setVisible(true);
-                    helpButton.draw(g);
-                    helpButton.setVisible(true);
+                    if(!stage.isPlayChosen()) {
+                        creditsButton.draw(g);
+                        creditsButton.setVisible(true);
+                        helpButton.draw(g);
+                        helpButton.setVisible(true);
+                        playButton.draw(g);
+                        playButton.setVisible(true);
+                        creatorButton.draw(g);
+                        creatorButton.setVisible(true);
+                    }
+                    else
+                        moveButtons(true);
                     if(stage.heartsActivated())
                         startScreen.stop();
                     else if(beginning && startScreen.isStopped())
@@ -1085,8 +1226,10 @@ public class Runner extends JPanel
         g2d.setFont(deteFontSpeech);
         g2d.setColor(Color.BLACK);
         String[] message;
-        if(!isGenocide)
+        if(!isGenocide && !stage.isMedium())
             message = easyMessage;
+        else if(!isGenocide)
+            message = mediumMessage;
         else
             message = hardMessage;
         String print = "";
@@ -1151,16 +1294,22 @@ public class Runner extends JPanel
     private static void hideButtons() {
         creditsButton.setVisible(false);
         helpButton.setVisible(false);
+        playButton.setVisible(false);
+        creatorButton.setVisible(false);
     }
     
     static void moveButtons(boolean shouldMove) {
         if(shouldMove) {
             creditsButton.setY(600);
             helpButton.setY(600);
+            playButton.setY(600);
+            helpButton.setY(600);
         }
         else {
             creditsButton.setY(400);
             helpButton.setY(400);
+            playButton.setY(300);
+            creatorButton.setY(300);
         }
     }
     
@@ -1170,7 +1319,7 @@ public class Runner extends JPanel
             heal.play();
         main.stop();
         main = mainSounds[++mainIndex];
-        main.changeVolume(musicVolume);
+        main.changeVolume(musicMutedVolume);
         main.play();
     }
     
@@ -1202,7 +1351,7 @@ public class Runner extends JPanel
     private void restartApplication() {
         timer.stop();
         allStopped = true;
-        stage.resetVars();
+        stage.resetVars(isReplaying);
         a.resetVars();
         a1.resetVars();
         if(gameDone != null)
@@ -1229,13 +1378,6 @@ public class Runner extends JPanel
         mainIndex = 0;
         levelIndex = 0;
         lastAttack = 1;
-        startScreen.changeVolume(1);
-        undyne.changeVolume(1);
-        undying.changeVolume(1);
-        heal.changeVolume(1);
-        block.changeVolume(1);
-        Attack.changeVol(1);
-        StartScreen.changeSfxVol(1);
         isGenocide = false;
         survival = false;
         heartDone = false;
@@ -1248,8 +1390,6 @@ public class Runner extends JPanel
         switchFade = false;
         allStopped = false;
         isFirstTime = false;
-        musicMuted = false;
-        sfxMuted = false;
         speechDone = false;
         timer = null;
         gif = null;
@@ -1260,6 +1400,8 @@ public class Runner extends JPanel
         sfxButton = null;
         creditsButton = null;
         helpButton = null;
+        playButton = null;
+        creatorButton = null;
         a1 = null;
         a = null;
         frame.dispose();
@@ -1274,6 +1416,44 @@ public class Runner extends JPanel
         catch(IOException | UnsupportedAudioFileException | FontFormatException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void start() {
+        isGenocide = stage.isHard();
+        survival = stage.isSurvival();
+        a = new Attacks(isGenocide, survival, stage.isMedium());
+        a1 = new Attack(new ArrayList<>(), a);
+        a.setAttack(a1);
+        hideButtons();
+        if(isGenocide) {
+            p.setHealth(60);
+            p.setBaseDamage(3);
+            p.setDamageOffset(12);
+        }
+        else {
+            p.setHealth(20);
+            p.setBaseDamage(0);
+            p.setDamageOffset(2);
+        }
+        if(isGenocide) {
+            main = mainSounds[2];
+            speechX = 310;
+            speechY = 60;
+            gif = gif2;
+        }
+        else {
+            if(stage.isMedium())
+                main = mainSounds[0];
+            else
+                main = sojSlow;
+            speechX = 305;
+            speechY = 50;
+        }
+        beginning = false;
+        startScreen.stop();
+        main.changeVolume(musicMutedVolume);
+        main.play();
+        dir = 'u';
     }
     
     @Override
@@ -1320,16 +1500,43 @@ public class Runner extends JPanel
                     DELAY = 10;
                 break;
             case KeyEvent.VK_X:
-                helpStarter = false;
-                creditsList.setExpanding(false);
+                if(helpStarter) {
+                    stage.playClick();
+                    helpStarter = false;
+                }
+                else if(creditsList.getExpanding()) {
+                    stage.playClick();
+                    creditsList.setExpanding(false);
+                }
+                else if(stage.isPlayChosen() && beginning) {
+                    stage.playClick();
+                    stage.deactivateSpears();
+                    stage.playChosen(false);
+                    moveButtons(false);
+                    stage.setHeartX(5);
+                    stage.setHeartY(72);
+                }
                 break;
             case KeyEvent.VK_Z:
                 if(beginning) {
-                    if(stage.isOnLink() && creditsButton.isDisplayable())
-                        creditsList.setExpanding(true);
-                    else if(stage.isOnHelp() && helpButton.isDisplayable())
-                        helpStarter = true;
-                    else if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
+                    if(!stage.isPlayChosen()) {
+                        if(creditsButton.onButton()) {
+                            stage.playClick();
+                            creditsList.setExpanding(true);
+                        }
+                        else if(helpButton.onButton()) {
+                            stage.playClick();
+                            helpStarter = true;
+                        }
+                        else if(playButton.onButton()) {
+                            stage.playClick();
+                            stage.playChosen(true);
+                            moveButtons(true);
+                            stage.setHeartX(5);
+                            stage.setHeartY(75);
+                        }
+                    }
+                    if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
                         block.play();
                         stage.activateHeartOne();
                         stage.activateBlueHeartFlash();
@@ -1345,40 +1552,10 @@ public class Runner extends JPanel
                         stage.activateBlueHeartFlash();
                     }
                     else if(stage.shouldStart()) {
-                        isGenocide = stage.isHard();
-                        survival = stage.isSurvival();
-                        a = new Attacks(isGenocide, survival);
-                        a1 = new Attack(new ArrayList<>(), a);
-                        a.setAttack(a1);
-                        hideButtons();
-                        if(isGenocide) {
-                            p.setHealth(60);
-                            p.setBaseDamage(3);
-                            p.setDamageOffset(12);
-                        }
-                        else {
-                            p.setHealth(20);
-                            p.setBaseDamage(0);
-                            p.setDamageOffset(2);
-                        }
-                        if(isGenocide) {
-                            main = mainSounds[2];
-                            speechX = 310;
-                            speechY = 60;
-                            gif = gif2;
-                        }
-                        else {
-                            main = mainSounds[0];
-                            speechX = 305;
-                            speechY = 50;
-                        }
-                        beginning = false;
-                        startScreen.stop();
-                        main.changeVolume(musicVolume);
-                        main.play();
-                        dir = 'u';
+                        stage.playClick();
+                        start();
                     }
-                    else if(stage.numHeartsActivated() > 0) {
+                    else if(stage.numHeartsActivated() > 0 && !stage.heartsActivated()) {
                         stage.deactivateHearts();
                         stage.playDamage();
                     }
@@ -1391,10 +1568,17 @@ public class Runner extends JPanel
                     restartApplication();
                 break;
             case KeyEvent.VK_V:
-                if(timer.getDelay() != 1)
-                    timer.setDelay(1);
+                if(timer.getDelay() != 0)
+                    timer.setDelay(0);
                 else
                     timer.setDelay(10);
+                break;
+            case KeyEvent.VK_R:
+                if(isGameOver && !allStopped || speechDone && !allStopped) {
+                    isReplaying = true;
+                    restartApplication();
+                    start();
+                }
                 break;
         }
         if(e.getKeyChar() != '￿')
@@ -1442,6 +1626,7 @@ public class Runner extends JPanel
         return bounds.contains(mousePos);
     }
     
+
     @Override
     public void mouseClicked(MouseEvent e) {
         customAttackMaker.mouseClicked(e);
@@ -1486,4 +1671,10 @@ public class Runner extends JPanel
     public void mouseWheelMoved(MouseWheelEvent e) {
         customAttackMaker.mouseWheelMoved(e);
     }
+
+    static boolean onFrontButton() {
+        return playButton.onButton() || creatorButton.onButton() || creditsButton.onButton() || helpButton.onButton();
+    }
+    
+
 }
