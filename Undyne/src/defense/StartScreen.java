@@ -283,6 +283,7 @@ public class StartScreen {
         for(int i = 0, y = 82; i < clickableNames.length; ++i, y += 40) {
             clickableNames[i] = new JPanel();
             JPanel b = clickableNames[i];
+            b.setVisible(false);
             b.setLocation((int) (85 - creditsList.getExpandedX()), (int) (y - creditsList.getExpandedY()));
             if(i == 11)
                 b.setLocation((int) (230 - creditsList.getExpandedX()), (int) (85 + 40 * 9 - creditsList.getExpandedY()));
