@@ -194,25 +194,25 @@ public class Arrow {
         int angle = 0;
         switch(direction) {
             case 'r':
-                if(!reverse || reverse && directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = 0;
                 else
                     angle = 180;
                 break;
             case 'd':
-                if(!reverse || reverse && directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = 90;
                 else
                     angle = -90;
                 break;
             case 'l':
-                if(!reverse || reverse && directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = 180;
                 else
                     angle = 0;
                 break;
             case 'u':
-                if(!reverse || reverse && directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = -90;
                 else
                     angle = 90;

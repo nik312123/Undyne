@@ -22,9 +22,10 @@ class Attacks {
     
     private ArrayList<ArrayList<Arrow>> undyneAttacks = new ArrayList<>();
     
-    Attacks(boolean isGenocide, boolean survival) {
+    Attacks(boolean isGenocide, boolean survival, boolean isMedium) {
         for(int i = 0; i < 13000; ++i)
             undyneAttacks.add(new ArrayList<>());
+        //Survival mode
         if(survival) {
             // Super Easy
             normalAttackOne();
@@ -233,6 +234,27 @@ class Attacks {
                 base += 12;
             }
         }
+        //Easy mode
+        else if(!isGenocide && !isMedium) {
+            easyAttackOne();
+            easyAttackTwo();
+            easyAttackThree();
+            normalAttackFour();
+            easyAttackFive();
+            easyAttackSix();
+            easyAttackSeven();
+            normalAttackEight();
+            easyAttackNine();
+            easyAttackTen();
+            normalAttackEleven();
+            easyAttackTwelve();
+            easyAttackThirteen();
+            easyAttackFourteen();
+            easyAttackFifteen();
+            easyAttackSixteen();
+        }
+        
+        //Medium mode
         else if(!isGenocide) {
             normalAttackOne();
             normalAttackTwo();
@@ -253,6 +275,7 @@ class Attacks {
             normalAttackSeventeen();
             normalAttackEighteen();
         }
+        //Hard mode
         else {
             genocideAttackOne();
             genocideAttackTwo();
@@ -271,7 +294,7 @@ class Attacks {
     }
     
     Arrow getCurrentArrow() {
-        for(int i = 0; i < undyneAttacks.size() && !loopDone; ++i) {
+        for(int i = position; i < undyneAttacks.size() && !loopDone; ++i) {
             if(undyneAttacks.get(i).size() != 0) {
                 currentAttack = i + 1;
                 position = i;
@@ -285,7 +308,7 @@ class Attacks {
             isNewAttack = true;
             lastAttack = currentAttack;
         }
-        else if(counter != undyneAttacks.size()) {
+        else if(counter == 0) {
             isNewAttack = false;
             counter = 0;
             return undyneAttacks.get(position).remove(0);
@@ -299,8 +322,8 @@ class Attacks {
         ArrayList<Arrow> attackPattern = att.getList();
         if(attackPattern.size() != 0)
             return false;
-        for(ArrayList<Arrow> arrowList : undyneAttacks) {
-            for(Arrow a : arrowList) {
+        for(int i = position; i < undyneAttacks.size(); ++i) {
+            for(Arrow a : undyneAttacks.get(i)) {
                 if(a != null && a.getSpeed() != 0)
                     return false;
             }
@@ -2534,6 +2557,145 @@ class Attacks {
                 addArrow(index, 5, false, 'r', 45);
                 break;
         }
+    }
+    
+    private void easyAttackOne() {
+        for(int i = 0; i < 3; ++i)
+            addArrow(0, 2, false, 'd', 75);
+    }
+    
+    private void easyAttackTwo() {
+        for(int i = 0; i < 3; ++i)
+            addArrow(1, 2, false, 'd', 75);
+        for(int i = 0; i < 3; ++i)
+            addArrow(1, 2, false, 'l', 75);
+        for(int i = 0; i < 3; ++i)
+            addArrow(1, 2, false, 'r', 75);
+        for(int i = 0; i < 3; ++i)
+            addArrow(1, 2, false, 'u', 75);
+    }
+    
+    private void easyAttackThree() {
+        for(int i = 0; i < 2; ++i) {
+            for(char c : DIRS)
+                addArrow(2, 2, false, c, 50);
+        }
+    }
+    
+    private void easyAttackFive() {
+        addArrow(4, 3, false, 'r', 35);
+        addArrow(4, 3, false, 'd', 35);
+        addArrow(4, 3, false, 'u', 35);
+        addArrow(4, 3, false, 'l', 35);
+        addArrow(4, 3, false, 'r', 35);
+        addArrow(4, 3, false, 'd', 35);
+        addArrow(4, 3, false, 'u', 35);
+        addArrow(4, 3, false, 'l', 35);
+        addArrow(4, 3, false, 'u', 35);
+        addArrow(4, 3, false, 'd', 45);
+    }
+    
+    private void easyAttackSix() {
+        addArrow(5, 2, false, 'l', 45);
+        addArrow(5, 2, false, 'd', 15);
+        addArrow(5, 2, false, 'd', 45);
+        addArrow(5, 2, false, 'r', 45);
+        addArrow(5, 2, false, 'u', 15);
+        addArrow(5, 2, false, 'u', 45);
+        addArrow(5, 2, false, 'l', 45);
+        addArrow(5, 2, false, 'd', 45);
+        addArrow(5, 2, false, 'u', 45);
+    }
+    
+    private void easyAttackSeven() {
+        addArrow(6, 2, false, 'r', 1);
+        addArrow(6, 3, false, 'r', 1);
+        addArrow(6, 4, false, 'r', 100);
+        addArrow(6, 2, false, 'l', 1);
+        addArrow(6, 3, false, 'l', 1);
+        addArrow(6, 4, false, 'l', 80);
+        addArrow(6, 3, false, 'u', 40);
+        addArrow(6, 3, false, 'd', 40);
+        addArrow(6, 3, false, 'u', 40);
+        addArrow(6, 3, false, 'd', 45);
+    }
+    
+    private void easyAttackNine() {
+        addArrow(8, 2, false, 'd', 45);
+        addArrow(8, 2, false, 'u', 30);
+        addArrow(8, 2, false, 'd', 45);
+        addArrow(8, 2, false, 'u', 45);
+        addArrow(8, 2, false, 'u', 30);
+        addArrow(8, 2, false, 'd', 45);
+        addArrow(8, 2, false, 'd', 45);
+        addArrow(8, 2, false, 'u', 45);
+        addArrow(8, 2, false, 'd', 45);
+    }
+    
+    private void easyAttackTen() {
+        addArrow(9, 2, false, 'u', 1);
+        addArrow(9, 3, false, 'l', 120);
+        addArrow(9, 2, false, 'd', 1);
+        addArrow(9, 3, false, 'r', 120);
+        addArrow(9, 2, false, 'u', 1);
+        addArrow(9, 3, false, 'r', 120);
+        addArrow(9, 2, false, 'd', 1);
+        addArrow(9, 3, false, 'u', 45);
+    }
+    
+    private void easyAttackTwelve() {
+        addArrow(11, 2, false, 'r', 40);
+        addArrow(11, 2, false, 'l', 45);
+        addArrow(11, 2, true, 'd', 70);
+        addArrow(11, 2, false, 'l', 40);
+        addArrow(11, 2, false, 'r', 45);
+        addArrow(11, 2, true, 'u', 70);
+    }
+    
+    private void easyAttackThirteen() {
+        addArrow(12, 2, true, 'l', 60);
+        addArrow(12, 2, true, 'u', 60);
+        addArrow(12, 2, false, 'l', 60);
+        addArrow(12, 2, false, 'u', 60);
+        addArrow(12, 2, true, 'r', 60);
+        addArrow(12, 2, true, 'd', 60);
+        addArrow(12, 2, false, 'r', 60);
+        addArrow(12, 2, false, 'd', 60);
+    }
+    
+    private void easyAttackFourteen() {
+        addArrow(13, 2, false, 'r', 50);
+        addArrow(13, 2, false, 'l', 50);
+        addArrow(13, 2, true, 'u', 50);
+        addArrow(13, 2, true, 'd', 50);
+        addArrow(13, 2, false, 'l', 50);
+        addArrow(13, 2, false, 'r', 50);
+        addArrow(13, 2, true, 'd', 50);
+        addArrow(13, 2, true, 'u', 50);
+    }
+    
+    private void easyAttackFifteen() {
+        addArrow(14, 2, false, 'd', 50);
+        addArrow(14, 2, false, 'l', 50);
+        addArrow(14, 2, false, 'u', 50);
+        addArrow(14, 2, false, 'r', 50);
+        addArrow(14, 2, false, 'd', 50);
+        addArrow(14, 2, false, 'l', 50);
+        addArrow(14, 2, false, 'u', 50);
+        addArrow(14, 2, false, 'r', 60);
+        addArrow(14, 2, true, 'u', 60);
+        addArrow(14, 2, true, 'r', 60);
+        addArrow(14, 2, true, 'd', 60);
+        addArrow(14, 2, true, 'l', 50);
+        addArrow(14, 2, true, 'u', 50);
+        addArrow(14, 2, true, 'r', 50);
+        addArrow(14, 2, true, 'd', 50);
+        addArrow(14, 2, true, 'l', 45);
+    }
+    
+    private void easyAttackSixteen() {
+        for(int i = 0; i < 10; ++i)
+            addArrow(15, 2, rand.nextBoolean(), DIRS[rand.nextInt(4)], 60);
     }
     
     private void normalAttackOne() {
