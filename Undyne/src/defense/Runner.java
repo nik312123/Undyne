@@ -608,7 +608,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             
         };
+        
         checkFocus = new FocusListener();
+        
         if(isFirstTime) {
             musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), true, 553, 30, 10, 50);
             sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, true, 581, 30, 10, 50);
