@@ -55,7 +55,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final String[] easyMessage = {"You did well...      ", "only because", "I went easy."};
     private static final String[] mediumMessage = {"Not bad, punk!", "Let me go", "harder on you."};
     private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
-    private static final String[] MAIN_SOUND_NAMES = {"/soj.wav", "/survivalSoj.wav", "/bath.wav", "/survivalBath.wav"};
+    private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
     
     private static double fadeStart = 0;
     private static double musicMutedVolume = 1;
@@ -192,17 +192,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     e.printStackTrace();
                 }
             });
-            sojSlow = new Sound(Runner.class.getResource("/sojSlow.wav"), true);
-            startScreen = new Sound(Runner.class.getResource("/WF.wav"), true);
-            undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
-            undying = new Sound(Runner.class.getResource("/undying.wav"), false);
-            heal = new Sound(Runner.class.getResource("/heal.wav"), false);
-            block = new Sound(Runner.class.getResource("/block.wav"), false);
-            gameDone = new Sound(Runner.class.getResource("/dt.wav"), true);
-            split = new Sound(Runner.class.getResource("/split.wav"), false);
-            broke = new Sound(Runner.class.getResource("/heartBreak.wav"), false);
-            asgore = new Sound(Runner.class.getResource("/asgore.wav"), false);
-            error = new Sound(Runner.class.getResource("/error.wav"), false);
+            sojSlow = new Sound(Runner.class.getResource("/sojSlow.ogg"), true);
+            startScreen = new Sound(Runner.class.getResource("/WF.ogg"), true);
+            undyne = new Sound(Runner.class.getResource("/undyne.ogg"), false);
+            undying = new Sound(Runner.class.getResource("/undying.ogg"), false);
+            heal = new Sound(Runner.class.getResource("/heal.ogg"), false);
+            block = new Sound(Runner.class.getResource("/block.ogg"), false);
+            gameDone = new Sound(Runner.class.getResource("/dt.ogg"), true);
+            split = new Sound(Runner.class.getResource("/split.ogg"), false);
+            broke = new Sound(Runner.class.getResource("/heartBreak.ogg"), false);
+            asgore = new Sound(Runner.class.getResource("/asgore.ogg"), false);
+            error = new Sound(Runner.class.getResource("/error.ogg"), false);
             heart = ImageIO.read(Runner.class.getResource("/heart.png"));
             heart = getCompatibleImage(heart);
             heartBreak = new BufferedImage[49];

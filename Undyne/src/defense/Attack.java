@@ -40,8 +40,8 @@ class Attack {
         this.a = a;
         if(Runner.isFirstTime) {
             try {
-                block = new Sound(Runner.class.getResource("/block.wav"), false);
-                damage = new Sound(Runner.class.getResource("/damage.wav"), false);
+                block = new Sound(Runner.class.getResource("/block.ogg"), false);
+                damage = new Sound(Runner.class.getResource("/damage.ogg"), false);
             }
             catch(UnsupportedAudioFileException | IOException e) {
                 e.printStackTrace();
