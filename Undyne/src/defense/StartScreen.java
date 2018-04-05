@@ -160,19 +160,19 @@ public class StartScreen {
     StartScreen() {
         if(Runner.isFirstTime) {
             try {
-                flare = new Sound(Runner.class.getResource("/fire.wav"), false);
-                bark = new Sound(Runner.class.getResource("/bark.wav"), false);
-                spearAppear = new Sound(Runner.class.getResource("/spearAppear.wav"), false);
-                spearFly = new Sound(Runner.class.getResource("/spearFly.wav"), false);
-                spearHit = new Sound(Runner.class.getResource("/spearHit.wav"), false);
-                wall = new Sound(Runner.class.getResource("/wall.wav"), false);
-                boneSound = new Sound(Runner.class.getResource("/bones.wav"), false);
-                damage = new Sound(Runner.class.getResource("/damage.wav"), false);
-                megalovania = new Sound(Runner.class.getResource("/megalovania.wav"), true);
-                slam = new Sound(Runner.class.getResource("/slam.wav"), false);
-                cracking = new Sound(Runner.class.getResource("/cracking.wav"), false);
-                bork = new Sound(Runner.class.getResource("/bork.wav"), false);
-                click = new Sound(Runner.class.getResource("/click.wav"), false);
+                flare = new Sound(Runner.class.getResource("/fire.ogg"), false);
+                bark = new Sound(Runner.class.getResource("/bark.ogg"), false);
+                spearAppear = new Sound(Runner.class.getResource("/spearAppear.ogg"), false);
+                spearFly = new Sound(Runner.class.getResource("/spearFly.ogg"), false);
+                spearHit = new Sound(Runner.class.getResource("/spearHit.ogg"), false);
+                wall = new Sound(Runner.class.getResource("/wall.ogg"), false);
+                boneSound = new Sound(Runner.class.getResource("/bones.ogg"), false);
+                damage = new Sound(Runner.class.getResource("/damage.ogg"), false);
+                megalovania = new Sound(Runner.class.getResource("/megalovania.ogg"), true);
+                slam = new Sound(Runner.class.getResource("/slam.ogg"), false);
+                cracking = new Sound(Runner.class.getResource("/cracking.ogg"), false);
+                bork = new Sound(Runner.class.getResource("/bork.ogg"), false);
+                click = new Sound(Runner.class.getResource("/click.ogg"), false);
             }
             catch(UnsupportedAudioFileException | IOException e1) {
                 e1.printStackTrace();
@@ -283,6 +283,7 @@ public class StartScreen {
         for(int i = 0, y = 82; i < clickableNames.length; ++i, y += 40) {
             clickableNames[i] = new JPanel();
             JPanel b = clickableNames[i];
+            b.setVisible(false);
             b.setLocation((int) (85 - creditsList.getExpandedX()), (int) (y - creditsList.getExpandedY()));
             if(i == 11)
                 b.setLocation((int) (230 - creditsList.getExpandedX()), (int) (85 + 40 * 9 - creditsList.getExpandedY()));
