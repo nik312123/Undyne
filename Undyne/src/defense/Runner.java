@@ -8,9 +8,7 @@ import nikunj.classes.Sound;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -32,7 +30,17 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -40,8 +48,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class Runner extends JPanel
-        implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Runner extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
     private static final long serialVersionUID = 1L;
     
     private static char dir = 'u';
@@ -64,7 +71,7 @@ public class Runner extends JPanel
     private static int breakCount = 0;
     private static int breakFrame = 0;
     private static int flickeringHeart = 0;
-    public static int count = 0;
+    private static int count = 0;
     private static int gifCount = 0;
     private static int gameOverCount = 0;
     private static int gameOverFrame = 0;
@@ -96,14 +103,12 @@ public class Runner extends JPanel
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
     private static boolean isReplaying = false;
+    private static boolean isCustomAttack = false;
     static boolean isFirstTime = true;
-    public static boolean isCustomAttack = false;
     
     private static Timer timer;
     
-
     public static BufferedImage dragArrowIcon;
-    public static BufferedImage blackBackground;
     public static BufferedImage addAttack;
     public static BufferedImage ticked;
     public static BufferedImage arrowDown;
@@ -115,12 +120,11 @@ public class Runner extends JPanel
     public static BufferedImage droppedDown;
     public static BufferedImage droppedClosed;
     public static BufferedImage newArrow;
-    public static BufferedImage exit;
+    private static BufferedImage exit;
     public static BufferedImage arrowImg;
-
+    
     private static FocusListener checkFocus;
     
-
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -182,7 +186,7 @@ public class Runner extends JPanel
     
     private static SplashScreen loading;
     
-    public static JFrame frame;
+    private static JFrame frame;
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
         Arrow.p = p;
@@ -246,52 +250,34 @@ public class Runner extends JPanel
                 levels[i] = getCompatibleImage(levels[i]);
             blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
             blueArr = getCompatibleImage(blueArr);
-            
             exit = ImageIO.read(Runner.class.getResource("/exit.png"));
             exit = getCompatibleImage(exit);
-    
             dragArrowIcon = ImageIO.read(Runner.class.getResource("/DragArrowIcon.png"));
             dragArrowIcon = getCompatibleImage(dragArrowIcon);
-            
             arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
             arrowImg = getCompatibleImage(arrowImg);
-    
             ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
             ticked = getCompatibleImage(ticked);
-    
-            blackBackground = ImageIO.read(Runner.class.getResource("/blackBackground.png"));
-            blackBackground = getCompatibleImage(blackBackground);
-    
             arrowUp = ImageIO.read(Runner.class.getResource("/arrowUp.png"));
             arrowUp = getCompatibleImage(arrowUp);
-    
             arrowDown = ImageIO.read(Runner.class.getResource("/arrowDown.png"));
             arrowDown = getCompatibleImage(arrowDown);
-    
             arrowLeft = ImageIO.read(Runner.class.getResource("/arrowLeft.png"));
             arrowLeft = getCompatibleImage(arrowLeft);
-    
             arrowRight = ImageIO.read(Runner.class.getResource("/arrowRight.png"));
             arrowRight = getCompatibleImage(arrowRight);
-            
             addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
             addAttack = getCompatibleImage(addAttack);
-            
             deleteAttack = ImageIO.read(Runner.class.getResource("/delete attack.png"));
             deleteAttack = getCompatibleImage(deleteAttack);
-            
             newArrow = ImageIO.read(Runner.class.getResource("/new arrow.png"));
             newArrow = getCompatibleImage(newArrow);
-            
             droppedDown = ImageIO.read(Runner.class.getResource("/droppedDown.png"));
             droppedDown = getCompatibleImage(droppedDown);
-            
             droppedClosed = ImageIO.read(Runner.class.getResource("/droppedClosed.png"));
             droppedClosed = getCompatibleImage(droppedClosed);
-            
             deleteArrow = ImageIO.read(Runner.class.getResource("/deleteArrow.png"));
             deleteArrow = getCompatibleImage(deleteArrow);
-            
             redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
             redArr = getCompatibleImage(redArr);
             reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
@@ -331,12 +317,10 @@ public class Runner extends JPanel
             }
         }
         new Runner("Undyne: Absolute");
-
         startScreen.changeVolume(musicMutedVolume);
         if(!isReplaying)
             startScreen.play();
         isReplaying = false;
-
     }
     
     private Runner(String s) {
@@ -345,21 +329,6 @@ public class Runner extends JPanel
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
-        
-        JPanel panel = new JPanel();
-        panel.setBounds(0,0,100,100);
-        panel.setBackground(Color.WHITE);
-    
-        JLabel label = new JLabel("I'm on fire");
-        label.setFont(label.getFont().deriveFont(Font.BOLD, 48));
-        label.setForeground(Color.GREEN);
-        label.setHorizontalAlignment(JLabel.CENTER);
-        
-        panel.add(label);
-        frame.add(panel);
-    
-    
-    
         closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
@@ -391,8 +360,8 @@ public class Runner extends JPanel
                 g.setColor(Color.BLACK);
                 g.fillRect(0, 0, 26, 26);
             }
-            
         };
+        
         draggableButton = new GradientButton(draggable, Color.BLACK, Color.BLUE, 30, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             private int xPos, yPos;
@@ -423,8 +392,8 @@ public class Runner extends JPanel
             
             @Override
             public void mouseMoved(MouseEvent e) {}
-            
         };
+        
         musicButton = new GradientButton(music, Color.BLACK, new Color(0, 208, 208), 545, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
@@ -491,7 +460,6 @@ public class Runner extends JPanel
                     musicMutedVolume = 0;
                 }
             }
-            
         };
         
         sfxButton = new GradientButton(sfx, Color.BLACK, Color.GREEN, 573, 2, 24, 24) {
@@ -566,7 +534,6 @@ public class Runner extends JPanel
                     sfxMutedVolume = 0;
                 }
             }
-            
         };
         
         creditsButton = new GradientButton(credits, Color.BLACK, new Color(148, 0, 211), 76, 380 + 20, 148, 62) {
@@ -597,7 +564,6 @@ public class Runner extends JPanel
             public boolean onButton() {
                 return isDisplayable() && stage.isOnLink();
             }
-            
         };
         
         helpButton = new GradientButton(help, Color.BLACK, new Color(148, 0, 211), 376, 380 + 20, 148, 62) {
@@ -628,7 +594,6 @@ public class Runner extends JPanel
             public boolean onButton() {
                 return isDisplayable() && stage.isOnHelp();
             }
-            
         };
         
         playButton = new GradientButton(play, Color.BLACK, new Color(148, 0, 211), 76, 300, 148, 62) {
@@ -658,7 +623,6 @@ public class Runner extends JPanel
             public boolean onButton() {
                 return isDisplayable() && stage.isOnPlay();
             }
-            
         };
         
         creatorButton = new GradientButton(creator, Color.BLACK, new Color(148, 0, 211), 376, 300, 148, 62) {
@@ -688,7 +652,6 @@ public class Runner extends JPanel
             public boolean onButton() {
                 return isDisplayable() && stage.isOnCreator();
             }
-            
         };
         
         checkFocus = new FocusListener();
@@ -738,20 +701,20 @@ public class Runner extends JPanel
             
             @Override
             public void mouseExited(MouseEvent e) {}
-            
         };
         
         frame.addMouseListener(errorListener);
         creditsButton.addMouseListener(errorListener);
-        frame.addMouseMotionListener(this);
-        frame.addMouseListener(this);
-        frame.addMouseWheelListener(this);
         helpButton.addMouseListener(errorListener);
         playButton.addMouseListener(errorListener);
         creatorButton.addMouseListener(errorListener);
+        
+        frame.addMouseMotionListener(this);
+        frame.addMouseListener(this);
+        frame.addMouseWheelListener(this);
         frame.addKeyListener(this);
         frame.addWindowListener(checkFocus);
-    
+        
         musicSlider.setVisible(true);
         sfxSlider.setVisible(true);
         creditsList.setVisible(true);
@@ -765,7 +728,6 @@ public class Runner extends JPanel
         frame.setUndecorated(true);
         frame.getContentPane().setLayout(null);
         frame.requestFocus();
-
         frame.setVisible(true);
     }
     
@@ -802,8 +764,6 @@ public class Runner extends JPanel
         void deactivateJustFocused() {
             justFocused = false;
         }
-
-        
     }
     
     private Runner() {
@@ -825,16 +785,14 @@ public class Runner extends JPanel
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
-        customAttacksCounter++;
-        if(customAttacksCounter > 500)
-            customAttacksCounter = 0;
-        
         if(!allStopped) {
             if(++alwaysOnTopCounter >= 20) {
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
             }
+            ++customAttacksCounter;
+            if(customAttacksCounter > 500)
+                customAttacksCounter = 0;
             if(main != null)
                 main.changeVolume(musicSlider.getPercentage());
             if(gameDone != null)
@@ -965,8 +923,6 @@ public class Runner extends JPanel
         helper.initiate(g, helpStarter);
         if(survival && !beginning)
             printScore(g);
-        
-        
         g.dispose();
     }
     
@@ -1492,8 +1448,8 @@ public class Runner extends JPanel
                 System.exit(0);
                 break;
             case KeyEvent.VK_U:
-                isCustomAttack ^= true;
-                beginning ^= true;
+                isCustomAttack = !isCustomAttack;
+                beginning = !beginning;
                 if(DELAY == 10)
                     DELAY = 0;
                 else
@@ -1626,17 +1582,14 @@ public class Runner extends JPanel
         return bounds.contains(mousePos);
     }
     
-
     @Override
     public void mouseClicked(MouseEvent e) {
         customAttackMaker.mouseClicked(e);
-        
     }
     
     @Override
     public void mousePressed(MouseEvent e) {
         customAttackMaker.mousePressed(e);
-        
     }
     
     @Override
@@ -1652,29 +1605,24 @@ public class Runner extends JPanel
     @Override
     public void mouseExited(MouseEvent e) {
         customAttackMaker.mouseExited(e);
-        
     }
     
     @Override
     public void mouseDragged(MouseEvent e) {
         customAttackMaker.mouseDragged(e);
-        
     }
     
     @Override
     public void mouseMoved(MouseEvent e) {
         customAttackMaker.mouseMoved(e);
-        
     }
     
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         customAttackMaker.mouseWheelMoved(e);
     }
-
+    
     static boolean onFrontButton() {
         return playButton.onButton() || creatorButton.onButton() || creditsButton.onButton() || helpButton.onButton();
     }
-    
-
 }
