@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 import java.text.AttributedString;
 import java.util.Random;
 
-public class StartScreen {
+class StartScreen {
     private double fadeIn = 0;
     private double fadeStart = 0;
     private static double sfxVolume = 1;
@@ -481,8 +481,6 @@ public class StartScreen {
         }
     }
     
-
-    
     private void drawDots(Graphics g) {
         g.drawImage(dots[numHeartsActivated()], 4, 588, null);
     }
@@ -605,7 +603,7 @@ public class StartScreen {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 g2d.drawImage(keys, 179, 490 + 50 - 20, null);
             }
-            else if((!easyButtonRectRed || !isOnEasy) && (!hardButtonRectRed || !isOnHard) && (!survivalButtonRectRed || !isOnSurvival)&& (!mediumButtonRectRed || !isOnMedium) ) {
+            else if((!easyButtonRectRed || !isOnEasy) && (!hardButtonRectRed || !isOnHard) && (!survivalButtonRectRed || !isOnSurvival) && (!mediumButtonRectRed || !isOnMedium)) {
                 AffineTransform trans = new AffineTransform();
                 trans.translate(174.5, 486 + shift);
                 g2d.drawImage(select, trans, null);
@@ -692,7 +690,7 @@ public class StartScreen {
     private void mediumButton(Graphics g) {
         if(playChosen) {
             g.setColor(new Color(246, 138, 21));
-            isOnMedium= (heartX + 288 + 16 >= 226 && heartX + 288 <= 374 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
+            isOnMedium = (heartX + 288 + 16 >= 226 && heartX + 288 <= 374 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
             if(mediumButtonCount % 6 == 0) {
                 if(isOnMedium) {
                     if(mediumButtonRect < 60) {
@@ -945,7 +943,7 @@ public class StartScreen {
             g2d.setFont(Runner.deteFontScore);
             g2d.setColor(Color.WHITE);
             String backMessage = "Press X to go back";
-            g2d.drawString(backMessage, (Runner.getFrame().getWidth() - g.getFontMetrics(Runner.deteFontScore).stringWidth(backMessage))/2, 30);
+            g2d.drawString(backMessage, (Runner.getFrame().getWidth() - g.getFontMetrics(Runner.deteFontScore).stringWidth(backMessage)) / 2, 30);
         }
     }
     

@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 /*
  * Composes an arrow to be implemented in the Attack class
  */
-public class Arrow {
+class Arrow {
     /*
      * This determines the speed the arrow should go at between 1 – 100
      */
@@ -33,14 +33,14 @@ public class Arrow {
     private int radius = 0;
     
     static Player p;
-
+    
     private boolean inside = false;
     private boolean isOne = true;
     private boolean isSlow;
     private boolean switchDir = false;
     private boolean directionNotSwitched;
     
-    public Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
+    Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
         directionNotSwitched = reverse;
