@@ -838,9 +838,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 stage.run(g);
                 drawCheat(g);
             }
-            else if(isCustomAttack) {
+            else if(isCustomAttack)
                 customAttackMaker.perform(g);
-            }
             else {
                 if(p.getHit()) {
                     p.decreaseCounter();
