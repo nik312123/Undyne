@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 /*
  * Composes an arrow to be implemented in the Attack class
  */
-public class Arrow {
+class Arrow {
     /*
      * This determines the speed the arrow should go at between 1 – 100
      */
