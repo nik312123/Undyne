@@ -14,6 +14,8 @@ class AttackBar {
     
     private int number;
     
+    private static final int ATTACKBAR_X = 30;
+    
     private boolean isDropped = true;
     
     private Rectangle dropDownButton = new Rectangle();
@@ -34,6 +36,10 @@ class AttackBar {
         return arrows;
     }
     
+    void add(ArrowBar bar) {
+        arrows.add(bar);
+    }
+    
     int getNumber() {
         return number;
     }
@@ -42,7 +48,8 @@ class AttackBar {
         this.number = num;
     }
     
-    void draw(Graphics g, int x, int y) {
+    void draw(Graphics g, int y) {
+        int x = ATTACKBAR_X;
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.GREEN);
         drawString(g, x, y);
@@ -119,16 +126,16 @@ class AttackBar {
             CustomAttacks.attacks.remove(number);
             return 1;
         }
-        if(CustomAttacks.mouse.intersects(dropDownButton))
+        else if(CustomAttacks.mouse.intersects(dropDownButton))
             isDropped = !isDropped;
-        if(CustomAttacks.mouse.intersects(newArrowButton))
-            arrows.add(new ArrowBar(1, false, 'u', 2, false));
+        else if(CustomAttacks.mouse.intersects(newArrowButton))
+            arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
             if(CustomAttacks.mouse.intersects(arrows.get(i).getDeleteArrowButton()))
                 arrows.remove(i);
-            if(CustomAttacks.mouse.intersects(arrows.get(i).getReverseTickBox()))
-                arrows.get(i).setReverse(!arrows.get(i).isReverse());
-            if(CustomAttacks.mouse.intersects(arrows.get(i).getDirectionRectangle()))
+            else if(CustomAttacks.mouse.intersects(arrows.get(i).getReverseTickBox()))
+                arrows.get(i).setReverseable(!arrows.get(i).isReverse());
+            else if(CustomAttacks.mouse.intersects(arrows.get(i).getDirectionRectangle()))
                 arrows.get(i).switchDirectionIsSelected();
         }
         return 0;
@@ -177,7 +184,7 @@ class AttackBar {
             if(a.isDirectionIsSelected()) {
                 switch(e.getKeyCode()) {
                     case KeyEvent.VK_ENTER:
-                        a.setisDirectionSelected(false);
+                        a.directionSelectedFalse();
                         break;
                     case KeyEvent.VK_UP:
                         a.setDirection('u');
