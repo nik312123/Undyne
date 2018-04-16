@@ -790,8 +790,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
             }
-            ++customAttacksCounter;
-            if(customAttacksCounter > 500)
+            if(++customAttacksCounter == 75)
                 customAttacksCounter = 0;
             if(main != null)
                 main.changeVolume(musicSlider.getPercentage());
@@ -1258,7 +1257,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             creditsButton.setY(600);
             helpButton.setY(600);
             playButton.setY(600);
-            helpButton.setY(600);
+            creatorButton.setY(600);
         }
         else {
             creditsButton.setY(400);
@@ -1446,14 +1445,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             case KeyEvent.VK_Q:
                 System.exit(0);
                 break;
-            case KeyEvent.VK_U:
-                isCustomAttack = !isCustomAttack;
-                beginning = !beginning;
-                if(DELAY == 10)
-                    DELAY = 0;
-                else
-                    DELAY = 10;
-                break;
             case KeyEvent.VK_X:
                 if(helpStarter) {
                     stage.playClick();
@@ -1489,6 +1480,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                             moveButtons(true);
                             stage.setHeartX(5);
                             stage.setHeartY(75);
+                        }
+                        else if(creatorButton.onButton()) {
+                            stage.playClick();
+                            isCustomAttack = !isCustomAttack;
+                            beginning = !beginning;
+                            moveButtons(!beginning);
+                            if(DELAY == 10)
+                                DELAY = 0;
+                            else
+                                DELAY = 10;
                         }
                     }
                     if(stage.isOnHeartOne() && !stage.heartOneActivated()) {

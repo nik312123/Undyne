@@ -28,15 +28,15 @@ public class ArrowBar {
     
     private int delay;
     
-    private boolean reverse;
+    private boolean reverseable;
     
     private char direction;
     
     private Rectangle reverseTickBox = new Rectangle();
     
-    ArrowBar(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
+    ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
-        this.reverse = reverse;
+        this.reverseable = reverseable;
         this.direction = direction;
         this.delay = delay;
     }
@@ -70,12 +70,8 @@ public class ArrowBar {
     
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
-        if(isDirectionSelected && Runner.customAttacksCounter % 50 < 20) {
+        if(!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
             setImage(g, x, y);
-        }
-        else {
-            setImage(g, x, y);
-        }
     }
     
     private void setImage(Graphics g, int x, int y) {
@@ -96,7 +92,7 @@ public class ArrowBar {
     }
     
     private void reverseTickBox(Graphics g, int x, int y) {
-        if(reverse)
+        if(reverseable)
             g.drawImage(Runner.ticked, x + 400 - 10, y + 8, null);
         reverseTickBox.setBounds(x + 400 - 10, y + 8, 13, 12);
     }
@@ -133,22 +129,18 @@ public class ArrowBar {
     }
     
     boolean isReverse() {
-        return reverse;
+        return reverseable;
     }
     
-    void setisDirectionSelected(boolean directionIsSelected) {
-        this.isDirectionSelected = directionIsSelected;
+    void directionSelectedFalse() {
+        this.isDirectionSelected = false;
     }
     
-    private char getDirection() {
-        return direction;
-    }
-    
-    public int getDelay() {
+    int getDelay() {
         return delay;
     }
     
-    public int getSpeed() {
+    int getSpeed() {
         return speed;
     }
     
@@ -160,8 +152,16 @@ public class ArrowBar {
         this.direction = direction;
     }
     
-    void setReverse(boolean reverse) {
-        this.reverse = reverse;
+    char getDirection() {
+        return direction;
+    }
+    
+    void setReverseable(boolean reverse) {
+        this.reverseable = reverse;
+    }
+    
+    boolean getReversable() {
+        return reverseable;
     }
     
     public void setSpeed(int speed) {
@@ -178,7 +178,7 @@ public class ArrowBar {
     
     @Override
     public String toString() {
-        return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reverse + ", direction = " + direction + '}';
+        return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reverseable + ", direction = " + direction + '}';
     }
 }
 
