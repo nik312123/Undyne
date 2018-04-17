@@ -139,8 +139,13 @@ public class CustomAttacks {
                 int previousAttack = -1;
                 errorLine = 0;
                 error = "";
+                boolean isFirstLine = true;
                 while(s.hasNextLine()) {
                     ++errorLine;
+                    if(isFirstLine) {
+                        s.nextLine();
+                        isFirstLine = false;
+                    }
                     inputArrow = s.nextLine().split(",");
                     if(inputArrow.length != 0 && inputArrow.length != 5) {
                         error = "Incorrect number of items in the given comma-separated list";
@@ -211,6 +216,7 @@ public class CustomAttacks {
     
     private void exportFile() {
         ArrayList<String> output = new ArrayList<>();
+        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored and would be still ignored if it were an arrow code.");
         for(AttackBar attackBar : attacks) {
             for(ArrowBar arrowBar : attackBar.getArrows())
                 output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.getReversable(), arrowBar.getDirection(), arrowBar.getDelay()));
