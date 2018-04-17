@@ -1,8 +1,10 @@
 package customAttackMaker;
 
 import defense.Runner;
+import nikunj.classes.PopUp;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -25,13 +27,35 @@ public class CustomAttacks {
     
     private Rectangle addAttack = new Rectangle();
     
-    private JFileChooser chooser = new JFileChooser();
+    static Rectangle mouse = new Rectangle();
     
+    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
+    
+    private String error;
+    
+    private int errorLine;
     static int scrollValue = 70;
-    
     static int dynamicLength = 0;
     
-    static Rectangle mouse = new Rectangle();
+    private JFileChooser chooser = new JFileChooser() {
+        @Override
+        public void approveSelection() {
+            File f = getSelectedFile();
+            if(f.exists() && getDialogType() == SAVE_DIALOG) {
+                int result = JOptionPane.showConfirmDialog(this, "The file already exists. Overwrite?", "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
+                switch(result) {
+                    case JOptionPane.NO_OPTION:
+                        return;
+                    case JOptionPane.CLOSED_OPTION:
+                        return;
+                    case JOptionPane.CANCEL_OPTION:
+                        cancelSelection();
+                        return;
+                }
+            }
+            super.approveSelection();
+        }
+    };
     
     public CustomAttacks() {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -47,6 +71,8 @@ public class CustomAttacks {
         for(AttackBar attackBar : attacks)
             attackBar.draw(g, dynamicLength);
         addAttackButton(g);
+        errorPopUp.draw(g);
+        drawErrorText(g);
     }
     
     private void addAttack() {
@@ -54,11 +80,9 @@ public class CustomAttacks {
     }
     
     private void reassignNumbers() {
-        int i = 0;
-        for(AttackBar a : CustomAttacks.attacks) {
-            a.setNumber(i);
-            ++i;
-        }
+        int i = -1;
+        for(AttackBar a : CustomAttacks.attacks)
+            a.setNumber(++i);
     }
     
     private void addAttackButton(Graphics g) {
@@ -69,6 +93,33 @@ public class CustomAttacks {
     private void bg(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 600, 600);
+    }
+    
+    private void drawErrorText(Graphics g) {
+        if(errorPopUp.percentageExpanded() == 1.0) {
+            g.setFont(Runner.deteFontNorm.deriveFont(20.0f));
+            g.setColor(Color.WHITE);
+            g.drawString("Error on line " + errorLine, 180, 200);
+            String[] errorSplit = error.split("\\s+");
+            StringBuilder line = new StringBuilder();
+            int lineIndex = 1;
+            boolean drewOnLast = true;
+            for(int i = 0; i < errorSplit.length; ++i) {
+                if(line.length() + errorSplit[i].length() + 1 < 19) {
+                    drewOnLast = false;
+                    line.append(errorSplit[i]).append(" ");
+                }
+                else {
+                    drewOnLast = true;
+                    g.drawString(line.toString(), 180, 200 + 15 + 25 * lineIndex);
+                    ++lineIndex;
+                    line = new StringBuilder();
+                    --i;
+                }
+            }
+            if(!drewOnLast)
+                g.drawString(line.toString(), 180, 200 + 15 + 25 * lineIndex);
+        }
     }
     
     private void importFile() {
@@ -86,34 +137,74 @@ public class CustomAttacks {
             if(s != null) {
                 String[] inputArrow;
                 int previousAttack = -1;
+                errorLine = 0;
+                error = "";
+                boolean isFirstLine = true;
                 while(s.hasNextLine()) {
+                    ++errorLine;
+                    if(isFirstLine) {
+                        s.nextLine();
+                        isFirstLine = false;
+                    }
                     inputArrow = s.nextLine().split(",");
-                    if(inputArrow.length != 0 && inputArrow.length != 5)
+                    if(inputArrow.length != 0 && inputArrow.length != 5) {
+                        error = "Incorrect number of items in the given comma-separated list";
+                        errorPopUp.setExpanding(true);
                         return;
+                    }
                     else if(inputArrow.length == 5) {
                         try {
                             int attack = Integer.parseInt(inputArrow[0]);
-                            if(attack < 0)
+                            if(attack < 0) {
+                                error = "Attack must be greater than zero";
+                                errorPopUp.setExpanding(true);
                                 return;
+                            }
+                            if(attack < previousAttack) {
+                                error = "Attacks must be in increasing order";
+                                errorPopUp.setExpanding(true);
+                                return;
+                            }
                             if(attack > previousAttack) {
-                                importedAttacks.add(new AttackBar());
+                                if(attack > 1 + previousAttack) {
+                                    error = "Attack numbers can't increase more than one";
+                                    errorPopUp.setExpanding(true);
+                                    return;
+                                }
+                                AttackBar newBar = new AttackBar();
+                                newBar.setNumber(attack);
+                                importedAttacks.add(newBar);
                                 previousAttack = attack;
                             }
                             int speed = Integer.parseInt(inputArrow[1]);
-                            if(speed < 1 || speed > 10)
+                            if(speed < 1 || speed > 10) {
+                                error = "Speed must be between 1 and 10 inclusive";
+                                errorPopUp.setExpanding(true);
                                 return;
-                            if(!inputArrow[2].equals("true") && !inputArrow[2].equals("false"))
+                            }
+                            if(!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
+                                error = "Third item in list must be true or false";
+                                errorPopUp.setExpanding(true);
                                 return;
+                            }
                             boolean reversable = Boolean.parseBoolean(inputArrow[2]);
                             char direction = inputArrow[3].charAt(0);
-                            if(inputArrow[3].length() != 1 && direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r')
+                            if(inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r') {
+                                error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
+                                errorPopUp.setExpanding(true);
                                 return;
+                            }
                             int delay = Integer.parseInt(inputArrow[4]);
-                            if(delay < 1 || delay > 999)
+                            if(delay < 1 || delay > 999) {
+                                error = "Delay must be between 1 and 999 inclusive";
+                                errorPopUp.setExpanding(true);
                                 return;
-                            importedAttacks.get(importedAttacks.size() -1).add(new ArrowBar(speed, reversable, direction, delay));
+                            }
+                            importedAttacks.get(importedAttacks.size() - 1).add(new ArrowBar(speed, reversable, direction, delay));
                         }
                         catch(NumberFormatException e) {
+                            error = "Attack number, speed, an delay must all be valid integers";
+                            errorPopUp.setExpanding(true);
                             return;
                         }
                     }
@@ -125,6 +216,7 @@ public class CustomAttacks {
     
     private void exportFile() {
         ArrayList<String> output = new ArrayList<>();
+        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored and would be still ignored if it were an arrow code.");
         for(AttackBar attackBar : attacks) {
             for(ArrowBar arrowBar : attackBar.getArrows())
                 output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.getReversable(), arrowBar.getDirection(), arrowBar.getDelay()));
@@ -150,17 +242,6 @@ public class CustomAttacks {
     
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()) {
-            case KeyEvent.VK_L:
-                for(AttackBar a : attacks) {
-                    System.out.println("Attack: " + a.getNumber());
-                    System.out.println();
-                    for(ArrowBar b : a.getArrows())
-                        System.out.println(b);
-                    System.out.println();
-                    System.out.println();
-                    System.out.println();
-                }
-                break;
             case KeyEvent.VK_E:
                 exportFile();
                 break;
@@ -199,6 +280,8 @@ public class CustomAttacks {
     }
     
     public void mouseClicked(MouseEvent e) {
+        if(errorPopUp.percentageExpanded() == 1.0)
+            errorPopUp.setExpanding(false);
         mouse.setBounds(e.getX(), e.getY(), 1, 1);
         for(AttackBar a : attacks) {
             if(a.mouseClickWork() == 1) {
@@ -211,4 +294,9 @@ public class CustomAttacks {
     }
     
     public void mouseExited(MouseEvent e) {}
+    
+    public PopUp getErrorPopUp() {
+        return errorPopUp;
+    }
+    
 }

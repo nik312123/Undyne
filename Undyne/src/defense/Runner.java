@@ -8,6 +8,7 @@ import nikunj.classes.Sound;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -136,14 +137,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static BufferedImage help;
     private static BufferedImage play;
     private static BufferedImage creator;
-    static BufferedImage blueArr;
-    static BufferedImage redArr;
-    static BufferedImage reverseArr;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
+    static BufferedImage blueArr;
+    static BufferedImage redArr;
+    static BufferedImage reverseArr;
     static BufferedImage[] gif;
     static BufferedImage[] gif2;
+    
+    public static ImageIcon warning;
     
     private static Sound main;
     private static Sound sojSlow;
@@ -225,6 +228,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             broke = new Sound(Runner.class.getResource("/heartBreak.ogg"), false);
             asgore = new Sound(Runner.class.getResource("/asgore.ogg"), false);
             error = new Sound(Runner.class.getResource("/error.ogg"), false);
+            for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
+                mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
             heart = ImageIO.read(Runner.class.getResource("/heart.png"));
             heart = getCompatibleImage(heart);
             heartBreak = new BufferedImage[49];
@@ -302,8 +307,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             play = Runner.getCompatibleImage(play);
             creator = ImageIO.read(Runner.class.getResourceAsStream("/creator.png"));
             creator = Runner.getCompatibleImage(creator);
-            for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
-                mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
+            warning = new ImageIcon(Runner.class.getResource("/warning.png"));
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
             deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
@@ -663,6 +667,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         creditsList = stage.getCreditsList();
         PopUp helpPopUp = helper.getHelpPopUp();
+        PopUp errorPopUp = customAttackMaker.getErrorPopUp();
         
         frame.add(closeButton);
         frame.add(draggableButton);
@@ -676,6 +681,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.add(sfxSlider);
         frame.add(creditsList);
         frame.add(helpPopUp);
+        frame.add(errorPopUp);
         
         MouseListener errorListener = new MouseListener() {
             
@@ -719,6 +725,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         sfxSlider.setVisible(true);
         creditsList.setVisible(true);
         helpPopUp.setVisible(true);
+        errorPopUp.setVisible(true);
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
