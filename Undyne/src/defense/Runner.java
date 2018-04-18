@@ -1,5 +1,6 @@
 package defense;
 
+import customAttackMaker.AttackBar;
 import customAttackMaker.CustomAttacks;
 import nikunj.classes.GradientButton;
 import nikunj.classes.PopUp;
@@ -104,6 +105,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
     private static boolean isReplaying = false;
+    public static boolean canBeStopped = false;
     private static boolean isCustomAttack = false;
     static boolean isFirstTime = true;
     
@@ -1386,23 +1388,52 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         a1 = new Attack(new ArrayList<>(), a);
         a.setAttack(a1);
         hideButtons();
+        setUpUndyne(isGenocide);
+        beginning = false;
+        startScreen.stop();
+        main.changeVolume(musicMutedVolume);
+        main.play();
+        dir = 'u';
+    }
+    
+    public static void start(ArrayList<AttackBar> attacks, boolean isGenocide) {
+        DELAY = 10;
+        a = new Attacks(attacks);
+        a1 = new Attack(new ArrayList<>(), a);
+        a.setAttack(a1);
+        setUpUndyne(isGenocide);
+        beginning = false;
+        isCustomAttack = false;
+        startScreen.stop();
+        main.changeVolume(musicMutedVolume);
+        main.play();
+        dir = 'u';
+        canBeStopped = true;
+    }
+    
+    public static void stop() {
+        if(canBeStopped) {
+            a.clearAttacks();
+            a1.clearAttacks();
+            isCustomAttack = true;
+            canBeStopped = false;
+        }
+    }
+    
+    private static void setUpUndyne(boolean isGenocide) {
         if(isGenocide) {
             p.setHealth(60);
             p.setBaseDamage(3);
             p.setDamageOffset(12);
-        }
-        else {
-            p.setHealth(20);
-            p.setBaseDamage(0);
-            p.setDamageOffset(2);
-        }
-        if(isGenocide) {
             main = mainSounds[2];
             speechX = 310;
             speechY = 60;
             gif = gif2;
         }
         else {
+            p.setHealth(20);
+            p.setBaseDamage(0);
+            p.setDamageOffset(2);
             if(stage.isMedium())
                 main = mainSounds[0];
             else
@@ -1410,11 +1441,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             speechX = 305;
             speechY = 50;
         }
-        beginning = false;
-        startScreen.stop();
-        main.changeVolume(musicMutedVolume);
-        main.play();
-        dir = 'u';
     }
     
     @Override

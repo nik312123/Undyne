@@ -136,11 +136,11 @@ public class ArrowBar {
         this.isDirectionSelected = false;
     }
     
-    int getDelay() {
+    public int getDelay() {
         return delay;
     }
     
-    int getSpeed() {
+    public int getSpeed() {
         return speed;
     }
     
@@ -152,7 +152,7 @@ public class ArrowBar {
         this.direction = direction;
     }
     
-    char getDirection() {
+    public char getDirection() {
         return direction;
     }
     
@@ -160,7 +160,7 @@ public class ArrowBar {
         this.reverseable = reverse;
     }
     
-    boolean getReversable() {
+    public boolean getReversable() {
         return reverseable;
     }
     
