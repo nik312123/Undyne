@@ -337,7 +337,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             play = Runner.getCompatibleImage(play);
             creator = ImageIO.read(Runner.class.getResourceAsStream("/creator.png"));
             creator = Runner.getCompatibleImage(creator);
-            warning = new ImageIcon(Runner.class.getResource("/warning.png"));
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
             deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
