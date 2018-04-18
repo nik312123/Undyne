@@ -8,6 +8,7 @@ import nikunj.classes.Sound;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -103,12 +104,21 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
     private static boolean isReplaying = false;
+    public static boolean canBeStopped = false;
     private static boolean isCustomAttack = false;
     static boolean isFirstTime = true;
     
     private static Timer timer;
     
     public static BufferedImage dragArrowIcon;
+    public static BufferedImage bottomMenuBar;
+    public static BufferedImage bottomMenuBarButNoArrowsNotShowing;
+    public static BufferedImage bottomMenuBarButNoArrowsShowing;
+    
+    public static BufferedImage bottomBarNotShowing;
+    public static BufferedImage CAT;
+    public static BufferedImage importThing;
+    public static BufferedImage newThing;
     public static BufferedImage addAttack;
     public static BufferedImage ticked;
     public static BufferedImage arrowDown;
@@ -136,14 +146,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static BufferedImage help;
     private static BufferedImage play;
     private static BufferedImage creator;
-    static BufferedImage blueArr;
-    static BufferedImage redArr;
-    static BufferedImage reverseArr;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
+    static BufferedImage blueArr;
+    static BufferedImage redArr;
+    static BufferedImage reverseArr;
     static BufferedImage[] gif;
     static BufferedImage[] gif2;
+    
+    public static ImageIcon warning;
     
     private static Sound main;
     private static Sound sojSlow;
@@ -225,6 +237,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             broke = new Sound(Runner.class.getResource("/heartBreak.ogg"), false);
             asgore = new Sound(Runner.class.getResource("/asgore.ogg"), false);
             error = new Sound(Runner.class.getResource("/error.ogg"), false);
+            for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
+                mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
             heart = ImageIO.read(Runner.class.getResource("/heart.png"));
             heart = getCompatibleImage(heart);
             heartBreak = new BufferedImage[49];
@@ -256,6 +270,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             dragArrowIcon = getCompatibleImage(dragArrowIcon);
             arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
             arrowImg = getCompatibleImage(arrowImg);
+            CAT = ImageIO.read(Runner.class.getResource("/UAT.png"));
+            CAT = getCompatibleImage(CAT);
+            importThing = ImageIO.read(Runner.class.getResource("/import.png"));
+            importThing = getCompatibleImage(importThing);
+            newThing = ImageIO.read(Runner.class.getResource("/new.png"));
+            newThing = getCompatibleImage(newThing);
+            bottomBarNotShowing = ImageIO.read(Runner.class.getResource("/bottomBarNotShowing.png"));
+            bottomBarNotShowing = getCompatibleImage(bottomBarNotShowing);
+            bottomMenuBar = ImageIO.read(Runner.class.getResource("/bottomMenuBar.png"));
+            bottomMenuBar = getCompatibleImage(bottomMenuBar);
             ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
             ticked = getCompatibleImage(ticked);
             arrowUp = ImageIO.read(Runner.class.getResource("/arrowUp.png"));
@@ -286,6 +310,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             replay = getCompatibleImage(replay);
             close = ImageIO.read(Runner.class.getResource("/close.png"));
             close = getCompatibleImage(close);
+    
+    
+            bottomMenuBarButNoArrowsNotShowing = ImageIO.read(Runner.class.getResource("/bottomBarButNoArrows.png"));
+            bottomMenuBarButNoArrowsNotShowing = getCompatibleImage(bottomMenuBarButNoArrowsNotShowing);
+    
+    
+            bottomMenuBarButNoArrowsShowing = ImageIO.read(Runner.class.getResource("/bottomBarButNoArrowsShowing.png"));
+            bottomMenuBarButNoArrowsShowing = getCompatibleImage(bottomMenuBarButNoArrowsShowing);
+            
+            
+            
             draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
             draggable = getCompatibleImage(draggable);
             music = ImageIO.read(Runner.class.getResource("/music.png"));
@@ -302,8 +337,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             play = Runner.getCompatibleImage(play);
             creator = ImageIO.read(Runner.class.getResourceAsStream("/creator.png"));
             creator = Runner.getCompatibleImage(creator);
-            for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
-                mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
+            warning = new ImageIcon(Runner.class.getResource("/warning.png"));
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
             deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
@@ -1379,23 +1413,29 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         a1 = new Attack(new ArrayList<>(), a);
         a.setAttack(a1);
         hideButtons();
+        setUpUndyne(isGenocide);
+        beginning = false;
+        startScreen.stop();
+        main.changeVolume(musicMutedVolume);
+        main.play();
+        dir = 'u';
+    }
+ 
+    
+    private static void setUpUndyne(boolean isGenocide) {
         if(isGenocide) {
             p.setHealth(60);
             p.setBaseDamage(3);
             p.setDamageOffset(12);
-        }
-        else {
-            p.setHealth(20);
-            p.setBaseDamage(0);
-            p.setDamageOffset(2);
-        }
-        if(isGenocide) {
             main = mainSounds[2];
             speechX = 310;
             speechY = 60;
             gif = gif2;
         }
         else {
+            p.setHealth(20);
+            p.setBaseDamage(0);
+            p.setDamageOffset(2);
             if(stage.isMedium())
                 main = mainSounds[0];
             else
@@ -1403,11 +1443,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             speechX = 305;
             speechY = 50;
         }
-        beginning = false;
-        startScreen.stop();
-        main.changeVolume(musicMutedVolume);
-        main.play();
-        dir = 'u';
     }
     
     @Override
