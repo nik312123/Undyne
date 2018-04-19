@@ -1413,14 +1413,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     public static void stop() {
         if(canBeStopped) {
-            a.clearAttacks();
-            a1.clearAttacks();
+            main.stop();
+            startScreen.changeVolume(musicMutedVolume);
+            startScreen.play();
+            a.resetVars();
+            a1.resetVars();
             isCustomAttack = true;
             canBeStopped = false;
         }
     }
     
     private static void setUpUndyne(boolean isGenocide) {
+        Runner.isGenocide = isGenocide;
         if(isGenocide) {
             p.setHealth(60);
             p.setBaseDamage(3);
@@ -1428,7 +1432,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             main = mainSounds[2];
             speechX = 310;
             speechY = 60;
-            gif = gif2;
+            gif = gif2.clone();
         }
         else {
             p.setHealth(20);

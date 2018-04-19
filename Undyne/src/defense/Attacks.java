@@ -309,18 +309,6 @@ class Attacks {
         }
     }
     
-    void clearAttacks() {
-        undyneAttacks.clear();
-        isNewAttack = true;
-        loopDone = false;
-        isFinished = false;
-        lastAttack = 1;
-        currentAttack = 1;
-        position = 0;
-        counter = 0;
-        prevChar = 'u';
-    }
-    
     Arrow getCurrentArrow() {
         for(int i = position; i < undyneAttacks.size() && !loopDone; ++i) {
             if(undyneAttacks.get(i).size() != 0) {

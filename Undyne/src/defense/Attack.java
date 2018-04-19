@@ -181,10 +181,6 @@ class Attack {
         return "";
     }
     
-    void clearAttacks() {
-        attackPattern.clear();
-    }
-    
     private void draw(Graphics g) {
         if(attackPattern.size() != 0) {
             attackPattern.get(0).draw(g, Color.RED);
