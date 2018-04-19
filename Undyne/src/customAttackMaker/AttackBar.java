@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class AttackBar {
+public class AttackBar {
     
     private int number;
     
@@ -32,7 +32,7 @@ class AttackBar {
         this.number = CustomAttacks.attacks.size();
     }
     
-    ArrayList<ArrowBar> getArrows() {
+    public ArrayList<ArrowBar> getArrows() {
         return arrows;
     }
     
@@ -40,7 +40,7 @@ class AttackBar {
         arrows.add(bar);
     }
     
-    int getNumber() {
+    public int getNumber() {
         return number;
     }
     

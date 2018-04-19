@@ -1,5 +1,8 @@
 package defense;
 
+import customAttackMaker.ArrowBar;
+import customAttackMaker.AttackBar;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,6 +24,19 @@ class Attacks {
     private Attack att;
     
     private ArrayList<ArrayList<Arrow>> undyneAttacks = new ArrayList<>();
+    
+    Attacks(ArrayList<AttackBar> attacks) {
+        for(int i = 0; i < 13000; ++i)
+            undyneAttacks.add(new ArrayList<>());
+        for(AttackBar at : attacks) {
+            for(ArrowBar ar : at.getArrows()) {
+                if(ar.getSpeed() == 1)
+                    addSlowArrow(at.getNumber(), ar.getReversable(), ar.getDirection(), ar.getDelay());
+                else
+                    addArrow(at.getNumber(), ar.getSpeed() - 1, ar.getReversable(), ar.getDirection(), ar.getDelay());
+            }
+        }
+    }
     
     Attacks(boolean isGenocide, boolean survival, boolean isMedium) {
         for(int i = 0; i < 13000; ++i)
@@ -3097,7 +3113,7 @@ class Attacks {
         addArrow(12, 2, true, 'u', 45);
     }
     
-    void setAttack(Attack att) {
+    public void setAttack(Attack att) {
         this.att = att;
     }
     

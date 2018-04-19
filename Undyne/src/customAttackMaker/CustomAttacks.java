@@ -248,6 +248,14 @@ public class CustomAttacks {
             case KeyEvent.VK_I:
                 importFile();
                 break;
+            case KeyEvent.VK_P:
+                if(!Runner.canBeStopped)
+                    Runner.start(attacks, true);
+                break;
+            case KeyEvent.VK_C:
+                if(Runner.canBeStopped)
+                    Runner.stop();
+                break;
         }
         for(AttackBar a : attacks)
             a.keyBoardWork(e);
