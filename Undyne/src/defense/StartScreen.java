@@ -507,8 +507,8 @@ class StartScreen {
             gifOneIndex = 0;
         if(gifTwoIndex > 79)
             gifTwoIndex = 0;
-        g.drawImage(Runner.gif[gifOneIndex], -100, 1000, null);
-        g.drawImage(Runner.gif2[gifTwoIndex], -100, 1000, null);
+        g.drawImage(Runner.gifUndyne[gifOneIndex], -100, 1000, null);
+        g.drawImage(Runner.gifUndying[gifTwoIndex], -100, 1000, null);
         ++gifOneIndex;
         ++gifTwoIndex;
     }

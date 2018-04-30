@@ -37,6 +37,8 @@ public class CustomAttacks {
     static int scrollValue = 70;
     static int dynamicLength = 0;
     
+    private boolean isGenocide = true;
+    
     private JFileChooser chooser = new JFileChooser() {
         @Override
         public void approveSelection() {
@@ -66,7 +68,6 @@ public class CustomAttacks {
     public void perform(Graphics g2) {
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        bg(g);
         dynamicLength = scrollValue;
         for(AttackBar attackBar : attacks)
             attackBar.draw(g, dynamicLength);
@@ -88,11 +89,6 @@ public class CustomAttacks {
     private void addAttackButton(Graphics g) {
         g.drawImage(Runner.addAttack, 300 - 33, dynamicLength - 5, null);
         addAttack.setBounds(300 - 33, dynamicLength - 5, 66, 17);
-    }
-    
-    private void bg(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 600, 600);
     }
     
     private void drawErrorText(Graphics g) {
@@ -147,7 +143,7 @@ public class CustomAttacks {
                         isFirstLine = false;
                     }
                     inputArrow = s.nextLine().split(",");
-                    if(inputArrow.length != 0 && inputArrow.length != 5) {
+                    if(inputArrow.length != 5 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
                         error = "Incorrect number of items in the given comma-separated list";
                         errorPopUp.setExpanding(true);
                         return;
@@ -160,16 +156,18 @@ public class CustomAttacks {
                                 errorPopUp.setExpanding(true);
                                 return;
                             }
-                            if(attack < previousAttack) {
+                            else if(attack < previousAttack) {
                                 error = "Attacks must be in increasing order";
                                 errorPopUp.setExpanding(true);
                                 return;
                             }
-                            if(attack > previousAttack) {
+                            else if(attack > previousAttack) {
                                 if(attack > 1 + previousAttack) {
-                                    error = "Attack numbers can't increase more than one";
-                                    errorPopUp.setExpanding(true);
-                                    return;
+                                    for(int i = previousAttack + 1; i < attack; ++i) {
+                                        AttackBar newBar = new AttackBar();
+                                        newBar.setNumber(i);
+                                        importedAttacks.add(newBar);
+                                    }
                                 }
                                 AttackBar newBar = new AttackBar();
                                 newBar.setNumber(attack);
@@ -241,24 +239,30 @@ public class CustomAttacks {
     }
     
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyCode()) {
-            case KeyEvent.VK_E:
-                exportFile();
-                break;
-            case KeyEvent.VK_I:
-                importFile();
-                break;
-            case KeyEvent.VK_P:
-                if(!Runner.canBeStopped)
-                    Runner.start(attacks, true);
-                break;
-            case KeyEvent.VK_C:
-                if(Runner.canBeStopped)
-                    Runner.stop();
-                break;
+        if(Runner.isCustomAttack) {
+            switch(e.getKeyCode()) {
+                case KeyEvent.VK_E:
+                    exportFile();
+                    break;
+                case KeyEvent.VK_I:
+                    importFile();
+                    break;
+                case KeyEvent.VK_P:
+                    if(!Runner.canBeStopped && attacks.size() != 0 && !areAttacksEmpty())
+                        Runner.play(false);
+                    break;
+            }
+            for(AttackBar a : attacks)
+                a.keyBoardWork(e);
         }
-        for(AttackBar a : attacks)
-            a.keyBoardWork(e);
+    }
+    
+    private boolean areAttacksEmpty() {
+        for(AttackBar attackBar : attacks) {
+            if(attackBar.getArrows().size() != 0)
+                return false;
+        }
+        return true;
     }
     
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -305,6 +309,14 @@ public class CustomAttacks {
     
     public PopUp getErrorPopUp() {
         return errorPopUp;
+    }
+    
+    public ArrayList<AttackBar> getAttacks() {
+        return attacks;
+    }
+    
+    public boolean isGenocide() {
+        return isGenocide;
     }
     
 }

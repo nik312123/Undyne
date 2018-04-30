@@ -116,7 +116,7 @@ public class ArrowBar {
     }
     
     private void deleteArrowButton(Graphics g, int x, int y) {
-        g.drawImage(Runner.deleteArrow, x, y, null); // 19 x 17
+        g.drawImage(Runner.deleteArrow, x, y, null);
         deleteArrowButton.setBounds(x, y, 19, 17);
     }
     

@@ -2,7 +2,7 @@
   <configuration default="false" name="Runner" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="defense.Runner" />
     <module name="Undyne" />
-    <option name="VM_PARAMETERS" value="-Xmx2048M -XX:+UseConcMarkSweepGC -splash:images/loading.gif" />
+    <option name="VM_PARAMETERS" value="-Xms512M -Xmx2048M -XX:+UseConcMarkSweepGC -splash:images/loading.gif" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <extension name="coverage">
       <pattern>

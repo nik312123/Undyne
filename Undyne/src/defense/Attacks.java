@@ -3113,7 +3113,7 @@ class Attacks {
         addArrow(12, 2, true, 'u', 45);
     }
     
-    public void setAttack(Attack att) {
+    void setAttack(Attack att) {
         this.att = att;
     }
     

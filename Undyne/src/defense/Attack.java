@@ -35,7 +35,7 @@ class Attack {
     /*
      * Constructor for constant delay
      */
-    public Attack(ArrayList<Arrow> attackPattern, Attacks a) {
+    Attack(ArrayList<Arrow> attackPattern, Attacks a) {
         this.attackPattern = attackPattern;
         this.a = a;
         if(Runner.isFirstTime) {
