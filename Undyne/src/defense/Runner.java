@@ -17,6 +17,7 @@ import javax.swing.WindowConstants;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -349,7 +350,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
     
     private Runner(String s) {
-        frame = new JFrame(s);
+        frame = new JFrame(s) {
+            
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                CustomAttacks.paintFields(g);
+            }
+            
+        };
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
@@ -1577,6 +1586,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
     }
     
+    public static void addComponent(Component component) {
+        frame.add(component);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == null)
@@ -1584,7 +1597,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         else {
             switch(e.getActionCommand()) {
                 case "main":
-                    repaint();
+                    frame.repaint();
                     break;
                 case "start":
                     start();

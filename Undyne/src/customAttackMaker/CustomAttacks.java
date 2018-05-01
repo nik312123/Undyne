@@ -118,6 +118,8 @@ public class CustomAttacks {
         }
     }
     
+    public static void paintFields(Graphics g) {}
+    
     private void importFile() {
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
         chooser.setDialogTitle("Choose file to import...");
