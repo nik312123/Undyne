@@ -22,32 +22,27 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CustomAttacks {
-    
-    static ArrayList<AttackBar> attacks = new ArrayList<>();
-    
-    private Rectangle addAttack = new Rectangle();
-    
-    public BottomMenuBar bottomMenuBar = new BottomMenuBar();
-    
-    static boolean optionSelected = false;
-    
-    static Rectangle newThing = new Rectangle(226,211,148,63);
-    static Rectangle importThing = new Rectangle(226,326,148,63);
-    
-    static int newThingAlpha = 0;
-    static int importThingAlpha = 0;
-    
-    static Rectangle mouse = new Rectangle();
-    
-    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
-    
-    private String error;
+    private static boolean optionSelected = false;
+    private boolean isGenocide = true;
     
     private int errorLine;
+    private static int newThingAlpha = 0;
+    private static int importThingAlpha = 0;
     static int scrollValue = 70;
     static int dynamicLength = 0;
     
-    private boolean isGenocide = true;
+    private String error;
+    
+    private Rectangle addAttack = new Rectangle();
+    private static Rectangle newThing = new Rectangle(226, 211, 148, 63);
+    private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
+    static Rectangle mouse = new Rectangle();
+    
+    static ArrayList<AttackBar> attacks = new ArrayList<>();
+    
+    private BottomMenuBar bottomMenuBar = new BottomMenuBar();
+    
+    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
     
     private JFileChooser chooser = new JFileChooser() {
         @Override
@@ -73,8 +68,6 @@ public class CustomAttacks {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Text files", "txt");
         chooser.setFileFilter(textFilter);
-    
-       
     }
     
     public void perform(Graphics g2) {
@@ -86,40 +79,39 @@ public class CustomAttacks {
                 attackBar.draw(g, dynamicLength);
             addAttackButton(g);
             bottomMenuBar.work(g);
-        } else {
-            startScreen(g);
         }
+        else
+            startScreen(g);
     }
     
-    private void startScreen(Graphics2D g){
+    private void startScreen(Graphics2D g) {
         if(CustomAttacks.mouse.intersects(newThing)) {
-            newThingAlpha+=5;
+            newThingAlpha += 5;
             if(newThingAlpha > 255)
                 newThingAlpha = 255;
-        } else {
-            if(newThingAlpha>0)
-                newThingAlpha-=5;
+        }
+        else {
+            if(newThingAlpha > 0)
+                newThingAlpha -= 5;
             if(newThingAlpha < 0)
                 newThingAlpha = 0;
         }
-        g.setColor(new Color(157,50,100,newThingAlpha));
+        g.setColor(new Color(157, 50, 100, newThingAlpha));
         g.fill(newThing);
-    
-    
-        if(CustomAttacks.mouse.intersects(importThing)){
-            importThingAlpha+=5;
+        if(CustomAttacks.mouse.intersects(importThing)) {
+            importThingAlpha += 5;
             if(importThingAlpha > 255)
                 importThingAlpha = 255;
-        } else {
+        }
+        else {
             if(importThingAlpha > 0)
-                importThingAlpha-=5;
+                importThingAlpha -= 5;
             if(importThingAlpha < 0)
                 importThingAlpha = 0;
         }
-        g.setColor(new Color(157,50,100,importThingAlpha));
-    
+        g.setColor(new Color(157, 50, 100, importThingAlpha));
         g.fill(importThing);
-        g.drawImage(Runner.CAT,129, 21,null);
+        g.drawImage(Runner.CAT, 129, 21, null);
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);
         errorPopUp.draw(g);
@@ -168,7 +160,7 @@ public class CustomAttacks {
         }
     }
     
-    public void importFile() {
+    private void importFile() {
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
         chooser.setDialogTitle("Choose file to import...");
         if(chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -267,7 +259,7 @@ public class CustomAttacks {
         }
     }
     
-    public void exportFile() {
+    private void exportFile() {
         ArrayList<String> output = new ArrayList<>();
         output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored and would be still ignored if it were an arrow code.");
         for(AttackBar attackBar : attacks) {
@@ -326,7 +318,6 @@ public class CustomAttacks {
     
     public void mouseMoved(MouseEvent e) {
         mouse.setBounds(e.getX(), e.getY(), 1, 1);
-    
     }
     
     public void mouseDragged(MouseEvent e) {
@@ -361,25 +352,17 @@ public class CustomAttacks {
         }
         if(mouse.intersects(addAttack))
             addAttack();
-        
         if(!optionSelected) {
-            if(mouse.intersects(newThing))
-                optionSelected = true;
-    
-            if(mouse.intersects(importThing)) {
-                optionSelected = true;
+            boolean intersectsImport = mouse.intersects(importThing);
+            optionSelected = mouse.intersects(newThing) || intersectsImport;
+            if(intersectsImport)
                 importFile();
-            }
         }
-        
         int check = bottomMenuBar.mouseWorks();
-        
         if(check == 1)
             exportFile();
-        
-        if(check == 0)
+        else if(check == 0)
             importFile();
-    
     }
     
     public void mouseExited(MouseEvent e) {}

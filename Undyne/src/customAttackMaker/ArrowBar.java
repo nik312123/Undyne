@@ -6,12 +6,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class ArrowBar {
-    
-    private Rectangle deleteArrowButton = new Rectangle();
-    private Rectangle directionRectangle = new Rectangle();
-    private Rectangle orderIntersecton = new Rectangle();
-    private Rectangle dragArrowIcon = new Rectangle();
-    
     private int y = 0;
     private int speed;
     private int delay;
@@ -22,6 +16,10 @@ public class ArrowBar {
     
     private char direction;
     
+    private Rectangle deleteArrowButton = new Rectangle();
+    private Rectangle directionRectangle = new Rectangle();
+    private Rectangle orderIntersecton = new Rectangle();
+    private Rectangle dragArrowIcon = new Rectangle();
     private Rectangle reverseTickBox = new Rectangle();
     
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
@@ -50,7 +48,6 @@ public class ArrowBar {
     void draw(Graphics g, int x, int y) {
         if(!pressed)
             this.y = y;
-        
         orderIntersecton.setBounds(x, this.y, 100, 10);
         g.drawImage(Runner.arrowImg, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);

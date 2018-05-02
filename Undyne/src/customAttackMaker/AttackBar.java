@@ -2,28 +2,19 @@ package customAttackMaker;
 
 import defense.Runner;
 
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JViewport;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class AttackBar {
-    
     private int number;
-    
     private static final int ATTACKBAR_X = 30;
     
     private boolean isDropped = true;
-    
-    
     
     private Rectangle dropDownButton = new Rectangle();
     private Rectangle deleteAttack = new Rectangle();
@@ -72,8 +63,6 @@ public class AttackBar {
         }
         else
             CustomAttacks.dynamicLength += 35;
-    
-    
     }
     
     private void drawString(Graphics g, int x, int y) {
