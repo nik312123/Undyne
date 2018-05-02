@@ -42,6 +42,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -67,7 +68,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static double sfxMutedVolume = 1;
     
     private static int nothingCounter = 0;
-    public static int customAttacksCounter = 0;
     private static int DELAY = 10;
     private static int breakCount = 0;
     private static int breakFrame = 0;
@@ -87,6 +87,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static int levelIndex = 0;
     private static int score = 0;
     private static int lastAttack = 1;
+    private static int loadingCounter = 0;
+    private static int loadingFrame = 0;
+    public static int customAttacksCounter = 0;
     
     private static boolean isGenocide = false;
     private static boolean survival = false;
@@ -104,17 +107,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
     private static boolean isReplaying = false;
-    public static boolean canBeStopped = false;
-    private static boolean isCustomAttack = false;
+    private static boolean isRobotBoxChecked = false;
+    private static boolean isPlayTimerDone = false;
+    private static boolean isStopTimerDone = false;
+    private static boolean isStartTimerDone = false;
+    private static boolean isOpenCreatorTimerDone = false;
+    private static boolean isCloseCreatorTimerDone = false;
     static boolean isFirstTime = true;
+    public static boolean isCustomAttack = false;
+    public static boolean canBeStopped = false;
     
     private static Timer timer;
+    private static Timer oneSecondDelay;
     
     public static BufferedImage dragArrowIcon;
     public static BufferedImage bottomMenuBar;
     public static BufferedImage bottomMenuBarButNoArrowsNotShowing;
     public static BufferedImage bottomMenuBarButNoArrowsShowing;
-    
     public static BufferedImage bottomBarNotShowing;
     public static BufferedImage CAT;
     public static BufferedImage importThing;
@@ -131,10 +140,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static BufferedImage droppedClosed;
     public static BufferedImage newArrow;
     private static BufferedImage exit;
-    public static BufferedImage arrowImg;
-    
-    private static FocusListener checkFocus;
-    
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -146,21 +151,38 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static BufferedImage help;
     private static BufferedImage play;
     private static BufferedImage creator;
+    private static BufferedImage checkBox;
+    public static BufferedImage arrowImg;
+    public static BufferedImage dragArrowIcon;
+    public static BufferedImage addAttack;
+    public static BufferedImage ticked;
+    public static BufferedImage arrowDown;
+    public static BufferedImage arrowLeft;
+    public static BufferedImage arrowRight;
+    public static BufferedImage arrowUp;
+    public static BufferedImage deleteArrow;
+    public static BufferedImage deleteAttack;
+    public static BufferedImage droppedDown;
+    public static BufferedImage droppedClosed;
+    public static BufferedImage newArrow;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
+    private static BufferedImage[] loadingCreator = new BufferedImage[48];
+    private static BufferedImage[] gif;
     static BufferedImage blueArr;
     static BufferedImage redArr;
     static BufferedImage reverseArr;
-    static BufferedImage[] gif;
-    static BufferedImage[] gif2;
-    
+    static BufferedImage[] gifUndyne;
+    static BufferedImage[] gifUndying;
+        
     public static ImageIcon warning;
     
     private static Sound main;
     private static Sound sojSlow;
     private static Sound gameDone;
     private static Sound startScreen;
+    private static Sound creatorMusic;
     private static Sound undyne;
     private static Sound undying;
     private static Sound heal;
@@ -188,6 +210,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static Font deteFontNorm;
     static Font deteFontSpeech;
     static Font deteFontScore;
+    
+    private static FocusListener checkFocus;
     
     private static Attack a1;
     private static Attacks a;
@@ -228,6 +252,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             });
             sojSlow = new Sound(Runner.class.getResource("/sojSlow.ogg"), true);
             startScreen = new Sound(Runner.class.getResource("/WF.ogg"), true);
+            creatorMusic = new Sound(Runner.class.getResource("/DS.ogg"), true);
             undyne = new Sound(Runner.class.getResource("/undyne.ogg"), false);
             undying = new Sound(Runner.class.getResource("/undying.ogg"), false);
             heal = new Sound(Runner.class.getResource("/heal.ogg"), false);
@@ -251,10 +276,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
                 gameOver[i] = getCompatibleImage(gameOver[i]);
             }
-            gif2 = new BufferedImage[80];
+            gifUndying = new BufferedImage[80];
             for(int i = 0; i <= 79; ++i) {
-                gif2[i] = ImageIO.read(Runner.class.getResource("/gif/undying" + i + ".png"));
-                gif2[i] = getCompatibleImage(gif2[i]);
+                gifUndying[i] = ImageIO.read(Runner.class.getResource("/gif/undying" + i + ".png"));
+                gifUndying[i] = getCompatibleImage(gifUndying[i]);
             }
             levels[0] = ImageIO.read(Runner.class.getResource("/levelOne.png"));
             levels[1] = ImageIO.read(Runner.class.getResource("/levelTwo.png"));
@@ -294,7 +319,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             addAttack = getCompatibleImage(addAttack);
             deleteAttack = ImageIO.read(Runner.class.getResource("/delete attack.png"));
             deleteAttack = getCompatibleImage(deleteAttack);
-            newArrow = ImageIO.read(Runner.class.getResource("/new arrow.png"));
+            newArrow = ImageIO.read(Runner.class.getResource("/newArrow.png"));
             newArrow = getCompatibleImage(newArrow);
             droppedDown = ImageIO.read(Runner.class.getResource("/droppedDown.png"));
             droppedDown = getCompatibleImage(droppedDown);
@@ -334,19 +359,26 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             help = ImageIO.read(Runner.class.getResource("/help.png"));
             help = getCompatibleImage(help);
             play = ImageIO.read(Runner.class.getResourceAsStream("/play.png"));
-            play = Runner.getCompatibleImage(play);
+            play = getCompatibleImage(play);
             creator = ImageIO.read(Runner.class.getResourceAsStream("/creator.png"));
-            creator = Runner.getCompatibleImage(creator);
+            creator = getCompatibleImage(creator);
+            warning = new ImageIcon(Runner.class.getResource("/warning.png"));
+            checkBox = ImageIO.read(Runner.class.getResource("/checkBox.png"));
+            checkBox = getCompatibleImage(checkBox);
+            for(int i = 0; i < 48; ++i) {
+                loadingCreator[i] = ImageIO.read(Runner.class.getResource("/loading/loading" + i + ".png"));
+                loadingCreator[i] = getCompatibleImage(loadingCreator[i]);
+            }
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
             deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
             deteFontScore = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(22.0f);
         }
-        if(gif == null || gif.length != 32) {
-            gif = new BufferedImage[32];
+        if(gifUndyne == null || gifUndyne.length != 32) {
+            gifUndyne = new BufferedImage[32];
             for(int i = 0; i <= 31; ++i) {
-                gif[i] = ImageIO.read(Runner.class.getResource("/gif/frame" + i + ".png"));
-                gif[i] = getCompatibleImage(gif[i]);
+                gifUndyne[i] = ImageIO.read(Runner.class.getResource("/gif/frame" + i + ".png"));
+                gifUndyne[i] = getCompatibleImage(gifUndyne[i]);
             }
         }
         new Runner("Undyne: Absolute");
@@ -697,6 +729,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         creditsList = stage.getCreditsList();
         PopUp helpPopUp = helper.getHelpPopUp();
+        PopUp errorPopUp = customAttackMaker.getErrorPopUp();
         
         frame.add(closeButton);
         frame.add(draggableButton);
@@ -710,6 +743,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.add(sfxSlider);
         frame.add(creditsList);
         frame.add(helpPopUp);
+        frame.add(errorPopUp);
         
         MouseListener errorListener = new MouseListener() {
             
@@ -753,6 +787,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         sfxSlider.setVisible(true);
         creditsList.setVisible(true);
         helpPopUp.setVisible(true);
+        errorPopUp.setVisible(true);
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
@@ -802,7 +837,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     private Runner() {
         timer = new Timer(DELAY, this);
+        timer.setActionCommand("main");
         timer.start();
+        oneSecondDelay = new Timer(1000, this);
+        oneSecondDelay.setRepeats(false);
     }
     
     static BufferedImage getCompatibleImage(BufferedImage current) {
@@ -814,6 +852,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g2d.drawImage(current, 0, 0, null);
         optimized.setAccelerationPriority(1);
         return optimized;
+    }
+    
+    private static Rectangle getCheckBox() {
+        return new Rectangle(579, 36, 13, 12);
     }
     
     @Override
@@ -834,6 +876,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 startScreen.changeVolume(musicSlider.getPercentage());
             if(stage != null)
                 stage.changeMusicVol(musicSlider.getPercentage());
+            if(sojSlow != null)
+                sojSlow.changeVolume(musicSlider.getPercentage());
+            if(creatorMusic != null)
+                creatorMusic.changeVolume(musicSlider.getPercentage());
             Attack.changeVol(sfxSlider.getPercentage());
             StartScreen.changeSfxVol(sfxSlider.getPercentage());
             undyne.changeVolume(sfxSlider.getPercentage());
@@ -848,8 +894,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             ++frameCounter;
             if(frameCounter == 1000)
                 frameCounter = 0;
-            if(beginning) {
-                drawBG(g);
+            drawBG(g);
+            if(beginning && !oneSecondDelay.isRunning()) {
                 if(stage.shouldShow()) {
                     if(!stage.isPlayChosen()) {
                         creditsButton.draw(g);
@@ -865,15 +911,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         moveButtons(true);
                     if(stage.heartsActivated())
                         startScreen.stop();
-                    else if(beginning && startScreen.isStopped())
+                    else if(beginning && startScreen.isStopped() && !oneSecondDelay.isRunning())
                         startScreen.play();
                 }
                 stage.run(g);
                 drawCheat(g);
             }
-            else if(isCustomAttack)
+            else if(isCustomAttack && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
-            else {
+            else if(!oneSecondDelay.isRunning()) {
                 if(p.getHit()) {
                     p.decreaseCounter();
                     if(frameCounter % 16 == 0) {
@@ -889,7 +935,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     }
                 }
                 if(p.getHealth() != 0) {
-                    drawBG(g);
                     drawCheat(g);
                     drawSqu(g);
                     drawCircle(g);
@@ -903,7 +948,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     automatic();
                 }
                 else {
-                    drawBG(g);
                     if(firstEnd) {
                         main.stop();
                         firstEnd = false;
@@ -924,37 +968,57 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     }
                 }
             }
-        }
-        if(a != null && a.getIsFinished()) {
-            if(isGenocide && count == 19 || !isGenocide && count == 10) {
-                if(main != null)
-                    main.stop();
-                g.drawImage(speech, speechX, speechY, null);
+            if(a != null && a.getIsFinished() && !oneSecondDelay.isRunning()) {
+                if(isGenocide && count == 19 || !isGenocide && count == 10 && !canBeStopped) {
+                    if(main != null)
+                        main.stop();
+                    g.drawImage(speech, speechX, speechY, null);
+                }
+            }
+            if(a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10) && !oneSecondDelay.isRunning()) {
+                if(canBeStopped)
+                    stop(true);
+                else
+                    undyneSpeech(g);
+            }
+            closeButton.draw(g);
+            draggableButton.draw(g);
+            musicButton.draw(g);
+            sfxButton.draw(g);
+            if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming()) {
+                musicSlider.setVisible(true);
+                musicSlider.draw(g);
+            }
+            else
+                musicSlider.setVisible(false);
+            if(sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming()) {
+                sfxSlider.setVisible(true);
+                sfxSlider.draw(g);
+            }
+            else
+                sfxSlider.setVisible(false);
+            if(speechDone)
+                drawReplay(g, 10);
+            helper.initiate(g, helpStarter);
+            if(survival && !beginning)
+                printScore(g);
+            if(oneSecondDelay.isRunning()) {
+                Graphics2D g2d = (Graphics2D) g;
+                if(++loadingCounter == 2) {
+                    loadingCounter = 0;
+                    ++loadingFrame;
+                }
+                if(loadingFrame == 48)
+                    loadingFrame = 0;
+                AffineTransform loadingTrans = new AffineTransform();
+                loadingTrans.translate(216.5, 265.5);
+                g2d.drawImage(loadingCreator[loadingFrame], loadingTrans, null);
+            }
+            else {
+                loadingCounter = 0;
+                loadingFrame = 0;
             }
         }
-        if(a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10))
-            undyneSpeech(g);
-        closeButton.draw(g);
-        draggableButton.draw(g);
-        musicButton.draw(g);
-        sfxButton.draw(g);
-        if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming()) {
-            musicSlider.setVisible(true);
-            musicSlider.draw(g);
-        }
-        else
-            musicSlider.setVisible(false);
-        if(sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming()) {
-            sfxSlider.setVisible(true);
-            sfxSlider.draw(g);
-        }
-        else
-            sfxSlider.setVisible(false);
-        if(speechDone)
-            drawReplay(g, 10);
-        helper.initiate(g, helpStarter);
-        if(survival && !beginning)
-            printScore(g);
         g.dispose();
     }
     
@@ -1048,7 +1112,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 gifChange = 3;
             }
             if(isGenocide) {
-                if(count == maxCount)
+                if(count >= maxCount)
                     count = 0;
                 else if(gifCount % gifChange == 0)
                     ++count;
@@ -1057,7 +1121,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     gifCount = 0;
             }
             else {
-                if(count == maxCount)
+                if(count >= maxCount)
                     count = 0;
                 else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
                     ++count;
@@ -1313,7 +1377,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     static void changeGif() {
         isGenocide = true;
-        gif = gif2;
+        gif = gifUndying.clone();
         p.setBaseDamage(2);
         p.setDamageOffset(4);
         p.convertHealth();
@@ -1330,6 +1394,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     static boolean getHelpStarter() {
         return helpStarter;
+    }
+    
+    static boolean isOneSecondDelayRunning() {
+        return oneSecondDelay.isRunning();
     }
     
     static JFrame getFrame() {
@@ -1406,23 +1474,117 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
     }
     
-    private void start() {
-        isGenocide = stage.isHard();
-        survival = stage.isSurvival();
-        a = new Attacks(isGenocide, survival, stage.isMedium());
-        a1 = new Attack(new ArrayList<>(), a);
-        a.setAttack(a1);
-        hideButtons();
-        setUpUndyne(isGenocide);
-        beginning = false;
-        startScreen.stop();
-        main.changeVolume(musicMutedVolume);
-        main.play();
-        dir = 'u';
+    private static void start() {
+        if(!oneSecondDelay.isRunning()) {
+            if(!isStartTimerDone) {
+                startScreen.stop();
+                oneSecondDelay.setActionCommand("start");
+                oneSecondDelay.start();
+                isStartTimerDone = true;
+            }
+            else {
+                isGenocide = stage.isHard();
+                survival = stage.isSurvival();
+                a = new Attacks(isGenocide, survival, stage.isMedium());
+                a1 = new Attack(new ArrayList<>(), a);
+                a.setAttack(a1);
+                hideButtons();
+                setUpUndyne(isGenocide);
+                beginning = false;
+                main.changeVolume(musicMutedVolume);
+                main.play();
+                dir = 'u';
+                isStartTimerDone = false;
+            }
+        }
     }
- 
+    
+    public static void play(boolean isCalledByTimer) {
+        if(!oneSecondDelay.isRunning()) {
+            if(!isPlayTimerDone) {
+                creatorMusic.stop();
+                oneSecondDelay.setActionCommand("play");
+                oneSecondDelay.start();
+                isPlayTimerDone = true;
+            }
+            else if(isCalledByTimer) {
+                DELAY = 10;
+                a = new Attacks(customAttackMaker.getAttacks());
+                a1 = new Attack(new ArrayList<>(), a);
+                a.setAttack(a1);
+                setUpUndyne(customAttackMaker.isGenocide());
+                beginning = false;
+                isCustomAttack = false;
+                main.changeVolume(musicMutedVolume);
+                main.play();
+                dir = 'u';
+                canBeStopped = true;
+                isPlayTimerDone = false;
+            }
+        }
+    }
+    
+    private static void stop(boolean isCalledByTimer) {
+        if(!oneSecondDelay.isRunning()) {
+            if(!isStopTimerDone) {
+                main.stop();
+                oneSecondDelay.setActionCommand("stop");
+                oneSecondDelay.start();
+                isStopTimerDone = true;
+            }
+            else if(canBeStopped && isCalledByTimer) {
+                creatorMusic.play();
+                a.resetVars();
+                a1.resetVars();
+                isCustomAttack = true;
+                canBeStopped = false;
+                isStopTimerDone = false;
+            }
+        }
+    }
+    
+    private static void openCreator() {
+        if(!oneSecondDelay.isRunning()) {
+            if(!isOpenCreatorTimerDone) {
+                startScreen.stop();
+                oneSecondDelay.setActionCommand("openCreator");
+                oneSecondDelay.start();
+                isOpenCreatorTimerDone = true;
+            }
+            else {
+                stage.playClick();
+                isCustomAttack = !isCustomAttack;
+                beginning = !beginning;
+                moveButtons(!beginning);
+                if(DELAY == 10)
+                    DELAY = 0;
+                else
+                    DELAY = 10;
+                creatorMusic.play();
+                isOpenCreatorTimerDone = false;
+            }
+        }
+    }
+    
+    private static void closeCreator() {
+        if(!oneSecondDelay.isRunning()) {
+            if(!isCloseCreatorTimerDone) {
+                creatorMusic.stop();
+                oneSecondDelay.setActionCommand("closeCreator");
+                oneSecondDelay.start();
+                isCloseCreatorTimerDone = true;
+            }
+            else {
+                DELAY = 10;
+                isCustomAttack = false;
+                beginning = true;
+                isCloseCreatorTimerDone = false;
+            }
+        }
+    }
     
     private static void setUpUndyne(boolean isGenocide) {
+        Runner.isGenocide = isGenocide;
         if(isGenocide) {
             p.setHealth(60);
             p.setBaseDamage(3);
@@ -1430,24 +1592,48 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             main = mainSounds[2];
             speechX = 310;
             speechY = 60;
-            gif = gif2;
+            gif = gifUndying.clone();
         }
         else {
             p.setHealth(20);
             p.setBaseDamage(0);
             p.setDamageOffset(2);
-            if(stage.isMedium())
+            if(stage.isMedium() || stage.isSurvival())
                 main = mainSounds[0];
             else
                 main = sojSlow;
             speechX = 305;
             speechY = 50;
+            gif = gifUndyne.clone();
         }
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        repaint();
+        if(e.getActionCommand() == null)
+            repaint();
+        else {
+            switch(e.getActionCommand()) {
+                case "main":
+                    repaint();
+                    break;
+                case "start":
+                    start();
+                    break;
+                case "openCreator":
+                    openCreator();
+                    break;
+                case "closeCreator":
+                    closeCreator();
+                    break;
+                case "play":
+                    play(true);
+                    break;
+                case "stop":
+                    stop(true);
+                    break;
+            }
+        }
     }
     
     @Override
@@ -1497,6 +1683,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     stage.setHeartX(5);
                     stage.setHeartY(72);
                 }
+                else if(isCustomAttack && !oneSecondDelay.isRunning())
+                    closeCreator();
                 break;
             case KeyEvent.VK_Z:
                 if(beginning) {
@@ -1516,16 +1704,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                             stage.setHeartX(5);
                             stage.setHeartY(75);
                         }
-                        else if(creatorButton.onButton()) {
-                            stage.playClick();
-                            isCustomAttack = !isCustomAttack;
-                            beginning = !beginning;
-                            moveButtons(!beginning);
-                            if(DELAY == 10)
-                                DELAY = 0;
-                            else
-                                DELAY = 10;
-                        }
+                        else if(creatorButton.onButton() && !oneSecondDelay.isRunning())
+                            openCreator();
                     }
                     if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
                         block.play();
@@ -1570,6 +1750,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     restartApplication();
                     start();
                 }
+                break;
+            case KeyEvent.VK_C:
+                if(Runner.canBeStopped)
+                    Runner.stop(false);
                 break;
         }
         if(e.getKeyChar() != '￿')
@@ -1617,8 +1801,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         return bounds.contains(mousePos);
     }
     
+    private static void robotBoxClicked(MouseEvent e) {
+        int x = e.getX(), y = e.getY();
+        if(canBeStopped && getCheckBox().contains(x, y))
+            isRobotBoxChecked = !isRobotBoxChecked;
+        if(activated.equals("Cheat Activated"))
+            automatic = true;
+        else
+            automatic = isRobotBoxChecked;
+    }
+    
     @Override
     public void mouseClicked(MouseEvent e) {
+        robotBoxClicked(e);
         customAttackMaker.mouseClicked(e);
     }
     

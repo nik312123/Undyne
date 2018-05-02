@@ -8,7 +8,7 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Attack {
+class Attack {
     private int counter = 0;
     private static boolean isFirst = true;
     /*

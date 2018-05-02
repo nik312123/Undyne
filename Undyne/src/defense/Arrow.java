@@ -120,65 +120,67 @@ class Arrow {
     }
     
     void tick() {
-        if(speed != 1 || isOne || !isSlow) {
-            switch(direction) {
-                case 'l':
-                    x -= speed;
-                    break;
-                case 'r':
-                    x += speed;
-                    break;
-                case 'u':
-                    y -= speed;
-                    break;
-                case 'd':
-                    y += speed;
-                    break;
+        if(!Runner.isOneSecondDelayRunning()) {
+            if(speed != 1 || isOne || !isSlow) {
+                switch(direction) {
+                    case 'l':
+                        x -= speed;
+                        break;
+                    case 'r':
+                        x += speed;
+                        break;
+                    case 'u':
+                        y -= speed;
+                        break;
+                    case 'd':
+                        y += speed;
+                        break;
+                }
             }
-        }
-        if(isSlow)
-            isOne = !isOne;
-        if(switchDir && directionNotSwitched) {
-            switch(direction) {
-                case 'l':
-                    if(Math.pow(x - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(x < 300 && y == 281))
-                        y = 281 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(x - 300 - (radius - 72), 2));
-                    else {
-                        y = 281;
-                        directionNotSwitched = false;
-                        direction = 'r';
-                    }
-                    break;
-                case 'r':
-                    if(Math.pow(300 - x - (radius - 72), 2) < Math.pow(radius, 2) && !(x > 300 && y == 281)) {
-                        y = 281 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - x - (radius - 72), 2));
-                    }
-                    else {
-                        x -= 5;
-                        y = 281;
-                        directionNotSwitched = false;
-                        direction = 'l';
-                    }
-                    break;
-                case 'u':
-                    if(Math.pow(y - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(y < 300 && x == 285))
-                        x = 285 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(y - 300 - (radius - 72), 2));
-                    else {
-                        y += 9;
-                        x = 285;
-                        directionNotSwitched = false;
-                        direction = 'd';
-                    }
-                    break;
-                case 'd':
-                    if(Math.pow(300 - y - (radius - 72), 2) < Math.pow(72, 2) && !(y > 300 && x == 285))
-                        x = 285 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - y - (radius - 72), 2));
-                    else {
-                        x = 285;
-                        directionNotSwitched = false;
-                        direction = 'u';
-                    }
-                    break;
+            if(isSlow)
+                isOne = !isOne;
+            if(switchDir && directionNotSwitched) {
+                switch(direction) {
+                    case 'l':
+                        if(Math.pow(x - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(x < 300 && y == 281))
+                            y = 281 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(x - 300 - (radius - 72), 2));
+                        else {
+                            y = 281;
+                            directionNotSwitched = false;
+                            direction = 'r';
+                        }
+                        break;
+                    case 'r':
+                        if(Math.pow(300 - x - (radius - 72), 2) < Math.pow(radius, 2) && !(x > 300 && y == 281)) {
+                            y = 281 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - x - (radius - 72), 2));
+                        }
+                        else {
+                            x -= 5;
+                            y = 281;
+                            directionNotSwitched = false;
+                            direction = 'l';
+                        }
+                        break;
+                    case 'u':
+                        if(Math.pow(y - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(y < 300 && x == 285))
+                            x = 285 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(y - 300 - (radius - 72), 2));
+                        else {
+                            y += 9;
+                            x = 285;
+                            directionNotSwitched = false;
+                            direction = 'd';
+                        }
+                        break;
+                    case 'd':
+                        if(Math.pow(300 - y - (radius - 72), 2) < Math.pow(72, 2) && !(y > 300 && x == 285))
+                            x = 285 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - y - (radius - 72), 2));
+                        else {
+                            x = 285;
+                            directionNotSwitched = false;
+                            direction = 'u';
+                        }
+                        break;
+                }
             }
         }
     }

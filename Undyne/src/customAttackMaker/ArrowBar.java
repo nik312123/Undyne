@@ -8,26 +8,16 @@ import java.awt.Rectangle;
 public class ArrowBar {
     
     private Rectangle deleteArrowButton = new Rectangle();
-    
     private Rectangle directionRectangle = new Rectangle();
-    
     private Rectangle orderIntersecton = new Rectangle();
+    private Rectangle dragArrowIcon = new Rectangle();
     
     private int y = 0;
+    private int speed;
+    private int delay;
     
     private boolean isDirectionSelected = false;
     private boolean pressed = false;
-    
-    void setPressed(boolean pressed) {
-        this.pressed = pressed;
-    }
-    
-    private Rectangle dragArrowIcon = new Rectangle();
-    
-    private int speed;
-    
-    private int delay;
-    
     private boolean reverseable;
     
     private char direction;
@@ -47,6 +37,10 @@ public class ArrowBar {
     
     void setY(int y) {
         this.y = y;
+    }
+    
+    void setPressed(boolean pressed) {
+        this.pressed = pressed;
     }
     
     Rectangle getOrderIntersecton() {
@@ -117,7 +111,7 @@ public class ArrowBar {
     }
     
     private void deleteArrowButton(Graphics g, int x, int y) {
-        g.drawImage(Runner.deleteArrow, x, y, null); // 19 x 17
+        g.drawImage(Runner.deleteArrow, x, y, null);
         deleteArrowButton.setBounds(x, y, 19, 17);
     }
     
@@ -137,11 +131,11 @@ public class ArrowBar {
         this.isDirectionSelected = false;
     }
     
-    int getDelay() {
+    public int getDelay() {
         return delay;
     }
     
-    int getSpeed() {
+    public int getSpeed() {
         return speed;
     }
     
@@ -153,7 +147,7 @@ public class ArrowBar {
         this.direction = direction;
     }
     
-    char getDirection() {
+    public char getDirection() {
         return direction;
     }
     
@@ -161,7 +155,7 @@ public class ArrowBar {
         this.reverseable = reverse;
     }
     
-    boolean getReversable() {
+    public boolean getReversable() {
         return reverseable;
     }
     
