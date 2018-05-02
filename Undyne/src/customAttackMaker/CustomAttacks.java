@@ -162,6 +162,11 @@ public class CustomAttacks {
                                 return;
                             }
                             else if(attack > previousAttack) {
+                                if(attack >= 13000) {
+                                    error = "Maximum number of attacks is 13000";
+                                    errorPopUp.setExpanding(true);
+                                    return;
+                                }
                                 if(attack > 1 + previousAttack) {
                                     for(int i = previousAttack + 1; i < attack; ++i) {
                                         AttackBar newBar = new AttackBar();
