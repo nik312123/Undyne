@@ -8,26 +8,16 @@ import java.awt.Rectangle;
 public class ArrowBar {
     
     private Rectangle deleteArrowButton = new Rectangle();
-    
     private Rectangle directionRectangle = new Rectangle();
-    
     private Rectangle orderIntersecton = new Rectangle();
+    private Rectangle dragArrowIcon = new Rectangle();
     
     private int y = 0;
+    private int speed;
+    private int delay;
     
     private boolean isDirectionSelected = false;
     private boolean pressed = false;
-    
-    void setPressed(boolean pressed) {
-        this.pressed = pressed;
-    }
-    
-    private Rectangle dragArrowIcon = new Rectangle();
-    
-    private int speed;
-    
-    private int delay;
-    
     private boolean reverseable;
     
     private char direction;
@@ -47,6 +37,10 @@ public class ArrowBar {
     
     void setY(int y) {
         this.y = y;
+    }
+    
+    void setPressed(boolean pressed) {
+        this.pressed = pressed;
     }
     
     Rectangle getOrderIntersecton() {

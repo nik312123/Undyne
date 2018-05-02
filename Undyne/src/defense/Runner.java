@@ -944,8 +944,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             draggableButton.draw(g);
             musicButton.draw(g);
             sfxButton.draw(g);
-            if(canBeStopped && !oneSecondDelay.isRunning())
-                drawRobotBox(g);
             if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming()) {
                 musicSlider.setVisible(true);
                 musicSlider.draw(g);
@@ -1302,14 +1300,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g.setFont(deteFontScore);
         g.setColor(Color.YELLOW);
         g.drawString("Score: " + score, 5, 590);
-    }
-    
-    private static void drawRobotBox(Graphics g) {
-        g.setFont(deteFontSpeech);
-        g.drawString("Automatic", 500, 46);
-        g.drawImage(checkBox, 579, 36, null);
-        if(isRobotBoxChecked)
-            g.drawImage(ticked, 579, 36, null);
     }
     
     private static void hideButtons() {
