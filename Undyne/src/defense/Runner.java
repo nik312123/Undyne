@@ -355,7 +355,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void paint(Graphics g) {
                 super.paint(g);
-                CustomAttacks.paintFields(g);
             }
             
         };
@@ -989,6 +988,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 loadingFrame = 0;
             }
         }
+        if(isCustomAttack)
+            CustomAttacks.paintFields(g);
+        else
+        
         g.dispose();
     }
     
@@ -1378,7 +1381,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         return oneSecondDelay.isRunning();
     }
     
-    static JFrame getFrame() {
+    public static JFrame getFrame() {
         return frame;
     }
     
@@ -1586,8 +1589,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
     }
     
-    public static void addComponent(Component component) {
-        frame.add(component);
+    public static void addComponent(Component component, int index) {
+        frame.add(component, index);
+    }
+    
+    public static void removeComponent(Component component) {
+        frame.remove(component);
     }
     
     @Override

@@ -14,7 +14,7 @@ public class AttackBar {
     
     private int number;
     
-    private static final int ATTACKBAR_X = 30;
+    static final int ATTACKBAR_X = 30;
     
     private boolean isDropped = true;
     
@@ -131,8 +131,10 @@ public class AttackBar {
         else if(CustomAttacks.mouse.intersects(newArrowButton))
             arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
-            if(CustomAttacks.mouse.intersects(arrows.get(i).getDeleteArrowButton()))
+            if(CustomAttacks.mouse.intersects(arrows.get(i).getDeleteArrowButton())) {
+                arrows.get(i).removeFields();
                 arrows.remove(i);
+            }
             else if(CustomAttacks.mouse.intersects(arrows.get(i).getReverseTickBox()))
                 arrows.get(i).setReverseable(!arrows.get(i).isReverse());
             else if(CustomAttacks.mouse.intersects(arrows.get(i).getDirectionRectangle()))

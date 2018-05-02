@@ -1,44 +1,86 @@
 package customAttackMaker;
 
 import defense.Runner;
+import nikunj.classes.NumberFieldLimit;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.IOException;
 
 public class ArrowBar {
     
     private Rectangle deleteArrowButton = new Rectangle();
-    
     private Rectangle directionRectangle = new Rectangle();
-    
     private Rectangle orderIntersecton = new Rectangle();
+    private Rectangle dragArrowIcon = new Rectangle();
+    private Rectangle reverseTickBox = new Rectangle();
     
+    private int speed;
     private int y = 0;
+    private int delay;
     
     private boolean isDirectionSelected = false;
     private boolean pressed = false;
-    
-    void setPressed(boolean pressed) {
-        this.pressed = pressed;
-    }
-    
-    private Rectangle dragArrowIcon = new Rectangle();
-    
-    private int speed;
-    
-    private int delay;
-    
     private boolean reverseable;
     
     private char direction;
     
-    private Rectangle reverseTickBox = new Rectangle();
+    private NumberFieldLimit speedField;
+    private NumberFieldLimit delayField;
+    
+    private class NumberFieldLimitSound extends NumberFieldLimit {
+        
+        /**
+         * Creates TextField with length and only numerical restrictions
+         *
+         * @param limit The number of characters the TextField can have at maximum
+         * @throws IOException Thrown if limit given is less than zero
+         */
+        NumberFieldLimitSound(int limit) throws IOException {
+            super(limit);
+        }
+        
+        @Override
+        public void onConsume() {
+        
+        }
+        
+    }
     
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
         this.reverseable = reverseable;
         this.direction = direction;
         this.delay = delay;
+        Color foreground = new Color(255, 196, 0);
+        try {
+            speedField = new NumberFieldLimitSound(2);
+            delayField = new NumberFieldLimitSound(3);
+            speedField.setFont(Runner.deteFontNorm);
+            delayField.setFont(Runner.deteFontNorm);
+            speedField.setForeground(foreground);
+            delayField.setForeground(foreground);
+            speedField.setBackground(Color.BLACK);
+            delayField.setBackground(Color.BLACK);
+            speedField.setBounds(AttackBar.ATTACKBAR_X + 10 + 183, y + 8, 26, 12);
+            delayField.setBounds(AttackBar.ATTACKBAR_X + 10 + 277, y + 8, 26, 12);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        Runner.addComponent(speedField, 0);
+        Runner.addComponent(delayField, 0);
+    }
+    
+    void drawFields(Graphics g) {
+        speedField.paint(g);
+        delayField.paint(g);
+    }
+    
+    void removeFields() {
+        Runner.removeComponent(speedField);
+        Runner.removeComponent(delayField);
     }
     
     int getY() {
@@ -56,12 +98,21 @@ public class ArrowBar {
     void draw(Graphics g, int x, int y) {
         if(!pressed)
             this.y = y;
+        speedField.setLocation(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8);
+        delayField.setLocation(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8);
+        g.setColor(Color.BLACK);
+        g.fillRect(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8, 26, 12);
+        g.fillRect(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8, 26, 12);
         orderIntersecton.setBounds(x, this.y, 100, 10);
         g.drawImage(Runner.arrowImg, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);
         drawDirection(g, x, this.y);
         reverseTickBox(g, x, this.y);
         dragArrowIcon(g, x, this.y);
+    }
+    
+    void setPressed(boolean pressed) {
+        this.pressed = pressed;
     }
     
     boolean isDirectionIsSelected() {

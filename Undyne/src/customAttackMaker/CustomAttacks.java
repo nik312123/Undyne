@@ -38,6 +38,7 @@ public class CustomAttacks {
     static int dynamicLength = 0;
     
     private boolean isGenocide = true;
+    public static boolean isScrolling = false;
     
     private JFileChooser chooser = new JFileChooser() {
         @Override
@@ -118,7 +119,14 @@ public class CustomAttacks {
         }
     }
     
-    public static void paintFields(Graphics g) {}
+    public static void paintFields(Graphics g) {
+        for(AttackBar attackBar : attacks) {
+            for(ArrowBar arrowBar : attackBar.getArrows()) {
+                if(CustomAttacks.isScrolling)
+                    arrowBar.drawFields(g);
+            }
+        }
+    }
     
     private void importFile() {
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
@@ -164,6 +172,11 @@ public class CustomAttacks {
                                 return;
                             }
                             else if(attack > previousAttack) {
+                                if(attack >= 13000) {
+                                    error = "13000 attack maximum";
+                                    errorPopUp.setExpanding(true);
+                                    return;
+                                }
                                 if(attack > 1 + previousAttack) {
                                     for(int i = previousAttack + 1; i < attack; ++i) {
                                         AttackBar newBar = new AttackBar();
@@ -269,6 +282,7 @@ public class CustomAttacks {
     
     public void mouseWheelMoved(MouseWheelEvent e) {
         scrollValue += e.getWheelRotation() * -1;
+        isScrolling = e.getWheelRotation() != 0;
     }
     
     public void mouseMoved(MouseEvent e) {}
