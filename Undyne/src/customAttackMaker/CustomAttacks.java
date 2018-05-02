@@ -3,6 +3,7 @@ package customAttackMaker;
 import defense.Runner;
 
 import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -41,10 +42,14 @@ public class CustomAttacks {
     static int newThingAlpha = 0;
     static int importThingAlpha = 0;
     
+    
+    
     public CustomAttacks() {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Text files", "txt");
         chooser.setFileFilter(textFilter);
+    
+       
     }
     
     public void perform(Graphics g2) {
@@ -201,9 +206,6 @@ public class CustomAttacks {
     }
     
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyCode()) {
-        
-        }
         for(AttackBar a : attacks)
             a.keyBoardWork(e);
     }

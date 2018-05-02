@@ -31,7 +31,7 @@ public class BottomMenuBar {
             if(y < 548)
                 y = 548;
         } else {
-            if(CustomAttacks.attacks.size() >= 1 && CustomAttacks.attacks.get(0).getArrows().size() >= 1)
+            if(isThereAnEmptyAttack())
                 g.drawImage(Runner.bottomBarNotShowing, 0, y, null);
             else
                 g.drawImage(Runner.bottomMenuBarButNoArrowsNotShowing, 0, y, null);
@@ -41,6 +41,13 @@ public class BottomMenuBar {
     
         }
     
+    }
+    
+    public boolean isThereAnEmptyAttack(){
+        for(AttackBar a : CustomAttacks.attacks)
+            if(a.getArrows().size() == 0)
+                return true;
+        return false;
     }
     
     public int mouseWorks(){

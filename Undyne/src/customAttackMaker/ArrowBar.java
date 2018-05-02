@@ -56,6 +56,7 @@ public class ArrowBar {
     void draw(Graphics g, int x, int y) {
         if(!pressed)
             this.y = y;
+        
         orderIntersecton.setBounds(x, this.y, 100, 10);
         g.drawImage(Runner.arrowImg, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);

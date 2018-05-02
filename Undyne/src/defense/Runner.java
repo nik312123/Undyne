@@ -198,7 +198,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     private static SplashScreen loading;
     
-    private static JFrame frame;
+    public static JFrame frame;
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
         Arrow.p = p;
@@ -359,6 +359,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private Runner(String s) {
         frame = new JFrame(s);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLayout(null);
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
