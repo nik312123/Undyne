@@ -42,11 +42,11 @@ class BottomMenuBar {
     }
     
     int mouseWorks() {
-        if(CustomAttacks.mouse.intersects(tab))
+        if(tab.contains(CustomAttacks.mousePosition))
             isShowing = !isShowing;
-        else if(CustomAttacks.attacks.size() >= 1 && CustomAttacks.attacks.get(0).getArrows().size() >= 1 && CustomAttacks.mouse.intersects(EXPORT) && isShowing)
+        else if(CustomAttacks.attacks.size() >= 1 && CustomAttacks.attacks.get(0).getArrows().size() >= 1 && EXPORT.contains(CustomAttacks.mousePosition) && isShowing)
             return 1;
-        else if(CustomAttacks.mouse.intersects(IMPORT) && isShowing)
+        else if(IMPORT.contains(CustomAttacks.mousePosition) && isShowing)
             return 0;
         return -1;
     }

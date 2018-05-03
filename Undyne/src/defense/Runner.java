@@ -1382,7 +1382,7 @@ public class Runner extends JPanel
         return oneSecondDelay.isRunning();
     }
     
-    static JFrame getFrame() {
+    public static JFrame getFrame() {
         return frame;
     }
     
