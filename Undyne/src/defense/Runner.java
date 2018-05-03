@@ -168,7 +168,7 @@ public class Runner extends JPanel
     public static ImageIcon warning;
     
     private static Sound main;
-    private static Sound sojSlow;
+    private static Sound sojBeta;
     private static Sound gameDone;
     private static Sound startScreen;
     private static Sound creatorMusic;
@@ -239,7 +239,7 @@ public class Runner extends JPanel
                     e.printStackTrace();
                 }
             });
-            sojSlow = new Sound(Runner.class.getResource("/sojSlow.ogg"), true);
+            sojBeta = new Sound(Runner.class.getResource("/sojBeta.ogg"), true);
             startScreen = new Sound(Runner.class.getResource("/WF.ogg"), true);
             creatorMusic = new Sound(Runner.class.getResource("/DS.ogg"), true);
             undyne = new Sound(Runner.class.getResource("/undyne.ogg"), false);
@@ -858,8 +858,8 @@ public class Runner extends JPanel
                 startScreen.changeVolume(musicSlider.getPercentage());
             if(stage != null)
                 stage.changeMusicVol(musicSlider.getPercentage());
-            if(sojSlow != null)
-                sojSlow.changeVolume(musicSlider.getPercentage());
+            if(sojBeta != null)
+                sojBeta.changeVolume(musicSlider.getPercentage());
             if(creatorMusic != null)
                 creatorMusic.changeVolume(musicSlider.getPercentage());
             Attack.changeVol(sfxSlider.getPercentage());
@@ -1583,7 +1583,7 @@ public class Runner extends JPanel
             if(stage.isMedium() || stage.isSurvival())
                 main = mainSounds[0];
             else
-                main = sojSlow;
+                main = sojBeta;
             speechX = 305;
             speechY = 50;
             gif = gifUndyne.clone();
