@@ -4,11 +4,14 @@ import defense.Runner;
 import nikunj.classes.PopUp;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
@@ -22,22 +25,31 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CustomAttacks {
-    
-    static ArrayList<AttackBar> attacks = new ArrayList<>();
-    
-    private Rectangle addAttack = new Rectangle();
-    
-    static Rectangle mouse = new Rectangle();
-    
-    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
-    
-    private String error;
+    private static boolean optionSelected = false;
+    private static boolean importChosen = false;
+    private static boolean importingComplete = false;
+    private static boolean fileBeingChosen = false;
+    private boolean isGenocide = true;
     
     private int errorLine;
+    private static int newThingAlpha = 0;
+    private static int importThingAlpha = 0;
     static int scrollValue = 70;
     static int dynamicLength = 0;
     
-    private boolean isGenocide = true;
+    private String error;
+    
+    private Rectangle addAttack = new Rectangle();
+    private static Rectangle newThing = new Rectangle(226, 211, 148, 63);
+    private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
+    
+    static Point mousePosition = new Point();
+    
+    static ArrayList<AttackBar> attacks = new ArrayList<>();
+    
+    private BottomMenuBar bottomMenuBar = new BottomMenuBar();
+    
+    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
     
     private JFileChooser chooser = new JFileChooser() {
         @Override
@@ -66,12 +78,52 @@ public class CustomAttacks {
     }
     
     public void perform(Graphics g2) {
+        Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
+        JFrame frame = Runner.getFrame();
+        mousePosition = new Point(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        dynamicLength = scrollValue;
-        for(AttackBar attackBar : attacks)
-            attackBar.draw(g, dynamicLength);
-        addAttackButton(g);
+        if(optionSelected && (!importChosen || importingComplete)) {
+            dynamicLength = scrollValue;
+            for(AttackBar attackBar : attacks)
+                attackBar.draw(g, dynamicLength);
+            addAttackButton(g);
+            bottomMenuBar.work(g);
+        }
+        else
+            startScreen(g);
+    }
+    
+    private void startScreen(Graphics2D g) {
+        if(newThing.contains(mousePosition)) {
+            newThingAlpha += 5;
+            if(newThingAlpha > 255)
+                newThingAlpha = 255;
+        }
+        else {
+            if(newThingAlpha > 0)
+                newThingAlpha -= 5;
+            if(newThingAlpha < 0)
+                newThingAlpha = 0;
+        }
+        g.setColor(new Color(157, 50, 100, newThingAlpha));
+        g.fill(newThing);
+        if(importThing.contains(mousePosition) || fileBeingChosen) {
+            importThingAlpha += 5;
+            if(importThingAlpha > 255)
+                importThingAlpha = 255;
+        }
+        else {
+            if(importThingAlpha > 0)
+                importThingAlpha -= 5;
+            if(importThingAlpha < 0)
+                importThingAlpha = 0;
+        }
+        g.setColor(new Color(157, 50, 100, importThingAlpha));
+        g.fill(importThing);
+        g.drawImage(Runner.CAT, 129, 21, null);
+        g.drawImage(Runner.newThing, 226, 211, null);
+        g.drawImage(Runner.importThing, 226, 326, null);
         errorPopUp.draw(g);
         drawErrorText(g);
     }
@@ -121,7 +173,10 @@ public class CustomAttacks {
     private void importFile() {
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
         chooser.setDialogTitle("Choose file to import...");
-        if(chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        fileBeingChosen = true;
+        int dialogChoice = chooser.showOpenDialog(null);
+        fileBeingChosen = false;
+        if(dialogChoice == JFileChooser.APPROVE_OPTION) {
             File openLocation = chooser.getSelectedFile();
             Scanner s = null;
             try {
@@ -213,8 +268,11 @@ public class CustomAttacks {
                     }
                 }
                 attacks = new ArrayList<>(importedAttacks);
+                importingComplete = true;
             }
         }
+        else
+            optionSelected = false;
     }
     
     private void exportFile() {
@@ -277,7 +335,6 @@ public class CustomAttacks {
     public void mouseMoved(MouseEvent e) {}
     
     public void mouseDragged(MouseEvent e) {
-        mouse.setBounds(e.getX(), e.getY(), 1, 1);
         for(AttackBar a : attacks)
             a.mouseDragWork();
     }
@@ -290,7 +347,6 @@ public class CustomAttacks {
     }
     
     public void mousePressed(MouseEvent e) {
-        mouse.setBounds(e.getX(), e.getY(), 1, 1);
         for(AttackBar a : attacks) {
             a.mousePressed();
         }
@@ -299,15 +355,25 @@ public class CustomAttacks {
     public void mouseClicked(MouseEvent e) {
         if(errorPopUp.percentageExpanded() == 1.0)
             errorPopUp.setExpanding(false);
-        mouse.setBounds(e.getX(), e.getY(), 1, 1);
         for(AttackBar a : attacks) {
             if(a.mouseClickWork() == 1) {
                 reassignNumbers();
                 break;
             }
         }
-        if(mouse.intersects(addAttack))
+        if(addAttack.contains(mousePosition))
             addAttack();
+        if(!optionSelected) {
+            importChosen = importThing.contains(mousePosition);
+            optionSelected = newThing.contains(mousePosition) || importChosen;
+            if(importChosen)
+                importFile();
+        }
+        int check = bottomMenuBar.mouseWorks();
+        if(check == 1)
+            exportFile();
+        else if(check == 0)
+            importFile();
     }
     
     public void mouseExited(MouseEvent e) {}

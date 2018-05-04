@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AttackBar {
-    
     private int number;
-    
     private static final int ATTACKBAR_X = 30;
     
     private boolean isDropped = true;
@@ -122,20 +120,21 @@ public class AttackBar {
     }
     
     int mouseClickWork() {
-        if(CustomAttacks.mouse.intersects(deleteAttack)) {
+        if(deleteAttack.contains(CustomAttacks.mousePosition)) {
             CustomAttacks.attacks.remove(number);
             return 1;
         }
-        else if(CustomAttacks.mouse.intersects(dropDownButton))
+        else if(dropDownButton.contains(CustomAttacks.mousePosition))
             isDropped = !isDropped;
-        else if(CustomAttacks.mouse.intersects(newArrowButton))
+        else if(newArrowButton.contains(CustomAttacks.mousePosition))
             arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
-            if(CustomAttacks.mouse.intersects(arrows.get(i).getDeleteArrowButton()))
+            ArrowBar ab = arrows.get(i);
+            if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition))
                 arrows.remove(i);
-            else if(CustomAttacks.mouse.intersects(arrows.get(i).getReverseTickBox()))
+            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition))
                 arrows.get(i).setReverseable(!arrows.get(i).isReverse());
-            else if(CustomAttacks.mouse.intersects(arrows.get(i).getDirectionRectangle()))
+            else if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
                 arrows.get(i).switchDirectionIsSelected();
         }
         return 0;
@@ -144,7 +143,7 @@ public class AttackBar {
     void mouseDragWork() {
         for(ArrowBar a : arrows) {
             if(a.isPressed()) {
-                int iconMovement = CustomAttacks.mouse.y - 8;
+                int iconMovement = CustomAttacks.mousePosition.y - 8;
                 if(iconMovement < topBound.getY() + 8)
                     iconMovement = (int) topBound.getY() + 8;
                 if(iconMovement > bottomBound.getY() - 18)
@@ -163,7 +162,7 @@ public class AttackBar {
     
     void mousePressed() {
         for(ArrowBar a : arrows) {
-            if(CustomAttacks.mouse.intersects(a.getDragArrowIcon()))
+            if(a.getDragArrowIcon().contains(CustomAttacks.mousePosition))
                 a.setPressed(true);
         }
     }

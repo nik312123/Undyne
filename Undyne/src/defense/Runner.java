@@ -50,22 +50,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class Runner extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Runner extends JPanel
+        implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
     private static final long serialVersionUID = 1L;
-    
-    private static char dir = 'u';
-    
-    private static final String NOTHING = "bad time";
-    private static String typed = "";
-    private static String activated = "";
-    private static final String[] easyMessage = {"You did well...      ", "only because", "I went easy."};
-    private static final String[] mediumMessage = {"Not bad, punk!", "Let me go", "harder on you."};
-    private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
-    private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
-    
-    private static double fadeStart = 0;
-    private static double musicMutedVolume = 1;
-    private static double sfxMutedVolume = 1;
     
     private static int nothingCounter = 0;
     private static int DELAY = 10;
@@ -90,6 +77,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static int loadingCounter = 0;
     private static int loadingFrame = 0;
     public static int customAttacksCounter = 0;
+    
+    private static double fadeStart = 0;
+    private static double musicMutedVolume = 1;
+    private static double sfxMutedVolume = 1;
     
     private static boolean isGenocide = false;
     private static boolean survival = false;
@@ -117,6 +108,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static boolean isCustomAttack = false;
     public static boolean canBeStopped = false;
     
+    private static char dir = 'u';
+    
+    private static final String NOTHING = "bad time";
+    private static String typed = "";
+    private static String activated = "";
+    private static final String[] easyMessage = {"You did well...      ", "only because", "I went easy."};
+    private static final String[] mediumMessage = {"Not bad, punk!", "Let me go", "harder on you."};
+    private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
+    private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
+    
     private static Timer timer;
     private static Timer oneSecondDelay;
     
@@ -133,8 +134,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static BufferedImage play;
     private static BufferedImage creator;
     private static BufferedImage checkBox;
-    public static BufferedImage arrowImg;
+    static BufferedImage blueArr;
+    static BufferedImage redArr;
+    static BufferedImage reverseArr;
     public static BufferedImage dragArrowIcon;
+    public static BufferedImage bottomMenuBar;
+    public static BufferedImage bottomMenuBarButNoArrowsNotShowing;
+    public static BufferedImage bottomMenuBarButNoArrowsShowing;
+    public static BufferedImage bottomBarNotShowing;
+    public static BufferedImage CAT;
+    public static BufferedImage importThing;
+    public static BufferedImage newThing;
     public static BufferedImage addAttack;
     public static BufferedImage ticked;
     public static BufferedImage arrowDown;
@@ -146,21 +156,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static BufferedImage droppedDown;
     public static BufferedImage droppedClosed;
     public static BufferedImage newArrow;
+    public static BufferedImage arrowImg;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
     private static BufferedImage[] loadingCreator = new BufferedImage[48];
     private static BufferedImage[] gif;
-    static BufferedImage blueArr;
-    static BufferedImage redArr;
-    static BufferedImage reverseArr;
     static BufferedImage[] gifUndyne;
     static BufferedImage[] gifUndying;
     
     public static ImageIcon warning;
     
     private static Sound main;
-    private static Sound sojSlow;
+    private static Sound sojBeta;
     private static Sound gameDone;
     private static Sound startScreen;
     private static Sound creatorMusic;
@@ -231,7 +239,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     e.printStackTrace();
                 }
             });
-            sojSlow = new Sound(Runner.class.getResource("/sojSlow.ogg"), true);
+            sojBeta = new Sound(Runner.class.getResource("/sojBeta.ogg"), true);
             startScreen = new Sound(Runner.class.getResource("/WF.ogg"), true);
             creatorMusic = new Sound(Runner.class.getResource("/DS.ogg"), true);
             undyne = new Sound(Runner.class.getResource("/undyne.ogg"), false);
@@ -276,6 +284,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             dragArrowIcon = getCompatibleImage(dragArrowIcon);
             arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
             arrowImg = getCompatibleImage(arrowImg);
+            CAT = ImageIO.read(Runner.class.getResource("/UAT.png"));
+            CAT = getCompatibleImage(CAT);
+            importThing = ImageIO.read(Runner.class.getResource("/import.png"));
+            importThing = getCompatibleImage(importThing);
+            newThing = ImageIO.read(Runner.class.getResource("/new.png"));
+            newThing = getCompatibleImage(newThing);
+            bottomBarNotShowing = ImageIO.read(Runner.class.getResource("/bottomBarNotShowing.png"));
+            bottomBarNotShowing = getCompatibleImage(bottomBarNotShowing);
+            bottomMenuBar = ImageIO.read(Runner.class.getResource("/bottomMenuBar.png"));
+            bottomMenuBar = getCompatibleImage(bottomMenuBar);
             ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
             ticked = getCompatibleImage(ticked);
             arrowUp = ImageIO.read(Runner.class.getResource("/arrowUp.png"));
@@ -306,6 +324,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             replay = getCompatibleImage(replay);
             close = ImageIO.read(Runner.class.getResource("/close.png"));
             close = getCompatibleImage(close);
+            bottomMenuBarButNoArrowsNotShowing = ImageIO.read(Runner.class.getResource("/bottomBarButNoArrows.png"));
+            bottomMenuBarButNoArrowsNotShowing = getCompatibleImage(bottomMenuBarButNoArrowsNotShowing);
+            bottomMenuBarButNoArrowsShowing = ImageIO.read(Runner.class.getResource("/bottomBarButNoArrowsShowing.png"));
+            bottomMenuBarButNoArrowsShowing = getCompatibleImage(bottomMenuBarButNoArrowsShowing);
             draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
             draggable = getCompatibleImage(draggable);
             music = ImageIO.read(Runner.class.getResource("/music.png"));
@@ -351,6 +373,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private Runner(String s) {
         frame = new JFrame(s);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLayout(null);
         Runner bp = new Runner();
         bp.setBounds(0, 0, 600, 600);
         frame.add(bp);
@@ -835,8 +858,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 startScreen.changeVolume(musicSlider.getPercentage());
             if(stage != null)
                 stage.changeMusicVol(musicSlider.getPercentage());
-            if(sojSlow != null)
-                sojSlow.changeVolume(musicSlider.getPercentage());
+            if(sojBeta != null)
+                sojBeta.changeVolume(musicSlider.getPercentage());
             if(creatorMusic != null)
                 creatorMusic.changeVolume(musicSlider.getPercentage());
             Attack.changeVol(sfxSlider.getPercentage());
@@ -1359,7 +1382,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         return oneSecondDelay.isRunning();
     }
     
-    static JFrame getFrame() {
+    public static JFrame getFrame() {
         return frame;
     }
     
@@ -1560,7 +1583,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             if(stage.isMedium() || stage.isSurvival())
                 main = mainSounds[0];
             else
-                main = sojSlow;
+                main = sojBeta;
             speechX = 305;
             speechY = 50;
             gif = gifUndyne.clone();
