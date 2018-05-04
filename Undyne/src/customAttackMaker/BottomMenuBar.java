@@ -30,13 +30,15 @@ public class BottomMenuBar {
         if(!isThereAnEmptyAttack()) {
             g.drawImage(Runner.bottomPlayButton, 5, y + 28, null);
             g.drawImage(Runner.bottomStopButton, 31, y + 28, null);
-            g.drawImage(Runner.exportButton, 456, y + 28, null);
         }
         else {
             g.drawImage(Runner.bottomPlayButtonDisabled, 5, y + 28, null);
             g.drawImage(Runner.bottomStopButtonDisabled, 31, y + 28, null);
-            g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
         }
+        if(isAttacksEmpty())
+            g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
+        else
+            g.drawImage(Runner.exportButton, 456, y + 28, null);
         if(isShowing) {
             g.drawImage(Runner.bottomTabDown, 541, y + 7, null);
             if(--y < 548)
@@ -72,12 +74,16 @@ public class BottomMenuBar {
         return false;
     }
     
+    private boolean isAttacksEmpty() {
+        return CustomAttacks.attacks.size() == 0;
+    }
+    
     public int mouseWorks(Point mousePosition) {
         play.setLocation(5, y + 28);
         stop.setLocation(31, y + 28);
         if(tab.contains(mousePosition))
             isShowing = !isShowing;
-        else if(EXPORT.contains(mousePosition) && isShowing && CustomAttacks.attacks.size() >= 1 && CustomAttacks.attacks.get(0).getArrows().size() >= 1)
+        else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty())
             return 1;
         else if(IMPORT.contains(mousePosition) && isShowing)
             return 0;
@@ -103,6 +109,10 @@ public class BottomMenuBar {
     
     public boolean isGenocideBoxChecked() {
         return isGenocideBoxChecked;
+    }
+    
+    void setIsGenocideBoxChecked(boolean checked) {
+        isGenocideBoxChecked = checked;
     }
     
     public boolean isRobotBoxChecked() {
