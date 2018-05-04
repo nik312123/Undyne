@@ -100,9 +100,8 @@ class Player {
             shield = shields[0];
             ++red;
         }
-        else {
+        else
             shield = shields[1];
-        }
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(angle), 71 / 2, 71 / 2);
@@ -159,8 +158,16 @@ class Player {
         return dir;
     }
     
+    void setDir(char dir) {
+        this.dir = dir;
+    }
+    
     int getAngle() {
         return angle;
+    }
+    
+    void zeroAngle() {
+        angle  = 0;
     }
     
     void setRedZero() {

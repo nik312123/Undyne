@@ -29,7 +29,7 @@ public class CustomAttacks {
     private static boolean importChosen = false;
     private static boolean importingComplete = false;
     private static boolean fileBeingChosen = false;
-    private boolean isGenocide = true;
+    private static boolean isIn = false;
     
     private int errorLine;
     private static int newThingAlpha = 0;
@@ -47,7 +47,7 @@ public class CustomAttacks {
     
     static ArrayList<AttackBar> attacks = new ArrayList<>();
     
-    private BottomMenuBar bottomMenuBar = new BottomMenuBar();
+    private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
     
     private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
     
@@ -83,15 +83,23 @@ public class CustomAttacks {
         mousePosition = new Point(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if(optionSelected && (!importChosen || importingComplete)) {
+        if(isIn || optionSelected && (!importChosen || importingComplete)) {
+            isIn = true;
             dynamicLength = scrollValue;
             for(AttackBar attackBar : attacks)
                 attackBar.draw(g, dynamicLength);
             addAttackButton(g);
-            bottomMenuBar.work(g);
+            drawTopBar(g);
         }
         else
             startScreen(g);
+    }
+    
+    private void drawTopBar(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, 600, 28);
+        g.setColor(Color.WHITE);
+        g.drawLine(0, 28, 600, 28);
     }
     
     private void startScreen(Graphics2D g) {
@@ -303,29 +311,17 @@ public class CustomAttacks {
     
     public void keyPressed(KeyEvent e) {
         if(Runner.isCustomAttack) {
-            switch(e.getKeyCode()) {
-                case KeyEvent.VK_E:
-                    exportFile();
-                    break;
-                case KeyEvent.VK_I:
-                    importFile();
-                    break;
-                case KeyEvent.VK_P:
-                    if(!Runner.canBeStopped && attacks.size() != 0 && !areAttacksEmpty())
-                        Runner.play(false);
-                    break;
-            }
             for(AttackBar a : attacks)
                 a.keyBoardWork(e);
         }
     }
     
-    private boolean areAttacksEmpty() {
+    static boolean areAnyAttacksEmpty() {
         for(AttackBar attackBar : attacks) {
-            if(attackBar.getArrows().size() != 0)
-                return false;
+            if(attackBar.getArrows().size() == 0)
+                return true;
         }
-        return true;
+        return false;
     }
     
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -369,7 +365,7 @@ public class CustomAttacks {
             if(importChosen)
                 importFile();
         }
-        int check = bottomMenuBar.mouseWorks();
+        int check = bottomMenuBar.mouseWorks(mousePosition);
         if(check == 1)
             exportFile();
         else if(check == 0)
@@ -386,8 +382,12 @@ public class CustomAttacks {
         return attacks;
     }
     
-    public boolean isGenocide() {
-        return isGenocide;
+    public static BottomMenuBar getBottomMenuBar() {
+        return bottomMenuBar;
+    }
+    
+    public static boolean isIn() {
+        return isIn;
     }
     
 }

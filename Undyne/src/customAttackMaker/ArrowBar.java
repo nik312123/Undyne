@@ -3,7 +3,9 @@ package customAttackMaker;
 import defense.Runner;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 
 public class ArrowBar {
     private int y = 0;
@@ -67,20 +69,26 @@ public class ArrowBar {
     }
     
     private void setImage(Graphics g, int x, int y) {
+        AffineTransform arrowTransform = new AffineTransform();
+        arrowTransform.translate(x + 103, y + 8);
+        double angle = 0;
         switch(getDirection()) {
             case 'u':
-                g.drawImage(Runner.arrowUp, x + 101, y + 5, null);
+                angle = 0;
                 break;
             case 'd':
-                g.drawImage(Runner.arrowDown, x + 101, y + 5, null);
+                angle = Math.PI;
                 break;
             case 'r':
-                g.drawImage(Runner.arrowRight, x + 97, y + 9, null);
+                angle = Math.PI / 2;
                 break;
             case 'l':
-                g.drawImage(Runner.arrowLeft, x + 97, y + 9, null);
+                angle = -Math.PI / 2;
                 break;
         }
+        arrowTransform.rotate(angle, 3, 6);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(Runner.customArrowDirection, arrowTransform, null);
     }
     
     private void reverseTickBox(Graphics g, int x, int y) {
