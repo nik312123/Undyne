@@ -30,10 +30,13 @@ class Attacks {
             undyneAttacks.add(new ArrayList<>());
         for(AttackBar at : attacks) {
             for(ArrowBar ar : at.getArrows()) {
+                char dir = ar.getDirection();
+                if(dir == 'n')
+                    dir = DIRS[rand.nextInt(4)];
                 if(ar.getSpeed() == 1)
-                    addSlowArrow(at.getNumber(), ar.getReversable(), ar.getDirection(), ar.getDelay());
+                    addSlowArrow(at.getNumber(), ar.getReversable(), dir, ar.getDelay());
                 else
-                    addArrow(at.getNumber(), ar.getSpeed() - 1, ar.getReversable(), ar.getDirection(), ar.getDelay());
+                    addArrow(at.getNumber(), ar.getSpeed() - 1, ar.getReversable(), dir, ar.getDelay());
             }
         }
     }

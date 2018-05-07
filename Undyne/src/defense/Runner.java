@@ -1,5 +1,6 @@
 package defense;
 
+import customAttackMaker.BottomMenuBar;
 import customAttackMaker.CustomAttacks;
 import nikunj.classes.GradientButton;
 import nikunj.classes.PopUp;
@@ -98,7 +99,6 @@ public class Runner extends JPanel
     private static boolean speechDone = false;
     private static boolean helpStarter = false;
     private static boolean isReplaying = false;
-    private static boolean isRobotBoxChecked = false;
     private static boolean isPlayTimerDone = false;
     private static boolean isStopTimerDone = false;
     private static boolean isStartTimerDone = false;
@@ -133,30 +133,32 @@ public class Runner extends JPanel
     private static BufferedImage help;
     private static BufferedImage play;
     private static BufferedImage creator;
-    private static BufferedImage checkBox;
     static BufferedImage blueArr;
     static BufferedImage redArr;
     static BufferedImage reverseArr;
     public static BufferedImage dragArrowIcon;
     public static BufferedImage bottomMenuBar;
-    public static BufferedImage bottomMenuBarButNoArrowsNotShowing;
-    public static BufferedImage bottomMenuBarButNoArrowsShowing;
-    public static BufferedImage bottomBarNotShowing;
     public static BufferedImage CAT;
     public static BufferedImage importThing;
     public static BufferedImage newThing;
     public static BufferedImage addAttack;
     public static BufferedImage ticked;
-    public static BufferedImage arrowDown;
-    public static BufferedImage arrowLeft;
-    public static BufferedImage arrowRight;
-    public static BufferedImage arrowUp;
+    public static BufferedImage customArrowDirection;
     public static BufferedImage deleteArrow;
     public static BufferedImage deleteAttack;
     public static BufferedImage droppedDown;
     public static BufferedImage droppedClosed;
     public static BufferedImage newArrow;
     public static BufferedImage arrowImg;
+    public static BufferedImage checkBox;
+    public static BufferedImage bottomPlayButton;
+    public static BufferedImage bottomPlayButtonDisabled;
+    public static BufferedImage bottomStopButton;
+    public static BufferedImage bottomStopButtonDisabled;
+    public static BufferedImage exportButton;
+    public static BufferedImage exportButtonDisabled;
+    public static BufferedImage bottomTabUp;
+    public static BufferedImage bottomTabDown;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
@@ -197,7 +199,7 @@ public class Runner extends JPanel
     private static PopUp creditsList;
     
     public static Font deteFontNorm;
-    static Font deteFontSpeech;
+    public static Font deteFontSpeech;
     static Font deteFontScore;
     
     private static FocusListener checkFocus;
@@ -208,8 +210,8 @@ public class Runner extends JPanel
     private static CustomAttacks customAttackMaker = new CustomAttacks();
     private static Player p = new Player();
     private static Help helper = new Help();
-    
     private static SplashScreen loading;
+    private static BottomMenuBar bottomBar = CustomAttacks.getBottomMenuBar();
     
     private static JFrame frame;
     
@@ -290,23 +292,15 @@ public class Runner extends JPanel
             importThing = getCompatibleImage(importThing);
             newThing = ImageIO.read(Runner.class.getResource("/new.png"));
             newThing = getCompatibleImage(newThing);
-            bottomBarNotShowing = ImageIO.read(Runner.class.getResource("/bottomBarNotShowing.png"));
-            bottomBarNotShowing = getCompatibleImage(bottomBarNotShowing);
-            bottomMenuBar = ImageIO.read(Runner.class.getResource("/bottomMenuBar.png"));
+            bottomMenuBar = ImageIO.read(Runner.class.getResource("/bottomBar/bottomMenuBar.png"));
             bottomMenuBar = getCompatibleImage(bottomMenuBar);
             ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
             ticked = getCompatibleImage(ticked);
-            arrowUp = ImageIO.read(Runner.class.getResource("/arrowUp.png"));
-            arrowUp = getCompatibleImage(arrowUp);
-            arrowDown = ImageIO.read(Runner.class.getResource("/arrowDown.png"));
-            arrowDown = getCompatibleImage(arrowDown);
-            arrowLeft = ImageIO.read(Runner.class.getResource("/arrowLeft.png"));
-            arrowLeft = getCompatibleImage(arrowLeft);
-            arrowRight = ImageIO.read(Runner.class.getResource("/arrowRight.png"));
-            arrowRight = getCompatibleImage(arrowRight);
+            customArrowDirection = ImageIO.read(Runner.class.getResource("/customArrowDirection.png"));
+            customArrowDirection = getCompatibleImage(customArrowDirection);
             addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
             addAttack = getCompatibleImage(addAttack);
-            deleteAttack = ImageIO.read(Runner.class.getResource("/delete attack.png"));
+            deleteAttack = ImageIO.read(Runner.class.getResource("/deleteAttack.png"));
             deleteAttack = getCompatibleImage(deleteAttack);
             newArrow = ImageIO.read(Runner.class.getResource("/newArrow.png"));
             newArrow = getCompatibleImage(newArrow);
@@ -324,10 +318,6 @@ public class Runner extends JPanel
             replay = getCompatibleImage(replay);
             close = ImageIO.read(Runner.class.getResource("/close.png"));
             close = getCompatibleImage(close);
-            bottomMenuBarButNoArrowsNotShowing = ImageIO.read(Runner.class.getResource("/bottomBarButNoArrows.png"));
-            bottomMenuBarButNoArrowsNotShowing = getCompatibleImage(bottomMenuBarButNoArrowsNotShowing);
-            bottomMenuBarButNoArrowsShowing = ImageIO.read(Runner.class.getResource("/bottomBarButNoArrowsShowing.png"));
-            bottomMenuBarButNoArrowsShowing = getCompatibleImage(bottomMenuBarButNoArrowsShowing);
             draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
             draggable = getCompatibleImage(draggable);
             music = ImageIO.read(Runner.class.getResource("/music.png"));
@@ -347,14 +337,30 @@ public class Runner extends JPanel
             warning = new ImageIcon(Runner.class.getResource("/warning.png"));
             checkBox = ImageIO.read(Runner.class.getResource("/checkBox.png"));
             checkBox = getCompatibleImage(checkBox);
+            bottomPlayButton = ImageIO.read(Runner.class.getResource("/bottomBar/playButton.png"));
+            bottomPlayButton = getCompatibleImage(bottomPlayButton);
+            bottomPlayButtonDisabled = ImageIO.read(Runner.class.getResource("/bottomBar/playButtonDisabled.png"));
+            bottomPlayButtonDisabled = getCompatibleImage(bottomPlayButtonDisabled);
+            bottomStopButton = ImageIO.read(Runner.class.getResource("/bottomBar/stopButton.png"));
+            bottomStopButton = getCompatibleImage(bottomStopButton);
+            bottomStopButtonDisabled = ImageIO.read(Runner.class.getResource("/bottomBar/stopButtonDisabled.png"));
+            bottomStopButtonDisabled = getCompatibleImage(bottomStopButtonDisabled);
+            exportButton = ImageIO.read(Runner.class.getResource("/bottomBar/exportButton.png"));
+            exportButton = getCompatibleImage(exportButton);
+            exportButtonDisabled = ImageIO.read(Runner.class.getResource("/bottomBar/exportButtonDisabled.png"));
+            exportButtonDisabled = getCompatibleImage(exportButtonDisabled);
+            bottomTabDown = ImageIO.read(Runner.class.getResource("/bottomBar/tabDown.png"));
+            bottomTabDown = getCompatibleImage(bottomTabDown);
+            bottomTabUp = ImageIO.read(Runner.class.getResource("/bottomBar/tabUp.png"));
+            bottomTabUp = getCompatibleImage(bottomTabUp);
             for(int i = 0; i < 48; ++i) {
                 loadingCreator[i] = ImageIO.read(Runner.class.getResource("/loading/loading" + i + ".png"));
                 loadingCreator[i] = getCompatibleImage(loadingCreator[i]);
             }
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
-            deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
-            deteFontScore = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(22.0f);
+            deteFontSpeech = deteFontNorm.deriveFont(14.0f);
+            deteFontScore = deteFontNorm.deriveFont(22.0f);
         }
         if(gifUndyne == null || gifUndyne.length != 32) {
             gifUndyne = new BufferedImage[32];
@@ -836,10 +842,6 @@ public class Runner extends JPanel
         return optimized;
     }
     
-    private static Rectangle getCheckBox() {
-        return new Rectangle(579, 36, 13, 12);
-    }
-    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -950,6 +952,8 @@ public class Runner extends JPanel
                     }
                 }
             }
+            if(!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped))
+                bottomBar.work(g);
             if(a != null && a.getIsFinished() && !oneSecondDelay.isRunning()) {
                 if(isGenocide && count == 19 || !isGenocide && count == 10 && !canBeStopped) {
                     if(main != null)
@@ -1022,7 +1026,7 @@ public class Runner extends JPanel
     }
     
     private void automatic() {
-        if(automatic && a1.getList().size() > 0) {
+        if((automatic || bottomBar.isRobotBoxChecked()) && a1.getList().size() > 0) {
             ArrayList<Arrow> arrows = a1.getList();
             double time = Integer.MAX_VALUE;
             char pointTowards = 'u';
@@ -1465,6 +1469,7 @@ public class Runner extends JPanel
                 isStartTimerDone = true;
             }
             else {
+                dir = 'u';
                 isGenocide = stage.isHard();
                 survival = stage.isSurvival();
                 a = new Attacks(isGenocide, survival, stage.isMedium());
@@ -1475,7 +1480,6 @@ public class Runner extends JPanel
                 beginning = false;
                 main.changeVolume(musicMutedVolume);
                 main.play();
-                dir = 'u';
                 isStartTimerDone = false;
             }
         }
@@ -1487,6 +1491,9 @@ public class Runner extends JPanel
                 creatorMusic.stop();
                 oneSecondDelay.setActionCommand("play");
                 oneSecondDelay.start();
+                dir = 'u';
+                p.setDir('u');
+                p.zeroAngle();
                 isPlayTimerDone = true;
             }
             else if(isCalledByTimer) {
@@ -1494,7 +1501,7 @@ public class Runner extends JPanel
                 a = new Attacks(customAttackMaker.getAttacks());
                 a1 = new Attack(new ArrayList<>(), a);
                 a.setAttack(a1);
-                setUpUndyne(customAttackMaker.isGenocide());
+                setUpUndyne(bottomBar.isGenocideBoxChecked());
                 beginning = false;
                 isCustomAttack = false;
                 main.changeVolume(musicMutedVolume);
@@ -1506,7 +1513,7 @@ public class Runner extends JPanel
         }
     }
     
-    private static void stop(boolean isCalledByTimer) {
+    public static void stop(boolean isCalledByTimer) {
         if(!oneSecondDelay.isRunning()) {
             if(!isStopTimerDone) {
                 main.stop();
@@ -1520,6 +1527,9 @@ public class Runner extends JPanel
                 a1.resetVars();
                 isCustomAttack = true;
                 canBeStopped = false;
+                p.setHit(false);
+                p.resetTimeoutCounter();
+                flickeringHeart = 0;
                 isStopTimerDone = false;
             }
         }
@@ -1580,7 +1590,7 @@ public class Runner extends JPanel
             p.setHealth(20);
             p.setBaseDamage(0);
             p.setDamageOffset(2);
-            if(stage.isMedium() || stage.isSurvival())
+            if(stage.isMedium() || stage.isSurvival() || canBeStopped)
                 main = mainSounds[0];
             else
                 main = sojBeta;
@@ -1733,10 +1743,6 @@ public class Runner extends JPanel
                     start();
                 }
                 break;
-            case KeyEvent.VK_C:
-                if(Runner.canBeStopped)
-                    Runner.stop(false);
-                break;
         }
         if(e.getKeyChar() != '￿')
             typed += e.getKeyChar();
@@ -1783,19 +1789,22 @@ public class Runner extends JPanel
         return bounds.contains(mousePos);
     }
     
-    private static void robotBoxClicked(MouseEvent e) {
+    private static void barCheckBoxClicked(MouseEvent e) {
         int x = e.getX(), y = e.getY();
-        if(canBeStopped && getCheckBox().contains(x, y))
-            isRobotBoxChecked = !isRobotBoxChecked;
-        if(activated.equals("Cheat Activated"))
-            automatic = true;
-        else
-            automatic = isRobotBoxChecked;
+        boolean mouseIntersectsCheckBox = bottomBar.getBarCheckBox().contains(x, y);
+        if(mouseIntersectsCheckBox) {
+            if(canBeStopped)
+                bottomBar.flipIsRobotBoxedChecked();
+            else if(isCustomAttack)
+                bottomBar.flipIsGenocideBoxChecked();
+        }
     }
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        robotBoxClicked(e);
+        barCheckBoxClicked(e);
+        if(canBeStopped)
+            bottomBar.mouseWorks(e.getPoint());
         customAttackMaker.mouseClicked(e);
     }
     
