@@ -2,6 +2,7 @@ package customAttackMaker;
 
 import defense.Runner;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -17,6 +18,8 @@ public class ArrowBar {
     private boolean reverseable;
     
     private char direction;
+    
+    private Color textColor = new Color(255, 198, 0);
     
     private Rectangle deleteArrowButton = new Rectangle();
     private Rectangle directionRectangle = new Rectangle();
@@ -58,10 +61,6 @@ public class ArrowBar {
         dragArrowIcon(g, x, this.y);
     }
     
-    boolean isDirectionIsSelected() {
-        return isDirectionSelected;
-    }
-    
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
         if(!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
@@ -69,10 +68,11 @@ public class ArrowBar {
     }
     
     private void setImage(Graphics g, int x, int y) {
+        boolean drawArrow = true;
         AffineTransform arrowTransform = new AffineTransform();
         arrowTransform.translate(x + 103, y + 8);
         double angle = 0;
-        switch(getDirection()) {
+        switch(direction) {
             case 'u':
                 angle = 0;
                 break;
@@ -85,10 +85,19 @@ public class ArrowBar {
             case 'l':
                 angle = -Math.PI / 2;
                 break;
+            case 'n':
+                drawArrow = false;
+                break;
         }
         arrowTransform.rotate(angle, 3, 6);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(Runner.customArrowDirection, arrowTransform, null);
+        if(drawArrow)
+            g2d.drawImage(Runner.customArrowDirection, arrowTransform, null);
+        else {
+            g2d.setColor(textColor);
+            g2d.setFont(Runner.deteFontSpeech);
+            g2d.drawString("R", x + 102, y + 18);
+        }
     }
     
     private void reverseTickBox(Graphics g, int x, int y) {
@@ -157,7 +166,11 @@ public class ArrowBar {
     }
     
     void setReverseable(boolean reverse) {
-        this.reverseable = reverse;
+        reverseable = reverse;
+    }
+    
+    void switchReversable() {
+        reverseable = !reverseable;
     }
     
     public boolean getReversable() {
@@ -170,6 +183,10 @@ public class ArrowBar {
     
     Rectangle getDirectionRectangle() {
         return directionRectangle;
+    }
+    
+    boolean isDirectionSelected() {
+        return isDirectionSelected;
     }
     
     void switchDirectionIsSelected() {

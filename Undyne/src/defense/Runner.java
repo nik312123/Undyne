@@ -300,7 +300,7 @@ public class Runner extends JPanel
             customArrowDirection = getCompatibleImage(customArrowDirection);
             addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
             addAttack = getCompatibleImage(addAttack);
-            deleteAttack = ImageIO.read(Runner.class.getResource("/delete attack.png"));
+            deleteAttack = ImageIO.read(Runner.class.getResource("/deleteAttack.png"));
             deleteAttack = getCompatibleImage(deleteAttack);
             newArrow = ImageIO.read(Runner.class.getResource("/newArrow.png"));
             newArrow = getCompatibleImage(newArrow);

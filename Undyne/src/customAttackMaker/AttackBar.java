@@ -120,22 +120,23 @@ public class AttackBar {
     }
     
     int mouseClickWork() {
-        if(deleteAttack.contains(CustomAttacks.mousePosition)) {
+        boolean anySelected = areAnyDirectionsSelected();
+        if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
             CustomAttacks.attacks.remove(number);
             return 1;
         }
         else if(dropDownButton.contains(CustomAttacks.mousePosition))
             isDropped = !isDropped;
-        else if(newArrowButton.contains(CustomAttacks.mousePosition))
+        else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected)
             arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
             ArrowBar ab = arrows.get(i);
-            if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition))
+            if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
+                ab.switchDirectionIsSelected();
+            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected)
                 arrows.remove(i);
-            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition))
-                arrows.get(i).setReverseable(!arrows.get(i).isReverse());
-            else if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
-                arrows.get(i).switchDirectionIsSelected();
+            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
+                ab.switchReversable();
         }
         return 0;
     }
@@ -180,7 +181,7 @@ public class AttackBar {
     
     void keyBoardWork(KeyEvent e) {
         for(ArrowBar a : arrows) {
-            if(a.isDirectionIsSelected()) {
+            if(a.isDirectionSelected()) {
                 switch(e.getKeyCode()) {
                     case KeyEvent.VK_ENTER:
                         a.directionSelectedFalse();
@@ -197,8 +198,22 @@ public class AttackBar {
                     case KeyEvent.VK_LEFT:
                         a.setDirection('l');
                         break;
+                    case KeyEvent.VK_R:
+                        a.setDirection('n');
+                        break;
                 }
             }
         }
     }
+    
+    private boolean areAnyDirectionsSelected() {
+        for(AttackBar at : CustomAttacks.attacks) {
+            for(ArrowBar ab : at.getArrows()) {
+                if(ab.isDirectionSelected())
+                    return true;
+            }
+        }
+        return false;
+    }
+    
 }

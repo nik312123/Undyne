@@ -266,7 +266,7 @@ public class CustomAttacks {
                                 }
                                 boolean reversable = Boolean.parseBoolean(inputArrow[2]);
                                 char direction = inputArrow[3].charAt(0);
-                                if(inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r') {
+                                if(inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     errorPopUp.setExpanding(true);
                                     return;
@@ -297,7 +297,7 @@ public class CustomAttacks {
     
     private void exportFile() {
         ArrayList<String> output = new ArrayList<>();
-        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored and would be still ignored if it were an arrow code.");
+        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
         for(AttackBar attackBar : attacks) {
             for(ArrowBar arrowBar : attackBar.getArrows())
