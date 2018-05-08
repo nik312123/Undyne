@@ -54,12 +54,9 @@ class StartScreen {
     private static BufferedImage[] dog = new BufferedImage[2];
     private static BufferedImage[] greaterDog = new BufferedImage[3];
     private static BufferedImage[] sans = new BufferedImage[10];
-    private static BufferedImage[] cracks = new BufferedImage[14];
     private static BufferedImage[] dots = new BufferedImage[4];
     
     private int zCounter = 0;
-    private int crackFrame = 0;
-    private int crackCounter = 0;
     private int hardButtonRect = 0;
     private int easyButtonRect = 0;
     private int mediumButtonRect = 0;
@@ -141,7 +138,6 @@ class StartScreen {
     private static Sound spearFly;
     private static Sound spearHit;
     private static Sound slam;
-    private static Sound cracking;
     private static Sound bork;
     private static Sound click;
     
@@ -170,7 +166,6 @@ class StartScreen {
                 damage = new Sound(Runner.class.getResource("/damage.ogg"), false);
                 megalovania = new Sound(Runner.class.getResource("/megalovania.ogg"), true);
                 slam = new Sound(Runner.class.getResource("/slam.ogg"), false);
-                cracking = new Sound(Runner.class.getResource("/cracking.ogg"), false);
                 bork = new Sound(Runner.class.getResource("/bork.ogg"), false);
                 click = new Sound(Runner.class.getResource("/click.ogg"), false);
             }
@@ -226,10 +221,6 @@ class StartScreen {
                 spear = Runner.getCompatibleImage(spear);
                 arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
                 arrows = Runner.getCompatibleImage(arrows);
-                for(int i = 0; i < 14; ++i) {
-                    cracks[i] = ImageIO.read(Runner.class.getResource("/cracks/cracks" + i + ".png"));
-                    cracks[i] = Runner.getCompatibleImage(cracks[i]);
-                }
                 for(int i = 0; i < 4; ++i) {
                     dots[i] = ImageIO.read(Runner.class.getResource("/dots/dots" + i + ".png"));
                     dots[i] = Runner.getCompatibleImage(dots[i]);
@@ -319,7 +310,7 @@ class StartScreen {
                             url = "http://soundbible.com/992-Right-Cross.html";
                             break;
                         case 7:
-                            url = "http://soundbible.com/970-Cracking-Chest-Open.html";
+                            url = "";
                             break;
                         case 8:
                             url = "http://www.freesfx.co.uk/sfx/button";
@@ -403,16 +394,6 @@ class StartScreen {
                 else if(!slammed) {
                     slam.changeVolume(sfxVolume);
                     slam.play();
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(200);
-                        }
-                        catch(InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        cracking.changeVolume(sfxVolume);
-                        cracking.play();
-                    }).start();
                     slammed = true;
                 }
             }
@@ -423,7 +404,6 @@ class StartScreen {
                 constrain();
                 zToStart(g);
                 startArrows(g);
-                drawCracks(g);
                 gifDog(g);
                 gifFire(g);
                 gifGreaterDog(g);
@@ -486,16 +466,6 @@ class StartScreen {
         g.drawImage(dots[numHeartsActivated()], 4, 588, null);
     }
     
-    private void drawCracks(Graphics g) {
-        if(scale <= 1 && !heartsActivated()) {
-            g.drawImage(cracks[crackFrame], 56, 159, null);
-            if(crackFrame != 13 && ++crackCounter % 2 == 0) {
-                ++crackFrame;
-                crackCounter = 0;
-            }
-        }
-    }
-    
     private void drawArrows(Graphics g) {
         g.drawImage(Runner.blueArr, -100, 1000, null);
         g.drawImage(Runner.redArr, -100, 1000, null);
@@ -545,7 +515,7 @@ class StartScreen {
                     heartY += speed;
                     heartMoved = true;
                 }
-                if(heartsActivated() && heartY == 281 && !hitGround) {
+                if(heartsActivated() && heartY >= 283 && !hitGround) {
                     wall.changeVolume(sfxVolume);
                     wall.play();
                     hitGround = true;
