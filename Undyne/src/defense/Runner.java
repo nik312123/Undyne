@@ -932,7 +932,11 @@ public class Runner extends JPanel
                     automatic();
                 }
                 else {
-                    if(firstEnd) {
+                    if(canBeStopped) {
+                        if(!oneSecondDelay.isRunning())
+                            stop(true);
+                    }
+                    else if(firstEnd) {
                         main.stop();
                         firstEnd = false;
                     }
@@ -1654,9 +1658,6 @@ public class Runner extends JPanel
             case KeyEvent.VK_A:
                 dir = 'l';
                 stage.setLeft();
-                break;
-            case KeyEvent.VK_Q:
-                System.exit(0);
                 break;
             case KeyEvent.VK_X:
                 if(helpStarter) {
