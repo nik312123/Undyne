@@ -451,7 +451,7 @@ class StartScreen {
                 if(heartsActivated()) {
                     ++flickerCounter;
                     flickeringHeart();
-                    if(megalovania.isStopped()) {
+                    if(megalovania.isStopped() && boneCounter <= 265) {
                         megalovania.changeVolume(musicVolume);
                         megalovania.play();
                     }
@@ -926,8 +926,11 @@ class StartScreen {
                 boneSound.play();
             }
             showBones = true;
-            if(boneCounter < 300)
+            if(boneCounter < 300) {
                 g.drawImage(bones, -11, boneY, null);
+                if(boneCounter > 265 && !megalovania.isStopped())
+                    megalovania.stop();
+            }
             else {
                 hideSans = true;
                 resetEgg();
@@ -1023,7 +1026,6 @@ class StartScreen {
         hitGround = false;
         showBones = false;
         hideSans = false;
-        megalovania.stop();
     }
     
     void setRightf() {
