@@ -119,4 +119,8 @@ public class BottomMenuBar {
         return isRobotBoxChecked;
     }
     
+    public int getY() {
+        return y;
+    }
+    
 }
