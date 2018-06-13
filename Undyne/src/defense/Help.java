@@ -15,12 +15,12 @@ class Help {
     
     private PopUp helpPopUp;
     
-    private static BufferedImage[] helpGif = new BufferedImage[534];
+    private static BufferedImage[] helpGif = new BufferedImage[502];
     
     Help() {
         if(Runner.isFirstTime) {
             try {
-                for(int i = 0; i < 534; ++i) {
+                for(int i = 0; i < 502; ++i) {
                     helpGif[i] = ImageIO.read(Runner.class.getResource("/help/help" + i + ".png"));
                     helpGif[i] = Runner.getCompatibleImage(helpGif[i]);
                 }
@@ -59,7 +59,7 @@ class Help {
             ++helpFrame;
             frameCounter = 0;
         }
-        if(helpFrame == 534)
+        if(helpFrame ==  502)
             helpFrame = 0;
     }
     

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AttackBar {
-    
     private int number;
     
     static final int ATTACKBAR_X = 30;
@@ -122,23 +121,23 @@ public class AttackBar {
     }
     
     int mouseClickWork() {
-        if(CustomAttacks.mouse.intersects(deleteAttack)) {
+        boolean anySelected = areAnyDirectionsSelected();
+        if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
             CustomAttacks.attacks.remove(number);
             return 1;
         }
-        else if(CustomAttacks.mouse.intersects(dropDownButton))
+        else if(dropDownButton.contains(CustomAttacks.mousePosition))
             isDropped = !isDropped;
-        else if(CustomAttacks.mouse.intersects(newArrowButton))
+        else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected)
             arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
-            if(CustomAttacks.mouse.intersects(arrows.get(i).getDeleteArrowButton())) {
-                arrows.get(i).removeFields();
+            ArrowBar ab = arrows.get(i);
+            if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
+                ab.switchDirectionIsSelected();
+            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected)
                 arrows.remove(i);
-            }
-            else if(CustomAttacks.mouse.intersects(arrows.get(i).getReverseTickBox()))
-                arrows.get(i).setReverseable(!arrows.get(i).isReverse());
-            else if(CustomAttacks.mouse.intersects(arrows.get(i).getDirectionRectangle()))
-                arrows.get(i).switchDirectionIsSelected();
+            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
+                ab.switchReversable();
         }
         return 0;
     }
@@ -146,7 +145,7 @@ public class AttackBar {
     void mouseDragWork() {
         for(ArrowBar a : arrows) {
             if(a.isPressed()) {
-                int iconMovement = CustomAttacks.mouse.y - 8;
+                int iconMovement = CustomAttacks.mousePosition.y - 8;
                 if(iconMovement < topBound.getY() + 8)
                     iconMovement = (int) topBound.getY() + 8;
                 if(iconMovement > bottomBound.getY() - 18)
@@ -165,7 +164,7 @@ public class AttackBar {
     
     void mousePressed() {
         for(ArrowBar a : arrows) {
-            if(CustomAttacks.mouse.intersects(a.getDragArrowIcon()))
+            if(a.getDragArrowIcon().contains(CustomAttacks.mousePosition))
                 a.setPressed(true);
         }
     }
@@ -183,7 +182,7 @@ public class AttackBar {
     
     void keyBoardWork(KeyEvent e) {
         for(ArrowBar a : arrows) {
-            if(a.isDirectionIsSelected()) {
+            if(a.isDirectionSelected()) {
                 switch(e.getKeyCode()) {
                     case KeyEvent.VK_ENTER:
                         a.directionSelectedFalse();
@@ -200,8 +199,22 @@ public class AttackBar {
                     case KeyEvent.VK_LEFT:
                         a.setDirection('l');
                         break;
+                    case KeyEvent.VK_R:
+                        a.setDirection('n');
+                        break;
                 }
             }
         }
     }
+    
+    private boolean areAnyDirectionsSelected() {
+        for(AttackBar at : CustomAttacks.attacks) {
+            for(ArrowBar ab : at.getArrows()) {
+                if(ab.isDirectionSelected())
+                    return true;
+            }
+        }
+        return false;
+    }
+    
 }

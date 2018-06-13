@@ -6,19 +6,14 @@ import nikunj.classes.NumberField;
 import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.awt.geom.AffineTransform;
 
 public class ArrowBar {
-    
-    private Rectangle deleteArrowButton = new Rectangle();
-    private Rectangle directionRectangle = new Rectangle();
-    private Rectangle orderIntersecton = new Rectangle();
-    private Rectangle dragArrowIcon = new Rectangle();
-    private Rectangle reverseTickBox = new Rectangle();
-    
-    private int speed;
     private int y = 0;
+    private int speed;
     private int delay;
     
     private boolean isDirectionSelected = false;
@@ -27,6 +22,14 @@ public class ArrowBar {
     
     private char direction;
     
+    private Color textColor = new Color(255, 198, 0);
+    
+    private Rectangle deleteArrowButton = new Rectangle();
+    private Rectangle directionRectangle = new Rectangle();
+    private Rectangle orderIntersecton = new Rectangle();
+    private Rectangle dragArrowIcon = new Rectangle();
+    private Rectangle reverseTickBox = new Rectangle();
+  
     private NumberField speedField;
     private NumberField delayField;
     
@@ -70,6 +73,10 @@ public class ArrowBar {
         this.y = y;
     }
     
+    void setPressed(boolean pressed) {
+        this.pressed = pressed;
+    }
+    
     Rectangle getOrderIntersecton() {
         return orderIntersecton;
     }
@@ -90,14 +97,6 @@ public class ArrowBar {
         dragArrowIcon(g, x, this.y);
     }
     
-    void setPressed(boolean pressed) {
-        this.pressed = pressed;
-    }
-    
-    boolean isDirectionIsSelected() {
-        return isDirectionSelected;
-    }
-    
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
         if(!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
@@ -105,19 +104,35 @@ public class ArrowBar {
     }
     
     private void setImage(Graphics g, int x, int y) {
-        switch(getDirection()) {
+        boolean drawArrow = true;
+        AffineTransform arrowTransform = new AffineTransform();
+        arrowTransform.translate(x + 103, y + 8);
+        double angle = 0;
+        switch(direction) {
             case 'u':
-                g.drawImage(Runner.arrowUp, x + 101, y + 5, null);
+                angle = 0;
                 break;
             case 'd':
-                g.drawImage(Runner.arrowDown, x + 101, y + 5, null);
+                angle = Math.PI;
                 break;
             case 'r':
-                g.drawImage(Runner.arrowRight, x + 97, y + 9, null);
+                angle = Math.PI / 2;
                 break;
             case 'l':
-                g.drawImage(Runner.arrowLeft, x + 97, y + 9, null);
+                angle = -Math.PI / 2;
                 break;
+            case 'n':
+                drawArrow = false;
+                break;
+        }
+        arrowTransform.rotate(angle, 3, 6);
+        Graphics2D g2d = (Graphics2D) g;
+        if(drawArrow)
+            g2d.drawImage(Runner.customArrowDirection, arrowTransform, null);
+        else {
+            g2d.setColor(textColor);
+            g2d.setFont(Runner.deteFontSpeech);
+            g2d.drawString("R", x + 102, y + 18);
         }
     }
     
@@ -187,7 +202,11 @@ public class ArrowBar {
     }
     
     void setReverseable(boolean reverse) {
-        this.reverseable = reverse;
+        reverseable = reverse;
+    }
+    
+    void switchReversable() {
+        reverseable = !reverseable;
     }
     
     public boolean getReversable() {
@@ -200,6 +219,10 @@ public class ArrowBar {
     
     Rectangle getDirectionRectangle() {
         return directionRectangle;
+    }
+    
+    boolean isDirectionSelected() {
+        return isDirectionSelected;
     }
     
     void switchDirectionIsSelected() {

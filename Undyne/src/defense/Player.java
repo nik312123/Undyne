@@ -1,5 +1,7 @@
 package defense;
 
+import customAttackMaker.CustomAttacks;
+
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Font;
@@ -71,20 +73,25 @@ class Player {
     }
     
     void drawHealth(Graphics g) {
+        int yBase;
+        if(Runner.canBeStopped)
+            yBase = CustomAttacks.getBottomMenuBar().getY() - 30;
+        else
+            yBase = 570;
         g.setColor(Color.RED);
-        g.fillRect(430, 530 + 40, 70, 20);
+        g.fillRect(430, yBase, 70, 20);
         g.setColor(Color.YELLOW);
-        g.fillRect(430, 530 + 40, (int) (70 * ((double) health / maxHealth)), 20);
+        g.fillRect(430, yBase, (int) (70 * ((double) health / maxHealth)), 20);
         Graphics2D g3 = (Graphics2D) g;
         g3.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g3.setFont(undyneFont);
         g3.setColor(Color.WHITE);
-        g3.drawString("HP", 390, 548 + 40);
+        g3.drawString("HP", 390, yBase + 18);
         Graphics2D g4 = (Graphics2D) g;
         g4.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g4.setFont(undyneFont);
         g4.setColor(Color.WHITE);
-        g4.drawString(health + "/" + maxHealth, 513, 547 + 40);
+        g4.drawString(health + "/" + maxHealth, 513, yBase + 17);
         
     }
     
@@ -100,9 +107,8 @@ class Player {
             shield = shields[0];
             ++red;
         }
-        else {
+        else
             shield = shields[1];
-        }
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(angle), 71 / 2, 71 / 2);
@@ -159,8 +165,16 @@ class Player {
         return dir;
     }
     
+    void setDir(char dir) {
+        this.dir = dir;
+    }
+    
     int getAngle() {
         return angle;
+    }
+    
+    void zeroAngle() {
+        angle  = 0;
     }
     
     void setRedZero() {
