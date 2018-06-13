@@ -1,8 +1,9 @@
 package customAttackMaker;
 
 import defense.Runner;
-import nikunj.classes.NumberFieldLimit;
+import nikunj.classes.NumberField;
 
+import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -26,27 +27,8 @@ public class ArrowBar {
     
     private char direction;
     
-    private NumberFieldLimit speedField;
-    private NumberFieldLimit delayField;
-    
-    private class NumberFieldLimitSound extends NumberFieldLimit {
-        
-        /**
-         * Creates TextField with length and only numerical restrictions
-         *
-         * @param limit The number of characters the TextField can have at maximum
-         * @throws IOException Thrown if limit given is less than zero
-         */
-        NumberFieldLimitSound(int limit) throws IOException {
-            super(limit);
-        }
-        
-        @Override
-        public void onConsume() {
-        
-        }
-        
-    }
+    private NumberField speedField;
+    private NumberField delayField;
     
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
@@ -55,27 +37,24 @@ public class ArrowBar {
         this.delay = delay;
         Color foreground = new Color(255, 196, 0);
         try {
-            speedField = new NumberFieldLimitSound(2);
-            delayField = new NumberFieldLimitSound(3);
-            speedField.setFont(Runner.deteFontNorm);
-            delayField.setFont(Runner.deteFontNorm);
+            speedField = new NumberField(2, NumberField.STATE_NORMAL, false);
+            delayField = new NumberField(3, NumberField.STATE_NORMAL, false);
+            speedField.setFont(Runner.deteFontEditor);
+            delayField.setFont(Runner.deteFontEditor);
             speedField.setForeground(foreground);
             delayField.setForeground(foreground);
             speedField.setBackground(Color.BLACK);
             delayField.setBackground(Color.BLACK);
-            speedField.setBounds(AttackBar.ATTACKBAR_X + 10 + 183, y + 8, 26, 12);
-            delayField.setBounds(AttackBar.ATTACKBAR_X + 10 + 277, y + 8, 26, 12);
+            speedField.setHorizontalAlignment(JTextField.CENTER);
+            delayField.setHorizontalAlignment(JTextField.CENTER);
+            speedField.setBounds(AttackBar.ATTACKBAR_X + 6 + 183, y + 7, 34, 13);
+            delayField.setBounds(AttackBar.ATTACKBAR_X + 6 + 277, y + 7, 34, 13);
         }
         catch(IOException e) {
             e.printStackTrace();
         }
         Runner.addComponent(speedField, 0);
         Runner.addComponent(delayField, 0);
-    }
-    
-    void drawFields(Graphics g) {
-        speedField.paint(g);
-        delayField.paint(g);
     }
     
     void removeFields() {
@@ -98,8 +77,8 @@ public class ArrowBar {
     void draw(Graphics g, int x, int y) {
         if(!pressed)
             this.y = y;
-        speedField.setLocation(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8);
-        delayField.setLocation(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8);
+        speedField.setLocation(AttackBar.ATTACKBAR_X + 6 + 183, this.y + 7);
+        delayField.setLocation(AttackBar.ATTACKBAR_X + 6 + 277, this.y + 7);
         g.setColor(Color.BLACK);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8, 26, 12);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8, 26, 12);

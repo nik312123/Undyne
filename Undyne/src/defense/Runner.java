@@ -188,10 +188,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static Slider sfxSlider;
     
     private static PopUp creditsList;
-    
-    public static Font deteFontNorm;
+
+    static Font deteFontNorm;
     static Font deteFontSpeech;
     static Font deteFontScore;
+    public static Font deteFontEditor;
+    public static Font deteFontEditorAttack;
+    public static Font deteFontError;
     
     private static FocusListener checkFocus;
     
@@ -332,8 +335,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
-            deteFontSpeech = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(14.0f);
-            deteFontScore = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(22.0f);
+            deteFontSpeech = deteFontNorm.deriveFont(14.0f);
+            deteFontScore = deteFontNorm.deriveFont(22.0f);
+            deteFontEditor = deteFontNorm.deriveFont(10.0f);
+            deteFontEditorAttack = deteFontNorm.deriveFont(24.0f);
+            deteFontError = deteFontNorm.deriveFont(20.0f);
+
         }
         if(gifUndyne == null || gifUndyne.length != 32) {
             gifUndyne = new BufferedImage[32];
@@ -988,8 +995,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 loadingFrame = 0;
             }
         }
-        if(isCustomAttack)
-            CustomAttacks.paintFields(g);
         else
         
         g.dispose();

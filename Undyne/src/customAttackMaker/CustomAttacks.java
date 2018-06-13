@@ -94,7 +94,7 @@ public class CustomAttacks {
     
     private void drawErrorText(Graphics g) {
         if(errorPopUp.percentageExpanded() == 1.0) {
-            g.setFont(Runner.deteFontNorm.deriveFont(20.0f));
+            g.setFont(Runner.deteFontError);
             g.setColor(Color.WHITE);
             g.drawString("Error on line " + errorLine, 180, 200);
             String[] errorSplit = error.split("\\s+");
@@ -116,15 +116,6 @@ public class CustomAttacks {
             }
             if(!drewOnLast)
                 g.drawString(line.toString(), 180, 200 + 15 + 25 * lineIndex);
-        }
-    }
-    
-    public static void paintFields(Graphics g) {
-        for(AttackBar attackBar : attacks) {
-            for(ArrowBar arrowBar : attackBar.getArrows()) {
-                if(CustomAttacks.isScrolling)
-                    arrowBar.drawFields(g);
-            }
         }
     }
     

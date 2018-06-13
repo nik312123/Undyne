@@ -69,7 +69,7 @@ public class AttackBar {
     
     private void drawString(Graphics g, int x, int y) {
         g.setColor(Color.WHITE);
-        g.setFont(Runner.deteFontNorm.deriveFont(Runner.deteFontNorm.getSize() * 2F));
+        g.setFont(Runner.deteFontEditorAttack);
         int displayNum = number + 1;
         g.drawString("Attack ", x, y);
         g.drawString(displayNum + "", 10 + x + g.getFontMetrics().stringWidth("Attack"), y);
