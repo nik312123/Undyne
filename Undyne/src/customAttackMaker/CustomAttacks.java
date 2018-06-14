@@ -15,7 +15,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -341,27 +340,27 @@ public class CustomAttacks {
         scrollValue += e.getWheelRotation() * -1;
     }
     
-    public void mouseMoved(MouseEvent e) {}
+    public void mouseMoved() {}
     
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged() {
         for(AttackBar a : attacks)
             a.mouseDragWork();
     }
     
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered() {}
     
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased() {
         for(AttackBar a : attacks)
             a.mouseReleased();
     }
     
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed() {
         for(AttackBar a : attacks) {
             a.mousePressed();
         }
     }
     
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked() {
         if(errorPopUp.percentageExpanded() == 1.0)
             errorPopUp.setExpanding(false);
         for(AttackBar a : attacks) {
@@ -386,7 +385,7 @@ public class CustomAttacks {
             importFile();
     }
     
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited() {}
     
     public PopUp getErrorPopUp() {
         return errorPopUp;

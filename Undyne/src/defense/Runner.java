@@ -199,7 +199,7 @@ public class Runner extends JPanel
     
     private static PopUp creditsList;
     
-    static Font deteFontNorm;
+    private static Font deteFontNorm;
     static Font deteFontScore;
     public static Font deteFontSpeech;
     public static Font deteFontEditor;
@@ -1512,7 +1512,7 @@ public class Runner extends JPanel
                 oneSecondDelay.setActionCommand("play");
                 oneSecondDelay.start();
                 dir = 'u';
-                p.setDir('u');
+                p.setDirUp();
                 p.zeroAngle();
                 isPlayTimerDone = true;
             }
@@ -1830,37 +1830,37 @@ public class Runner extends JPanel
         barCheckBoxClicked(e);
         if(canBeStopped)
             bottomBar.mouseWorks(e.getPoint());
-        customAttackMaker.mouseClicked(e);
+        customAttackMaker.mouseClicked();
     }
     
     @Override
     public void mousePressed(MouseEvent e) {
-        customAttackMaker.mousePressed(e);
+        customAttackMaker.mousePressed();
     }
     
     @Override
     public void mouseReleased(MouseEvent e) {
-        customAttackMaker.mouseReleased(e);
+        customAttackMaker.mouseReleased();
     }
     
     @Override
     public void mouseEntered(MouseEvent e) {
-        customAttackMaker.mouseEntered(e);
+        customAttackMaker.mouseEntered();
     }
     
     @Override
     public void mouseExited(MouseEvent e) {
-        customAttackMaker.mouseExited(e);
+        customAttackMaker.mouseExited();
     }
     
     @Override
     public void mouseDragged(MouseEvent e) {
-        customAttackMaker.mouseDragged(e);
+        customAttackMaker.mouseDragged();
     }
     
     @Override
     public void mouseMoved(MouseEvent e) {
-        customAttackMaker.mouseMoved(e);
+        customAttackMaker.mouseMoved();
     }
     
     @Override

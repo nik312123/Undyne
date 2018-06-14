@@ -134,8 +134,10 @@ public class AttackBar {
             ArrowBar ab = arrows.get(i);
             if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
                 ab.switchDirectionIsSelected();
-            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected)
+            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
+                ab.removeFields();
                 arrows.remove(i);
+            }
             else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
                 ab.switchReversable();
         }

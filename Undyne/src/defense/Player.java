@@ -165,8 +165,8 @@ class Player {
         return dir;
     }
     
-    void setDir(char dir) {
-        this.dir = dir;
+    void setDirUp() {
+        this.dir = 'u';
     }
     
     int getAngle() {
