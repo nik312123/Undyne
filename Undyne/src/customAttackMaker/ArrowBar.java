@@ -228,6 +228,11 @@ public class ArrowBar {
     void switchDirectionIsSelected() {
         isDirectionSelected = !isDirectionSelected;
     }
+
+    void setFieldsVisibility(boolean visibility) {
+        speedField.setVisible(visibility);
+        delayField.setVisible(visibility);
+    }
     
     @Override
     public String toString() {

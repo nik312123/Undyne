@@ -917,56 +917,59 @@ public class Runner extends JPanel
             }
             else if(isCustomAttack && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
-            else if(!oneSecondDelay.isRunning()) {
-                if(p.getHit()) {
-                    p.decreaseCounter();
-                    if(frameCounter % 16 == 0) {
-                        if(flickeringHeart == 0)
-                            flickeringHeart = 9000;
-                        else
+            else {
+                customAttackMaker.setAllFieldsVisibility(false);
+                if(!oneSecondDelay.isRunning()) {
+                    if(p.getHit()) {
+                        p.decreaseCounter();
+                        if(frameCounter % 16 == 0) {
+                            if(flickeringHeart == 0)
+                                flickeringHeart = 9000;
+                            else
+                                flickeringHeart = 0;
+                        }
+                        if(p.getTimeoutCounter() == 0) {
+                            p.setHit(false);
+                            p.resetTimeoutCounter();
                             flickeringHeart = 0;
+                        }
                     }
-                    if(p.getTimeoutCounter() == 0) {
-                        p.setHit(false);
-                        p.resetTimeoutCounter();
-                        flickeringHeart = 0;
+                    if(p.getHealth() != 0) {
+                        drawCheat(g);
+                        drawSqu(g);
+                        drawCircle(g);
+                        drawHeart(g);
+                        p.shield(g, dir);
+                        gif(g);
+                        if(survival)
+                            g.drawImage(levels[levelIndex], 433, 4, null);
+                        a1.spawnArrows(g, p);
+                        p.drawHealth(g);
+                        automatic();
                     }
-                }
-                if(p.getHealth() != 0) {
-                    drawCheat(g);
-                    drawSqu(g);
-                    drawCircle(g);
-                    drawHeart(g);
-                    p.shield(g, dir);
-                    gif(g);
-                    if(survival)
-                        g.drawImage(levels[levelIndex], 433, 4, null);
-                    a1.spawnArrows(g, p);
-                    p.drawHealth(g);
-                    automatic();
-                }
-                else {
-                    if(canBeStopped) {
-                        if(!oneSecondDelay.isRunning())
-                            stop(true);
-                    }
-                    else if(firstEnd) {
-                        main.stop();
-                        firstEnd = false;
-                    }
-                    else if(!heartDone) {
-                        breakHeart(g);
-                    }
-                    else if(secondEnd) {
-                        secondEnd = false;
-                        gameDone.play();
-                    }
-                    else if(!gameOverDone)
-                        gameOver(g);
                     else {
-                        drawGameOver(g, gameOverFrame);
-                        if(isGameOver)
-                            drawReplay(g, 0);
+                        if(canBeStopped) {
+                            if(!oneSecondDelay.isRunning())
+                                stop(true);
+                        }
+                        else if(firstEnd) {
+                            main.stop();
+                            firstEnd = false;
+                        }
+                        else if(!heartDone) {
+                            breakHeart(g);
+                        }
+                        else if(secondEnd) {
+                            secondEnd = false;
+                            gameDone.play();
+                        }
+                        else if(!gameOverDone)
+                            gameOver(g);
+                        else {
+                            drawGameOver(g, gameOverFrame);
+                            if(isGameOver)
+                                drawReplay(g, 0);
+                        }
                     }
                 }
             }

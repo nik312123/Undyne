@@ -89,9 +89,12 @@ public class CustomAttacks {
                 attackBar.draw(g, dynamicLength);
             addAttackButton(g);
             drawTopBar(g);
+            setAllFieldsVisibility(true);
         }
-        else
+        else {
             startScreen(g);
+            setAllFieldsVisibility(false);
+        }
     }
     
     private void drawTopBar(Graphics g) {
@@ -383,6 +386,14 @@ public class CustomAttacks {
             exportFile();
         else if(check == 0)
             importFile();
+    }
+
+    public void setAllFieldsVisibility(boolean visibility) {
+        for(AttackBar at : attacks) {
+            for(ArrowBar ab : at.getArrows()) {
+                ab.setFieldsVisibility(visibility);
+            }
+        }
     }
     
     public void mouseExited() {}
