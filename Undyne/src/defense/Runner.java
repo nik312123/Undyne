@@ -384,14 +384,7 @@ public class Runner extends JPanel
     }
     
     private Runner(String s) {
-        frame = new JFrame(s) {
-            
-            @Override
-            public void paint(Graphics g) {
-                super.paint(g);
-            }
-            
-        };
+        frame = new JFrame(s);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(null);
         Runner bp = new Runner();
@@ -1026,8 +1019,6 @@ public class Runner extends JPanel
                 loadingFrame = 0;
             }
         }
-        else
-        
         g.dispose();
     }
     
