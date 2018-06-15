@@ -12,7 +12,8 @@ import java.util.Collections;
 
 public class AttackBar {
     private int number;
-    private static final int ATTACKBAR_X = 30;
+    
+    static final int ATTACKBAR_X = 30;
     
     private boolean isDropped = true;
     
@@ -67,7 +68,7 @@ public class AttackBar {
     
     private void drawString(Graphics g, int x, int y) {
         g.setColor(Color.WHITE);
-        g.setFont(Runner.deteFontNorm.deriveFont(Runner.deteFontNorm.getSize() * 2F));
+        g.setFont(Runner.deteFontEditorAttack);
         int displayNum = number + 1;
         g.drawString("Attack ", x, y);
         g.drawString(displayNum + "", 10 + x + g.getFontMetrics().stringWidth("Attack"), y);
@@ -133,8 +134,10 @@ public class AttackBar {
             ArrowBar ab = arrows.get(i);
             if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
                 ab.switchDirectionIsSelected();
-            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected)
+            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
+                ab.removeFields();
                 arrows.remove(i);
+            }
             else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
                 ab.switchReversable();
         }

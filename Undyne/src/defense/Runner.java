@@ -18,6 +18,7 @@ import javax.swing.WindowConstants;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -198,9 +199,12 @@ public class Runner extends JPanel
     
     private static PopUp creditsList;
     
-    public static Font deteFontNorm;
-    public static Font deteFontSpeech;
+    private static Font deteFontNorm;
     static Font deteFontScore;
+    public static Font deteFontSpeech;
+    public static Font deteFontEditor;
+    public static Font deteFontEditorAttack;
+    public static Font deteFontError;
     
     private static FocusListener checkFocus;
     
@@ -361,6 +365,9 @@ public class Runner extends JPanel
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
             deteFontSpeech = deteFontNorm.deriveFont(14.0f);
             deteFontScore = deteFontNorm.deriveFont(22.0f);
+            deteFontEditor = deteFontNorm.deriveFont(10.0f);
+            deteFontEditorAttack = deteFontNorm.deriveFont(24.0f);
+            deteFontError = deteFontNorm.deriveFont(20.0f);
         }
         if(gifUndyne == null || gifUndyne.length != 32) {
             gifUndyne = new BufferedImage[32];
@@ -903,56 +910,59 @@ public class Runner extends JPanel
             }
             else if(isCustomAttack && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
-            else if(!oneSecondDelay.isRunning()) {
-                if(p.getHit()) {
-                    p.decreaseCounter();
-                    if(frameCounter % 16 == 0) {
-                        if(flickeringHeart == 0)
-                            flickeringHeart = 9000;
-                        else
+            else {
+                customAttackMaker.setAllFieldsVisibility(false);
+                if(!oneSecondDelay.isRunning()) {
+                    if(p.getHit()) {
+                        p.decreaseCounter();
+                        if(frameCounter % 16 == 0) {
+                            if(flickeringHeart == 0)
+                                flickeringHeart = 9000;
+                            else
+                                flickeringHeart = 0;
+                        }
+                        if(p.getTimeoutCounter() == 0) {
+                            p.setHit(false);
+                            p.resetTimeoutCounter();
                             flickeringHeart = 0;
+                        }
                     }
-                    if(p.getTimeoutCounter() == 0) {
-                        p.setHit(false);
-                        p.resetTimeoutCounter();
-                        flickeringHeart = 0;
+                    if(p.getHealth() != 0) {
+                        drawCheat(g);
+                        drawSqu(g);
+                        drawCircle(g);
+                        drawHeart(g);
+                        p.shield(g, dir);
+                        gif(g);
+                        if(survival)
+                            g.drawImage(levels[levelIndex], 433, 4, null);
+                        a1.spawnArrows(g, p);
+                        p.drawHealth(g);
+                        automatic();
                     }
-                }
-                if(p.getHealth() != 0) {
-                    drawCheat(g);
-                    drawSqu(g);
-                    drawCircle(g);
-                    drawHeart(g);
-                    p.shield(g, dir);
-                    gif(g);
-                    if(survival)
-                        g.drawImage(levels[levelIndex], 433, 4, null);
-                    a1.spawnArrows(g, p);
-                    p.drawHealth(g);
-                    automatic();
-                }
-                else {
-                    if(canBeStopped) {
-                        if(!oneSecondDelay.isRunning())
-                            stop(true);
-                    }
-                    else if(firstEnd) {
-                        main.stop();
-                        firstEnd = false;
-                    }
-                    else if(!heartDone) {
-                        breakHeart(g);
-                    }
-                    else if(secondEnd) {
-                        secondEnd = false;
-                        gameDone.play();
-                    }
-                    else if(!gameOverDone)
-                        gameOver(g);
                     else {
-                        drawGameOver(g, gameOverFrame);
-                        if(isGameOver)
-                            drawReplay(g, 0);
+                        if(canBeStopped) {
+                            if(!oneSecondDelay.isRunning())
+                                stop(true);
+                        }
+                        else if(firstEnd) {
+                            main.stop();
+                            firstEnd = false;
+                        }
+                        else if(!heartDone) {
+                            breakHeart(g);
+                        }
+                        else if(secondEnd) {
+                            secondEnd = false;
+                            gameDone.play();
+                        }
+                        else if(!gameOverDone)
+                            gameOver(g);
+                        else {
+                            drawGameOver(g, gameOverFrame);
+                            if(isGameOver)
+                                drawReplay(g, 0);
+                        }
                     }
                 }
             }
@@ -1496,7 +1506,7 @@ public class Runner extends JPanel
                 oneSecondDelay.setActionCommand("play");
                 oneSecondDelay.start();
                 dir = 'u';
-                p.setDir('u');
+                p.setDirUp();
                 p.zeroAngle();
                 isPlayTimerDone = true;
             }
@@ -1604,6 +1614,14 @@ public class Runner extends JPanel
         }
     }
     
+    public static void addComponent(Component component, int index) {
+        frame.add(component, index);
+    }
+    
+    public static void removeComponent(Component component) {
+        frame.remove(component);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == null)
@@ -1611,7 +1629,7 @@ public class Runner extends JPanel
         else {
             switch(e.getActionCommand()) {
                 case "main":
-                    repaint();
+                    frame.repaint();
                     break;
                 case "start":
                     start();
@@ -1806,37 +1824,37 @@ public class Runner extends JPanel
         barCheckBoxClicked(e);
         if(canBeStopped)
             bottomBar.mouseWorks(e.getPoint());
-        customAttackMaker.mouseClicked(e);
+        customAttackMaker.mouseClicked();
     }
     
     @Override
     public void mousePressed(MouseEvent e) {
-        customAttackMaker.mousePressed(e);
+        customAttackMaker.mousePressed();
     }
     
     @Override
     public void mouseReleased(MouseEvent e) {
-        customAttackMaker.mouseReleased(e);
+        customAttackMaker.mouseReleased();
     }
     
     @Override
     public void mouseEntered(MouseEvent e) {
-        customAttackMaker.mouseEntered(e);
+        customAttackMaker.mouseEntered();
     }
     
     @Override
     public void mouseExited(MouseEvent e) {
-        customAttackMaker.mouseExited(e);
+        customAttackMaker.mouseExited();
     }
     
     @Override
     public void mouseDragged(MouseEvent e) {
-        customAttackMaker.mouseDragged(e);
+        customAttackMaker.mouseDragged();
     }
     
     @Override
     public void mouseMoved(MouseEvent e) {
-        customAttackMaker.mouseMoved(e);
+        customAttackMaker.mouseMoved();
     }
     
     @Override
