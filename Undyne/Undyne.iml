@@ -68,18 +68,18 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="library" exported="" name="nikunj_classes" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/nikunj_classes.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/nikunj_classes.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/nikunj_classes.jar!/" />
+          <root url="jar://$USER_HOME$/Desktop/nikunj_classes.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="nikunj_classes" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
