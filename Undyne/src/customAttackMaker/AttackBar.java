@@ -136,7 +136,6 @@ public class AttackBar {
             arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
             ArrowBar ab = arrows.get(i);
-            ab.setFieldUsability(!anySelected);
             if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
                 ab.switchDirectionIsSelected();
             else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
@@ -187,7 +186,7 @@ public class AttackBar {
         }
     }
     
-    private boolean areAnyDirectionsSelected() {
+    static boolean areAnyDirectionsSelected() {
         for(AttackBar at : CustomAttacks.attacks) {
             for(ArrowBar ab : at.getArrows()) {
                 if(ab.isDirectionSelected())

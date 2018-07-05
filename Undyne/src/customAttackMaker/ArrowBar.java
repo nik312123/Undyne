@@ -110,6 +110,8 @@ public class ArrowBar {
             speed = Integer.parseInt(speedField.getText());
         if(!delayField.getText().isEmpty())
             delay = Integer.parseInt(delayField.getText());
+        boolean anySelected = AttackBar.areAnyDirectionsSelected();
+        setFieldUsability(!anySelected);
     }
     
     private void drawDirection(Graphics g, int x, int y) {
@@ -237,7 +239,7 @@ public class ArrowBar {
         delayField.setVisible(visibility);
     }
     
-    void setFieldUsability(boolean usability) {
+    private void setFieldUsability(boolean usability) {
         if(usability) {
             speedField.setEditable(true);
             speedField.setHighlighter(defaultHighlighter);

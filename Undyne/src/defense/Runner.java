@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -37,6 +38,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -734,6 +736,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         PopUp errorPopUp = customAttackMaker.getErrorPopUp();
         
         setUpKeyBindings(runner);
+    
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if(event instanceof MouseEvent) {
+                MouseEvent evt = (MouseEvent) event;
+                if(evt.getID() == MouseEvent.MOUSE_CLICKED) {
+                    barCheckBoxClicked(evt);
+                    if(canBeStopped)
+                        bottomBar.mouseWorks(evt.getPoint());
+                    customAttackMaker.mouseClicked();
+                }
+            }
+        }, AWTEvent.MOUSE_EVENT_MASK);
         
         frame.add(runner);
         frame.add(closeButton);
@@ -1979,24 +1993,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
     
     @Override
-    public void mouseClicked(MouseEvent e) {
-        if(frame.getFocusOwner() instanceof NumberField)
-            requestFocus();
-        else if(frame.getFocusOwner() instanceof Runner) {
-            for(AttackBar attBar : CustomAttacks.attacks) {
-                for(ArrowBar arrBar : attBar.getArrows()) {
-                    if(arrBar.getSpeedFieldBounds().contains(e.getLocationOnScreen()))
-                        arrBar.getSpeedField().requestFocus();
-                    else if(arrBar.getDelayFieldBounds().contains(e.getLocationOnScreen()))
-                        arrBar.getDelayField().requestFocus();
-                }
-            }
-        }
-        barCheckBoxClicked(e);
-        if(canBeStopped)
-            bottomBar.mouseWorks(e.getPoint());
-        customAttackMaker.mouseClicked();
-    }
+    public void mouseClicked(MouseEvent e) {}
     
     @Override
     public void mousePressed(MouseEvent e) {
