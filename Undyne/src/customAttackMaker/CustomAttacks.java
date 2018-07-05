@@ -14,7 +14,6 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +43,7 @@ public class CustomAttacks {
     
     static Point mousePosition = new Point();
     
-    static ArrayList<AttackBar> attacks = new ArrayList<>();
+    public static ArrayList<AttackBar> attacks = new ArrayList<>();
     
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
     
@@ -303,7 +302,7 @@ public class CustomAttacks {
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
         for(AttackBar attackBar : attacks) {
             for(ArrowBar arrowBar : attackBar.getArrows())
-                output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.getReversable(), arrowBar.getDirection(), arrowBar.getDelay()));
+                output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.isReversible(), arrowBar.getDirection(), arrowBar.getDelay()));
         }
         chooser.setDialogTitle("Choose export location...");
         if(chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -321,13 +320,6 @@ public class CustomAttacks {
                 for(String s : output)
                     p.println(s);
             }
-        }
-    }
-    
-    public void keyPressed(KeyEvent e) {
-        if(Runner.isCustomAttack) {
-            for(AttackBar a : attacks)
-                a.keyBoardWork(e);
         }
     }
     
@@ -387,7 +379,7 @@ public class CustomAttacks {
         else if(check == 0)
             importFile();
     }
-
+    
     public void setAllFieldsVisibility(boolean visibility) {
         for(AttackBar at : attacks) {
             for(ArrowBar ab : at.getArrows()) {

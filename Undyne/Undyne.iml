@@ -12,7 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/images" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/lib" type="java-resource" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
@@ -81,5 +81,6 @@
     </orderEntry>
     <orderEntry type="library" name="nikunj_classes" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.7-javadoc" level="project" />
   </component>
 </module>

@@ -123,7 +123,11 @@ public class AttackBar {
     int mouseClickWork() {
         boolean anySelected = areAnyDirectionsSelected();
         if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
-            CustomAttacks.attacks.remove(number);
+            ArrayList<AttackBar> attacks = CustomAttacks.attacks;
+            AttackBar attBar = attacks.get(number);
+            for(ArrowBar arrBar : attBar.getArrows())
+                arrBar.removeFields();
+            attacks.remove(number);
             return 1;
         }
         else if(dropDownButton.contains(CustomAttacks.mousePosition))
@@ -132,6 +136,7 @@ public class AttackBar {
             arrows.add(new ArrowBar(1, false, 'u', 2));
         for(int i = 0; i < arrows.size(); ++i) {
             ArrowBar ab = arrows.get(i);
+            ab.setFieldUsability(!anySelected);
             if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
                 ab.switchDirectionIsSelected();
             else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
@@ -177,33 +182,6 @@ public class AttackBar {
                 if(arrows.get(i).getOrderIntersecton().intersects(arrows.get(j).getOrderIntersecton())) {
                     Collections.swap(arrows, i, j);
                     return;
-                }
-            }
-        }
-    }
-    
-    void keyBoardWork(KeyEvent e) {
-        for(ArrowBar a : arrows) {
-            if(a.isDirectionSelected()) {
-                switch(e.getKeyCode()) {
-                    case KeyEvent.VK_ENTER:
-                        a.directionSelectedFalse();
-                        break;
-                    case KeyEvent.VK_UP:
-                        a.setDirection('u');
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        a.setDirection('d');
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        a.setDirection('r');
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        a.setDirection('l');
-                        break;
-                    case KeyEvent.VK_R:
-                        a.setDirection('n');
-                        break;
                 }
             }
         }

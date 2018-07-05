@@ -174,7 +174,7 @@ class Player {
     }
     
     void zeroAngle() {
-        angle  = 0;
+        angle = 0;
     }
     
     void setRedZero() {

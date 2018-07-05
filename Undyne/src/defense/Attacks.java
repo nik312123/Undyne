@@ -34,9 +34,9 @@ class Attacks {
                 if(dir == 'n')
                     dir = DIRS[rand.nextInt(4)];
                 if(ar.getSpeed() == 1)
-                    addSlowArrow(at.getNumber(), ar.getReversable(), dir, ar.getDelay());
+                    addSlowArrow(at.getNumber(), ar.isReversible(), dir, ar.getDelay());
                 else
-                    addArrow(at.getNumber(), ar.getSpeed() - 1, ar.getReversable(), dir, ar.getDelay());
+                    addArrow(at.getNumber(), ar.getSpeed() - 1, ar.isReversible(), dir, ar.getDelay());
             }
         }
     }

@@ -59,7 +59,7 @@ class Help {
             ++helpFrame;
             frameCounter = 0;
         }
-        if(helpFrame ==  502)
+        if(helpFrame == 502)
             helpFrame = 0;
     }
     

@@ -27,7 +27,8 @@ public class BottomMenuBar {
     public void work(Graphics g) {
         tab.setBounds(528, y, 46, 25);
         g.drawImage(Runner.bottomMenuBar, 0, y, null);
-        if(!isThereAnEmptyAttack()) {
+        boolean emptyAttackExists = isThereAnEmptyAttack();
+        if(!emptyAttackExists && noFieldsAreEmpty()) {
             g.drawImage(Runner.bottomPlayButton, 5, y + 28, null);
             g.drawImage(Runner.bottomStopButton, 31, y + 28, null);
         }
@@ -35,7 +36,7 @@ public class BottomMenuBar {
             g.drawImage(Runner.bottomPlayButtonDisabled, 5, y + 28, null);
             g.drawImage(Runner.bottomStopButtonDisabled, 31, y + 28, null);
         }
-        if(isAttacksEmpty())
+        if(emptyAttackExists && isAttacksEmpty())
             g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
         else
             g.drawImage(Runner.exportButton, 456, y + 28, null);
@@ -65,6 +66,16 @@ public class BottomMenuBar {
         g.drawString(checkBoxMode, CHECKBOX_X + 17, y + 41);
     }
     
+    private boolean noFieldsAreEmpty() {
+        for(AttackBar attBar : CustomAttacks.attacks) {
+            for(ArrowBar arrBar : attBar.getArrows()) {
+                if(arrBar.emptyFieldExists())
+                    return false;
+            }
+        }
+        return true;
+    }
+    
     private boolean isThereAnEmptyAttack() {
         if(CustomAttacks.attacks.size() == 0)
             return true;
@@ -75,7 +86,11 @@ public class BottomMenuBar {
     }
     
     private boolean isAttacksEmpty() {
-        return CustomAttacks.attacks.size() == 0;
+        for(AttackBar a : CustomAttacks.attacks) {
+            if(a.getArrows().size() > 0)
+                return false;
+        }
+        return true;
     }
     
     public int mouseWorks(Point mousePosition) {
@@ -83,11 +98,11 @@ public class BottomMenuBar {
         stop.setLocation(31, y + 28);
         if(tab.contains(mousePosition))
             isShowing = !isShowing;
-        else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty())
+        else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty() && !isThereAnEmptyAttack())
             return 1;
         else if(IMPORT.contains(mousePosition) && isShowing)
             return 0;
-        else if(play.contains(mousePosition) && !Runner.canBeStopped && CustomAttacks.attacks.size() != 0 && !CustomAttacks.areAnyAttacksEmpty())
+        else if(play.contains(mousePosition) && !Runner.canBeStopped && CustomAttacks.attacks.size() != 0 && !CustomAttacks.areAnyAttacksEmpty() && noFieldsAreEmpty())
             Runner.play(false);
         else if(stop.contains(mousePosition) && Runner.canBeStopped)
             Runner.stop(false);
