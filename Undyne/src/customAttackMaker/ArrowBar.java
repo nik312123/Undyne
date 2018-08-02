@@ -67,8 +67,8 @@ public class ArrowBar {
         catch(IOException e) {
             e.printStackTrace();
         }
-        Runner.addComponent(speedField, 0);
-        Runner.addComponent(delayField, 0);
+        Runner.addComponent(speedField, 6);
+        Runner.addComponent(delayField, 6);
     }
     
     void removeFields() {
@@ -261,26 +261,6 @@ public class ArrowBar {
     
     boolean emptyFieldExists() {
         return speedField.getText().isEmpty() || delayField.getText().isEmpty();
-    }
-    
-    public Rectangle getSpeedFieldBounds() {
-        Rectangle speedRect = (Rectangle) speedField.getBounds().clone();
-        speedRect.setLocation(speedField.getLocationOnScreen());
-        return speedRect;
-    }
-    
-    public Rectangle getDelayFieldBounds() {
-        Rectangle delayRect = (Rectangle) delayField.getBounds().clone();
-        delayRect.setLocation(delayField.getLocationOnScreen());
-        return delayRect;
-    }
-    
-    public NumberField getSpeedField() {
-        return speedField;
-    }
-    
-    public NumberField getDelayField() {
-        return delayField;
     }
     
     @Override

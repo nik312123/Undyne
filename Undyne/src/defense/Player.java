@@ -75,7 +75,7 @@ class Player {
     void drawHealth(Graphics g) {
         int yBase;
         if(Runner.canBeStopped)
-            yBase = CustomAttacks.getBottomMenuBar().getY() - 30;
+            yBase = CustomAttacks.getBottomMenuBar().getYValue() - 30;
         else
             yBase = 570;
         g.setColor(Color.RED);
@@ -111,7 +111,7 @@ class Player {
             shield = shields[1];
         g.translate(300, 300);
         AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), 71 / 2, 71 / 2);
+        tx.rotate(Math.toRadians(angle), 35, 35);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         shield = op.filter(shield, null);
         g.translate(-300, -300);

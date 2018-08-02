@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -141,6 +140,7 @@ public class AttackBar {
             else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
                 ab.removeFields();
                 arrows.remove(i);
+                --i;
             }
             else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
                 ab.switchReversable();

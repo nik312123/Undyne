@@ -82,6 +82,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static int loadingCounter = 0;
     private static int loadingFrame = 0;
     public static int customAttacksCounter = 0;
+    private static int clickCounter = 0;
     
     private static double fadeStart = 0;
     private static double musicMutedVolume = 1;
@@ -125,7 +126,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static Timer timer;
     private static Timer oneSecondDelay;
     
-    private static BufferedImage exit;
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -220,6 +220,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static SplashScreen loading;
     private static BottomMenuBar bottomBar = CustomAttacks.getBottomMenuBar();
     
+    private static JPanel topBar;
+    
     private static JFrame frame;
     
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
@@ -287,8 +289,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 levels[i] = getCompatibleImage(levels[i]);
             blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
             blueArr = getCompatibleImage(blueArr);
-            exit = ImageIO.read(Runner.class.getResource("/exit.png"));
-            exit = getCompatibleImage(exit);
             dragArrowIcon = ImageIO.read(Runner.class.getResource("/DragArrowIcon.png"));
             dragArrowIcon = getCompatibleImage(dragArrowIcon);
             arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
@@ -422,7 +422,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void beforeDraw(Graphics g) {
                 g.setColor(Color.BLACK);
-                g.fillRect(0, 0, 26, 26);
+                g.fillRect(0, 0, 24, 24);
             }
         };
         
@@ -460,6 +460,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public void mouseMoved(MouseEvent e) {}
+    
+            @Override
+            public void beforeDraw(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 24, 24);
+            }
         };
         
         musicButton = new GradientButton(music, Color.BLACK, new Color(0, 208, 208), 545, 2, 24, 24) {
@@ -510,6 +516,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public void mouseMoved(MouseEvent e) {}
+    
+            @Override
+            public void beforeDraw(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 24, 24);
+            }
             
             @Override
             public void afterDraw(Graphics g) {
@@ -584,6 +596,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public void mouseMoved(MouseEvent e) {}
+    
+            @Override
+            public void beforeDraw(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 24, 24);
+            }
             
             @Override
             public void afterDraw(Graphics g) {
@@ -630,7 +648,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnLink();
+                return isVisible() && stage.isOnLink();
             }
         };
         
@@ -660,7 +678,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnHelp();
+                return isVisible() && stage.isOnHelp();
             }
         };
         
@@ -689,7 +707,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnPlay();
+                return isVisible() && stage.isOnPlay();
             }
         };
         
@@ -718,7 +736,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnCreator();
+                return isVisible() && stage.isOnCreator();
             }
         };
         
@@ -739,6 +757,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             if(event instanceof MouseEvent) {
                 MouseEvent evt = (MouseEvent) event;
                 if(evt.getID() == MouseEvent.MOUSE_CLICKED) {
+//                    System.out.println("Click " + ++clickCounter);
+                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
+                        if(error.isFinished())
+                            error.play();
+                        stage.warningOn();
+                    }
+                    else if(checkFocus.isJustFocused())
+                        checkFocus.deactivateJustFocused();
                     barCheckBoxClicked(evt);
                     if(canBeStopped)
                         bottomBar.mouseWorks(evt.getPoint());
@@ -747,52 +773,49 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
         
-        frame.add(runner);
+        bottomBar.setBounds(0, 548, 600, 52);
+    
+        topBar = new JPanel() {
+            
+            @Override
+            public void paintComponent(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 600, 28);
+                g.setColor(Color.WHITE);
+                g.drawLine(0, 28, 600, 28);
+            }
+            
+        };
+        topBar.setBounds(0, 0, 600, 28);
+        
+        bottomBar.setOpaque(false);
+        topBar.setOpaque(false);
+        creditsList.setOpaque(false);
+        helpPopUp.setOpaque(false);
+        errorPopUp.setOpaque(false);
+        closeButton.setOpaque(false);
+        draggableButton.setOpaque(false);
+        musicButton.setOpaque(false);
+        sfxButton.setOpaque(false);
+        musicSlider.setOpaque(false);
+        sfxSlider.setOpaque(false);
+        creditsButton.setOpaque(false);
+        helpButton.setOpaque(false);
+        playButton.setOpaque(false);
+        creatorButton.setOpaque(false);
+        
+        frame.add(bottomBar);
         frame.add(closeButton);
         frame.add(draggableButton);
         frame.add(musicButton);
         frame.add(sfxButton);
-        frame.add(creditsButton);
-        frame.add(helpButton);
-        frame.add(playButton);
-        frame.add(creatorButton);
-        frame.add(musicSlider);
-        frame.add(sfxSlider);
+        frame.add(topBar);
         frame.add(creditsList);
         frame.add(helpPopUp);
         frame.add(errorPopUp);
-        
-        MouseListener errorListener = new MouseListener() {
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
-                    if(error.isFinished())
-                        error.play();
-                    stage.warningOn();
-                }
-                else if(checkFocus.isJustFocused())
-                    checkFocus.deactivateJustFocused();
-            }
-            
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        };
-        
-        frame.addMouseListener(errorListener);
-        creditsButton.addMouseListener(errorListener);
-        helpButton.addMouseListener(errorListener);
-        playButton.addMouseListener(errorListener);
-        creatorButton.addMouseListener(errorListener);
+        frame.add(musicSlider);
+        frame.add(sfxSlider);
+        frame.add(runner);
         
         frame.addMouseMotionListener(runner);
         frame.addMouseListener(runner);
@@ -802,9 +825,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         musicSlider.setVisible(true);
         sfxSlider.setVisible(true);
-        creditsList.setVisible(true);
-        helpPopUp.setVisible(true);
-        errorPopUp.setVisible(true);
+        creditsList.setVisible(false);
+        helpPopUp.setVisible(false);
+        errorPopUp.setVisible(false);
+        playButton.setVisible(false);
+        creatorButton.setVisible(false);
+        helpButton.setVisible(false);
+        creditsButton.setVisible(false);
+        topBar.setVisible(false);
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
@@ -908,14 +936,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             if(beginning && !oneSecondDelay.isRunning()) {
                 if(stage.shouldShow()) {
                     if(!stage.isPlayChosen()) {
-                        creditsButton.draw(g);
                         creditsButton.setVisible(true);
-                        helpButton.draw(g);
+                        creditsButton.draw(g);
                         helpButton.setVisible(true);
-                        playButton.draw(g);
+                        helpButton.draw(g);
                         playButton.setVisible(true);
-                        creatorButton.draw(g);
+                        playButton.draw(g);
                         creatorButton.setVisible(true);
+                        creatorButton.draw(g);
                     }
                     else
                         moveButtons(true);
@@ -930,6 +958,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             else if(isCustomAttack && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
             else {
+                topBar.setVisible(false);
                 customAttackMaker.setAllFieldsVisibility(false);
                 if(!oneSecondDelay.isRunning()) {
                     if(p.getHit()) {
@@ -986,7 +1015,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 }
             }
             if(!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped))
-                bottomBar.work(g);
+                bottomBar.setVisible(true);
+            else
+                bottomBar.setVisible(false);
             if(a != null && a.getIsFinished() && !oneSecondDelay.isRunning()) {
                 if(isGenocide && count == 19 || !isGenocide && count == 10 && !canBeStopped) {
                     if(main != null)
@@ -1000,20 +1031,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 else
                     undyneSpeech(g);
             }
-            closeButton.draw(g);
-            draggableButton.draw(g);
-            musicButton.draw(g);
-            sfxButton.draw(g);
-            if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming()) {
+            closeButton.visibilityCheck();
+            draggableButton.visibilityCheck();
+            musicButton.visibilityCheck();
+            sfxButton.visibilityCheck();
+            if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming())
                 musicSlider.setVisible(true);
-                musicSlider.draw(g);
-            }
             else
                 musicSlider.setVisible(false);
-            if(sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming()) {
+            if(sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming())
                 sfxSlider.setVisible(true);
-                sfxSlider.draw(g);
-            }
             else
                 sfxSlider.setVisible(false);
             if(speechDone)
@@ -1109,7 +1136,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     private void nothing() {
         if(typed.length() > NOTHING.length())
-            typed = typed.substring(typed.length() - NOTHING.length(), typed.length());
+            typed = typed.substring(typed.length() - NOTHING.length());
         if(typed.length() == NOTHING.length()) {
             if(typed.equalsIgnoreCase(NOTHING)) {
                 automatic = !automatic;
@@ -1405,6 +1432,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     static void finalBoost() {
         heal.play();
         p.healthBoost();
+    }
+    
+    static void showInitialButtons() {
+        playButton.setVisible(true);
+        creditsButton.setVisible(true);
+        creatorButton.setVisible(true);
+        helpButton.setVisible(true);
     }
     
     static boolean isSurvival() {
@@ -1760,6 +1794,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         if(creditsButton.onButton()) {
                             stage.playClick();
                             creditsList.setExpanding(true);
+                            creditsList.setVisible(true);
                         }
                         else if(helpButton.onButton()) {
                             stage.playClick();
@@ -1990,6 +2025,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
     }
     
+    public static void setTopBarVisibility(boolean visibility) {
+        topBar.setVisible(visibility);
+    }
+    
+    static boolean onFrontButton() {
+        return playButton.onButton() || creatorButton.onButton() || creditsButton.onButton() || helpButton.onButton();
+    }
+    
+    public static boolean bottomBarShouldDraw() {
+        return !allStopped && !oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped);
+    }
+    
     @Override
     public void mouseClicked(MouseEvent e) {}
     
@@ -2028,7 +2075,4 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         customAttackMaker.mouseWheelMoved(e);
     }
     
-    static boolean onFrontButton() {
-        return playButton.onButton() || creatorButton.onButton() || creditsButton.onButton() || helpButton.onButton();
-    }
 }

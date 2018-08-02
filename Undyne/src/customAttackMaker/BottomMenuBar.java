@@ -2,13 +2,14 @@ package customAttackMaker;
 
 import defense.Runner;
 
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public class BottomMenuBar {
-    private int y = 548;
+public class BottomMenuBar extends JPanel {
+    private int y = 0;
     private final int CHECKBOX_X = 353;
     
     private boolean isShowing = true;
@@ -18,39 +19,46 @@ public class BottomMenuBar {
     private String checkBoxMode;
     
     private Rectangle tab = new Rectangle();
-    private Rectangle checkbox = new Rectangle(CHECKBOX_X, y + 31, 13, 12);
-    private Rectangle play = new Rectangle(5, y + 28, 20, 18);
-    private Rectangle stop = new Rectangle(31, y + 28, 20, 18);
+    private Rectangle checkbox = new Rectangle(CHECKBOX_X, y + 31 + 548, 13, 12);
+    private Rectangle play = new Rectangle(5, y + 28 + 548, 20, 18);
+    private Rectangle stop = new Rectangle(31, y + 28 + 548, 20, 18);
     private final Rectangle EXPORT = new Rectangle(457, 576, 53, 17);
     private final Rectangle IMPORT = new Rectangle(518, 576, 53, 17);
-    
-    public void work(Graphics g) {
-        tab.setBounds(528, y, 46, 25);
-        g.drawImage(Runner.bottomMenuBar, 0, y, null);
-        boolean emptyAttackExists = isThereAnEmptyAttack();
-        if(!emptyAttackExists && noFieldsAreEmpty()) {
-            g.drawImage(Runner.bottomPlayButton, 5, y + 28, null);
-            g.drawImage(Runner.bottomStopButton, 31, y + 28, null);
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, 600, 600);
+        if(Runner.bottomBarShouldDraw()) {
+            tab.setBounds(528, y, 46, 25);
+            g.drawImage(Runner.bottomMenuBar, 0, y, null);
+            boolean emptyAttackExists = isThereAnEmptyAttack();
+            if(!emptyAttackExists && noFieldsAreEmpty()) {
+                g.drawImage(Runner.bottomPlayButton, 5, y + 28, null);
+                g.drawImage(Runner.bottomStopButton, 31, y + 28, null);
+            }
+            else {
+                g.drawImage(Runner.bottomPlayButtonDisabled, 5, y + 28, null);
+                g.drawImage(Runner.bottomStopButtonDisabled, 31, y + 28, null);
+            }
+            if(emptyAttackExists && isAttacksEmpty())
+                g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
+            else
+                g.drawImage(Runner.exportButton, 456, y + 28, null);
+            if(isShowing) {
+                g.drawImage(Runner.bottomTabDown, 541, y + 7, null);
+                if(--y < 0)
+                    y = 0;
+            }
+            else {
+                g.drawImage(Runner.bottomTabUp, 541, y + 7, null);
+                if(++y > 32)
+                    y = 32;
+            }
+            drawBarCheck(g);
         }
-        else {
-            g.drawImage(Runner.bottomPlayButtonDisabled, 5, y + 28, null);
-            g.drawImage(Runner.bottomStopButtonDisabled, 31, y + 28, null);
-        }
-        if(emptyAttackExists && isAttacksEmpty())
-            g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
-        else
-            g.drawImage(Runner.exportButton, 456, y + 28, null);
-        if(isShowing) {
-            g.drawImage(Runner.bottomTabDown, 541, y + 7, null);
-            if(--y < 548)
-                y = 548;
-        }
-        else {
-            g.drawImage(Runner.bottomTabUp, 541, y + 7, null);
-            if(++y > 580)
-                y = 580;
-        }
-        drawBarCheck(g);
+        g.setColor(Color.PINK);
     }
     
     private void drawBarCheck(Graphics g) {
@@ -94,8 +102,8 @@ public class BottomMenuBar {
     }
     
     public int mouseWorks(Point mousePosition) {
-        play.setLocation(5, y + 28);
-        stop.setLocation(31, y + 28);
+        play.setLocation(5, y + 28 + 548);
+        stop.setLocation(31, y + 28 + 548);
         if(tab.contains(mousePosition))
             isShowing = !isShowing;
         else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty() && !isThereAnEmptyAttack())
@@ -110,7 +118,7 @@ public class BottomMenuBar {
     }
     
     public Rectangle getBarCheckBox() {
-        checkbox.setLocation(CHECKBOX_X, y + 31);
+        checkbox.setLocation(CHECKBOX_X, y + 31 + 548);
         return checkbox;
     }
     
@@ -134,7 +142,7 @@ public class BottomMenuBar {
         return isRobotBoxChecked;
     }
     
-    public int getY() {
+    public int getYValue() {
         return y;
     }
     

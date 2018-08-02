@@ -87,20 +87,14 @@ public class CustomAttacks {
             for(AttackBar attackBar : attacks)
                 attackBar.draw(g, dynamicLength);
             addAttackButton(g);
-            drawTopBar(g);
+            Runner.setTopBarVisibility(true);
             setAllFieldsVisibility(true);
         }
         else {
+            Runner.setTopBarVisibility(false);
             startScreen(g);
             setAllFieldsVisibility(false);
         }
-    }
-    
-    private void drawTopBar(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 600, 28);
-        g.setColor(Color.WHITE);
-        g.drawLine(0, 28, 600, 28);
     }
     
     private void startScreen(Graphics2D g) {
@@ -133,7 +127,7 @@ public class CustomAttacks {
         g.drawImage(Runner.CAT, 129, 21, null);
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);
-        errorPopUp.draw(g);
+        errorPopUp.checkVisibility();
         drawErrorText(g);
     }
     
@@ -210,6 +204,7 @@ public class CustomAttacks {
                             if(!isGenocide.equals("true") && !isGenocide.equals("false")) {
                                 error = "The Undying value must be true or false only";
                                 errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
                                 return;
                             }
                             else
@@ -221,6 +216,7 @@ public class CustomAttacks {
                         if(inputArrow.length != 5 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
                             error = "Incorrect number of items in the given comma-separated list";
                             errorPopUp.setExpanding(true);
+                            errorPopUp.setVisible(true);
                             return;
                         }
                         else if(inputArrow.length == 5) {
@@ -229,17 +225,20 @@ public class CustomAttacks {
                                 if(attack < 0) {
                                     error = "Attack must be greater than zero";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 else if(attack < previousAttack) {
                                     error = "Attacks must be in increasing order";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 else if(attack > previousAttack) {
                                     if(attack >= 13000) {
                                         error = "Maximum number of attacks is 13000";
                                         errorPopUp.setExpanding(true);
+                                        errorPopUp.setVisible(true);
                                         return;
                                     }
                                     if(attack > 1 + previousAttack) {
@@ -258,11 +257,13 @@ public class CustomAttacks {
                                 if(speed < 1 || speed > 10) {
                                     error = "Speed must be between 1 and 10 inclusive";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 if(!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
                                     error = "Third item in list must be true or false";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 boolean reversable = Boolean.parseBoolean(inputArrow[2]);
@@ -270,12 +271,14 @@ public class CustomAttacks {
                                 if(inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 int delay = Integer.parseInt(inputArrow[4]);
                                 if(delay < 1 || delay > 999) {
                                     error = "Delay must be between 1 and 999 inclusive";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 importedAttacks.get(importedAttacks.size() - 1).add(new ArrowBar(speed, reversable, direction, delay));
@@ -283,6 +286,7 @@ public class CustomAttacks {
                             catch(NumberFormatException e) {
                                 error = "Attack number, speed, an delay must all be valid integers";
                                 errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
                                 return;
                             }
                         }
