@@ -3,7 +3,6 @@ package defense;
 import nikunj.classes.PopUp;
 import nikunj.classes.Sound;
 
-import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import java.awt.AlphaComposite;
@@ -172,63 +171,32 @@ class StartScreen {
             catch(UnsupportedAudioFileException | IOException e1) {
                 e1.printStackTrace();
             }
-            try {
-                subtitle = ImageIO.read(Runner.class.getResource("/sub.png"));
-                subtitle = Runner.getCompatibleImage(subtitle);
-                keys = ImageIO.read(Runner.class.getResource("/keys.png"));
-                keys = Runner.getCompatibleImage(keys);
-                undyne = ImageIO.read(Runner.class.getResource("/undyne.png"));
-                undyne = Runner.getCompatibleImage(undyne);
-                start = ImageIO.read(Runner.class.getResource("/start.png"));
-                start = Runner.getCompatibleImage(start);
-                zSelect = ImageIO.read(Runner.class.getResource("/zSelect.png"));
-                zSelect = Runner.getCompatibleImage(zSelect);
-                select = ImageIO.read(Runner.class.getResource("/select.png"));
-                select = Runner.getCompatibleImage(select);
-                heartMouse = ImageIO.read(Runner.class.getResource("/heartMouse.png"));
-                heartMouse = Runner.getCompatibleImage(heartMouse);
-                heartMouseBlue = ImageIO.read(Runner.class.getResource("/heartMouseBlue.png"));
-                heartMouseBlue = Runner.getCompatibleImage(heartMouseBlue);
-                buttons = ImageIO.read(Runner.class.getResource("/buttons.png"));
-                buttons = Runner.getCompatibleImage(buttons);
-                survival = ImageIO.read(Runner.class.getResourceAsStream("/survival.png"));
-                survival = Runner.getCompatibleImage(survival);
-                for(int i = 0; i <= 37; ++i) {
-                    fire[i] = ImageIO.read(Runner.class.getResource("/fireGif/fire" + i + ".png"));
-                    fire[i] = Runner.getCompatibleImage(fire[i]);
-                }
-                dog[0] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog1.png"));
-                dog[0] = Runner.getCompatibleImage(dog[0]);
-                dog[1] = ImageIO.read(Runner.class.getResource("/annoyingDog/dog2.png"));
-                dog[1] = Runner.getCompatibleImage(dog[1]);
-                greaterDog[0] = ImageIO.read(Runner.class.getResourceAsStream("/greaterDog/greaterDogRight.png"));
-                greaterDog[0] = Runner.getCompatibleImage(greaterDog[0]);
-                greaterDog[1] = ImageIO.read(Runner.class.getResourceAsStream("/greaterDog/greaterDogMid.png"));
-                greaterDog[1] = Runner.getCompatibleImage(greaterDog[1]);
-                greaterDog[2] = ImageIO.read(Runner.class.getResourceAsStream("/greaterDog/greaterDogLeft.png"));
-                greaterDog[2] = Runner.getCompatibleImage(greaterDog[2]);
-                subtitleBlue = ImageIO.read(Runner.class.getResource("/subBlue.png"));
-                subtitleBlue = Runner.getCompatibleImage(subtitleBlue);
-                bones = ImageIO.read(Runner.class.getResource("/bones.png"));
-                bones = Runner.getCompatibleImage(bones);
-                for(int i = 0; i <= 9; ++i) {
-                    sans[i] = ImageIO.read(Runner.class.getResource("/sans/sans" + i + ".png"));
-                    sans[i] = Runner.getCompatibleImage(sans[i]);
-                }
-                blueHeartFlash = ImageIO.read(Runner.class.getResource("/blueHeartFlash.png"));
-                blueHeartFlash = Runner.getCompatibleImage(blueHeartFlash);
-                spear = ImageIO.read(Runner.class.getResource("/spear.png"));
-                spear = Runner.getCompatibleImage(spear);
-                arrows = ImageIO.read(Runner.class.getResource("/arrows.png"));
-                arrows = Runner.getCompatibleImage(arrows);
-                for(int i = 0; i < 4; ++i) {
-                    dots[i] = ImageIO.read(Runner.class.getResource("/dots/dots" + i + ".png"));
-                    dots[i] = Runner.getCompatibleImage(dots[i]);
-                }
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
+            subtitle = Runner.getCompatibleImage("/sub.png");
+            keys = Runner.getCompatibleImage("/keys.png");
+            undyne = Runner.getCompatibleImage("/undyne.png");
+            start = Runner.getCompatibleImage("/start.png");
+            zSelect = Runner.getCompatibleImage("/zSelect.png");
+            select = Runner.getCompatibleImage("/select.png");
+            heartMouse = Runner.getCompatibleImage("/heartMouse.png");
+            heartMouseBlue = Runner.getCompatibleImage("/heartMouseBlue.png");
+            buttons = Runner.getCompatibleImage("/buttons.png");
+            survival = Runner.getCompatibleImage("/survival.png");
+            for(int i = 0; i <= 37; ++i)
+                fire[i] = Runner.getCompatibleImage("/fireGif/fire" + i + ".png");
+            dog[0] = Runner.getCompatibleImage("/annoyingDog/dog1.png");
+            dog[1] = Runner.getCompatibleImage("/annoyingDog/dog2.png");
+            greaterDog[0] = Runner.getCompatibleImage("/greaterDog/greaterDogRight.png");
+            greaterDog[1] = Runner.getCompatibleImage("/greaterDog/greaterDogMid.png");
+            greaterDog[2] = Runner.getCompatibleImage("/greaterDog/greaterDogLeft.png");
+            subtitleBlue = Runner.getCompatibleImage("/subBlue.png");
+            bones = Runner.getCompatibleImage("/bones.png");
+            for(int i = 0; i <= 9; ++i)
+                sans[i] = Runner.getCompatibleImage("/sans/sans" + i + ".png");
+            blueHeartFlash = Runner.getCompatibleImage("/blueHeartFlash.png");
+            spear = Runner.getCompatibleImage("/spear.png");
+            arrows = Runner.getCompatibleImage("/arrows.png");
+            for(int i = 0; i < 4; ++i)
+                dots[i] = Runner.getCompatibleImage("/dots/dots" + i + ".png");
         }
         else {
             heartMoved = true;

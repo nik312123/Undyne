@@ -124,7 +124,7 @@ public class CustomAttacks {
         }
         g.setColor(new Color(157, 50, 100, importThingAlpha));
         g.fill(importThing);
-        g.drawImage(Runner.CAT, 129, 21, null);
+        g.drawImage(Runner.cat, 129, 21, null);
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);
         errorPopUp.checkVisibility();
