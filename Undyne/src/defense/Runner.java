@@ -254,7 +254,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 }
             });
     
-            if("1.8.0_172".compareTo(System.getProperty("java.version")) >= 0) {
+            if("1.8.0_172".compareTo(System.getProperty("java.version")) > 0) {
                 int updateJava = JOptionPane.showConfirmDialog(null, "You need to update your Java version to play. Go to download site?", "Java Outdated", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
                 if(updateJava == 0) {
                     try {
