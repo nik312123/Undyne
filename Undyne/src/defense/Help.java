@@ -12,27 +12,26 @@ import java.io.IOException;
 class Help {
     private int frameCounter = 0;
     private int helpFrame = 0;
-    
+
     private PopUp helpPopUp;
-    
+
     private static BufferedImage[] helpGif = new BufferedImage[502];
-    
+
     Help() {
-        if(Runner.isFirstTime) {
+        if (Runner.isFirstTime) {
             try {
-                for(int i = 0; i < 502; ++i) {
+                for (int i = 0; i < 502; ++i) {
                     helpGif[i] = ImageIO.read(Runner.class.getResource("/help/help" + i + ".png"));
                     helpGif[i] = Runner.getCompatibleImage(helpGif[i]);
                 }
-            }
-            catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         
         helpPopUp = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {}
     
@@ -53,11 +52,10 @@ class Help {
                 if(helpFrame == 502)
                     helpFrame = 0;
             }
-            
         };
         helpPopUp.setLayout(null);
     }
-    
+
     void initiate(Graphics g, boolean start) {
         if(start) {
             helpPopUp.setExpanding(true);
@@ -69,9 +67,9 @@ class Help {
             helpFrame = 0;
         }
     }
-    
+
     PopUp getHelpPopUp() {
         return helpPopUp;
     }
-    
+
 }

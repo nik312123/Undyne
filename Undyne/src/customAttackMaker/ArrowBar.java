@@ -16,15 +16,15 @@ public class ArrowBar {
     private int y = 0;
     private int speed;
     private int delay;
-    
+
     private boolean isDirectionSelected = false;
     private boolean pressed = false;
     private boolean reverseable;
-    
+
     private char direction;
-    
+
     private Color textColor = new Color(255, 198, 0);
-    
+
     private Rectangle deleteArrowButton = new Rectangle();
     private Rectangle directionRectangle = new Rectangle();
     private Rectangle orderIntersecton = new Rectangle();
@@ -35,7 +35,6 @@ public class ArrowBar {
     private NumberField delayField;
     
     private Highlighter defaultHighlighter;
-    
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
         this.reverseable = reverseable;
@@ -63,37 +62,36 @@ public class ArrowBar {
             
             speedField.setBounds(AttackBar.ATTACKBAR_X + 6 + 183, y + 7, 34, 13);
             delayField.setBounds(AttackBar.ATTACKBAR_X + 6 + 277, y + 7, 34, 13);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         Runner.addComponent(speedField, 6);
         Runner.addComponent(delayField, 6);
     }
-    
+
     void removeFields() {
         Runner.removeComponent(speedField);
         Runner.removeComponent(delayField);
     }
-    
+
     int getY() {
         return y;
     }
-    
+
     void setY(int y) {
         this.y = y;
     }
-    
+
     void setPressed(boolean pressed) {
         this.pressed = pressed;
     }
-    
+
     Rectangle getOrderIntersecton() {
         return orderIntersecton;
     }
-    
+
     void draw(Graphics g, int x, int y) {
-        if(!pressed)
+        if (!pressed)
             this.y = y;
         speedField.setLocation(AttackBar.ATTACKBAR_X + 6 + 183, this.y + 7);
         delayField.setLocation(AttackBar.ATTACKBAR_X + 6 + 277, this.y + 7);
@@ -113,19 +111,19 @@ public class ArrowBar {
         boolean anySelected = AttackBar.areAnyDirectionsSelected();
         setFieldUsability(!anySelected);
     }
-    
+
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
-        if(!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
+        if (!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
             setImage(g, x, y);
     }
-    
+
     private void setImage(Graphics g, int x, int y) {
         boolean drawArrow = true;
         AffineTransform arrowTransform = new AffineTransform();
         arrowTransform.translate(x + 103, y + 8);
         double angle = 0;
-        switch(direction) {
+        switch (direction) {
             case 'u':
                 angle = 0;
                 break;
@@ -144,7 +142,7 @@ public class ArrowBar {
         }
         arrowTransform.rotate(angle, 3, 6);
         Graphics2D g2d = (Graphics2D) g;
-        if(drawArrow)
+        if (drawArrow)
             g2d.drawImage(Runner.customArrowDirection, arrowTransform, null);
         else {
             g2d.setColor(textColor);
@@ -152,40 +150,40 @@ public class ArrowBar {
             g2d.drawString("R", x + 102, y + 18);
         }
     }
-    
+
     private void reverseTickBox(Graphics g, int x, int y) {
-        if(reverseable)
+        if (reverseable)
             g.drawImage(Runner.ticked, x + 400 - 10, y + 8, null);
         reverseTickBox.setBounds(x + 400 - 10, y + 8, 13, 12);
     }
-    
+
     boolean isPressed() {
         return pressed;
     }
-    
+
     private void dragArrowIcon(Graphics g, int x, int y) {
-        if(!pressed)
-            dragArrowIcon.setBounds(x + 424, y + 8, 16, 8);
+        if (!pressed)
+            dragArrowIcon.setBounds(x + 424, y + 8, 16, 8 + 3);
         g.drawImage(Runner.dragArrowIcon, dragArrowIcon.x, dragArrowIcon.y, null);
     }
-    
+
     Rectangle getDragArrowIcon() {
         return dragArrowIcon;
     }
-    
+
     void setDragArrowIcon(Rectangle dragArrowIcon) {
         this.dragArrowIcon = dragArrowIcon;
     }
-    
+
     private void deleteArrowButton(Graphics g, int x, int y) {
         g.drawImage(Runner.deleteArrow, x, y, null);
         deleteArrowButton.setBounds(x, y, 19, 17);
     }
-    
+
     Rectangle getDeleteArrowButton() {
         return deleteArrowButton;
     }
-    
+
     Rectangle getReverseTickBox() {
         return reverseTickBox;
     }
@@ -193,13 +191,13 @@ public class ArrowBar {
     public void directionSelectedFalse() {
         this.isDirectionSelected = false;
     }
-    
+
     public int getDelay() {
         if(!delayField.getText().isEmpty())
             delay = Integer.parseInt(delayField.getText());
         return delay;
     }
-    
+
     public int getSpeed() {
         if(!speedField.getText().isEmpty())
             speed = Integer.parseInt(speedField.getText());
@@ -209,7 +207,7 @@ public class ArrowBar {
     public void setDirection(char direction) {
         this.direction = direction;
     }
-    
+
     public char getDirection() {
         return direction;
     }
@@ -229,7 +227,7 @@ public class ArrowBar {
     public boolean isDirectionSelected() {
         return isDirectionSelected;
     }
-    
+
     void switchDirectionIsSelected() {
         isDirectionSelected = !isDirectionSelected;
     }
