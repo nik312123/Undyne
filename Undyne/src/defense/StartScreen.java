@@ -166,7 +166,7 @@ class StartScreen {
                 megalovania = new Sound(Runner.class.getResource("/megalovania.ogg"), true);
                 slam = new Sound(Runner.class.getResource("/slam.ogg"), false);
                 bork = new Sound(Runner.class.getResource("/bork.ogg"), false);
-                click = new Sound(Runner.class.getResource("/click.ogg"), false);
+                click = new Sound(Runner.class.getResource("/click.wav"), false);
             }
             catch(UnsupportedAudioFileException | IOException e1) {
                 e1.printStackTrace();

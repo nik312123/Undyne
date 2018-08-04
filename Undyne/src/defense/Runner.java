@@ -272,8 +272,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             sojBeta = new Sound(Runner.class.getResource("/sojBeta.ogg"), true);
             startScreen = new Sound(Runner.class.getResource("/WF.ogg"), true);
             creatorMusic = new Sound(Runner.class.getResource("/DS.ogg"), true);
-            undyne = new Sound(Runner.class.getResource("/undyne.ogg"), false);
-            undying = new Sound(Runner.class.getResource("/undying.ogg"), false);
+            undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
+            undying = new Sound(Runner.class.getResource("/undying.wav"), false);
             heal = new Sound(Runner.class.getResource("/heal.ogg"), false);
             block = new Sound(Runner.class.getResource("/block.ogg"), false);
             gameDone = new Sound(Runner.class.getResource("/dt.ogg"), true);
@@ -502,7 +502,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         Graphics2D g2d = (Graphics2D) g;
                         g2d.setColor(Color.WHITE);
                         g2d.setStroke(new BasicStroke(2));
-                        g2d.draw(new Line2D.Float(549, 22, 565, 4));
+                        g2d.draw(new Line2D.Float(4, 20, 20, 2));
                     }
                 }
                 else if(musicSlider.getPercentage() == 0) {
@@ -582,7 +582,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         Graphics2D g2d = (Graphics2D) g;
                         g2d.setColor(Color.WHITE);
                         g2d.setStroke(new BasicStroke(2));
-                        g2d.draw(new Line2D.Float(577, 22, 593, 4));
+                        g2d.draw(new Line2D.Float(4, 20, 20, 2));
                     }
                 }
                 else if(sfxSlider.getPercentage() == 0) {
@@ -727,9 +727,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             if(event instanceof MouseEvent) {
                 MouseEvent evt = (MouseEvent) event;
                 if(evt.getID() == MouseEvent.MOUSE_CLICKED) {
-//                    System.out.println("Click " + ++clickCounter);
                     if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
-                        if(error.isFinished())
+                        
+                        Point evtLocation = evt.getLocationOnScreen();
+                        
+                        Rectangle closeRect = new Rectangle(closeButton.getBounds());
+                        closeRect.setLocation(closeButton.getLocationOnScreen());
+    
+                        Rectangle draggableRect = new Rectangle(draggableButton.getBounds());
+                        draggableRect.setLocation(draggableButton.getLocationOnScreen());
+    
+                        Rectangle musicRect = new Rectangle(musicButton.getBounds());
+                        musicRect.setLocation(musicButton.getLocationOnScreen());
+    
+                        Rectangle sfxRect = new Rectangle(sfxButton.getBounds());
+                        sfxRect.setLocation(sfxButton.getLocationOnScreen());
+                        
+                        if(error.isFinished() && !closeRect.contains(evtLocation) && !draggableRect.contains(evtLocation) && !musicRect.contains(evtLocation) && !sfxRect.contains(evtLocation))
                             error.play();
                         stage.warningOn();
                     }
