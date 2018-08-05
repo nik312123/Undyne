@@ -28,39 +28,44 @@ class Help {
                 e.printStackTrace();
             }
         }
+        
         helpPopUp = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {}
+    
+            @Override
+            public void afterDraw(Graphics g) {
+                int heightWidth = Math.min(helpPopUp.getPopUpWidth(), 460);
+                g.setFont(Runner.deteFontSpeech);
+                helpPopUp.checkVisibility();
+                if(helpPopUp.getExpanding() || helpPopUp.percentageExpanded() > 0)
+                    g.drawImage(helpGif[helpFrame], 235 - heightWidth / 2, 235 - heightWidth / 2, heightWidth, heightWidth, null);
+                g.setColor(Color.WHITE);
+                if(helpPopUp.percentageExpanded() == 1.0)
+                    g.drawString("PRESS X TO EXIT", 235 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 535 - heightWidth / 4 + 37);
+                if(++frameCounter % 3 == 0) {
+                    ++helpFrame;
+                    frameCounter = 0;
+                }
+                if(helpFrame == 502)
+                    helpFrame = 0;
             }
-
         };
         helpPopUp.setLayout(null);
     }
 
     void initiate(Graphics g, boolean start) {
-        if (start)
+        if(start) {
             helpPopUp.setExpanding(true);
+            helpPopUp.setVisible(true);
+        }
         else {
             helpPopUp.setExpanding(false);
             frameCounter = 0;
             helpFrame = 0;
         }
-        int heightWidth = Math.min(helpPopUp.getWidth(), 460);
-        g.setFont(Runner.deteFontSpeech);
-        helpPopUp.draw(g);
-        if (helpPopUp.getExpanding() || helpPopUp.getWidth() > 0)
-            g.drawImage(helpGif[helpFrame], 300 - heightWidth / 2, 300 - heightWidth / 2, heightWidth, heightWidth, null);
-        g.setColor(Color.WHITE);
-        if (helpPopUp.getWidth() == helpPopUp.getExpandedWidth())
-            g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - heightWidth / 4 + 37);
-        if (++frameCounter % 3 == 0) {
-            ++helpFrame;
-            frameCounter = 0;
-        }
-        if (helpFrame == 502)
-            helpFrame = 0;
     }
 
     PopUp getHelpPopUp() {

@@ -4,6 +4,7 @@ import defense.Runner;
 import nikunj.classes.NumberField;
 
 import javax.swing.JTextField;
+import javax.swing.text.Highlighter;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -29,10 +30,11 @@ public class ArrowBar {
     private Rectangle orderIntersecton = new Rectangle();
     private Rectangle dragArrowIcon = new Rectangle();
     private Rectangle reverseTickBox = new Rectangle();
-
+    
     private NumberField speedField;
     private NumberField delayField;
-
+    
+    private Highlighter defaultHighlighter;
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
         this.reverseable = reverseable;
@@ -42,21 +44,29 @@ public class ArrowBar {
         try {
             speedField = new NumberField(2, NumberField.STATE_NORMAL, false);
             delayField = new NumberField(3, NumberField.STATE_NORMAL, false);
+            
             speedField.setFont(Runner.deteFontEditor);
             delayField.setFont(Runner.deteFontEditor);
+            
             speedField.setForeground(foreground);
             delayField.setForeground(foreground);
+            
             speedField.setBackground(Color.BLACK);
             delayField.setBackground(Color.BLACK);
+            
+            speedField.setCaretColor(Color.WHITE);
+            delayField.setCaretColor(Color.WHITE);
+            
             speedField.setHorizontalAlignment(JTextField.CENTER);
             delayField.setHorizontalAlignment(JTextField.CENTER);
+            
             speedField.setBounds(AttackBar.ATTACKBAR_X + 6 + 183, y + 7, 34, 13);
             delayField.setBounds(AttackBar.ATTACKBAR_X + 6 + 277, y + 7, 34, 13);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Runner.addComponent(speedField, 0);
-        Runner.addComponent(delayField, 0);
+        Runner.addComponent(speedField, 6);
+        Runner.addComponent(delayField, 6);
     }
 
     void removeFields() {
@@ -94,6 +104,12 @@ public class ArrowBar {
         drawDirection(g, x, this.y);
         reverseTickBox(g, x, this.y);
         dragArrowIcon(g, x, this.y);
+        if(!speedField.getText().isEmpty())
+            speed = Integer.parseInt(speedField.getText());
+        if(!delayField.getText().isEmpty())
+            delay = Integer.parseInt(delayField.getText());
+        boolean anySelected = AttackBar.areAnyDirectionsSelected();
+        setFieldUsability(!anySelected);
     }
 
     private void drawDirection(Graphics g, int x, int y) {
@@ -171,68 +187,80 @@ public class ArrowBar {
     Rectangle getReverseTickBox() {
         return reverseTickBox;
     }
-
-    boolean isReverse() {
-        return reverseable;
-    }
-
-    void directionSelectedFalse() {
+    
+    public void directionSelectedFalse() {
         this.isDirectionSelected = false;
     }
 
     public int getDelay() {
+        if(!delayField.getText().isEmpty())
+            delay = Integer.parseInt(delayField.getText());
         return delay;
     }
 
     public int getSpeed() {
+        if(!speedField.getText().isEmpty())
+            speed = Integer.parseInt(speedField.getText());
         return speed;
     }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
-    void setDirection(char direction) {
+    
+    public void setDirection(char direction) {
         this.direction = direction;
     }
 
     public char getDirection() {
         return direction;
     }
-
-    void setReverseable(boolean reverse) {
-        reverseable = reverse;
-    }
-
+    
     void switchReversable() {
         reverseable = !reverseable;
     }
-
-    public boolean getReversable() {
+    
+    public boolean isReversible() {
         return reverseable;
     }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
+    
     Rectangle getDirectionRectangle() {
         return directionRectangle;
     }
-
-    boolean isDirectionSelected() {
+    
+    public boolean isDirectionSelected() {
         return isDirectionSelected;
     }
 
     void switchDirectionIsSelected() {
         isDirectionSelected = !isDirectionSelected;
     }
-
+    
     void setFieldsVisibility(boolean visibility) {
         speedField.setVisible(visibility);
         delayField.setVisible(visibility);
     }
-
+    
+    private void setFieldUsability(boolean usability) {
+        if(usability) {
+            speedField.setEditable(true);
+            speedField.setHighlighter(defaultHighlighter);
+            speedField.setCaretColor(Color.WHITE);
+            delayField.setEditable(true);
+            delayField.setHighlighter(defaultHighlighter);
+            delayField.setCaretColor(Color.WHITE);
+        }
+        else {
+            defaultHighlighter = speedField.getHighlighter();
+            speedField.setEditable(false);
+            speedField.setHighlighter(null);
+            speedField.setCaretColor(Color.BLACK);
+            delayField.setEditable(false);
+            delayField.setHighlighter(null);
+            delayField.setCaretColor(Color.BLACK);
+        }
+    }
+    
+    boolean emptyFieldExists() {
+        return speedField.getText().isEmpty() || delayField.getText().isEmpty();
+    }
+    
     @Override
     public String toString() {
         return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reverseable + ", direction = " + direction + '}';

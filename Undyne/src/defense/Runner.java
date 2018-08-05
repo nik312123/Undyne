@@ -1,8 +1,11 @@
 package defense;
 
+import customAttackMaker.ArrowBar;
+import customAttackMaker.AttackBar;
 import customAttackMaker.BottomMenuBar;
 import customAttackMaker.CustomAttacks;
 import nikunj.classes.GradientButton;
+import nikunj.classes.KeyAction;
 import nikunj.classes.PopUp;
 import nikunj.classes.Slider;
 import nikunj.classes.Sound;
@@ -15,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -78,7 +82,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static int loadingCounter = 0;
     private static int loadingFrame = 0;
     public static int customAttacksCounter = 0;
-
+    private static int clickCounter = 0;
+    
     private static double fadeStart = 0;
     private static double musicMutedVolume = 1;
     private static double sfxMutedVolume = 1;
@@ -120,8 +125,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
 
     private static Timer timer;
     private static Timer oneSecondDelay;
-
-    private static BufferedImage exit;
+    
     private static BufferedImage heart;
     private static BufferedImage replay;
     private static BufferedImage close;
@@ -215,7 +219,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static Help helper = new Help();
     private static SplashScreen loading;
     private static BottomMenuBar bottomBar = CustomAttacks.getBottomMenuBar();
-
+    
+    private static JPanel topBar;
+    
     private static JFrame frame;
 
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
@@ -282,8 +288,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 levels[i] = getCompatibleImage(levels[i]);
             blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
             blueArr = getCompatibleImage(blueArr);
-            exit = ImageIO.read(Runner.class.getResource("/exit.png"));
-            exit = getCompatibleImage(exit);
             dragArrowIcon = ImageIO.read(Runner.class.getResource("/DragArrowIcon.png"));
             dragArrowIcon = getCompatibleImage(dragArrowIcon);
             arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
@@ -374,20 +378,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 gifUndyne[i] = getCompatibleImage(gifUndyne[i]);
             }
         }
-        new Runner("Undyne: Absolute");
-        startScreen.changeVolume(musicMutedVolume);
-        if (!isReplaying)
-            startScreen.play();
-        isReplaying = false;
-    }
-
-    private Runner(String s) {
-        frame = new JFrame(s);
+        
+        frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(null);
-        Runner bp = new Runner();
-        bp.setBounds(0, 0, 600, 600);
-        frame.add(bp);
+        
+        Runner runner = new Runner();
+        runner.setBounds(0, 0, 600, 600);
+        
+        timer = new Timer(DELAY, runner);
+        timer.setActionCommand("main");
+        timer.start();
+        oneSecondDelay = new Timer(1000, runner);
+        oneSecondDelay.setRepeats(false);
+        
         closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
 
@@ -423,22 +427,24 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void beforeDraw(Graphics g) {
                 g.setColor(Color.BLACK);
-                g.fillRect(0, 0, 26, 26);
+                g.fillRect(0, 0, 24, 24);
             }
         };
 
         draggableButton = new GradientButton(draggable, Color.BLACK, Color.BLUE, 30, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
-            private int xPos, yPos;
-
+            
+            private Point originalLocation;
+            private Point pressLocation;
+            
             @Override
             public void mouseClicked(MouseEvent e) {
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                xPos = e.getX();
-                yPos = e.getY();
+                originalLocation = frame.getLocation();
+                pressLocation = e.getLocationOnScreen();
             }
 
             @Override
@@ -455,12 +461,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                frame.setLocation((int) (frame.getLocation().getX() + e.getX() - xPos), (int) (frame.getLocation().getY() + e.getY() - yPos));
-
+                Point drag = e.getLocationOnScreen();
+                int x = Math.round(originalLocation.x + drag.x - pressLocation.x);
+                int y = Math.round(originalLocation.y + drag.y - pressLocation.y);
+                frame.setLocation(x, y);
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
+            public void mouseMoved(MouseEvent e) {}
+    
+            @Override
+            public void beforeDraw(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 24, 24);
             }
         };
 
@@ -515,9 +528,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
+            public void mouseMoved(MouseEvent e) {}
+    
+            @Override
+            public void beforeDraw(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 24, 24);
             }
-
+            
             @Override
             public void afterDraw(Graphics g) {
                 if (musicMuted) {
@@ -593,9 +611,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
+            public void mouseMoved(MouseEvent e) {}
+    
+            @Override
+            public void beforeDraw(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 24, 24);
             }
-
+            
             @Override
             public void afterDraw(Graphics g) {
                 if (sfxMuted) {
@@ -647,7 +670,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
 
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnLink();
+                return isVisible() && stage.isOnLink();
             }
         };
 
@@ -684,7 +707,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
 
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnHelp();
+                return isVisible() && stage.isOnHelp();
             }
         };
 
@@ -720,7 +743,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
 
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnPlay();
+                return isVisible() && stage.isOnPlay();
             }
         };
 
@@ -756,7 +779,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
 
             @Override
             public boolean onButton() {
-                return isDisplayable() && stage.isOnCreator();
+                return isVisible() && stage.isOnCreator();
             }
         };
 
@@ -770,68 +793,90 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         creditsList = stage.getCreditsList();
         PopUp helpPopUp = helper.getHelpPopUp();
         PopUp errorPopUp = customAttackMaker.getErrorPopUp();
-
+        
+        setUpKeyBindings(runner);
+    
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if(event instanceof MouseEvent) {
+                MouseEvent evt = (MouseEvent) event;
+                if(evt.getID() == MouseEvent.MOUSE_CLICKED) {
+//                    System.out.println("Click " + ++clickCounter);
+                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
+                        if(error.isFinished())
+                            error.play();
+                        stage.warningOn();
+                    }
+                    else if(checkFocus.isJustFocused())
+                        checkFocus.deactivateJustFocused();
+                    barCheckBoxClicked(evt);
+                    if(canBeStopped)
+                        bottomBar.mouseWorks(evt.getPoint());
+                    customAttackMaker.mouseClicked();
+                }
+            }
+        }, AWTEvent.MOUSE_EVENT_MASK);
+        
+        bottomBar.setBounds(0, 548, 600, 52);
+    
+        topBar = new JPanel() {
+            
+            @Override
+            public void paintComponent(Graphics g) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, 600, 28);
+                g.setColor(Color.WHITE);
+                g.drawLine(0, 28, 600, 28);
+            }
+            
+        };
+        topBar.setBounds(0, 0, 600, 28);
+        
+        bottomBar.setOpaque(false);
+        topBar.setOpaque(false);
+        creditsList.setOpaque(false);
+        helpPopUp.setOpaque(false);
+        errorPopUp.setOpaque(false);
+        closeButton.setOpaque(false);
+        draggableButton.setOpaque(false);
+        musicButton.setOpaque(false);
+        sfxButton.setOpaque(false);
+        musicSlider.setOpaque(false);
+        sfxSlider.setOpaque(false);
+        creditsButton.setOpaque(false);
+        helpButton.setOpaque(false);
+        playButton.setOpaque(false);
+        creatorButton.setOpaque(false);
+        
+        frame.add(bottomBar);
         frame.add(closeButton);
         frame.add(draggableButton);
         frame.add(musicButton);
         frame.add(sfxButton);
-        frame.add(creditsButton);
-        frame.add(helpButton);
-        frame.add(playButton);
-        frame.add(creatorButton);
-        frame.add(musicSlider);
-        frame.add(sfxSlider);
+        frame.add(topBar);
         frame.add(creditsList);
         frame.add(helpPopUp);
         frame.add(errorPopUp);
-
-        MouseListener errorListener = new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
-                    if (error.isFinished())
-                        error.play();
-                    stage.warningOn();
-                } else if (checkFocus.isJustFocused())
-                    checkFocus.deactivateJustFocused();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        };
-
-        frame.addMouseListener(errorListener);
-        creditsButton.addMouseListener(errorListener);
-        helpButton.addMouseListener(errorListener);
-        playButton.addMouseListener(errorListener);
-        creatorButton.addMouseListener(errorListener);
-
-        frame.addMouseMotionListener(this);
-        frame.addMouseListener(this);
-        frame.addMouseWheelListener(this);
-        frame.addKeyListener(this);
+        frame.add(musicSlider);
+        frame.add(sfxSlider);
+        frame.add(runner);
+        
+        frame.addMouseMotionListener(runner);
+        frame.addMouseListener(runner);
+        frame.addMouseWheelListener(runner);
+        frame.addKeyListener(runner);
         frame.addWindowListener(checkFocus);
 
         musicSlider.setVisible(true);
         sfxSlider.setVisible(true);
-        creditsList.setVisible(true);
-        helpPopUp.setVisible(true);
-        errorPopUp.setVisible(true);
-
+        creditsList.setVisible(false);
+        helpPopUp.setVisible(false);
+        errorPopUp.setVisible(false);
+        playButton.setVisible(false);
+        creatorButton.setVisible(false);
+        helpButton.setVisible(false);
+        creditsButton.setVisible(false);
+        topBar.setVisible(false);
+        
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(600, 600);
         frame.setLocation((dim.width - frame.getWidth()) / 2, (dim.height - frame.getHeight()) / 2);
@@ -841,9 +886,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.getContentPane().setLayout(null);
         frame.requestFocus();
         frame.setVisible(true);
+        
+        startScreen.changeVolume(musicMutedVolume);
+        if(!isReplaying)
+            startScreen.play();
+        isReplaying = false;
     }
-
-    private class FocusListener implements WindowListener {
+    
+    private static class FocusListener implements WindowListener {
         private boolean justFocused = false;
 
         @Override
@@ -883,15 +933,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             justFocused = false;
         }
     }
-
-    private Runner() {
-        timer = new Timer(DELAY, this);
-        timer.setActionCommand("main");
-        timer.start();
-        oneSecondDelay = new Timer(1000, this);
-        oneSecondDelay.setRepeats(false);
-    }
-
+    
     static BufferedImage getCompatibleImage(BufferedImage current) {
         GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         if (current.getColorModel().equals(gfxConfig.getColorModel()))
@@ -940,18 +982,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             if (frameCounter == 1000)
                 frameCounter = 0;
             drawBG(g);
-            if (beginning && !oneSecondDelay.isRunning()) {
-                if (stage.shouldShow()) {
-                    if (!stage.isPlayChosen()) {
-                        creditsButton.draw(g);
+            if(beginning && !oneSecondDelay.isRunning()) {
+                if(stage.shouldShow()) {
+                    if(!stage.isPlayChosen()) {
                         creditsButton.setVisible(true);
-                        helpButton.draw(g);
+                        creditsButton.draw(g);
                         helpButton.setVisible(true);
-                        playButton.draw(g);
+                        helpButton.draw(g);
                         playButton.setVisible(true);
-                        creatorButton.draw(g);
+                        playButton.draw(g);
                         creatorButton.setVisible(true);
-                    } else
+                        creatorButton.draw(g);
+                    }
+                    else
                         moveButtons(true);
                     if (stage.heartsActivated())
                         startScreen.stop();
@@ -963,6 +1006,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             } else if (isCustomAttack && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
             else {
+                topBar.setVisible(false);
                 customAttackMaker.setAllFieldsVisibility(false);
                 if (!oneSecondDelay.isRunning()) {
                     if (p.getHit()) {
@@ -1013,13 +1057,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     }
                 }
             }
-            if (!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped)) {
-                if (!customAttackMaker.beingReordered)
-                    bottomBar.work(g);
-            }
-            if (a != null && a.getIsFinished() && !oneSecondDelay.isRunning()) {
-                if (isGenocide && count == 19 || !isGenocide && count == 10 && !canBeStopped) {
-                    if (main != null)
+            if(!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped))
+                bottomBar.setVisible(true);
+            else
+                bottomBar.setVisible(false);
+            if(a != null && a.getIsFinished() && !oneSecondDelay.isRunning()) {
+                if(isGenocide && count == 19 || !isGenocide && count == 10 && !canBeStopped) {
+                    if(main != null)
                         main.stop();
                     g.drawImage(speech, speechX, speechY, null);
                 }
@@ -1030,21 +1074,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 else
                     undyneSpeech(g);
             }
-            if (!customAttackMaker.beingReordered) {
-                closeButton.draw(g);
-                draggableButton.draw(g);
-                musicButton.draw(g);
-                sfxButton.draw(g);
-            }
-            if (musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming()) {
+            closeButton.visibilityCheck();
+            draggableButton.visibilityCheck();
+            musicButton.visibilityCheck();
+            sfxButton.visibilityCheck();
+            if(musicButton.onButton() || musicSlider.isVisible() && onSlider("music") || musicSlider.actionPerforming())
                 musicSlider.setVisible(true);
-                musicSlider.draw(g);
-            } else
+            else
                 musicSlider.setVisible(false);
-            if (sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming()) {
+            if(sfxButton.onButton() || sfxSlider.isVisible() && onSlider("sfx") || sfxSlider.actionPerforming())
                 sfxSlider.setVisible(true);
-                sfxSlider.draw(g);
-            } else
+            else
                 sfxSlider.setVisible(false);
             if (speechDone)
                 drawReplay(g, 10);
@@ -1137,10 +1177,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
 
     private void nothing() {
-        if (typed.length() > NOTHING.length())
-            typed = typed.substring(typed.length() - NOTHING.length(), typed.length());
-        if (typed.length() == NOTHING.length()) {
-            if (typed.equalsIgnoreCase(NOTHING)) {
+        if(typed.length() > NOTHING.length())
+            typed = typed.substring(typed.length() - NOTHING.length());
+        if(typed.length() == NOTHING.length()) {
+            if(typed.equalsIgnoreCase(NOTHING)) {
                 automatic = !automatic;
                 typed = typed.substring(0, typed.length() - NOTHING.length());
             }
@@ -1323,29 +1363,33 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g2d.setFont(deteFontSpeech);
         g2d.setColor(Color.BLACK);
         String[] message;
-        if (!isGenocide && !stage.isMedium())
-            message = easyMessage;
-        else if (!isGenocide)
+        if(isGenocide)
+            message = hardMessage;
+        else if(stage.isMedium())
             message = mediumMessage;
         else
-            message = hardMessage;
+            message = easyMessage;
         String print = "";
-        if (speechCounter < message[0].length() + 1) {
+        int speechTextX = speechX + 30 - (isGenocide ? 8 : 0);
+        if(speechCounter < message[0].length() + 1) {
             print = message[0].substring(0, speechCounter);
-            g.drawString(message[0].substring(0, speechCounter), speechX + 30, speechY + 20);
-        } else if (speechCounter < message[1].length() + message[0].length() + 2) {
+            g.drawString(message[0].substring(0, speechCounter), speechTextX, speechY + 20);
+        }
+        else if(speechCounter < message[1].length() + message[0].length() + 2) {
             print = message[1].substring(0, speechCounter - (message[0].length() + 1));
-            g.drawString(message[0], speechX + 30, speechY + 20);
-            g.drawString(message[1].substring(0, speechCounter - (message[0].length() + 1)), speechX + 30, speechY + 40);
-        } else if (speechCounter < message[2].length() + message[1].length() + message[0].length() + 3) {
+            g.drawString(message[0], speechTextX, speechY + 20);
+            g.drawString(message[1].substring(0, speechCounter - (message[0].length() + 1)), speechTextX, speechY + 40);
+        }
+        else if(speechCounter < message[2].length() + message[1].length() + message[0].length() + 3) {
             print = message[2].substring(0, speechCounter - (message[0].length() + message[1].length() + 2));
-            g.drawString(message[0], speechX + 30, speechY + 20);
-            g.drawString(message[1], speechX + 30, speechY + 40);
-            g.drawString(message[2].substring(0, speechCounter - (message[0].length() + message[1].length() + 2)), speechX + 30, speechY + 60);
-        } else {
-            g.drawString(message[0], speechX + 30, speechY + 20);
-            g.drawString(message[1], speechX + 30, speechY + 40);
-            g.drawString(message[2], speechX + 30, speechY + 60);
+            g.drawString(message[0], speechTextX, speechY + 20);
+            g.drawString(message[1], speechTextX, speechY + 40);
+            g.drawString(message[2].substring(0, speechCounter - (message[0].length() + message[1].length() + 2)), speechTextX, speechY + 60);
+        }
+        else {
+            g.drawString(message[0], speechTextX, speechY + 20);
+            g.drawString(message[1], speechTextX, speechY + 40);
+            g.drawString(message[2], speechTextX, speechY + 60);
             speechDone = true;
         }
         if (speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
@@ -1357,8 +1401,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         speechCounterPrev = speechCounter;
         if (speechCounter < message[2].length() + message[1].length() + message[0].length() + 3 && speechDelayCounter % 6 == 0)
             ++speechCounter;
-        ++speechDelayCounter;
-        if (speechDelayCounter == 6)
+        if(++speechDelayCounter == 6)
             speechDelayCounter = 0;
     }
 
@@ -1428,7 +1471,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         heal.play();
         p.healthBoost();
     }
-
+    
+    static void showInitialButtons() {
+        playButton.setVisible(true);
+        creditsButton.setVisible(true);
+        creatorButton.setVisible(true);
+        helpButton.setVisible(true);
+    }
+    
     static boolean isSurvival() {
         return survival;
     }
@@ -1444,8 +1494,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static JFrame getFrame() {
         return frame;
     }
-
-    private void restartApplication() {
+    
+    private static void restartApplication() {
         timer.stop();
         allStopped = true;
         stage.resetVars(isReplaying);
@@ -1683,37 +1733,70 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
+    
+    private static void setUpKeyBindings(Runner runner) {
+        int condition = WHEN_IN_FOCUSED_WINDOW;
+        
+        new KeyAction(runner, condition, KeyEvent.VK_UP, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                upPressed();
+            }
+        };
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+        new KeyAction(runner, condition, KeyEvent.VK_W, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                upPressed();
+            }
+        };
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        customAttackMaker.keyPressed(e);
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                dir = 'u';
-                stage.setUp();
-                break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                dir = 'd';
-                stage.setDown();
-                break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                dir = 'r';
-                stage.setRight();
-                break;
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                dir = 'l';
-                stage.setLeft();
-                break;
-            case KeyEvent.VK_X:
-                if (helpStarter) {
+        new KeyAction(runner, condition, KeyEvent.VK_DOWN, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                downPressed();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_S, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                downPressed();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_RIGHT, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightPressed();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_D, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightPressed();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_LEFT, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                leftPressed();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_A, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                leftPressed();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_X, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(helpStarter) {
                     stage.playClick();
                     helpStarter = false;
                 } else if (creditsList.getExpanding()) {
@@ -1728,14 +1811,20 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     stage.setHeartY(72);
                 } else if (isCustomAttack && !oneSecondDelay.isRunning())
                     closeCreator();
-                break;
-            case KeyEvent.VK_Z:
-                if (beginning) {
-                    if (!stage.isPlayChosen()) {
-                        if (creditsButton.onButton()) {
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_Z, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(beginning) {
+                    if(!stage.isPlayChosen()) {
+                        if(creditsButton.onButton()) {
                             stage.playClick();
                             creditsList.setExpanding(true);
-                        } else if (helpButton.onButton()) {
+                            creditsList.setVisible(true);
+                        }
+                        else if(helpButton.onButton()) {
                             stage.playClick();
                             helpStarter = true;
                         } else if (playButton.onButton()) {
@@ -1771,48 +1860,162 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     isGameOver = true;
                 } else if (isGameOver && !allStopped || speechDone && !allStopped)
                     restartApplication();
-                break;
-            case KeyEvent.VK_V:
-                if (timer.getDelay() != 0)
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_V, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(timer.getDelay() != 0)
                     timer.setDelay(0);
                 else
                     timer.setDelay(10);
-                break;
-            case KeyEvent.VK_R:
-                if (isGameOver && !allStopped || speechDone && !allStopped) {
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_R, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setCustomDirection('n');
+                if(isGameOver && !allStopped || speechDone && !allStopped) {
                     isReplaying = true;
                     restartApplication();
                     start();
                 }
-                break;
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_ENTER, 0, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(AttackBar attBar : CustomAttacks.attacks) {
+                    for(ArrowBar arrBar : attBar.getArrows()) {
+                        if(arrBar.isDirectionSelected())
+                            arrBar.directionSelectedFalse();
+                    }
+                }
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_UP, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                upReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_W, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                upReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_DOWN, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                downReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_S, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                downReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_RIGHT, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_D, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_LEFT, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                leftReleased();
+            }
+        };
+
+        new KeyAction(runner, condition, KeyEvent.VK_A, 0, true) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                leftReleased();
+            }
+        };
+    }
+    
+    private static void upPressed() {
+        setCustomDirection('u');
+        dir = 'u';
+        stage.setUp();
+    }
+    
+    private static void downPressed() {
+        setCustomDirection('d');
+        dir = 'd';
+        stage.setDown();
+    }
+    
+    private static void rightPressed() {
+        setCustomDirection('r');
+        dir = 'r';
+        stage.setRight();
+    }
+    
+    private static void leftPressed() {
+        setCustomDirection('l');
+        dir = 'l';
+        stage.setLeft();
+    }
+    
+    private static void upReleased() {
+        stage.setUpf();
+    }
+    
+    private static void downReleased() {
+        stage.setDownf();
+    }
+    
+    private static void rightReleased() {
+        stage.setRightf();
+    }
+    
+    private static void leftReleased() {
+        stage.setLeftf();
+    }
+    
+    private static void setCustomDirection(char dir) {
+        for(AttackBar attBar : CustomAttacks.attacks) {
+            for(ArrowBar arrBar : attBar.getArrows()) {
+                if(arrBar.isDirectionSelected())
+                    arrBar.setDirection(dir);
+            }
         }
-        if (e.getKeyChar() != '￿')
+    }
+    
+    @Override
+    public void keyTyped(KeyEvent e) {}
+    
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyChar() != KeyEvent.CHAR_UNDEFINED)
             typed += e.getKeyChar();
         nothing();
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                stage.setUpf();
-                break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                stage.setDownf();
-                break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                stage.setRightf();
-                break;
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                stage.setLeftf();
-                break;
-        }
-    }
-
+    public void keyReleased(KeyEvent e) {}
+    
     private static boolean onSlider(String slider) {
         Slider s;
         GradientButton gb;
@@ -1840,15 +2043,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 bottomBar.flipIsGenocideBoxChecked();
         }
     }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        barCheckBoxClicked(e);
-        if (canBeStopped)
-            bottomBar.mouseWorks(e.getPoint());
-        customAttackMaker.mouseClicked();
+    
+    public static void setTopBarVisibility(boolean visibility) {
+        topBar.setVisible(visibility);
     }
-
+    
+    static boolean onFrontButton() {
+        return playButton.onButton() || creatorButton.onButton() || creditsButton.onButton() || helpButton.onButton();
+    }
+    
+    public static boolean bottomBarShouldDraw() {
+        return !allStopped && !oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped);
+    }
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    
     @Override
     public void mousePressed(MouseEvent e) {
         customAttackMaker.mousePressed();
@@ -1883,8 +2093,5 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public void mouseWheelMoved(MouseWheelEvent e) {
         customAttackMaker.mouseWheelMoved(e);
     }
-
-    static boolean onFrontButton() {
-        return playButton.onButton() || creatorButton.onButton() || creditsButton.onButton() || helpButton.onButton();
-    }
+    
 }

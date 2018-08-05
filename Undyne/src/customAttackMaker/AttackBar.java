@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -134,8 +133,12 @@ public class AttackBar {
 
     int mouseClickWork() {
         boolean anySelected = areAnyDirectionsSelected();
-        if (deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
-            CustomAttacks.attacks.remove(number);
+        if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
+            ArrayList<AttackBar> attacks = CustomAttacks.attacks;
+            AttackBar attBar = attacks.get(number);
+            for(ArrowBar arrBar : attBar.getArrows())
+                arrBar.removeFields();
+            attacks.remove(number);
             return 1;
         } else if (dropDownButton.contains(CustomAttacks.mousePosition))
             isDropped = !isDropped;
@@ -148,7 +151,9 @@ public class AttackBar {
             else if (ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
                 ab.removeFields();
                 arrows.remove(i);
-            } else if (ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
+                --i;
+            }
+            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
                 ab.switchReversable();
         }
         return 0;
@@ -191,38 +196,11 @@ public class AttackBar {
             }
         }
     }
-
-    void keyBoardWork(KeyEvent e) {
-        for (ArrowBar a : arrows) {
-            if (a.isDirectionSelected()) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_ENTER:
-                        a.directionSelectedFalse();
-                        break;
-                    case KeyEvent.VK_UP:
-                        a.setDirection('u');
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        a.setDirection('d');
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        a.setDirection('r');
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        a.setDirection('l');
-                        break;
-                    case KeyEvent.VK_R:
-                        a.setDirection('n');
-                        break;
-                }
-            }
-        }
-    }
-
-    private boolean areAnyDirectionsSelected() {
-        for (AttackBar at : CustomAttacks.attacks) {
-            for (ArrowBar ab : at.getArrows()) {
-                if (ab.isDirectionSelected())
+    
+    static boolean areAnyDirectionsSelected() {
+        for(AttackBar at : CustomAttacks.attacks) {
+            for(ArrowBar ab : at.getArrows()) {
+                if(ab.isDirectionSelected())
                     return true;
             }
         }

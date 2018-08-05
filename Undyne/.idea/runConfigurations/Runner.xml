@@ -6,6 +6,10 @@
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <extension name="coverage">
       <pattern>
+        <option name="PATTERN" value="defense.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
         <option name="PATTERN" value="customAttackMaker.*" />
         <option name="ENABLED" value="true" />
       </pattern>

@@ -14,7 +14,6 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,9 +43,9 @@ public class CustomAttacks {
     private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
 
     static Point mousePosition = new Point();
-
-    static ArrayList<AttackBar> attacks = new ArrayList<>();
-
+    
+    public static ArrayList<AttackBar> attacks = new ArrayList<>();
+    
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
 
     private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
@@ -90,14 +89,17 @@ public class CustomAttacks {
             for (AttackBar attackBar : attacks)
                 attackBar.draw(g, (int) dynamicLength);
             addAttackButton(g);
+            Runner.setTopBarVisibility(true);
             setAllFieldsVisibility(true);
-        } else {
+        }
+        else {
+            Runner.setTopBarVisibility(false);
             startScreen(g);
             setAllFieldsVisibility(false);
         }
 
     }
-
+    
     private void startScreen(Graphics2D g) {
         if (newThing.contains(mousePosition)) {
             newThingAlpha += 5;
@@ -126,7 +128,7 @@ public class CustomAttacks {
         g.drawImage(Runner.CAT, 129, 21, null);
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);
-        errorPopUp.draw(g);
+        errorPopUp.checkVisibility();
         drawErrorText(g);
     }
 
@@ -201,6 +203,7 @@ public class CustomAttacks {
                             if (!isGenocide.equals("true") && !isGenocide.equals("false")) {
                                 error = "The Undying value must be true or false only";
                                 errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
                                 return;
                             } else
                                 bottomMenuBar.setIsGenocideBoxChecked(Boolean.parseBoolean(isGenocide));
@@ -211,6 +214,7 @@ public class CustomAttacks {
                         if (inputArrow.length != 5 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
                             error = "Incorrect number of items in the given comma-separated list";
                             errorPopUp.setExpanding(true);
+                            errorPopUp.setVisible(true);
                             return;
                         } else if (inputArrow.length == 5) {
                             try {
@@ -218,15 +222,18 @@ public class CustomAttacks {
                                 if (attack < 0) {
                                     error = "Attack must be greater than zero";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 } else if (attack < previousAttack) {
                                     error = "Attacks must be in increasing order";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 } else if (attack > previousAttack) {
                                     if (attack >= 13000) {
                                         error = "Maximum number of attacks is 13000";
                                         errorPopUp.setExpanding(true);
+                                        errorPopUp.setVisible(true);
                                         return;
                                     }
                                     if (attack > 1 + previousAttack) {
@@ -245,11 +252,13 @@ public class CustomAttacks {
                                 if (speed < 1 || speed > 10) {
                                     error = "Speed must be between 1 and 10 inclusive";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 if (!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
                                     error = "Third item in list must be true or false";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 boolean reversable = Boolean.parseBoolean(inputArrow[2]);
@@ -257,18 +266,21 @@ public class CustomAttacks {
                                 if (inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 int delay = Integer.parseInt(inputArrow[4]);
                                 if (delay < 1 || delay > 999) {
                                     error = "Delay must be between 1 and 999 inclusive";
                                     errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
                                     return;
                                 }
                                 importedAttacks.get(importedAttacks.size() - 1).add(new ArrowBar(speed, reversable, direction, delay));
                             } catch (NumberFormatException e) {
                                 error = "Attack number, speed, an delay must all be valid integers";
                                 errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
                                 return;
                             }
                         }
@@ -285,9 +297,9 @@ public class CustomAttacks {
         ArrayList<String> output = new ArrayList<>();
         output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
-        for (AttackBar attackBar : attacks) {
-            for (ArrowBar arrowBar : attackBar.getArrows())
-                output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.getReversable(), arrowBar.getDirection(), arrowBar.getDelay()));
+        for(AttackBar attackBar : attacks) {
+            for(ArrowBar arrowBar : attackBar.getArrows())
+                output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.isReversible(), arrowBar.getDirection(), arrowBar.getDelay()));
         }
         chooser.setDialogTitle("Choose export location...");
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -306,14 +318,7 @@ public class CustomAttacks {
             }
         }
     }
-
-    public void keyPressed(KeyEvent e) {
-        if (Runner.isCustomAttack) {
-            for (AttackBar a : attacks)
-                a.keyBoardWork(e);
-        }
-    }
-
+    
     static boolean areAnyAttacksEmpty() {
         for (AttackBar attackBar : attacks) {
             if (attackBar.getArrows().size() == 0)
@@ -372,7 +377,7 @@ public class CustomAttacks {
         else if (check == 0)
             importFile();
     }
-
+    
     public void setAllFieldsVisibility(boolean visibility) {
         for (AttackBar at : attacks) {
             for (ArrowBar ab : at.getArrows()) {

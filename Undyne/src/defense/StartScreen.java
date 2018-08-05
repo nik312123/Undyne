@@ -235,9 +235,32 @@ class StartScreen {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {}
+            
+            @Override
+            public void afterDraw(Graphics g) {
+                if(creditsList.percentageExpanded() == 1.0) {
+                    Runner.moveButtons(true);
+                    TextAttribute[] t = {TextAttribute.FONT};
+                    int originalY = 20 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight() / 2;
+                    int x = 20, y = originalY;
+                    g.setColor(Color.WHITE);
+                    for(AttributedString a : creditsText) {
+                        g.drawString(a.getIterator(), x, y);
+                        y += 40;
+                    }
+                    g.setFont(Runner.deteFontSpeech);
+                    g.drawString("Undertale SFX & music, and creating Undertale", x, originalY + 15);
+                    g.drawString("and code", x, originalY + 15 + 40 * 9);
+                    g.drawString("game!", x, originalY + 15 + 40 * 10);
+                    for(JPanel b : clickableNames)
+                        b.setVisible(true);
+                    g.setFont(Runner.deteFontSpeech);
+    
+                    g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - Math.min(creditsList.getPopUpWidth(), 460) / 4 + 37);
+                }
             }
-
+            
         };
         creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
         addLinkFormatting(0, 0, 9);
@@ -260,8 +283,8 @@ class StartScreen {
         creditsText[9] = new AttributedString("Nikunj Chawla and Aaron Kandikatla: All other sprites");
         addLinkFormatting(9, 0, 13);
         addLinkFormatting(9, 18, 35);
-        creditsText[10] = new AttributedString("And most importantly, thanks to you for enjoying our");
-        for (AttributedString a : creditsText) {
+        creditsText[10] = new AttributedString("And most importantly, thank you for enjoying our");
+        for(AttributedString a : creditsText) {
             try {
                 a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
             } catch (FontFormatException | IOException e) {
@@ -272,9 +295,9 @@ class StartScreen {
             clickableNames[i] = new JPanel();
             JPanel b = clickableNames[i];
             b.setVisible(false);
-            b.setLocation((int) (85 - creditsList.getExpandedX()), (int) (y - creditsList.getExpandedY()));
-            if (i == 11)
-                b.setLocation((int) (230 - creditsList.getExpandedX()), (int) (85 + 40 * 9 - creditsList.getExpandedY()));
+            b.setLocation(85 - creditsList.getX(), y - creditsList.getY());
+            if(i == 11)
+                b.setLocation(230 - creditsList.getX(), 85 + 40 * 9 - creditsList.getY());
             b.setOpaque(false);
             b.setName(Integer.toString(i));
             b.addMouseListener(new MouseListener() {
@@ -397,7 +420,8 @@ class StartScreen {
             }
             starterTitle(g);
             drawSubtitle(g);
-            if (frameCounter1 > 250) {
+            if(frameCounter1 > 250) {
+                Runner.showInitialButtons();
                 moveHeart();
                 constrain();
                 zToStart(g);
@@ -418,28 +442,9 @@ class StartScreen {
                 if (heartsActivated())
                     drawSans(g);
                 heartMouse(g);
-                creditsList.draw(g);
-                if (creditsList.percentageExpanded() == 1.0) {
-                    Runner.moveButtons(true);
-                    TextAttribute[] t = {TextAttribute.FONT};
-                    int originalY = 85 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight() / 2;
-                    int x = 85, y = originalY;
-                    g.setColor(Color.WHITE);
-                    for (AttributedString a : creditsText) {
-                        g.drawString(a.getIterator(), x, y);
-                        y += 40;
-                    }
-                    g.setFont(Runner.deteFontSpeech);
-                    g.drawString("Undertale SFX & music, and creating Undertale", x, originalY + 15);
-                    g.drawString("and code", x, originalY + 15 + 40 * 9);
-                    g.drawString("game!", x, originalY + 15 + 40 * 10);
-                    for (JPanel b : clickableNames)
-                        b.setVisible(true);
-                    g.setFont(Runner.deteFontSpeech);
-
-                    g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - Math.min(creditsList.getWidth(), 460) / 4 + 37);
-                } else {
-                    for (JPanel b : clickableNames)
+                creditsList.checkVisibility();
+                if(creditsList.percentageExpanded() != 1.0) {
+                    for(JPanel b : clickableNames)
                         b.setVisible(false);
                     if (!playChosen)
                         Runner.moveButtons(false);
