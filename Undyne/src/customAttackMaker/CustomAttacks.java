@@ -1,6 +1,7 @@
 package customAttackMaker;
 
 import defense.Runner;
+import defense.StartScreen;
 import nikunj.classes.PopUp;
 
 import javax.swing.JFileChooser;
@@ -373,6 +374,8 @@ public class CustomAttacks {
         if(!optionSelected) {
             boolean newChosen = newThing.contains(mousePosition);
             importChosen = importThing.contains(mousePosition);
+            if(newChosen || importChosen)
+                StartScreen.playClick();
             if(importChosen)
                 importFile();
             optionSelected = importChosen && importingComplete || newChosen;
@@ -408,6 +411,10 @@ public class CustomAttacks {
     
     public static boolean isIn() {
         return isIn;
+    }
+    
+    public static boolean isFileBeingChosen() {
+        return fileBeingChosen;
     }
     
 }

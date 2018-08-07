@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 import java.text.AttributedString;
 import java.util.Random;
 
-class StartScreen {
+public class StartScreen {
     private double fadeIn = 0;
     private double fadeStart = 0;
     private static double sfxVolume = 1;
@@ -39,7 +39,8 @@ class StartScreen {
     private static BufferedImage zSelect;
     private static BufferedImage heartMouse;
     private static BufferedImage heartMouseBlue;
-    private static BufferedImage select;
+    private static BufferedImage selectDifficulty;
+    private static BufferedImage selectOption;
     private static BufferedImage subtitle;
     private static BufferedImage subtitleBlue;
     private static BufferedImage buttons;
@@ -176,7 +177,8 @@ class StartScreen {
             undyne = Runner.getCompatibleImage("/undyne.png");
             start = Runner.getCompatibleImage("/start.png");
             zSelect = Runner.getCompatibleImage("/zSelect.png");
-            select = Runner.getCompatibleImage("/select.png");
+            selectDifficulty = Runner.getCompatibleImage("/selectDifficulty.png");
+            selectOption = Runner.getCompatibleImage("/selectOption.png");
             heartMouse = Runner.getCompatibleImage("/heartMouse.png");
             heartMouseBlue = Runner.getCompatibleImage("/heartMouseBlue.png");
             buttons = Runner.getCompatibleImage("/buttons.png");
@@ -547,10 +549,21 @@ class StartScreen {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 g2d.drawImage(keys, 179, 490 + 50 - 20, null);
             }
+            else if(!playChosen) {
+                AffineTransform trans = new AffineTransform();
+                trans.translate(174.5, 486 + shift);
+                g2d.drawImage(selectOption, trans, null);
+                if(warningCounter == 0)
+                    g2d.drawImage(keys, 179, 490 + 50 - 20, null);
+                else {
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                    g2d.drawImage(keys, (int) (179 - 0.5 * keys.getWidth() / 2), (int) (490 + 50 - 20 - 0.5 * keys.getHeight() / 2), (int) (1.5 * keys.getWidth()), (int) (1.5 * keys.getHeight()), null);
+                }
+            }
             else if((!easyButtonRectRed || !isOnEasy) && (!hardButtonRectRed || !isOnHard) && (!survivalButtonRectRed || !isOnSurvival) && (!mediumButtonRectRed || !isOnMedium)) {
                 AffineTransform trans = new AffineTransform();
                 trans.translate(174.5, 486 + shift);
-                g2d.drawImage(select, trans, null);
+                g2d.drawImage(selectDifficulty, trans, null);
                 if(warningCounter == 0)
                     g2d.drawImage(keys, 179, 490 + 50 - 20, null);
                 else {
@@ -1181,7 +1194,7 @@ class StartScreen {
         heartY = y;
     }
     
-    void playClick() {
+    public static void playClick() {
         click.changeVolume(sfxVolume);
         click.play();
     }

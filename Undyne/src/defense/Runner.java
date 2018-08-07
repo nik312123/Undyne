@@ -86,7 +86,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static int loadingCounter = 0;
     private static int loadingFrame = 0;
     public static int customAttacksCounter = 0;
-    private static int clickCounter = 0;
     
     private static double fadeStart = 0;
     private static double musicMutedVolume = 1;
@@ -726,8 +725,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
             if(event instanceof MouseEvent) {
                 MouseEvent evt = (MouseEvent) event;
-                if(evt.getID() == MouseEvent.MOUSE_CLICKED) {
-                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
+                if(evt.getID() == MouseEvent.MOUSE_CLICKED && !CustomAttacks.isFileBeingChosen()) {
+                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused() && error.isFinished() && !oneSecondDelay.isRunning()) {
                         
                         Point evtLocation = evt.getLocationOnScreen();
                         
@@ -743,7 +742,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         Rectangle sfxRect = new Rectangle(sfxButton.getBounds());
                         sfxRect.setLocation(sfxButton.getLocationOnScreen());
                         
-                        if(error.isFinished() && !closeRect.contains(evtLocation) && !draggableRect.contains(evtLocation) && !musicRect.contains(evtLocation) && !sfxRect.contains(evtLocation))
+                        if(!closeRect.contains(evtLocation) && !draggableRect.contains(evtLocation) && !musicRect.contains(evtLocation) && !sfxRect.contains(evtLocation))
                             error.play();
                         stage.warningOn();
                     }
@@ -1605,7 +1604,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 isOpenCreatorTimerDone = true;
             }
             else {
-                stage.playClick();
                 isCustomAttack = !isCustomAttack;
                 beginning = !beginning;
                 moveButtons(!beginning);
@@ -1760,23 +1758,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(helpStarter) {
-                    stage.playClick();
+                    StartScreen.playClick();
                     helpStarter = false;
                 }
                 else if(creditsList.getExpanding()) {
-                    stage.playClick();
+                    StartScreen.playClick();
                     creditsList.setExpanding(false);
                 }
                 else if(stage.isPlayChosen() && beginning) {
-                    stage.playClick();
+                    StartScreen.playClick();
                     stage.deactivateSpears();
                     stage.playChosen(false);
                     moveButtons(false);
                     stage.setHeartX(5);
                     stage.setHeartY(72);
                 }
-                else if(isCustomAttack && !oneSecondDelay.isRunning())
+                else if(isCustomAttack && !oneSecondDelay.isRunning() && !AttackBar.areAnyDirectionsSelected()) {
+                    StartScreen.playClick();
                     closeCreator();
+                }
             }
         };
 
@@ -1786,23 +1786,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 if(beginning) {
                     if(!stage.isPlayChosen()) {
                         if(creditsButton.onButton()) {
-                            stage.playClick();
+                            StartScreen.playClick();
                             creditsList.setExpanding(true);
                             creditsList.setVisible(true);
                         }
                         else if(helpButton.onButton()) {
-                            stage.playClick();
+                            StartScreen.playClick();
                             helpStarter = true;
                         }
                         else if(playButton.onButton()) {
-                            stage.playClick();
+                            StartScreen.playClick();
                             stage.playChosen(true);
                             moveButtons(true);
                             stage.setHeartX(5);
                             stage.setHeartY(75);
                         }
-                        else if(creatorButton.onButton() && !oneSecondDelay.isRunning())
+                        else if(creatorButton.onButton() && !oneSecondDelay.isRunning()) {
+                            StartScreen.playClick();
                             openCreator();
+                        }
                     }
                     if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
                         block.play();
@@ -1820,7 +1822,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         stage.activateBlueHeartFlash();
                     }
                     else if(stage.shouldStart()) {
-                        stage.playClick();
+                        StartScreen.playClick();
                         start();
                     }
                     else if(stage.numHeartsActivated() > 0 && !stage.heartsActivated()) {
