@@ -29,6 +29,7 @@ public class CustomAttacks {
     private static boolean importingComplete = false;
     private static boolean fileBeingChosen = false;
     private static boolean isIn = false;
+    private static boolean errorIsContracting = false;
     
     private int errorLine;
     private static int newThingAlpha = 0;
@@ -48,7 +49,36 @@ public class CustomAttacks {
     
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
     
-    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5);
+    private PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5) {
+        
+        @Override
+        public void afterDraw(Graphics g) {
+            if(percentageExpanded() == 1.0) {
+                g.setFont(Runner.deteFontError);
+                g.setColor(Color.WHITE);
+                g.drawString("Error on line " + errorLine, 10, 25);
+                String[] errorSplit = error.split("\\s+");
+                StringBuilder line = new StringBuilder();
+                int lineIndex = 1;
+                boolean drewOnLast = true;
+                for(int i = 0; i < errorSplit.length; ++i) {
+                    if(line.length() + errorSplit[i].length() + 1 < 19) {
+                        drewOnLast = false;
+                        line.append(errorSplit[i]).append(" ");
+                    }
+                    else {
+                        drewOnLast = true;
+                        g.drawString(line.toString(), 10, 25 + 15 + 25 * lineIndex);
+                        ++lineIndex;
+                        line = new StringBuilder();
+                        --i;
+                    }
+                }
+                if(!drewOnLast)
+                    g.drawString(line.toString(), 10, 25 + 15 + 25 * lineIndex);
+            }
+        }
+    };
     
     private JFileChooser chooser = new JFileChooser() {
         @Override
@@ -96,6 +126,10 @@ public class CustomAttacks {
             startScreen(g);
             setAllFieldsVisibility(false);
         }
+        if(errorIsContracting && errorPopUp.percentageExpanded() == 0.0) {
+            errorPopUp.setVisible(false);
+            errorIsContracting = false;
+        }
     }
     
     private void startScreen(Graphics2D g) {
@@ -129,7 +163,6 @@ public class CustomAttacks {
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);
         errorPopUp.checkVisibility();
-        drawErrorText(g);
     }
     
     private void addAttack() {
@@ -145,33 +178,6 @@ public class CustomAttacks {
     private void addAttackButton(Graphics g) {
         g.drawImage(Runner.addAttack, 300 - 33, dynamicLength - 5, null);
         addAttack.setBounds(300 - 33, dynamicLength - 5, 66, 17);
-    }
-    
-    private void drawErrorText(Graphics g) {
-        if(errorPopUp.percentageExpanded() == 1.0) {
-            g.setFont(Runner.deteFontError);
-            g.setColor(Color.WHITE);
-            g.drawString("Error on line " + errorLine, 180, 200);
-            String[] errorSplit = error.split("\\s+");
-            StringBuilder line = new StringBuilder();
-            int lineIndex = 1;
-            boolean drewOnLast = true;
-            for(int i = 0; i < errorSplit.length; ++i) {
-                if(line.length() + errorSplit[i].length() + 1 < 19) {
-                    drewOnLast = false;
-                    line.append(errorSplit[i]).append(" ");
-                }
-                else {
-                    drewOnLast = true;
-                    g.drawString(line.toString(), 180, 200 + 15 + 25 * lineIndex);
-                    ++lineIndex;
-                    line = new StringBuilder();
-                    --i;
-                }
-            }
-            if(!drewOnLast)
-                g.drawString(line.toString(), 180, 200 + 15 + 25 * lineIndex);
-        }
     }
     
     private void importFile() {
@@ -206,6 +212,7 @@ public class CustomAttacks {
                                 error = "The Undying value must be true or false only";
                                 errorPopUp.setExpanding(true);
                                 errorPopUp.setVisible(true);
+                                StartScreen.playClick();
                                 return;
                             }
                             else
@@ -218,6 +225,7 @@ public class CustomAttacks {
                             error = "Incorrect number of items in the given comma-separated list";
                             errorPopUp.setExpanding(true);
                             errorPopUp.setVisible(true);
+                            StartScreen.playClick();
                             return;
                         }
                         else if(inputArrow.length == 5) {
@@ -227,12 +235,14 @@ public class CustomAttacks {
                                     error = "Attack must be greater than zero";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
                                     return;
                                 }
                                 else if(attack < previousAttack) {
                                     error = "Attacks must be in increasing order";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
                                     return;
                                 }
                                 else if(attack > previousAttack) {
@@ -240,6 +250,7 @@ public class CustomAttacks {
                                         error = "Maximum number of attacks is 13000";
                                         errorPopUp.setExpanding(true);
                                         errorPopUp.setVisible(true);
+                                        StartScreen.playClick();
                                         return;
                                     }
                                     if(attack > 1 + previousAttack) {
@@ -259,12 +270,14 @@ public class CustomAttacks {
                                     error = "Speed must be between 1 and 10 inclusive";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
                                     return;
                                 }
                                 if(!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
                                     error = "Third item in list must be true or false";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
                                     return;
                                 }
                                 boolean reversable = Boolean.parseBoolean(inputArrow[2]);
@@ -273,6 +286,7 @@ public class CustomAttacks {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
                                     return;
                                 }
                                 int delay = Integer.parseInt(inputArrow[4]);
@@ -280,6 +294,7 @@ public class CustomAttacks {
                                     error = "Delay must be between 1 and 999 inclusive";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
                                     return;
                                 }
                                 importedAttacks.get(importedAttacks.size() - 1).add(new ArrowBar(speed, reversable, direction, delay));
@@ -288,6 +303,7 @@ public class CustomAttacks {
                                 error = "Attack number, speed, an delay must all be valid integers";
                                 errorPopUp.setExpanding(true);
                                 errorPopUp.setVisible(true);
+                                StartScreen.playClick();
                                 return;
                             }
                         }
@@ -361,30 +377,39 @@ public class CustomAttacks {
     }
     
     public void mouseClicked() {
-        if(errorPopUp.percentageExpanded() == 1.0)
+        if(errorPopUp.percentageExpanded() == 1.0) {
             errorPopUp.setExpanding(false);
-        for(AttackBar a : attacks) {
-            if(a.mouseClickWork() == 1) {
-                reassignNumbers();
-                break;
-            }
+            StartScreen.playClick();
+            errorIsContracting = true;
         }
-        if(addAttack.contains(mousePosition))
-            addAttack();
-        if(!optionSelected) {
+        else if(!optionSelected) {
             boolean newChosen = newThing.contains(mousePosition);
             importChosen = importThing.contains(mousePosition);
             if(newChosen || importChosen)
                 StartScreen.playClick();
             if(importChosen)
                 importFile();
+            if(importingComplete)
+                StartScreen.playClick();
             optionSelected = importChosen && importingComplete || newChosen;
         }
-        int check = bottomMenuBar.mouseWorks(mousePosition);
-        if(check == 1)
-            exportFile();
-        else if(check == 0)
-            importFile();
+        else {
+            int check = bottomMenuBar.mouseWorks(mousePosition);
+            if(check == 1)
+                exportFile();
+            else if(check == 0)
+                importFile();
+            else if(addAttack.contains(mousePosition))
+                addAttack();
+            else {
+                for(AttackBar a : attacks) {
+                    if(a.mouseClickWork() == 1) {
+                        reassignNumbers();
+                        break;
+                    }
+                }
+            }
+        }
     }
     
     public void setAllFieldsVisibility(boolean visibility) {

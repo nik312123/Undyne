@@ -81,7 +81,6 @@
     </orderEntry>
     <orderEntry type="library" name="nikunj_classes" level="project" />
     <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="commons-lang3-3.7-javadoc" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>

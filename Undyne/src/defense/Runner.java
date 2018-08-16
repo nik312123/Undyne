@@ -212,7 +212,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static Font deteFontEditorAttack;
     public static Font deteFontError;
     
-    private static FocusListener checkFocus;
+    private static WindowFocusListener checkFocus;
     
     private static Attack a1;
     private static Attacks a;
@@ -709,7 +709,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         };
         
-        checkFocus = new FocusListener();
+        checkFocus = new WindowFocusListener();
         
         if(isFirstTime) {
             musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), true, 553, 30, 10, 50);
@@ -721,32 +721,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         PopUp errorPopUp = customAttackMaker.getErrorPopUp();
         
         setUpKeyBindings(runner);
-    
+        
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
             if(event instanceof MouseEvent) {
                 MouseEvent evt = (MouseEvent) event;
                 if(evt.getID() == MouseEvent.MOUSE_CLICKED && !CustomAttacks.isFileBeingChosen()) {
-                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused() && error.isFinished() && !oneSecondDelay.isRunning()) {
-                        
-                        Point evtLocation = evt.getLocationOnScreen();
-                        
-                        Rectangle closeRect = new Rectangle(closeButton.getBounds());
-                        closeRect.setLocation(closeButton.getLocationOnScreen());
-    
-                        Rectangle draggableRect = new Rectangle(draggableButton.getBounds());
-                        draggableRect.setLocation(draggableButton.getLocationOnScreen());
-    
-                        Rectangle musicRect = new Rectangle(musicButton.getBounds());
-                        musicRect.setLocation(musicButton.getLocationOnScreen());
-    
-                        Rectangle sfxRect = new Rectangle(sfxButton.getBounds());
-                        sfxRect.setLocation(sfxButton.getLocationOnScreen());
-                        
-                        if(!closeRect.contains(evtLocation) && !draggableRect.contains(evtLocation) && !musicRect.contains(evtLocation) && !sfxRect.contains(evtLocation))
-                            error.play();
-                        stage.warningOn();
-                    }
-                    else if(checkFocus.isJustFocused())
+                    if(checkFocus.isJustFocused())
                         checkFocus.deactivateJustFocused();
                     barCheckBoxClicked(evt);
                     if(canBeStopped)
@@ -799,7 +779,39 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.add(musicSlider);
         frame.add(sfxSlider);
         frame.add(runner);
+    
+        MouseListener errorListener = new MouseListener() {
         
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(beginning && StartScreen.isLoaded /*&& !checkFocus.isJustFocused()*/) {
+                    if(error.isFinished())
+                        error.play();
+                    stage.warningOn();
+                }
+                else if(checkFocus.isJustFocused())
+                    checkFocus.deactivateJustFocused();
+            }
+        
+            @Override
+            public void mousePressed(MouseEvent e) {}
+        
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+        
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+        
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        
+        };
+    
+        frame.addMouseListener(errorListener);
+        creditsButton.addMouseListener(errorListener);
+        helpButton.addMouseListener(errorListener);
+        playButton.addMouseListener(errorListener);
+        creatorButton.addMouseListener(errorListener);
         frame.addMouseMotionListener(runner);
         frame.addMouseListener(runner);
         frame.addMouseWheelListener(runner);
@@ -833,7 +845,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         isReplaying = false;
     }
     
-    private static class FocusListener implements WindowListener {
+    private static class WindowFocusListener implements WindowListener {
         private boolean justFocused = false;
         
         @Override
