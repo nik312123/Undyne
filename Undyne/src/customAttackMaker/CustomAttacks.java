@@ -1,6 +1,7 @@
 package customAttackMaker;
 
 import defense.Runner;
+import defense.StartScreen;
 import nikunj.classes.PopUp;
 
 import javax.swing.JFileChooser;
@@ -125,7 +126,7 @@ public class CustomAttacks {
         }
         g.setColor(new Color(157, 50, 100, importThingAlpha));
         g.fill(importThing);
-        g.drawImage(Runner.CAT, 129, 21, null);
+        g.drawImage(Runner.cat, 129, 21, null);
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);
         errorPopUp.checkVisibility();
@@ -367,7 +368,9 @@ public class CustomAttacks {
         if (!optionSelected) {
             boolean newChosen = newThing.contains(mousePosition);
             importChosen = importThing.contains(mousePosition);
-            if (importChosen)
+            if(newChosen || importChosen)
+                StartScreen.playClick();
+            if(importChosen)
                 importFile();
             optionSelected = importChosen && importingComplete || newChosen;
         }
@@ -404,5 +407,9 @@ public class CustomAttacks {
     public static boolean isIn() {
         return isIn;
     }
-
+    
+    public static boolean isFileBeingChosen() {
+        return fileBeingChosen;
+    }
+    
 }

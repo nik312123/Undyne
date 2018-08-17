@@ -31,7 +31,7 @@ public class BottomMenuBar extends JPanel {
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, 600, 600);
         if(Runner.bottomBarShouldDraw()) {
-            tab.setBounds(528, y, 46, 25);
+            tab.setBounds(528, y + 548, 46, 25);
             g.drawImage(Runner.bottomMenuBar, 0, y, null);
             boolean emptyAttackExists = isThereAnEmptyAttack();
             if(!emptyAttackExists && noFieldsAreEmpty()) {
