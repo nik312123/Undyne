@@ -193,10 +193,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static Sound error;
     private static Sound[] mainSounds = new Sound[4];
     
-    private static GradientButton closeButton;
-    private static GradientButton draggableButton;
-    private static GradientButton musicButton;
-    private static GradientButton sfxButton;
+    private static GradientButtonTolerance closeButton;
+    private static GradientButtonTolerance draggableButton;
+    private static GradientButtonTolerance musicButton;
+    private static GradientButtonTolerance sfxButton;
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
     private static GradientButton playButton;
@@ -364,19 +364,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         oneSecondDelay = new Timer(1000, runner);
         oneSecondDelay.setRepeats(false);
         
-        closeButton = new GradientButton(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
+        closeButton = new GradientButtonTolerance(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void onMouseClick(MouseEvent e) {
                 System.exit(0);
             }
             
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void onMousePress(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void onMouseRelease(MouseEvent e) {}
             
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -405,23 +405,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         };
         
-        draggableButton = new GradientButton(draggable, Color.BLACK, Color.BLUE, 30, 2, 24, 24) {
+        draggableButton = new GradientButtonTolerance(draggable, Color.BLACK, Color.BLUE, 30, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
             private Point originalLocation;
             private Point pressLocation;
             
             @Override
-            public void mouseClicked(MouseEvent e) {}
+            public void onMouseClick(MouseEvent e) {}
             
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void onMousePress(MouseEvent e) {
                 originalLocation = frame.getLocation();
                 pressLocation = e.getLocationOnScreen();
             }
             
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void onMouseRelease(MouseEvent e) {}
             
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -455,11 +455,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         };
         
-        musicButton = new GradientButton(music, Color.BLACK, new Color(0, 208, 208), 545, 2, 24, 24) {
+        musicButton = new GradientButtonTolerance(music, Color.BLACK, new Color(0, 208, 208), 545, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void onMouseClick(MouseEvent e) {
                 if(musicMuted) {
                     musicSlider.setPercentage(musicMutedVolume);
                     if(main != null)
@@ -487,10 +487,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
             
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void onMousePress(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void onMouseRelease(MouseEvent e) {}
             
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -533,11 +533,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         };
         
-        sfxButton = new GradientButton(sfx, Color.BLACK, Color.GREEN, 573, 2, 24, 24) {
+        sfxButton = new GradientButtonTolerance(sfx, Color.BLACK, Color.GREEN, 573, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void onMouseClick(MouseEvent e) {
                 if(sfxMuted) {
                     sfxSlider.setPercentage(sfxMutedVolume);
                     Attack.changeVol(sfxMutedVolume);
@@ -571,10 +571,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
             
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void onMousePress(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void onMouseRelease(MouseEvent e) {}
             
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -2079,7 +2079,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     private static boolean onSlider(String slider) {
         Slider s;
-        GradientButton gb;
+        GradientButtonTolerance gb;
         if(slider.equals("music")) {
             s = musicSlider;
             gb = musicButton;
