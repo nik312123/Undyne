@@ -24,7 +24,7 @@ public class BottomMenuBar extends JPanel {
     private Rectangle stop = new Rectangle(31, y + 28 + 548, 20, 18);
     private final Rectangle EXPORT = new Rectangle(457, 576, 53, 17);
     private final Rectangle IMPORT = new Rectangle(518, 576, 53, 17);
-
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

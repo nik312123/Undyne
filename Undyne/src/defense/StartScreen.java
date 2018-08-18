@@ -229,8 +229,8 @@ public class StartScreen {
                     for(JPanel b : clickableNames)
                         b.setVisible(true);
                     g.setFont(Runner.deteFontSpeech);
-    
-                    g.drawString("PRESS X TO EXIT", 300 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 600 - Math.min(creditsList.getPopUpWidth(), 460) / 4 + 37);
+                    
+                    g.drawString("PRESS X TO EXIT", 235 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 535 - Math.min(creditsList.getPopUpWidth(), 460) / 4 + 37);
                 }
             }
             

@@ -26,7 +26,7 @@ class Help {
             
             @Override
             public void mouseClicked(MouseEvent e) {}
-    
+            
             @Override
             public void afterDraw(Graphics g) {
                 int heightWidth = Math.min(helpPopUp.getPopUpWidth(), 460);
@@ -49,7 +49,7 @@ class Help {
         helpPopUp.setLayout(null);
     }
     
-    void initiate(Graphics g, boolean start) {
+    void initiate(boolean start) {
         if(start) {
             helpPopUp.setExpanding(true);
             helpPopUp.setVisible(true);
