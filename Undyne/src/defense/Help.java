@@ -10,11 +10,11 @@ import java.awt.image.BufferedImage;
 class Help {
     private int frameCounter = 0;
     private int helpFrame = 0;
-    
+
     private PopUp helpPopUp;
-    
+
     private static BufferedImage[] helpGif = new BufferedImage[502];
-    
+
     Help() {
         if(Runner.isFirstTime) {
             for(int i = 0; i < 502; ++i)
@@ -23,7 +23,7 @@ class Help {
         
         helpPopUp = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {}
             
@@ -44,7 +44,6 @@ class Help {
                 if(helpFrame == 502)
                     helpFrame = 0;
             }
-            
         };
         helpPopUp.setLayout(null);
     }
@@ -60,9 +59,9 @@ class Help {
             helpFrame = 0;
         }
     }
-    
+
     PopUp getHelpPopUp() {
         return helpPopUp;
     }
-    
+
 }

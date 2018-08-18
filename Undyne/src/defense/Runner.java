@@ -64,7 +64,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Runner extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
     private static final long serialVersionUID = 1L;
-    
+
     private static int nothingCounter = 0;
     private static int DELAY = 10;
     private static int breakCount = 0;
@@ -92,7 +92,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static double fadeStart = 0;
     private static double musicMutedVolume = 1;
     private static double sfxMutedVolume = 1;
-    
+
     private static boolean isGenocide = false;
     private static boolean survival = false;
     private static boolean heartDone = false;
@@ -117,9 +117,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     static boolean isFirstTime = true;
     public static boolean isCustomAttack = false;
     public static boolean canBeStopped = false;
-    
+
     private static char dir = 'u';
-    
+
     private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
@@ -127,7 +127,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static final String[] mediumMessage = {"Not bad, punk!", "Let me go", "harder on you."};
     private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
     private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
-    
+
     private static Timer timer;
     private static Timer oneSecondDelay;
     
@@ -175,9 +175,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static BufferedImage[] gif;
     static BufferedImage[] gifUndyne;
     static BufferedImage[] gifUndying;
-    
+
     public static ImageIcon warning;
-    
+
     private static Sound main;
     private static Sound sojBeta;
     private static Sound gameDone;
@@ -197,16 +197,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static GradientButtonTolerance draggableButton;
     private static GradientButtonTolerance musicButton;
     private static GradientButtonTolerance sfxButton;
+    
     private static GradientButton creditsButton;
     private static GradientButton helpButton;
     private static GradientButton playButton;
     private static GradientButton creatorButton;
-    
+
     private static Slider musicSlider;
     private static Slider sfxSlider;
-    
+
     private static PopUp creditsList;
-    
+
     private static Font deteFontNorm;
     static Font deteFontScore;
     public static Font deteFontSpeech;
@@ -228,9 +229,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static JPanel topBar;
     
     private static JFrame frame;
-    
+
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
-        if(isFirstTime) {
             EventQueue.invokeLater(() -> {
                 SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
                     @Override
@@ -249,8 +249,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 worker.execute();
                 try {
                     worker.get();
-                }
-                catch(InterruptedException | ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             });
@@ -282,7 +281,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             broke = new Sound(Runner.class.getResource("/heartBreak.ogg"), false);
             asgore = new Sound(Runner.class.getResource("/asgore.ogg"), false);
             error = new Sound(Runner.class.getResource("/error.ogg"), false);
-            for(int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
+            for (int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
                 mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
             heart = getCompatibleImage("/heart.png");
             heartBreak = new BufferedImage[49];
@@ -345,7 +344,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             deteFontEditorAttack = deteFontNorm.deriveFont(24.0f);
             deteFontError = deteFontNorm.deriveFont(20.0f);
         }
-        if(gifUndyne == null || gifUndyne.length != 32) {
+        if (gifUndyne == null || gifUndyne.length != 32) {
             gifUndyne = new BufferedImage[32];
             for(int i = 0; i <= 31; ++i)
                 gifUndyne[i] = getCompatibleImage("/gif/frame" + i + ".png");
@@ -366,12 +365,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         closeButton = new GradientButtonTolerance(close, Color.BLACK, Color.RED, 2, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public void onMouseClick(MouseEvent e) {
                 System.exit(0);
             }
-            
+
             @Override
             public void onMousePress(MouseEvent e) {}
             
@@ -379,17 +378,21 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
-            public void mouseMoved(MouseEvent e) {}
-            
+            public void mouseMoved(MouseEvent e) {
+            }
+
             @Override
             public void beforeDraw(Graphics g) {
                 g.setColor(Color.BLACK);
@@ -419,16 +422,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 originalLocation = frame.getLocation();
                 pressLocation = e.getLocationOnScreen();
             }
-            
+
             @Override
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point drag = e.getLocationOnScreen();
@@ -436,7 +441,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 int y = Math.round(originalLocation.y + drag.y - pressLocation.y);
                 frame.setLocation(x, y);
             }
-            
+
             @Override
             public void mouseMoved(MouseEvent e) {}
             
@@ -457,35 +462,34 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         musicButton = new GradientButtonTolerance(music, Color.BLACK, new Color(0, 208, 208), 545, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public void onMouseClick(MouseEvent e) {
                 if(musicMuted) {
                     musicSlider.setPercentage(musicMutedVolume);
-                    if(main != null)
+                    if (main != null)
                         main.changeVolume(musicMutedVolume);
-                    if(gameDone != null)
+                    if (gameDone != null)
                         gameDone.changeVolume(musicMutedVolume);
-                    if(startScreen != null)
+                    if (startScreen != null)
                         startScreen.changeVolume(musicMutedVolume);
-                    if(stage != null)
+                    if (stage != null)
                         stage.changeMusicVol(musicMutedVolume);
-                }
-                else {
+                } else {
                     musicMutedVolume = musicSlider.getPercentage();
                     musicSlider.setPercentage(0);
-                    if(main != null)
+                    if (main != null)
                         main.changeVolume(0);
-                    if(gameDone != null)
+                    if (gameDone != null)
                         gameDone.changeVolume(0);
-                    if(startScreen != null)
+                    if (startScreen != null)
                         startScreen.changeVolume(0);
-                    if(stage != null)
+                    if (stage != null)
                         stage.changeMusicVol(0);
                 }
                 musicMuted = !musicMuted;
             }
-            
+
             @Override
             public void onMousePress(MouseEvent e) {}
             
@@ -493,14 +497,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
             public void mouseMoved(MouseEvent e) {}
             
@@ -512,8 +519,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public void afterDraw(Graphics g) {
-                if(musicMuted) {
-                    if(musicSlider.getPercentage() > 0)
+                if (musicMuted) {
+                    if (musicSlider.getPercentage() > 0)
                         musicMuted = false;
                     else {
                         Graphics2D g2d = (Graphics2D) g;
@@ -521,8 +528,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         g2d.setStroke(new BasicStroke(2));
                         g2d.draw(new Line2D.Float(4, 20, 20, 2));
                     }
-                }
-                else if(musicSlider.getPercentage() == 0) {
+                } else if (musicSlider.getPercentage() == 0) {
                     musicMuted = true;
                     musicMutedVolume = 0;
                 }
@@ -535,7 +541,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         sfxButton = new GradientButtonTolerance(sfx, Color.BLACK, Color.GREEN, 573, 2, 24, 24) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public void onMouseClick(MouseEvent e) {
                 if(sfxMuted) {
@@ -551,8 +557,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     asgore.changeVolume(sfxMutedVolume);
                     heal.changeVolume(sfxMutedVolume);
                     error.changeVolume(sfxMutedVolume);
-                }
-                else {
+                } else {
                     sfxMutedVolume = sfxSlider.getPercentage();
                     sfxSlider.setPercentage(0);
                     Attack.changeVol(0);
@@ -569,7 +574,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 }
                 sfxMuted = !sfxMuted;
             }
-            
+
             @Override
             public void onMousePress(MouseEvent e) {}
             
@@ -577,14 +582,17 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
             public void mouseMoved(MouseEvent e) {}
             
@@ -596,8 +604,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public void afterDraw(Graphics g) {
-                if(sfxMuted) {
-                    if(sfxSlider.getPercentage() > 0)
+                if (sfxMuted) {
+                    if (sfxSlider.getPercentage() > 0)
                         sfxMuted = false;
                     else {
                         Graphics2D g2d = (Graphics2D) g;
@@ -605,8 +613,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         g2d.setStroke(new BasicStroke(2));
                         g2d.draw(new Line2D.Float(4, 20, 20, 2));
                     }
-                }
-                else if(sfxSlider.getPercentage() == 0) {
+                } else if (sfxSlider.getPercentage() == 0) {
                     sfxMuted = true;
                     sfxMutedVolume = 0;
                 }
@@ -616,119 +623,147 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 }
             }
         };
-        
+
         creditsButton = new GradientButton(credits, Color.BLACK, new Color(148, 0, 211), 76, 380 + 20, 148, 62) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
-            public void mouseClicked(MouseEvent e) {}
-            
+            public void mouseClicked(MouseEvent e) {
+            }
+
             @Override
-            public void mousePressed(MouseEvent e) {}
-            
+            public void mousePressed(MouseEvent e) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent e) {}
-            
+            public void mouseReleased(MouseEvent e) {
+            }
+
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
-            public void mouseMoved(MouseEvent e) {}
-            
+            public void mouseMoved(MouseEvent e) {
+            }
+
             @Override
             public boolean onButton() {
                 return isVisible() && stage.isOnLink();
             }
         };
-        
+
         helpButton = new GradientButton(help, Color.BLACK, new Color(148, 0, 211), 376, 380 + 20, 148, 62) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
-            public void mouseClicked(MouseEvent e) {}
-            
+            public void mouseClicked(MouseEvent e) {
+            }
+
             @Override
-            public void mousePressed(MouseEvent e) {}
-            
+            public void mousePressed(MouseEvent e) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent e) {}
-            
+            public void mouseReleased(MouseEvent e) {
+            }
+
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
-            public void mouseMoved(MouseEvent e) {}
-            
+            public void mouseMoved(MouseEvent e) {
+            }
+
             @Override
             public boolean onButton() {
                 return isVisible() && stage.isOnHelp();
             }
         };
-        
+
         playButton = new GradientButton(play, Color.BLACK, new Color(148, 0, 211), 76, 300, 148, 62) {
-            
+
             @Override
-            public void mouseClicked(MouseEvent e) {}
-            
+            public void mouseClicked(MouseEvent e) {
+            }
+
             @Override
-            public void mousePressed(MouseEvent e) {}
-            
+            public void mousePressed(MouseEvent e) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent e) {}
-            
+            public void mouseReleased(MouseEvent e) {
+            }
+
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
-            public void mouseMoved(MouseEvent e) {}
-            
+            public void mouseMoved(MouseEvent e) {
+            }
+
             @Override
             public boolean onButton() {
                 return isVisible() && stage.isOnPlay();
             }
         };
-        
+
         creatorButton = new GradientButton(creator, Color.BLACK, new Color(148, 0, 211), 376, 300, 148, 62) {
-            
+
             @Override
-            public void mouseClicked(MouseEvent e) {}
-            
+            public void mouseClicked(MouseEvent e) {
+            }
+
             @Override
-            public void mousePressed(MouseEvent e) {}
-            
+            public void mousePressed(MouseEvent e) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent e) {}
-            
+            public void mouseReleased(MouseEvent e) {
+            }
+
             @Override
-            public void mouseEntered(MouseEvent e) {}
-            
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) {}
-            
+            public void mouseExited(MouseEvent e) {
+            }
+
             @Override
-            public void mouseDragged(MouseEvent e) {}
-            
+            public void mouseDragged(MouseEvent e) {
+            }
+
             @Override
-            public void mouseMoved(MouseEvent e) {}
-            
+            public void mouseMoved(MouseEvent e) {
+            }
+
             @Override
             public boolean onButton() {
                 return isVisible() && stage.isOnCreator();
@@ -741,7 +776,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             musicSlider = new Slider(Color.WHITE, new Color(150, 150, 150), new Color(0, 208, 208), true, 553, 30, 10, 50);
             sfxSlider = new Slider(Color.WHITE, new Color(150, 150, 150), Color.GREEN, true, 581, 30, 10, 50);
         }
-        
+
         creditsList = stage.getCreditsList();
         PopUp helpPopUp = helper.getHelpPopUp();
         PopUp errorPopUp = customAttackMaker.getErrorPopUp();
@@ -867,7 +902,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.addMouseWheelListener(runner);
         frame.addKeyListener(runner);
         frame.addWindowListener(checkFocus);
-        
+
         musicSlider.setVisible(true);
         sfxSlider.setVisible(true);
         creditsList.setVisible(false);
@@ -901,20 +936,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         private Thread justFocusedDisabler;
         
         @Override
-        public void windowOpened(WindowEvent e) {}
-        
+        public void windowOpened(WindowEvent e) {
+        }
+
         @Override
-        public void windowClosing(WindowEvent e) {}
-        
+        public void windowClosing(WindowEvent e) {
+        }
+
         @Override
-        public void windowClosed(WindowEvent e) {}
-        
+        public void windowClosed(WindowEvent e) {
+        }
+
         @Override
-        public void windowIconified(WindowEvent e) {}
-        
+        public void windowIconified(WindowEvent e) {
+        }
+
         @Override
-        public void windowDeiconified(WindowEvent e) {}
-        
+        public void windowDeiconified(WindowEvent e) {
+        }
+
         @Override
         public void windowActivated(WindowEvent e) {
             windowFocused = true;
@@ -928,7 +968,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             });
             justFocusedDisabler.start();
         }
-        
+
         @Override
         public void windowDeactivated(WindowEvent e) {
             windowFocused = false;
@@ -942,7 +982,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         boolean isJustFocused() {
             return justFocused;
         }
-        
+
         void deactivateJustFocused() {
             justFocused = false;
         }
@@ -969,28 +1009,28 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
         return null;
     }
-    
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(!allStopped) {
-            if(++alwaysOnTopCounter >= 20) {
+        if (!allStopped) {
+            if (++alwaysOnTopCounter >= 20) {
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
             }
-            if(++customAttacksCounter == 75)
+            if (++customAttacksCounter == 75)
                 customAttacksCounter = 0;
-            if(main != null)
+            if (main != null)
                 main.changeVolume(musicSlider.getPercentage());
-            if(gameDone != null)
+            if (gameDone != null)
                 gameDone.changeVolume(musicSlider.getPercentage());
-            if(startScreen != null)
+            if (startScreen != null)
                 startScreen.changeVolume(musicSlider.getPercentage());
-            if(stage != null)
+            if (stage != null)
                 stage.changeMusicVol(musicSlider.getPercentage());
-            if(sojBeta != null)
+            if (sojBeta != null)
                 sojBeta.changeVolume(musicSlider.getPercentage());
-            if(creatorMusic != null)
+            if (creatorMusic != null)
                 creatorMusic.changeVolume(musicSlider.getPercentage());
             Attack.changeVol(sfxSlider.getPercentage());
             StartScreen.changeSfxVol(sfxSlider.getPercentage());
@@ -1004,7 +1044,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             heal.changeVolume(sfxSlider.getPercentage());
             error.changeVolume(sfxSlider.getPercentage());
             ++frameCounter;
-            if(frameCounter == 1000)
+            if (frameCounter == 1000)
                 frameCounter = 0;
             drawBG(g);
             if(beginning && !oneSecondDelay.isRunning()) {
@@ -1021,68 +1061,62 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     }
                     else
                         moveButtons(true);
-                    if(stage.heartsActivated())
+                    if (stage.heartsActivated())
                         startScreen.stop();
-                    else if(beginning && startScreen.isStopped() && !oneSecondDelay.isRunning())
+                    else if (beginning && startScreen.isStopped() && !oneSecondDelay.isRunning())
                         startScreen.play();
                 }
                 stage.run(g);
                 drawCheat(g);
-            }
-            else if(isCustomAttack && !oneSecondDelay.isRunning())
+            } else if (isCustomAttack && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
             else {
                 topBar.setVisible(false);
                 customAttackMaker.setAllFieldsVisibility(false);
-                if(!oneSecondDelay.isRunning()) {
-                    if(p.getHit()) {
+                if (!oneSecondDelay.isRunning()) {
+                    if (p.getHit()) {
                         p.decreaseCounter();
-                        if(frameCounter % 16 == 0) {
-                            if(flickeringHeart == 0)
+                        if (frameCounter % 16 == 0) {
+                            if (flickeringHeart == 0)
                                 flickeringHeart = 9000;
                             else
                                 flickeringHeart = 0;
                         }
-                        if(p.getTimeoutCounter() == 0) {
+                        if (p.getTimeoutCounter() == 0) {
                             p.setHit(false);
                             p.resetTimeoutCounter();
                             flickeringHeart = 0;
                         }
                     }
-                    if(p.getHealth() != 0) {
+                    if (p.getHealth() != 0) {
                         drawCheat(g);
                         drawSqu(g);
                         drawCircle(g);
                         drawHeart(g);
                         p.shield(g, dir);
                         gif(g);
-                        if(survival)
+                        if (survival)
                             g.drawImage(levels[levelIndex], 433, 4, null);
                         a1.spawnArrows(g, p);
                         p.drawHealth(g);
                         automatic();
-                    }
-                    else {
-                        if(canBeStopped) {
-                            if(!oneSecondDelay.isRunning())
+                    } else {
+                        if (canBeStopped) {
+                            if (!oneSecondDelay.isRunning())
                                 stop(true);
-                        }
-                        else if(firstEnd) {
+                        } else if (firstEnd) {
                             main.stop();
                             firstEnd = false;
-                        }
-                        else if(!heartDone) {
+                        } else if (!heartDone) {
                             breakHeart(g);
-                        }
-                        else if(secondEnd) {
+                        } else if (secondEnd) {
                             secondEnd = false;
                             gameDone.play();
-                        }
-                        else if(!gameOverDone)
+                        } else if (!gameOverDone)
                             gameOver(g);
                         else {
                             drawGameOver(g, gameOverFrame);
-                            if(isGameOver)
+                            if (isGameOver)
                                 drawReplay(g, 0);
                         }
                     }
@@ -1099,8 +1133,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     g.drawImage(speech, speechX, speechY, null);
                 }
             }
-            if(a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10) && !oneSecondDelay.isRunning()) {
-                if(canBeStopped)
+            if (a != null && a.getIsFinished() && (isGenocide && count == 19 || !isGenocide && count == 10) && !oneSecondDelay.isRunning()) {
+                if (canBeStopped)
                     stop(true);
                 else
                     undyneSpeech(g);
@@ -1117,24 +1151,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 sfxSlider.setVisible(true);
             else
                 sfxSlider.setVisible(false);
-            if(speechDone)
+            if (speechDone)
                 drawReplay(g, 10);
             helper.initiate(helpStarter);
             if(survival && !beginning)
                 printScore(g);
-            if(oneSecondDelay.isRunning()) {
+            if (oneSecondDelay.isRunning()) {
                 Graphics2D g2d = (Graphics2D) g;
-                if(++loadingCounter == 2) {
+                if (++loadingCounter == 2) {
                     loadingCounter = 0;
                     ++loadingFrame;
                 }
-                if(loadingFrame == 48)
+                if (loadingFrame == 48)
                     loadingFrame = 0;
                 AffineTransform loadingTrans = new AffineTransform();
                 loadingTrans.translate(216.5, 265.5);
                 g2d.drawImage(loadingCreator[loadingFrame], loadingTrans, null);
-            }
-            else {
+            } else {
                 loadingCounter = 0;
                 loadingFrame = 0;
             }
@@ -1145,9 +1178,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
         g.dispose();
     }
-    
+
     private void drawCheat(Graphics g) {
-        if(automatic)
+        if (automatic)
             activated = "Cheat Activated";
         else {
             activated = "";
@@ -1157,50 +1190,50 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setFont(deteFontNorm);
         g2.setColor(Color.GREEN);
-        if(!activated.equals(""))
+        if (!activated.equals(""))
             g2.drawString(activated.substring(0, nothingCounter), 0, 13 + 30);
-        if(frameCounter % 7 == 0 && nothingCounter < activated.length())
+        if (frameCounter % 7 == 0 && nothingCounter < activated.length())
             nothingCounter++;
     }
-    
+
     private void automatic() {
-        if((automatic || bottomBar.isRobotBoxChecked()) && a1.getList().size() > 0) {
+        if ((automatic || bottomBar.isRobotBoxChecked()) && a1.getList().size() > 0) {
             ArrayList<Arrow> arrows = a1.getList();
             double time = Integer.MAX_VALUE;
             char pointTowards = 'u';
-            for(Arrow a : arrows) {
-                switch(a.getDir()) {
+            for (Arrow a : arrows) {
+                switch (a.getDir()) {
                     case 'l':
-                        if(time > (a.getX() - 308) / (double) a.getSpeed()) {
+                        if (time > (a.getX() - 308) / (double) a.getSpeed()) {
                             time = (a.getX() - 308) / (double) a.getSpeed();
-                            if(a.getDirectionNotSwitched() && a.getReverse())
+                            if (a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'l';
                             else
                                 pointTowards = 'r';
                         }
                         break;
                     case 'r':
-                        if(time > (261 - a.getX()) / (double) a.getSpeed()) {
+                        if (time > (261 - a.getX()) / (double) a.getSpeed()) {
                             time = (261 - a.getX()) / (double) a.getSpeed();
-                            if(a.getDirectionNotSwitched() && a.getReverse())
+                            if (a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'r';
                             else
                                 pointTowards = 'l';
                         }
                         break;
                     case 'u':
-                        if(time > (a.getY() - 295) / (double) a.getSpeed()) {
+                        if (time > (a.getY() - 295) / (double) a.getSpeed()) {
                             time = (a.getY() - 295) / (double) a.getSpeed();
-                            if(a.getDirectionNotSwitched() && a.getReverse())
+                            if (a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'u';
                             else
                                 pointTowards = 'd';
                         }
                         break;
                     case 'd':
-                        if(time > (252 - a.getY()) / (double) a.getSpeed()) {
+                        if (time > (252 - a.getY()) / (double) a.getSpeed()) {
                             time = (252 - a.getY()) / (double) a.getSpeed();
-                            if(a.getDirectionNotSwitched() && a.getReverse())
+                            if (a.getDirectionNotSwitched() && a.getReverse())
                                 pointTowards = 'd';
                             else
                                 pointTowards = 'u';
@@ -1211,7 +1244,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             dir = pointTowards;
         }
     }
-    
+
     private void nothing() {
         if(typed.length() > NOTHING.length())
             typed = typed.substring(typed.length() - NOTHING.length());
@@ -1222,39 +1255,37 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
-    
+
     private void gif(Graphics g) {
-        if(a == null || !a.getIsFinished() || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
+        if (a == null || !a.getIsFinished() || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
             int maxCount;
             int gifChange;
-            if(isGenocide) {
+            if (isGenocide) {
                 maxCount = 79;
                 gifChange = 4;
-            }
-            else {
+            } else {
                 maxCount = 31;
                 gifChange = 3;
             }
-            if(isGenocide) {
-                if(count >= maxCount)
+            if (isGenocide) {
+                if (count >= maxCount)
                     count = 0;
-                else if(gifCount % gifChange == 0)
+                else if (gifCount % gifChange == 0)
                     ++count;
                 ++gifCount;
-                if(gifCount == gifChange)
+                if (gifCount == gifChange)
                     gifCount = 0;
-            }
-            else {
-                if(count >= maxCount)
+            } else {
+                if (count >= maxCount)
                     count = 0;
-                else if(gifCount % gifChange == 0 && (count - 1) % 3 != 0)
+                else if (gifCount % gifChange == 0 && (count - 1) % 3 != 0)
                     ++count;
-                else if((count - 1) % 3 == 0 && gifCount % 4 == 0)
+                else if ((count - 1) % 3 == 0 && gifCount % 4 == 0)
                     ++count;
                 ++gifCount;
-                if(gifCount == gifChange && (count - 1) % 3 != 0)
+                if (gifCount == gifChange && (count - 1) % 3 != 0)
                     gifCount = 0;
-                else if((count - 1) % 3 == 0 && gifCount == 4)
+                else if ((count - 1) % 3 == 0 && gifCount == 4)
                     gifCount = 0;
             }
         }
@@ -1262,23 +1293,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         float opacity = 0.3f;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         int gifXShift;
-        if(isGenocide)
+        if (isGenocide)
             gifXShift = 198;
         else
             gifXShift = 189;
         g2d.drawImage(gif[count], gifXShift + p.getElementPosition(), 10 + p.getElementPosition(), null);
         g2d.dispose();
     }
-    
+
     private boolean breakHeartException(int breakFrame) {
         int[] exceptions = {2, 6, 8, 12, 14, 18, 20, 22, 23};
-        for(int exception : exceptions) {
-            if(breakFrame == exception)
+        for (int exception : exceptions) {
+            if (breakFrame == exception)
                 return true;
         }
         return false;
     }
-    
+
     private void makeBreakHeart(Graphics g, int breakFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
         int width = heartBreak[breakFrame].getWidth();
@@ -1286,38 +1317,37 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g2d.drawImage(heartBreak[breakFrame], getWidth() / 2 - width / 2 + 11, getHeight() / 2 - height / 2 + 78, null);
         g2d.dispose();
     }
-    
+
     private void breakHeart(Graphics g) {
         ++breakCount;
         boolean exception = breakHeartException(breakFrame);
-        if(breakCount % 4 == 0 && breakCount != 0 && !exception) {
+        if (breakCount % 4 == 0 && breakCount != 0 && !exception) {
             ++breakFrame;
-            if(breakFrame == 25) {
+            if (breakFrame == 25) {
                 split.play();
             }
-            if(breakFrame == 48)
+            if (breakFrame == 48)
                 heartDone = true;
             breakCount = 0;
-        }
-        else if(exception) {
-            switch(breakFrame) {
+        } else if (exception) {
+            switch (breakFrame) {
                 case 2:
                 case 12:
-                    if(breakCount % 24 == 0) {
+                    if (breakCount % 24 == 0) {
                         ++breakFrame;
                         breakCount = 0;
                     }
                     break;
                 case 14:
-                    if(breakCount % 28 == 0) {
+                    if (breakCount % 28 == 0) {
                         ++breakFrame;
                         breakCount = 0;
                     }
                     break;
                 default:
-                    if(breakCount % 8 == 0) {
+                    if (breakCount % 8 == 0) {
                         ++breakFrame;
-                        if(breakFrame == 9)
+                        if (breakFrame == 9)
                             broke.play();
                         breakCount = 0;
                     }
@@ -1325,77 +1355,77 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
         makeBreakHeart(g, breakFrame);
     }
-    
+
     private void gameOver(Graphics g) {
         ++gameOverCount;
-        if(gameOverCount % 4 == 0 && gameOverCount != 0) {
+        if (gameOverCount % 4 == 0 && gameOverCount != 0) {
             ++gameOverFrame;
-            if(gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192))
+            if (gameOverFrame % 2 == 0 && (gameOverFrame > 67 && gameOverFrame < 99 || gameOverFrame > 137 && gameOverFrame < 149 || gameOverFrame > 162 && gameOverFrame < 192))
                 asgore.play();
-            if(gameOverFrame >= 225)
+            if (gameOverFrame >= 225)
                 gameOverDone = true;
             gameOverCount = 0;
         }
         drawGameOver(g, gameOverFrame);
     }
-    
+
     private void drawGameOver(Graphics g, int gameOverFrame) {
         Graphics2D g2d = (Graphics2D) g.create();
-        if(gameOverFrame > 225)
+        if (gameOverFrame > 225)
             gameOverFrame = 225;
         g2d.drawImage(gameOver[gameOverFrame], 154 + getWidth() / 2 - 600 / 2 + 1, 25 + getHeight() / 2 - 338 / 2, null);
         g2d.dispose();
-        if(gameOverFrame == 225)
+        if (gameOverFrame == 225)
             isGameOver = true;
     }
-    
+
     private void drawSqu(Graphics g) {
         int size = 80;
         Color translucentWhite = new Color(255, 255, 255, 200);
         g.setColor(translucentWhite);
-        while(size > 72) {
+        while (size > 72) {
             g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(), getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
             --size;
         }
     }
-    
+
     private void drawBG(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
     }
-    
+
     private void drawHeart(Graphics g) {
         int width = 30;
         int height = 30;
         g.drawImage(heart, getWidth() / 2 - width / 2 + 1 + p.getElementPosition() + flickeringHeart, getHeight() / 2 - height / 2 + p.getElementPosition(), null);
     }
-    
+
     private void drawCircle(Graphics g) {
         g.setColor(Color.GREEN);
         g.drawOval(getWidth() / 2 - 25 + p.getElementPosition(), getHeight() / 2 - 25 + p.getElementPosition(), 50, 50);
     }
-    
+
     private void drawReplay(Graphics g, int xShift) {
         float opacity = (float) fadeStart;
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
         g2d.drawImage(replay, 187 + xShift, 421, null);
         g2d.dispose();
-        if(flashCount % 2 == 0) {
-            if(fadeStart <= 1 && !switchFade)
+        if (flashCount % 2 == 0) {
+            if (fadeStart <= 1 && !switchFade)
                 fadeStart += 0.02;
             else {
                 switchFade = true;
                 fadeStart -= 0.02;
-                if(fadeStart < 0.03)
+                if (fadeStart < 0.03)
                     switchFade = false;
             }
         }
         ++flashCount;
-        if(flashCount == 2)
+        if (flashCount == 2)
             flashCount = 0;
     }
-    
+
     private void undyneSpeech(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -1431,23 +1461,23 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             g.drawString(message[2], speechTextX, speechY + 60);
             speechDone = true;
         }
-        if(speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
-            if(isGenocide)
+        if (speechCounter != speechCounterPrev && print.length() != 0 && print.charAt(print.length() - 1) != ' ') {
+            if (isGenocide)
                 undying.play();
             else
                 undyne.play();
         }
         speechCounterPrev = speechCounter;
-        if(speechCounter < message[2].length() + message[1].length() + message[0].length() + 3 && speechDelayCounter % 6 == 0)
+        if (speechCounter < message[2].length() + message[1].length() + message[0].length() + 3 && speechDelayCounter % 6 == 0)
             ++speechCounter;
         if(++speechDelayCounter == 6)
             speechDelayCounter = 0;
     }
-    
+
     private static void printScore(Graphics g) {
-        if(a != null && a.isNewAttack() && a.getCurrentAttack() != lastAttack && a1.getList().size() == 0) {
+        if (a != null && a.isNewAttack() && a.getCurrentAttack() != lastAttack && a1.getList().size() == 0) {
             lastAttack = a.getCurrentAttack();
-            switch(levelIndex) {
+            switch (levelIndex) {
                 case 0:
                     score += 5;
                     break;
@@ -1466,39 +1496,38 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g.setColor(Color.YELLOW);
         g.drawString("Score: " + score, 5, 590);
     }
-    
+
     private static void hideButtons() {
         creditsButton.setVisible(false);
         helpButton.setVisible(false);
         playButton.setVisible(false);
         creatorButton.setVisible(false);
     }
-    
+
     static void moveButtons(boolean shouldMove) {
-        if(shouldMove) {
+        if (shouldMove) {
             creditsButton.setY(600);
             helpButton.setY(600);
             playButton.setY(600);
             creatorButton.setY(600);
-        }
-        else {
+        } else {
             creditsButton.setY(400);
             helpButton.setY(400);
             playButton.setY(300);
             creatorButton.setY(300);
         }
     }
-    
+
     static void changeMain() {
         ++levelIndex;
-        if(levelIndex > 1)
+        if (levelIndex > 1)
             heal.play();
         main.stop();
         main = mainSounds[++mainIndex];
         main.changeVolume(musicMutedVolume);
         main.play();
     }
-    
+
     static void changeGif() {
         isGenocide = true;
         gif = gifUndying.clone();
@@ -1506,7 +1535,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         p.setDamageOffset(4);
         p.convertHealth();
     }
-    
+
     static void finalBoost() {
         heal.play();
         p.healthBoost();
@@ -1522,15 +1551,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     static boolean isSurvival() {
         return survival;
     }
-    
+
     static boolean getHelpStarter() {
         return helpStarter;
     }
-    
+
     static boolean isOneSecondDelayRunning() {
         return oneSecondDelay.isRunning();
     }
-    
+
     public static JFrame getFrame() {
         return frame;
     }
@@ -1541,7 +1570,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         stage.resetVars(isReplaying);
         a.resetVars();
         a1.resetVars();
-        if(gameDone != null)
+        if (gameDone != null)
             gameDone.stop();
         dir = 'u';
         typed = "";
@@ -1599,21 +1628,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         System.gc();
         try {
             main();
-        }
-        catch(IOException | UnsupportedAudioFileException | FontFormatException e) {
+        } catch (IOException | UnsupportedAudioFileException | FontFormatException e) {
             e.printStackTrace();
         }
     }
-    
+
     private static void start() {
-        if(!oneSecondDelay.isRunning()) {
-            if(!isStartTimerDone) {
+        if (!oneSecondDelay.isRunning()) {
+            if (!isStartTimerDone) {
                 startScreen.stop();
                 oneSecondDelay.setActionCommand("start");
                 oneSecondDelay.start();
                 isStartTimerDone = true;
-            }
-            else {
+            } else {
                 dir = 'u';
                 isGenocide = stage.isHard();
                 survival = stage.isSurvival();
@@ -1629,10 +1656,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
-    
+
     public static void play(boolean isCalledByTimer) {
-        if(!oneSecondDelay.isRunning()) {
-            if(!isPlayTimerDone) {
+        if (!oneSecondDelay.isRunning()) {
+            if (!isPlayTimerDone) {
                 creatorMusic.stop();
                 oneSecondDelay.setActionCommand("play");
                 oneSecondDelay.start();
@@ -1640,8 +1667,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 p.setDirUp();
                 p.zeroAngle();
                 isPlayTimerDone = true;
-            }
-            else if(isCalledByTimer) {
+            } else if (isCalledByTimer) {
                 DELAY = 10;
                 a = new Attacks(customAttackMaker.getAttacks());
                 a1 = new Attack(new ArrayList<>(), a);
@@ -1657,16 +1683,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
-    
+
     public static void stop(boolean isCalledByTimer) {
-        if(!oneSecondDelay.isRunning()) {
-            if(!isStopTimerDone) {
+        if (!oneSecondDelay.isRunning()) {
+            if (!isStopTimerDone) {
                 main.stop();
                 oneSecondDelay.setActionCommand("stop");
                 oneSecondDelay.start();
                 isStopTimerDone = true;
-            }
-            else if(canBeStopped && isCalledByTimer) {
+            } else if (canBeStopped && isCalledByTimer) {
                 creatorMusic.play();
                 a.resetVars();
                 a1.resetVars();
@@ -1679,10 +1704,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
-    
+
     private static void openCreator() {
-        if(!oneSecondDelay.isRunning()) {
-            if(!isOpenCreatorTimerDone) {
+        if (!oneSecondDelay.isRunning()) {
+            if (!isOpenCreatorTimerDone) {
                 startScreen.stop();
                 oneSecondDelay.setActionCommand("openCreator");
                 oneSecondDelay.start();
@@ -1692,7 +1717,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 isCustomAttack = !isCustomAttack;
                 beginning = !beginning;
                 moveButtons(!beginning);
-                if(DELAY == 10)
+                if (DELAY == 10)
                     DELAY = 0;
                 else
                     DELAY = 10;
@@ -1701,16 +1726,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
-    
+
     private static void closeCreator() {
-        if(!oneSecondDelay.isRunning()) {
-            if(!isCloseCreatorTimerDone) {
+        if (!oneSecondDelay.isRunning()) {
+            if (!isCloseCreatorTimerDone) {
                 creatorMusic.stop();
                 oneSecondDelay.setActionCommand("closeCreator");
                 oneSecondDelay.start();
                 isCloseCreatorTimerDone = true;
-            }
-            else {
+            } else {
                 DELAY = 10;
                 isCustomAttack = false;
                 beginning = true;
@@ -1718,10 +1742,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             }
         }
     }
-    
+
     private static void setUpUndyne(boolean isGenocide) {
         Runner.isGenocide = isGenocide;
-        if(isGenocide) {
+        if (isGenocide) {
             p.setHealth(60);
             p.setBaseDamage(3);
             p.setDamageOffset(12);
@@ -1729,12 +1753,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             speechX = 310;
             speechY = 60;
             gif = gifUndying.clone();
-        }
-        else {
+        } else {
             p.setHealth(20);
             p.setBaseDamage(0);
             p.setDamageOffset(2);
-            if(stage.isMedium() || stage.isSurvival() || canBeStopped)
+            if (stage.isMedium() || stage.isSurvival() || canBeStopped)
                 main = mainSounds[0];
             else
                 main = sojBeta;
@@ -1743,21 +1766,21 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             gif = gifUndyne.clone();
         }
     }
-    
+
     public static void addComponent(Component component, int index) {
         frame.add(component, index);
     }
-    
+
     public static void removeComponent(Component component) {
         frame.remove(component);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand() == null)
+        if (e.getActionCommand() == null)
             repaint();
         else {
-            switch(e.getActionCommand()) {
+            switch (e.getActionCommand()) {
                 case "main":
                     frame.repaint();
                     break;
@@ -1891,17 +1914,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                             openCreator();
                         }
                     }
-                    if(stage.isOnHeartOne() && !stage.heartOneActivated()) {
+                    if (stage.isOnHeartOne() && !stage.heartOneActivated()) {
                         block.play();
                         stage.activateHeartOne();
                         stage.activateBlueHeartFlash();
-                    }
-                    else if(stage.isOnHeartTwo() && !stage.heartTwoActivated()) {
+                    } else if (stage.isOnHeartTwo() && !stage.heartTwoActivated()) {
                         block.play();
                         stage.activateHeartTwo();
                         stage.activateBlueHeartFlash();
-                    }
-                    else if(stage.isOnHeartThree() && !stage.heartThreeActivated()) {
+                    } else if (stage.isOnHeartThree() && !stage.heartThreeActivated()) {
                         block.play();
                         stage.activateHeartThree();
                         stage.activateBlueHeartFlash();
@@ -1909,17 +1930,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     else if(stage.shouldStart()) {
                         StartScreen.playClick();
                         start();
-                    }
-                    else if(stage.numHeartsActivated() > 0 && !stage.heartsActivated()) {
+                    } else if (stage.numHeartsActivated() > 0 && !stage.heartsActivated()) {
                         stage.deactivateHearts();
                         stage.playDamage();
                     }
-                }
-                else if(!secondEnd && !isGameOver && !isFirstTime) {
+                } else if (!secondEnd && !isGameOver && !isFirstTime) {
                     gameOverFrame = 225;
                     isGameOver = true;
-                }
-                else if(isGameOver && !allStopped || speechDone && !allStopped)
+                } else if (isGameOver && !allStopped || speechDone && !allStopped)
                     restartApplication();
             }
         };
@@ -2073,7 +2091,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             typed += e.getKeyChar();
         nothing();
     }
-    
+
     @Override
     public void keyReleased(KeyEvent e) {}
     
@@ -2083,8 +2101,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         if(slider.equals("music")) {
             s = musicSlider;
             gb = musicButton;
-        }
-        else {
+        } else {
             s = sfxSlider;
             gb = sfxButton;
         }
@@ -2094,14 +2111,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         bounds.setBounds(gb.getX() - s.getX(), -6, gb.getWidth(), s.getHeight() + 6);
         return bounds.contains(mousePos);
     }
-    
+
     private static void barCheckBoxClicked(MouseEvent e) {
         int x = e.getX(), y = e.getY();
         boolean mouseIntersectsCheckBox = bottomBar.getBarCheckBox().contains(x, y);
-        if(mouseIntersectsCheckBox) {
-            if(canBeStopped)
+        if (mouseIntersectsCheckBox) {
+            if (canBeStopped)
                 bottomBar.flipIsRobotBoxedChecked();
-            else if(isCustomAttack)
+            else if (isCustomAttack)
                 bottomBar.flipIsGenocideBoxChecked();
         }
     }
@@ -2131,22 +2148,22 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public void mouseEntered(MouseEvent e) {
         customAttackMaker.mouseEntered();
     }
-    
+
     @Override
     public void mouseExited(MouseEvent e) {
         customAttackMaker.mouseExited();
     }
-    
+
     @Override
     public void mouseDragged(MouseEvent e) {
         customAttackMaker.mouseDragged();
     }
-    
+
     @Override
     public void mouseMoved(MouseEvent e) {
         customAttackMaker.mouseMoved();
     }
-    
+
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         customAttackMaker.mouseWheelMoved(e);
