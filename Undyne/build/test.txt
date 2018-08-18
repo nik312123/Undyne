@@ -1,0 +1,17 @@
+Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored and would be still ignored if it were an arrow code.
+true
+0,1,false,l,2
+0,1,false,l,2
+0,1,false,l,2
+1,1,false,l,2
+1,1,false,l,2
+1,1,false,l,2
+1,1,false,u,2
+1,1,false,u,2
+1,1,false,u,2
+2,1,false,r,2
+3,1,false,r,2
+4,1,false,r,2
+5,1,false,d,2
+5,1,false,d,2
+5,1,false,d,2
