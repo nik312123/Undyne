@@ -34,15 +34,15 @@ public class CustomAttacks {
     private int errorLine;
     private static int newThingAlpha = 0;
     private static int importThingAlpha = 0;
-    static int scrollValue = 70;
-    static int dynamicLength = 0;
-    
+    static double scrollValue = 70;
+    static double dynamicLength = 0;
+
     private String error;
-    
+
     private Rectangle addAttack = new Rectangle();
     private static Rectangle newThing = new Rectangle(226, 211, 148, 63);
     private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
-    
+
     static Point mousePosition = new Point();
     
     public static ArrayList<AttackBar> attacks = new ArrayList<>();
@@ -84,9 +84,9 @@ public class CustomAttacks {
         @Override
         public void approveSelection() {
             File f = getSelectedFile();
-            if(f.exists() && getDialogType() == SAVE_DIALOG) {
+            if (f.exists() && getDialogType() == SAVE_DIALOG) {
                 int result = JOptionPane.showConfirmDialog(this, "The file already exists. Overwrite?", "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
-                switch(result) {
+                switch (result) {
                     case JOptionPane.NO_OPTION:
                         return;
                     case JOptionPane.CLOSED_OPTION:
@@ -99,24 +99,25 @@ public class CustomAttacks {
             super.approveSelection();
         }
     };
-    
+
     public CustomAttacks() {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Text files", "txt");
         chooser.setFileFilter(textFilter);
     }
-    
+
     public void perform(Graphics g2) {
-        Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
+        beingReordered = false;
         JFrame frame = Runner.getFrame();
+        Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
         mousePosition = new Point(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if(isIn || optionSelected && (!importChosen || importingComplete)) {
+        if (isIn || optionSelected && (!importChosen || importingComplete)) {
             isIn = true;
-            dynamicLength = scrollValue;
-            for(AttackBar attackBar : attacks)
-                attackBar.draw(g, dynamicLength);
+            dynamicLength = (int) scrollValue;
+            for (AttackBar attackBar : attacks)
+                attackBar.draw(g, (int) dynamicLength);
             addAttackButton(g);
             Runner.setTopBarVisibility(true);
             setAllFieldsVisibility(true);
@@ -133,28 +134,26 @@ public class CustomAttacks {
     }
     
     private void startScreen(Graphics2D g) {
-        if(newThing.contains(mousePosition)) {
+        if (newThing.contains(mousePosition)) {
             newThingAlpha += 5;
-            if(newThingAlpha > 255)
+            if (newThingAlpha > 255)
                 newThingAlpha = 255;
-        }
-        else {
-            if(newThingAlpha > 0)
+        } else {
+            if (newThingAlpha > 0)
                 newThingAlpha -= 5;
-            if(newThingAlpha < 0)
+            if (newThingAlpha < 0)
                 newThingAlpha = 0;
         }
         g.setColor(new Color(157, 50, 100, newThingAlpha));
         g.fill(newThing);
-        if(importThing.contains(mousePosition) || fileBeingChosen) {
+        if (importThing.contains(mousePosition) || fileBeingChosen) {
             importThingAlpha += 5;
-            if(importThingAlpha > 255)
+            if (importThingAlpha > 255)
                 importThingAlpha = 255;
-        }
-        else {
-            if(importThingAlpha > 0)
+        } else {
+            if (importThingAlpha > 0)
                 importThingAlpha -= 5;
-            if(importThingAlpha < 0)
+            if (importThingAlpha < 0)
                 importThingAlpha = 0;
         }
         g.setColor(new Color(157, 50, 100, importThingAlpha));
@@ -164,20 +163,20 @@ public class CustomAttacks {
         g.drawImage(Runner.importThing, 226, 326, null);
         errorPopUp.checkVisibility();
     }
-    
+
     private void addAttack() {
         attacks.add(new AttackBar());
     }
-    
+
     private void reassignNumbers() {
         int i = -1;
-        for(AttackBar a : CustomAttacks.attacks)
+        for (AttackBar a : CustomAttacks.attacks)
             a.setNumber(++i);
     }
-    
+
     private void addAttackButton(Graphics g) {
-        g.drawImage(Runner.addAttack, 300 - 33, dynamicLength - 5, null);
-        addAttack.setBounds(300 - 33, dynamicLength - 5, 66, 17);
+        g.drawImage(Runner.addAttack, 300 - 33, (int) dynamicLength - 5, null);
+        addAttack.setBounds(300 - 33, (int) dynamicLength - 5, 66, 17);
     }
     
     private void importFile() {
@@ -186,75 +185,70 @@ public class CustomAttacks {
         fileBeingChosen = true;
         int dialogChoice = chooser.showOpenDialog(null);
         fileBeingChosen = false;
-        if(dialogChoice == JFileChooser.APPROVE_OPTION) {
+        if (dialogChoice == JFileChooser.APPROVE_OPTION) {
             File openLocation = chooser.getSelectedFile();
             Scanner s = null;
             try {
                 s = new Scanner(new FileInputStream(openLocation));
-            }
-            catch(FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            if(s != null) {
+            if (s != null) {
                 String[] inputArrow;
                 int previousAttack = -1;
                 errorLine = 0;
                 error = "";
-                while(s.hasNextLine()) {
+                while (s.hasNextLine()) {
                     ++errorLine;
-                    switch(errorLine) {
+                    switch (errorLine) {
                         case 1:
                             s.nextLine();
                             break;
                         case 2:
                             String isGenocide = s.nextLine().trim();
-                            if(!isGenocide.equals("true") && !isGenocide.equals("false")) {
+                            if (!isGenocide.equals("true") && !isGenocide.equals("false")) {
                                 error = "The Undying value must be true or false only";
                                 errorPopUp.setExpanding(true);
                                 errorPopUp.setVisible(true);
                                 StartScreen.playClick();
                                 return;
-                            }
-                            else
+                            } else
                                 bottomMenuBar.setIsGenocideBoxChecked(Boolean.parseBoolean(isGenocide));
                             break;
                     }
-                    if(errorLine > 2) {
+                    if (errorLine > 2) {
                         inputArrow = s.nextLine().trim().split(",");
-                        if(inputArrow.length != 5 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
+                        if (inputArrow.length != 5 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
                             error = "Incorrect number of items in the given comma-separated list";
                             errorPopUp.setExpanding(true);
                             errorPopUp.setVisible(true);
                             StartScreen.playClick();
                             return;
-                        }
-                        else if(inputArrow.length == 5) {
+                        } else if (inputArrow.length == 5) {
                             try {
                                 int attack = Integer.parseInt(inputArrow[0]);
-                                if(attack < 0) {
+                                if (attack < 0) {
                                     error = "Attack must be greater than zero";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
                                     StartScreen.playClick();
                                     return;
-                                }
-                                else if(attack < previousAttack) {
+                                } else if (attack < previousAttack) {
                                     error = "Attacks must be in increasing order";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
                                     StartScreen.playClick();
                                     return;
-                                }
-                                else if(attack > previousAttack) {
-                                    if(attack >= 13000) {
+                                } else if (attack > previousAttack) {
+                                    if (attack >= 13000) {
                                         error = "Maximum number of attacks is 13000";
                                         errorPopUp.setExpanding(true);
                                         errorPopUp.setVisible(true);
                                         StartScreen.playClick();
                                         return;
                                     }
-                                    if(attack > 1 + previousAttack) {
-                                        for(int i = previousAttack + 1; i < attack; ++i) {
+                                    if (attack > 1 + previousAttack) {
+                                        for (int i = previousAttack + 1; i < attack; ++i) {
                                             AttackBar newBar = new AttackBar();
                                             newBar.setNumber(i);
                                             importedAttacks.add(newBar);
@@ -266,14 +260,14 @@ public class CustomAttacks {
                                     previousAttack = attack;
                                 }
                                 int speed = Integer.parseInt(inputArrow[1]);
-                                if(speed < 1 || speed > 10) {
+                                if (speed < 1 || speed > 10) {
                                     error = "Speed must be between 1 and 10 inclusive";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
                                     StartScreen.playClick();
                                     return;
                                 }
-                                if(!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
+                                if (!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
                                     error = "Third item in list must be true or false";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
@@ -282,7 +276,7 @@ public class CustomAttacks {
                                 }
                                 boolean reversable = Boolean.parseBoolean(inputArrow[2]);
                                 char direction = inputArrow[3].charAt(0);
-                                if(inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
+                                if (inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
@@ -290,7 +284,7 @@ public class CustomAttacks {
                                     return;
                                 }
                                 int delay = Integer.parseInt(inputArrow[4]);
-                                if(delay < 1 || delay > 999) {
+                                if (delay < 1 || delay > 999) {
                                     error = "Delay must be between 1 and 999 inclusive";
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
@@ -298,8 +292,7 @@ public class CustomAttacks {
                                     return;
                                 }
                                 importedAttacks.get(importedAttacks.size() - 1).add(new ArrowBar(speed, reversable, direction, delay));
-                            }
-                            catch(NumberFormatException e) {
+                            } catch (NumberFormatException e) {
                                 error = "Attack number, speed, an delay must all be valid integers";
                                 errorPopUp.setExpanding(true);
                                 errorPopUp.setVisible(true);
@@ -312,11 +305,10 @@ public class CustomAttacks {
                 attacks = new ArrayList<>(importedAttacks);
                 importingComplete = true;
             }
-        }
-        else
+        } else
             optionSelected = false;
     }
-    
+
     private void exportFile() {
         ArrayList<String> output = new ArrayList<>();
         output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
@@ -326,56 +318,57 @@ public class CustomAttacks {
                 output.add(String.format("%d,%d,%b,%c,%d", attackBar.getNumber(), arrowBar.getSpeed(), arrowBar.isReversible(), arrowBar.getDirection(), arrowBar.getDelay()));
         }
         chooser.setDialogTitle("Choose export location...");
-        if(chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File saveLocation = chooser.getSelectedFile();
-            if(!saveLocation.getName().endsWith(".txt"))
+            if (!saveLocation.getName().endsWith(".txt"))
                 saveLocation = new File(saveLocation.getAbsolutePath() + ".txt");
             PrintStream p = null;
             try {
                 p = new PrintStream(saveLocation);
-            }
-            catch(FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            if(p != null) {
-                for(String s : output)
+            if (p != null) {
+                for (String s : output)
                     p.println(s);
             }
         }
     }
     
     static boolean areAnyAttacksEmpty() {
-        for(AttackBar attackBar : attacks) {
-            if(attackBar.getArrows().size() == 0)
+        for (AttackBar attackBar : attacks) {
+            if (attackBar.getArrows().size() == 0)
                 return true;
         }
         return false;
     }
-    
+
     public void mouseWheelMoved(MouseWheelEvent e) {
         scrollValue += e.getWheelRotation() * -1;
     }
-    
-    public void mouseMoved() {}
-    
+
+    public void mouseMoved() {
+    }
+
     public void mouseDragged() {
-        for(AttackBar a : attacks)
+        for (AttackBar a : attacks)
             a.mouseDragWork();
     }
-    
-    public void mouseEntered() {}
-    
+
+    public void mouseEntered() {
+    }
+
     public void mouseReleased() {
-        for(AttackBar a : attacks)
+        for (AttackBar a : attacks)
             a.mouseReleased();
     }
-    
+
     public void mousePressed() {
-        for(AttackBar a : attacks) {
+        for (AttackBar a : attacks) {
             a.mousePressed();
         }
     }
-    
+
     public void mouseClicked() {
         if(errorPopUp.percentageExpanded() == 1.0) {
             errorPopUp.setExpanding(false);
@@ -413,27 +406,28 @@ public class CustomAttacks {
     }
     
     public void setAllFieldsVisibility(boolean visibility) {
-        for(AttackBar at : attacks) {
-            for(ArrowBar ab : at.getArrows()) {
+        for (AttackBar at : attacks) {
+            for (ArrowBar ab : at.getArrows()) {
                 ab.setFieldsVisibility(visibility);
             }
         }
     }
-    
-    public void mouseExited() {}
-    
+
+    public void mouseExited() {
+    }
+
     public PopUp getErrorPopUp() {
         return errorPopUp;
     }
-    
+
     public ArrayList<AttackBar> getAttacks() {
         return attacks;
     }
-    
+
     public static BottomMenuBar getBottomMenuBar() {
         return bottomMenuBar;
     }
-    
+
     public static boolean isIn() {
         return isIn;
     }
