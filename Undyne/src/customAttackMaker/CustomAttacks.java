@@ -178,7 +178,7 @@ public class CustomAttacks {
         g.drawImage(Runner.addAttack, 300 - 33, (int) dynamicLength - 5, null);
         addAttack.setBounds(300 - 33, (int) dynamicLength - 5, 66, 17);
     }
-    
+
     private void importFile() {
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
         chooser.setDialogTitle("Choose file to import...");
