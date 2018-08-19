@@ -5,10 +5,20 @@
     <value />
   </option>
   <JavaCodeStyleSettings>
+    <option name="LAYOUT_STATIC_IMPORTS_SEPARATELY" value="false" />
     <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
     <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
     <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
       <value />
+    </option>
+    <option name="IMPORT_LAYOUT_TABLE">
+      <value>
+        <package name="" withSubpackages="true" static="false" />
+        <emptyLine />
+        <package name="javax" withSubpackages="true" static="false" />
+        <package name="java" withSubpackages="true" static="false" />
+        <emptyLine />
+      </value>
     </option>
   </JavaCodeStyleSettings>
   <codeStyleSettings language="JAVA">
@@ -31,13 +41,27 @@
     <option name="SPACE_BEFORE_SWITCH_PARENTHESES" value="false" />
     <option name="SPACE_BEFORE_SYNCHRONIZED_PARENTHESES" value="false" />
     <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
-    <option name="EXTENDS_KEYWORD_WRAP" value="1" />
-    <option name="THROWS_KEYWORD_WRAP" value="1" />
     <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
     <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
     <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_CLASSES_IN_ONE_LINE" value="true" />
+    <option name="WRAP_COMMENTS" value="true" />
+    <option name="ENUM_CONSTANTS_WRAP" value="2" />
     <indentOptions>
       <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
     </indentOptions>
+    <arrangement>
+      <groups>
+        <group>
+          <type>GETTERS_AND_SETTERS</type>
+          <order>KEEP</order>
+        </group>
+        <group>
+          <type>DEPENDENT_METHODS</type>
+          <order>BREADTH_FIRST</order>
+        </group>
+      </groups>
+    </arrangement>
   </codeStyleSettings>
 </code_scheme>
