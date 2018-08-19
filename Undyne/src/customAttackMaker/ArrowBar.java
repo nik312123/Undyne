@@ -3,7 +3,10 @@ package customAttackMaker;
 import defense.Runner;
 import nikunj.classes.NumberField;
 
+import javax.swing.InputMap;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.text.Highlighter;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -109,9 +112,28 @@ public class ArrowBar {
         if(!delayField.getText().isEmpty())
             delay = Integer.parseInt(delayField.getText());
         boolean anySelected = AttackBar.areAnyDirectionsSelected();
+        if(anySelected) {
+            InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
+            inputMapKeyStrokeReplacement(im, "RIGHT", "none");
+            inputMapKeyStrokeReplacement(im, "LEFT", "none");
+            inputMapKeyStrokeReplacement(im, "UP", "none");
+            inputMapKeyStrokeReplacement(im, "DOWN", "none");
+        }
+        else {
+            InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
+            inputMapKeyStrokeReplacement(im, "RIGHT", "caret-forward");
+            inputMapKeyStrokeReplacement(im, "LEFT", "caret-backward");
+            inputMapKeyStrokeReplacement(im, "UP", "caret-begin-line");
+            inputMapKeyStrokeReplacement(im, "DOWN", "caret-end-line");
+        }
         setFieldUsability(!anySelected);
     }
-
+    
+    private void inputMapKeyStrokeReplacement(InputMap im, String keyStrokeName, String actionMapKey) {
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeName);
+        im.put(keyStroke, actionMapKey);
+    }
+    
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
         if (!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
@@ -237,8 +259,8 @@ public class ArrowBar {
         delayField.setVisible(visibility);
     }
     
-    private void setFieldUsability(boolean usability) {
-        if(usability) {
+    private void setFieldUsability(boolean usable) {
+        if(usable) {
             speedField.setEditable(true);
             speedField.setHighlighter(defaultHighlighter);
             speedField.setCaretColor(Color.WHITE);

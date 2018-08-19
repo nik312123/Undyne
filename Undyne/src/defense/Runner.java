@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -23,6 +24,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -52,6 +54,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -82,7 +86,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static int loadingCounter = 0;
     private static int loadingFrame = 0;
     public static int customAttacksCounter = 0;
-    private static int clickCounter = 0;
     
     private static double fadeStart = 0;
     private static double musicMutedVolume = 1;
@@ -142,7 +145,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     static BufferedImage reverseArr;
     public static BufferedImage dragArrowIcon;
     public static BufferedImage bottomMenuBar;
-    public static BufferedImage CAT;
+    public static BufferedImage cat;
     public static BufferedImage importThing;
     public static BufferedImage newThing;
     public static BufferedImage addAttack;
@@ -225,8 +228,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static JFrame frame;
 
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
-        Arrow.p = p;
-        if (isFirstTime) {
+        if(isFirstTime) {
             EventQueue.invokeLater(() -> {
                 SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
                     @Override
@@ -249,11 +251,27 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     e.printStackTrace();
                 }
             });
+    
+            if("1.8.0_172".compareTo(System.getProperty("java.version")) > 0) {
+                int updateJava = JOptionPane.showConfirmDialog(null, "You need to update your Java version to play. Go to download site?", "Java Outdated", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
+                if(updateJava == 0) {
+                    try {
+                        Desktop.getDesktop().browse(new URI("http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html"));
+                    }
+                    catch(URISyntaxException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.exit(0);
+            }
+            
+            Arrow.p = p;
+    
             sojBeta = new Sound(Runner.class.getResource("/sojBeta.ogg"), true);
             startScreen = new Sound(Runner.class.getResource("/WF.ogg"), true);
             creatorMusic = new Sound(Runner.class.getResource("/DS.ogg"), true);
-            undyne = new Sound(Runner.class.getResource("/undyne.ogg"), false);
-            undying = new Sound(Runner.class.getResource("/undying.ogg"), false);
+            undyne = new Sound(Runner.class.getResource("/undyne.wav"), false);
+            undying = new Sound(Runner.class.getResource("/undying.wav"), false);
             heal = new Sound(Runner.class.getResource("/heal.ogg"), false);
             block = new Sound(Runner.class.getResource("/block.ogg"), false);
             gameDone = new Sound(Runner.class.getResource("/dt.ogg"), true);
@@ -263,106 +281,59 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             error = new Sound(Runner.class.getResource("/error.ogg"), false);
             for (int i = 0; i < MAIN_SOUND_NAMES.length; ++i)
                 mainSounds[i] = new Sound(Runner.class.getResource(MAIN_SOUND_NAMES[i]), true);
-            heart = ImageIO.read(Runner.class.getResource("/heart.png"));
-            heart = getCompatibleImage(heart);
+            heart = getCompatibleImage("/heart.png");
             heartBreak = new BufferedImage[49];
-            for (int i = 0; i <= 48; ++i) {
-                heartBreak[i] = ImageIO.read(Runner.class.getResource("/gif/heartBreak" + i + ".png"));
-                heartBreak[i] = getCompatibleImage(heartBreak[i]);
-            }
+            for(int i = 0; i <= 48; ++i)
+                heartBreak[i] =getCompatibleImage("/gif/heartBreak" + i + ".png");
             gameOver = new BufferedImage[226];
-            for (int i = 0; i <= 225; ++i) {
-                gameOver[i] = ImageIO.read(Runner.class.getResource("/gif/gameOver" + i + ".png"));
-                gameOver[i] = getCompatibleImage(gameOver[i]);
-            }
+            for(int i = 0; i <= 225; ++i)
+                gameOver[i] = getCompatibleImage("/gif/gameOver" + i + ".png");
             gifUndying = new BufferedImage[80];
-            for (int i = 0; i <= 79; ++i) {
-                gifUndying[i] = ImageIO.read(Runner.class.getResource("/gif/undying" + i + ".png"));
-                gifUndying[i] = getCompatibleImage(gifUndying[i]);
-            }
-            levels[0] = ImageIO.read(Runner.class.getResource("/levelOne.png"));
-            levels[1] = ImageIO.read(Runner.class.getResource("/levelTwo.png"));
-            levels[2] = ImageIO.read(Runner.class.getResource("/levelThree.png"));
-            levels[3] = ImageIO.read(Runner.class.getResource("/levelFour.png"));
-            for (int i = 0; i < levels.length; ++i)
-                levels[i] = getCompatibleImage(levels[i]);
-            blueArr = ImageIO.read(Runner.class.getResource("/arrowB.png"));
-            blueArr = getCompatibleImage(blueArr);
-            dragArrowIcon = ImageIO.read(Runner.class.getResource("/DragArrowIcon.png"));
-            dragArrowIcon = getCompatibleImage(dragArrowIcon);
-            arrowImg = ImageIO.read(Runner.class.getResource("/arrow.png"));
-            arrowImg = getCompatibleImage(arrowImg);
-            CAT = ImageIO.read(Runner.class.getResource("/UAT.png"));
-            CAT = getCompatibleImage(CAT);
-            importThing = ImageIO.read(Runner.class.getResource("/import.png"));
-            importThing = getCompatibleImage(importThing);
-            newThing = ImageIO.read(Runner.class.getResource("/new.png"));
-            newThing = getCompatibleImage(newThing);
-            bottomMenuBar = ImageIO.read(Runner.class.getResource("/bottomBar/bottomMenuBar.png"));
-            bottomMenuBar = getCompatibleImage(bottomMenuBar);
-            ticked = ImageIO.read(Runner.class.getResource("/ticked.png"));
-            ticked = getCompatibleImage(ticked);
-            customArrowDirection = ImageIO.read(Runner.class.getResource("/customArrowDirection.png"));
-            customArrowDirection = getCompatibleImage(customArrowDirection);
-            addAttack = ImageIO.read(Runner.class.getResource("/AddAttack.png"));
-            addAttack = getCompatibleImage(addAttack);
-            deleteAttack = ImageIO.read(Runner.class.getResource("/deleteAttack.png"));
-            deleteAttack = getCompatibleImage(deleteAttack);
-            newArrow = ImageIO.read(Runner.class.getResource("/newArrow.png"));
-            newArrow = getCompatibleImage(newArrow);
-            droppedDown = ImageIO.read(Runner.class.getResource("/droppedDown.png"));
-            droppedDown = getCompatibleImage(droppedDown);
-            droppedClosed = ImageIO.read(Runner.class.getResource("/droppedClosed.png"));
-            droppedClosed = getCompatibleImage(droppedClosed);
-            deleteArrow = ImageIO.read(Runner.class.getResource("/deleteArrow.png"));
-            deleteArrow = getCompatibleImage(deleteArrow);
-            redArr = ImageIO.read(Runner.class.getResource("/arrowR.png"));
-            redArr = getCompatibleImage(redArr);
-            reverseArr = ImageIO.read(Runner.class.getResource("/arrowRE.png"));
-            reverseArr = getCompatibleImage(reverseArr);
-            replay = ImageIO.read(Runner.class.getResource("/replay.png"));
-            replay = getCompatibleImage(replay);
-            close = ImageIO.read(Runner.class.getResource("/close.png"));
-            close = getCompatibleImage(close);
-            draggable = ImageIO.read(Runner.class.getResource("/draggable.png"));
-            draggable = getCompatibleImage(draggable);
-            music = ImageIO.read(Runner.class.getResource("/music.png"));
-            music = getCompatibleImage(music);
-            sfx = ImageIO.read(Runner.class.getResource("/sfx.png"));
-            sfx = getCompatibleImage(sfx);
-            speech = ImageIO.read(Runner.class.getResource("/speech.png"));
-            speech = getCompatibleImage(speech);
-            credits = ImageIO.read(Runner.class.getResource("/credits.png"));
-            credits = getCompatibleImage(credits);
-            help = ImageIO.read(Runner.class.getResource("/help.png"));
-            help = getCompatibleImage(help);
-            play = ImageIO.read(Runner.class.getResourceAsStream("/play.png"));
-            play = getCompatibleImage(play);
-            creator = ImageIO.read(Runner.class.getResourceAsStream("/creator.png"));
-            creator = getCompatibleImage(creator);
+            for(int i = 0; i <= 79; ++i)
+                gifUndying[i] = getCompatibleImage("/gif/undying" + i + ".png");
+            levels[0] = getCompatibleImage("/levelOne.png");
+            levels[1] = getCompatibleImage("/levelTwo.png");
+            levels[2] = getCompatibleImage("/levelThree.png");
+            levels[3] = getCompatibleImage("/levelFour.png");
+            blueArr = getCompatibleImage("/arrowB.png");
+            dragArrowIcon = getCompatibleImage("/DragArrowIcon.png");
+            arrowImg = getCompatibleImage("/arrow.png");
+            cat = getCompatibleImage("/UAT.png");
+            importThing = getCompatibleImage("/import.png");
+            newThing = getCompatibleImage("/new.png");
+            bottomMenuBar = getCompatibleImage("/bottomBar/bottomMenuBar.png");
+            ticked = getCompatibleImage("/ticked.png");
+            customArrowDirection = getCompatibleImage("/customArrowDirection.png");
+            addAttack = getCompatibleImage("/AddAttack.png");
+            deleteAttack = getCompatibleImage("/deleteAttack.png");
+            newArrow = getCompatibleImage("/newArrow.png");
+            droppedDown = getCompatibleImage("/droppedDown.png");
+            droppedClosed = getCompatibleImage("/droppedClosed.png");
+            deleteArrow = getCompatibleImage("/deleteArrow.png");
+            redArr = getCompatibleImage("/arrowR.png");
+            reverseArr = getCompatibleImage("/arrowRE.png");
+            replay = getCompatibleImage("/replay.png");
+            close = getCompatibleImage("/close.png");
+            draggable = getCompatibleImage("/draggable.png");
+            music = getCompatibleImage("/music.png");
+            sfx = getCompatibleImage("/sfx.png");
+            speech = getCompatibleImage("/speech.png");
+            credits = getCompatibleImage("/credits.png");
+            help = getCompatibleImage("/help.png");
+            play = getCompatibleImage("/play.png");
+            creator = getCompatibleImage("/creator.png");
             warning = new ImageIcon(Runner.class.getResource("/warning.png"));
-            checkBox = ImageIO.read(Runner.class.getResource("/checkBox.png"));
-            checkBox = getCompatibleImage(checkBox);
-            bottomPlayButton = ImageIO.read(Runner.class.getResource("/bottomBar/playButton.png"));
-            bottomPlayButton = getCompatibleImage(bottomPlayButton);
-            bottomPlayButtonDisabled = ImageIO.read(Runner.class.getResource("/bottomBar/playButtonDisabled.png"));
-            bottomPlayButtonDisabled = getCompatibleImage(bottomPlayButtonDisabled);
-            bottomStopButton = ImageIO.read(Runner.class.getResource("/bottomBar/stopButton.png"));
-            bottomStopButton = getCompatibleImage(bottomStopButton);
-            bottomStopButtonDisabled = ImageIO.read(Runner.class.getResource("/bottomBar/stopButtonDisabled.png"));
-            bottomStopButtonDisabled = getCompatibleImage(bottomStopButtonDisabled);
-            exportButton = ImageIO.read(Runner.class.getResource("/bottomBar/exportButton.png"));
-            exportButton = getCompatibleImage(exportButton);
-            exportButtonDisabled = ImageIO.read(Runner.class.getResource("/bottomBar/exportButtonDisabled.png"));
-            exportButtonDisabled = getCompatibleImage(exportButtonDisabled);
-            bottomTabDown = ImageIO.read(Runner.class.getResource("/bottomBar/tabDown.png"));
-            bottomTabDown = getCompatibleImage(bottomTabDown);
-            bottomTabUp = ImageIO.read(Runner.class.getResource("/bottomBar/tabUp.png"));
-            bottomTabUp = getCompatibleImage(bottomTabUp);
-            for (int i = 0; i < 48; ++i) {
-                loadingCreator[i] = ImageIO.read(Runner.class.getResource("/loading/loading" + i + ".png"));
-                loadingCreator[i] = getCompatibleImage(loadingCreator[i]);
-            }
+            checkBox = getCompatibleImage("/checkBox.png");
+            bottomPlayButton = getCompatibleImage("/bottomBar/playButton.png");
+            bottomPlayButtonDisabled = getCompatibleImage("/bottomBar/playButtonDisabled.png");
+            bottomStopButton = getCompatibleImage("/bottomBar/stopButton.png");
+            bottomStopButtonDisabled = getCompatibleImage("/bottomBar/stopButtonDisabled.png");
+            exportButton = getCompatibleImage("/bottomBar/exportButton.png");
+            exportButtonDisabled = getCompatibleImage("/bottomBar/exportButtonDisabled.png");
+            bottomTabDown = getCompatibleImage("/bottomBar/tabDown.png");
+            bottomTabUp = getCompatibleImage("/bottomBar/tabUp.png");
+            for(int i = 0; i < 48; ++i)
+                loadingCreator[i] = getCompatibleImage("/loading/loading" + i + ".png");
             URL fontUrl = Runner.class.getResource("/dete.otf");
             deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
             deteFontSpeech = deteFontNorm.deriveFont(14.0f);
@@ -373,10 +344,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
         if (gifUndyne == null || gifUndyne.length != 32) {
             gifUndyne = new BufferedImage[32];
-            for (int i = 0; i <= 31; ++i) {
-                gifUndyne[i] = ImageIO.read(Runner.class.getResource("/gif/frame" + i + ".png"));
-                gifUndyne[i] = getCompatibleImage(gifUndyne[i]);
-            }
+            for(int i = 0; i <= 31; ++i)
+                gifUndyne[i] = getCompatibleImage("/gif/frame" + i + ".png");
         }
         
         frame = new JFrame();
@@ -545,7 +514,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         Graphics2D g2d = (Graphics2D) g;
                         g2d.setColor(Color.WHITE);
                         g2d.setStroke(new BasicStroke(2));
-                        g2d.draw(new Line2D.Float(549, 22, 565, 4));
+                        g2d.draw(new Line2D.Float(4, 20, 20, 2));
                     }
                 } else if (musicSlider.getPercentage() == 0) {
                     musicMuted = true;
@@ -628,7 +597,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         Graphics2D g2d = (Graphics2D) g;
                         g2d.setColor(Color.WHITE);
                         g2d.setStroke(new BasicStroke(2));
-                        g2d.draw(new Line2D.Float(577, 22, 593, 4));
+                        g2d.draw(new Line2D.Float(4, 20, 20, 2));
                     }
                 } else if (sfxSlider.getPercentage() == 0) {
                     sfxMuted = true;
@@ -799,10 +768,24 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
             if(event instanceof MouseEvent) {
                 MouseEvent evt = (MouseEvent) event;
-                if(evt.getID() == MouseEvent.MOUSE_CLICKED) {
-//                    System.out.println("Click " + ++clickCounter);
-                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
-                        if(error.isFinished())
+                if(evt.getID() == MouseEvent.MOUSE_CLICKED && !CustomAttacks.isFileBeingChosen()) {
+                    if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused() && error.isFinished() && !oneSecondDelay.isRunning()) {
+                        
+                        Point evtLocation = evt.getLocationOnScreen();
+                        
+                        Rectangle closeRect = new Rectangle(closeButton.getBounds());
+                        closeRect.setLocation(closeButton.getLocationOnScreen());
+    
+                        Rectangle draggableRect = new Rectangle(draggableButton.getBounds());
+                        draggableRect.setLocation(draggableButton.getLocationOnScreen());
+    
+                        Rectangle musicRect = new Rectangle(musicButton.getBounds());
+                        musicRect.setLocation(musicButton.getLocationOnScreen());
+    
+                        Rectangle sfxRect = new Rectangle(sfxButton.getBounds());
+                        sfxRect.setLocation(sfxButton.getLocationOnScreen());
+                        
+                        if(!closeRect.contains(evtLocation) && !draggableRect.contains(evtLocation) && !musicRect.contains(evtLocation) && !sfxRect.contains(evtLocation))
                             error.play();
                         stage.warningOn();
                     }
@@ -934,15 +917,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
     }
     
-    static BufferedImage getCompatibleImage(BufferedImage current) {
+    static BufferedImage getCompatibleImage(String pathToImage) {
+        BufferedImage current = null;
+        try {
+            current = ImageIO.read(Runner.class.getResource(pathToImage));
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
         GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        if (current.getColorModel().equals(gfxConfig.getColorModel()))
-            return current;
-        BufferedImage optimized = gfxConfig.createCompatibleImage(current.getWidth(), current.getHeight(), current.getTransparency());
-        Graphics2D g2d = optimized.createGraphics();
-        g2d.drawImage(current, 0, 0, null);
-        optimized.setAccelerationPriority(1);
-        return optimized;
+        if(current != null) {
+            if(current.getColorModel().equals(gfxConfig.getColorModel()))
+                return current;
+            BufferedImage optimized = gfxConfig.createCompatibleImage(current.getWidth(), current.getHeight(), current.getTransparency());
+            Graphics2D g2d = optimized.createGraphics();
+            g2d.drawImage(current, 0, 0, null);
+            optimized.setAccelerationPriority(1);
+            return optimized;
+        }
+        return null;
     }
 
     @Override
@@ -1643,8 +1636,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 oneSecondDelay.setActionCommand("openCreator");
                 oneSecondDelay.start();
                 isOpenCreatorTimerDone = true;
-            } else {
-                stage.playClick();
+            }
+            else {
                 isCustomAttack = !isCustomAttack;
                 beginning = !beginning;
                 moveButtons(!beginning);
@@ -1797,20 +1790,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(helpStarter) {
-                    stage.playClick();
+                    StartScreen.playClick();
                     helpStarter = false;
-                } else if (creditsList.getExpanding()) {
-                    stage.playClick();
+                }
+                else if(creditsList.getExpanding()) {
+                    StartScreen.playClick();
                     creditsList.setExpanding(false);
-                } else if (stage.isPlayChosen() && beginning) {
-                    stage.playClick();
+                }
+                else if(stage.isPlayChosen() && beginning) {
+                    StartScreen.playClick();
                     stage.deactivateSpears();
                     stage.playChosen(false);
                     moveButtons(false);
                     stage.setHeartX(5);
                     stage.setHeartY(72);
-                } else if (isCustomAttack && !oneSecondDelay.isRunning())
+                }
+                else if(isCustomAttack && !oneSecondDelay.isRunning() && !AttackBar.areAnyDirectionsSelected()) {
+                    StartScreen.playClick();
                     closeCreator();
+                }
             }
         };
 
@@ -1820,21 +1818,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 if(beginning) {
                     if(!stage.isPlayChosen()) {
                         if(creditsButton.onButton()) {
-                            stage.playClick();
+                            StartScreen.playClick();
                             creditsList.setExpanding(true);
                             creditsList.setVisible(true);
                         }
                         else if(helpButton.onButton()) {
-                            stage.playClick();
+                            StartScreen.playClick();
                             helpStarter = true;
-                        } else if (playButton.onButton()) {
-                            stage.playClick();
+                        }
+                        else if(playButton.onButton()) {
+                            StartScreen.playClick();
                             stage.playChosen(true);
                             moveButtons(true);
                             stage.setHeartX(5);
                             stage.setHeartY(75);
-                        } else if (creatorButton.onButton() && !oneSecondDelay.isRunning())
+                        }
+                        else if(creatorButton.onButton() && !oneSecondDelay.isRunning()) {
+                            StartScreen.playClick();
                             openCreator();
+                        }
                     }
                     if (stage.isOnHeartOne() && !stage.heartOneActivated()) {
                         block.play();
@@ -1848,8 +1850,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         block.play();
                         stage.activateHeartThree();
                         stage.activateBlueHeartFlash();
-                    } else if (stage.shouldStart()) {
-                        stage.playClick();
+                    }
+                    else if(stage.shouldStart()) {
+                        StartScreen.playClick();
                         start();
                     } else if (stage.numHeartsActivated() > 0 && !stage.heartsActivated()) {
                         stage.deactivateHearts();

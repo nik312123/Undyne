@@ -2,12 +2,10 @@ package defense;
 
 import nikunj.classes.PopUp;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 class Help {
     private int frameCounter = 0;
@@ -18,15 +16,9 @@ class Help {
     private static BufferedImage[] helpGif = new BufferedImage[502];
 
     Help() {
-        if (Runner.isFirstTime) {
-            try {
-                for (int i = 0; i < 502; ++i) {
-                    helpGif[i] = ImageIO.read(Runner.class.getResource("/help/help" + i + ".png"));
-                    helpGif[i] = Runner.getCompatibleImage(helpGif[i]);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(Runner.isFirstTime) {
+            for(int i = 0; i < 502; ++i)
+                helpGif[i] = Runner.getCompatibleImage("/help/help" + i + ".png");
         }
         
         helpPopUp = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {

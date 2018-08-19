@@ -197,7 +197,7 @@ public class AttackBar {
         }
     }
     
-    static boolean areAnyDirectionsSelected() {
+    public static boolean areAnyDirectionsSelected() {
         for(AttackBar at : CustomAttacks.attacks) {
             for(ArrowBar ab : at.getArrows()) {
                 if(ab.isDirectionSelected())
