@@ -31,15 +31,15 @@ class Arrow {
      */
     private int delay;
     private int radius = 0;
-
+    
     static Player p;
-
+    
     private boolean inside = false;
     private boolean isOne = true;
     private boolean isSlow;
     private boolean switchDir = false;
     private boolean directionNotSwitched;
-
+    
     Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
@@ -49,55 +49,59 @@ class Arrow {
         this.isSlow = isSlow;
         setCoordinates(direction);
     }
-
+    
     /*
      * Helper method for the constructor setting the original arrow coordinates
      */
     private void setCoordinates(char direction) {
-        switch (direction) {
+        switch(direction) {
             case 'r':
-                if (reverse) {
+                if(reverse) {
                     x = 17 + 11;
                     y = 270 + 11;
-                } else {
+                }
+                else {
                     x = 11;
                     y = 270 + 11;
                 }
                 break;
             case 'l':
-                if (reverse) {
+                if(reverse) {
                     x = 557 - 9 - 11;
                     y = 270 + 11;
-                } else {
+                }
+                else {
                     x = 557;
                     y = 270 + 11;
                 }
                 break;
             case 'u':
-                if (reverse) {
+                if(reverse) {
                     x = 285;
                     y = 545 - 8;
-                } else {
+                }
+                else {
                     x = 285;
                     y = 545 + 11;
                 }
                 break;
             case 'd':
-                if (reverse) {
+                if(reverse) {
                     x = 285;
                     y = 11 + 8 + 11;
-                } else {
+                }
+                else {
                     x = 285;
                     y = 11;
                 }
                 break;
         }
     }
-
+    
     void switchDir() {
         switchDir = true;
-        if (radius == 0) {
-            switch (direction) {
+        if(radius == 0) {
+            switch(direction) {
                 case 'l':
                     radius = x - 300;
                     break;
@@ -114,11 +118,11 @@ class Arrow {
             speed *= 3;
         }
     }
-
+    
     void tick() {
-        if (!Runner.isOneSecondDelayRunning()) {
-            if (speed != 1 || isOne || !isSlow) {
-                switch (direction) {
+        if(!Runner.isOneSecondDelayRunning()) {
+            if(speed != 1 || isOne || !isSlow) {
+                switch(direction) {
                     case 'l':
                         x -= speed;
                         break;
@@ -133,12 +137,12 @@ class Arrow {
                         break;
                 }
             }
-            if (isSlow)
+            if(isSlow)
                 isOne = !isOne;
-            if (switchDir && directionNotSwitched) {
-                switch (direction) {
+            if(switchDir && directionNotSwitched) {
+                switch(direction) {
                     case 'l':
-                        if (Math.pow(x - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(x < 300 && y == 281))
+                        if(Math.pow(x - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(x < 300 && y == 281))
                             y = 281 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(x - 300 - (radius - 72), 2));
                         else {
                             y = 281;
@@ -147,9 +151,10 @@ class Arrow {
                         }
                         break;
                     case 'r':
-                        if (Math.pow(300 - x - (radius - 72), 2) < Math.pow(radius, 2) && !(x > 300 && y == 281)) {
+                        if(Math.pow(300 - x - (radius - 72), 2) < Math.pow(radius, 2) && !(x > 300 && y == 281)) {
                             y = 281 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - x - (radius - 72), 2));
-                        } else {
+                        }
+                        else {
                             x -= 5;
                             y = 281;
                             directionNotSwitched = false;
@@ -157,7 +162,7 @@ class Arrow {
                         }
                         break;
                     case 'u':
-                        if (Math.pow(y - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(y < 300 && x == 285))
+                        if(Math.pow(y - 300 - (radius - 72), 2) < Math.pow(72, 2) && !(y < 300 && x == 285))
                             x = 285 + (int) Math.sqrt(Math.pow(72, 2) - Math.pow(y - 300 - (radius - 72), 2));
                         else {
                             y += 9;
@@ -167,7 +172,7 @@ class Arrow {
                         }
                         break;
                     case 'd':
-                        if (Math.pow(300 - y - (radius - 72), 2) < Math.pow(72, 2) && !(y > 300 && x == 285))
+                        if(Math.pow(300 - y - (radius - 72), 2) < Math.pow(72, 2) && !(y > 300 && x == 285))
                             x = 285 - (int) Math.sqrt(Math.pow(72, 2) - Math.pow(300 - y - (radius - 72), 2));
                         else {
                             x = 285;
@@ -179,37 +184,37 @@ class Arrow {
             }
         }
     }
-
+    
     void draw(Graphics g, Color c) {
         BufferedImage arr;
-        if (reverse)
+        if(reverse)
             arr = Runner.reverseArr;
-        else if (c.equals(Color.RED))
+        else if(c.equals(Color.RED))
             arr = Runner.redArr;
         else
             arr = Runner.blueArr;
         int angle = 0;
-        switch (direction) {
+        switch(direction) {
             case 'r':
-                if (!reverse || directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = 0;
                 else
                     angle = 180;
                 break;
             case 'd':
-                if (!reverse || directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = 90;
                 else
                     angle = -90;
                 break;
             case 'l':
-                if (!reverse || directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = 180;
                 else
                     angle = 0;
                 break;
             case 'u':
-                if (!reverse || directionNotSwitched)
+                if(!reverse || directionNotSwitched)
                     angle = -90;
                 else
                     angle = 90;
@@ -221,30 +226,30 @@ class Arrow {
         arr = op.filter(arr, null);
         g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
         int xShift, yShift;
-        switch (direction) {
+        switch(direction) {
             case 'r':
-                if (reverse)
+                if(reverse)
                     xShift = 22;
                 else
                     xShift = 30;
                 inside = x + xShift >= 277 && (!reverse || !directionNotSwitched);
                 break;
             case 'l':
-                if (reverse)
+                if(reverse)
                     xShift = 10;
                 else
                     xShift = 1;
                 inside = x + xShift <= 322 && (!reverse || !directionNotSwitched);
                 break;
             case 'd':
-                if (reverse)
+                if(reverse)
                     yShift = 22;
                 else
                     yShift = 30;
                 inside = y + yShift >= 277 && (!reverse || !directionNotSwitched);
                 break;
             case 'u':
-                if (reverse)
+                if(reverse)
                     yShift = 10;
                 else
                     yShift = 1;
@@ -252,42 +257,42 @@ class Arrow {
                 break;
         }
     }
-
+    
     boolean notInside() {
         return !inside;
     }
-
+    
     int getX() {
         return x;
     }
-
+    
     int getY() {
         return y;
     }
-
+    
     char getDir() {
         return direction;
     }
-
+    
     int getDelay() {
         return delay;
     }
-
+    
     int getSpeed() {
         return speed;
     }
-
+    
     boolean getReverse() {
         return reverse;
     }
-
+    
     boolean getDirectionNotSwitched() {
         return directionNotSwitched;
     }
-
+    
     @Override
     public String toString() {
         return String.format("Arrow[speed = %d, reverse = %b, direction = %c, delay = %d]", speed, reverse, direction, delay);
     }
-
+    
 }

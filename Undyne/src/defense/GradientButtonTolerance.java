@@ -44,14 +44,16 @@ public abstract class GradientButtonTolerance extends JPanel implements MouseLis
     private class ToleranceComponent extends Component {}
     
     /**
-     * Initializes a newly created {@code GradientButtonTolerance} with a rectangular shape and 25 steps to a color change
-     * @param buttonIcon        An image that is used for the button's icon
-     * @param initialColor      The initial button color
-     * @param finalColor        The color the button changes to when on the button
-     * @param x                 The x coordinate of the button
-     * @param y                 The y coordinate of the button
-     * @param width             The width of the button
-     * @param height            The height of the button
+     * Initializes a newly created {@code GradientButtonTolerance} with a rectangular shape and 25 steps to a color
+     * change
+     *
+     * @param buttonIcon   An image that is used for the button's icon
+     * @param initialColor The initial button color
+     * @param finalColor   The color the button changes to when on the button
+     * @param x            The x coordinate of the button
+     * @param y            The y coordinate of the button
+     * @param width        The width of the button
+     * @param height       The height of the button
      */
     GradientButtonTolerance(Image buttonIcon, Color initialColor, Color finalColor, int x, int y, int width, int height) {
         this.buttonIcon = buttonIcon;
@@ -89,7 +91,7 @@ public abstract class GradientButtonTolerance extends JPanel implements MouseLis
         g2d.setColor(initialColor);
         g2d.fill(shapeToFill);
         Composite original = g2d.getComposite();
-        AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) colorChange/ steps);
+        AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) colorChange / steps);
         g2d.setComposite(alpha);
         g2d.setColor(finalColor);
         g2d.fill(shapeToFill);
@@ -113,13 +115,15 @@ public abstract class GradientButtonTolerance extends JPanel implements MouseLis
     
     /**
      * Overridable method to do something before every time the button is drawn
-     * @param g    Graphics object from paintComponent
+     *
+     * @param g Graphics object from paintComponent
      */
     public void beforeDraw(Graphics g) {}
     
     /**
      * Overridable method to do something after every time the button is drawn
-     * @param g    Graphics object from paintComponent
+     *
+     * @param g Graphics object from paintComponent
      */
     public void afterDraw(Graphics g) {}
     
