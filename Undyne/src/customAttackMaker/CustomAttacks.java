@@ -107,7 +107,6 @@ public class CustomAttacks {
     }
 
     public void perform(Graphics g2) {
-        beingReordered = false;
         JFrame frame = Runner.getFrame();
         Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
         mousePosition = new Point(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());

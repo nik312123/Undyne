@@ -97,10 +97,8 @@ public class AttackBar {
         int counter = 0;
         int beingDragged = -1;
         for (int i = 0; i < arrows.size(); ++i) {
-            if (arrows.get(i).isPressed()) {
+            if (arrows.get(i).isPressed())
                 beingDragged = i;
-                CustomAttacks.beingReordered = true;
-            }
             ++counter;
             arrows.get(i).draw(g, x + 10, y + 10);
             y += 30;

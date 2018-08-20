@@ -110,7 +110,7 @@ class Attack {
                 case 'l':
                     if (dir == 'r' && (angle <= 135 && angle >= 45 || p.getHit())) {
                         if (tempArrow.getX() + xShift < 266 + 67 && tempArrow.getY() == 270 + 11) {
-                            if (!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
+                            if (!tempArrow.getDirectionNotSwitched() && (tempArrow.notInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
@@ -124,7 +124,7 @@ class Attack {
                 case 'r':
                     if (dir == 'l' && angle <= 315 && angle >= 225) {
                         if (tempArrow.getX() + xShift > 266 && tempArrow.getY() == 270 + 11) {
-                            if (!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
+                            if (!tempArrow.getDirectionNotSwitched() && (tempArrow.notInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
@@ -138,7 +138,7 @@ class Attack {
                 case 'u':
                     if (dir == 'd' && (angle <= 225 && angle >= 135 || p.getHit())) {
                         if (tempArrow.getY() + yShift < 266 + 67 && tempArrow.getX() == 285) {
-                            if (!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
+                            if (!tempArrow.getDirectionNotSwitched() && (tempArrow.notInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }
@@ -152,7 +152,7 @@ class Attack {
                 case 'd':
                     if (dir == 'u' && (angle <= 45 || angle >= 315 || p.getHit())) {
                         if (attackPattern.get(i).getY() + yShift > 266 && tempArrow.getX() == 285) {
-                            if (!tempArrow.getDirectionNotSwitched() && (!tempArrow.getInside() || p.getHit())) {
+                            if (!tempArrow.getDirectionNotSwitched() && (tempArrow.notInside() || p.getHit())) {
                                 hit = true;
                                 attackPattern.remove(i);
                             }

@@ -231,6 +231,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static JFrame frame;
 
     public static void main(String... args) throws IOException, UnsupportedAudioFileException, FontFormatException {
+        if(isFirstTime) {
             EventQueue.invokeLater(() -> {
                 SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>() {
                     @Override
