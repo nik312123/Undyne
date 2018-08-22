@@ -12,13 +12,13 @@ import java.awt.Rectangle;
 public class BottomMenuBar extends JPanel {
     private int y = 0;
     private final int CHECKBOX_X = 353;
-
+    
     private boolean isShowing = true;
     private boolean isRobotBoxChecked = false;
     private boolean isGenocideBoxChecked = false;
-
+    
     private String checkBoxMode;
-
+    
     private Rectangle tab = new Rectangle();
     private Rectangle checkbox = new Rectangle(CHECKBOX_X, y + 31 + 548, 13, 12);
     private Rectangle play = new Rectangle(5, y + 28 + 548, 20, 18);
@@ -65,14 +65,14 @@ public class BottomMenuBar extends JPanel {
             g.fillRect(0, y + 25, 600, 52);
         }
     }
-
+    
     private void drawBarCheck(Graphics g) {
         g.drawImage(Runner.checkBox, CHECKBOX_X, y + 31, null);
-        if (Runner.isCustomAttack && isGenocideBoxChecked || Runner.canBeStopped && isRobotBoxChecked)
+        if(Runner.isCustomAttack && isGenocideBoxChecked || Runner.canBeStopped && isRobotBoxChecked)
             g.drawImage(Runner.ticked, CHECKBOX_X, y + 31, null);
-        if (Runner.isCustomAttack)
+        if(Runner.isCustomAttack)
             checkBoxMode = "Undying";
-        else if (Runner.canBeStopped)
+        else if(Runner.canBeStopped)
             checkBoxMode = "Automatic";
         g.setFont(Runner.deteFontSpeech);
         g.setColor(Color.WHITE);
@@ -90,14 +90,14 @@ public class BottomMenuBar extends JPanel {
     }
     
     private boolean isThereAnEmptyAttack() {
-        if (CustomAttacks.attacks.size() == 0)
+        if(CustomAttacks.attacks.size() == 0)
             return true;
-        for (AttackBar a : CustomAttacks.attacks)
-            if (a.getArrows().size() == 0)
+        for(AttackBar a : CustomAttacks.attacks)
+            if(a.getArrows().size() == 0)
                 return true;
         return false;
     }
-
+    
     private boolean isAttacksEmpty() {
         for(AttackBar a : CustomAttacks.attacks) {
             if(a.getArrows().size() > 0)
@@ -105,7 +105,7 @@ public class BottomMenuBar extends JPanel {
         }
         return true;
     }
-
+    
     public int mouseWorks(Point mousePosition) {
         play.setLocation(5, y + 28 + 548);
         stop.setLocation(31, y + 28 + 548);
@@ -127,28 +127,28 @@ public class BottomMenuBar extends JPanel {
         }
         return -1;
     }
-
+    
     public Rectangle getBarCheckBox() {
         checkbox.setLocation(CHECKBOX_X, y + 31 + 548);
         return checkbox;
     }
-
+    
     public void flipIsGenocideBoxChecked() {
         isGenocideBoxChecked = !isGenocideBoxChecked;
     }
-
+    
     public void flipIsRobotBoxedChecked() {
         isRobotBoxChecked = !isRobotBoxChecked;
     }
-
+    
     public boolean isGenocideBoxChecked() {
         return isGenocideBoxChecked;
     }
-
+    
     void setIsGenocideBoxChecked(boolean checked) {
         isGenocideBoxChecked = checked;
     }
-
+    
     public boolean isRobotBoxChecked() {
         return isRobotBoxChecked;
     }
@@ -156,5 +156,5 @@ public class BottomMenuBar extends JPanel {
     public int getYValue() {
         return y;
     }
-
+    
 }

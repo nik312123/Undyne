@@ -329,12 +329,10 @@ public class StartScreen {
                 }
                 
                 @Override
-                public void mousePressed(MouseEvent e) {
-                }
+                public void mousePressed(MouseEvent e) {}
                 
                 @Override
-                public void mouseReleased(MouseEvent e) {
-                }
+                public void mouseReleased(MouseEvent e) {}
                 
                 @Override
                 public void mouseEntered(MouseEvent e) {

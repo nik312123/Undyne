@@ -142,6 +142,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static BufferedImage help;
     private static BufferedImage play;
     private static BufferedImage creator;
+    private static BufferedImage numberFieldGlow;
     static BufferedImage blueArr;
     static BufferedImage redArr;
     static BufferedImage reverseArr;
@@ -208,6 +209,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static Slider sfxSlider;
     
     private static PopUp creditsList;
+    
+    private static ArrowBar.NumberFieldFocus focused;
     
     private static Font deteFontNorm;
     static Font deteFontScore;
@@ -338,6 +341,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             exportButtonDisabled = getCompatibleImage("/bottomBar/exportButtonDisabled.png");
             bottomTabDown = getCompatibleImage("/bottomBar/tabDown.png");
             bottomTabUp = getCompatibleImage("/bottomBar/tabUp.png");
+            numberFieldGlow = getCompatibleImage("/numberFieldGlow.png");
             for(int i = 0; i < 48; ++i)
                 loadingCreator[i] = getCompatibleImage("/loading/loading" + i + ".png");
             URL fontUrl = Runner.class.getResource("/dete.otf");
@@ -382,20 +386,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
-            public void mouseMoved(MouseEvent e) {
-            }
+            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public void beforeDraw(Graphics g) {
@@ -431,12 +431,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -502,16 +500,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
             public void mouseMoved(MouseEvent e) {}
@@ -589,16 +584,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
             public void mouseMoved(MouseEvent e) {}
@@ -636,32 +628,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             private static final long serialVersionUID = 1L;
             
             @Override
-            public void mouseClicked(MouseEvent e) {
-            }
+            public void mouseClicked(MouseEvent e) {}
             
             @Override
-            public void mousePressed(MouseEvent e) {
-            }
+            public void mousePressed(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {
-            }
+            public void mouseReleased(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
-            public void mouseMoved(MouseEvent e) {
-            }
+            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public boolean onButton() {
@@ -673,32 +658,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             private static final long serialVersionUID = 1L;
             
             @Override
-            public void mouseClicked(MouseEvent e) {
-            }
+            public void mouseClicked(MouseEvent e) {}
             
             @Override
-            public void mousePressed(MouseEvent e) {
-            }
+            public void mousePressed(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {
-            }
+            public void mouseReleased(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
-            public void mouseMoved(MouseEvent e) {
-            }
+            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public boolean onButton() {
@@ -709,32 +687,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         playButton = new GradientButton(play, Color.BLACK, new Color(148, 0, 211), 76, 300, 148, 62) {
             
             @Override
-            public void mouseClicked(MouseEvent e) {
-            }
+            public void mouseClicked(MouseEvent e) {}
             
             @Override
-            public void mousePressed(MouseEvent e) {
-            }
+            public void mousePressed(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {
-            }
+            public void mouseReleased(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
-            public void mouseMoved(MouseEvent e) {
-            }
+            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public boolean onButton() {
@@ -745,32 +716,25 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         creatorButton = new GradientButton(creator, Color.BLACK, new Color(148, 0, 211), 376, 300, 148, 62) {
             
             @Override
-            public void mouseClicked(MouseEvent e) {
-            }
+            public void mouseClicked(MouseEvent e) {}
             
             @Override
-            public void mousePressed(MouseEvent e) {
-            }
+            public void mousePressed(MouseEvent e) {}
             
             @Override
-            public void mouseReleased(MouseEvent e) {
-            }
+            public void mouseReleased(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             
             @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+            public void mouseDragged(MouseEvent e) {}
             
             @Override
-            public void mouseMoved(MouseEvent e) {
-            }
+            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public boolean onButton() {
@@ -843,7 +807,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 g.setColor(Color.WHITE);
                 g.setFont(deteFontSpeech);
                 String exit = "Press X to Exit";
-                g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit)/2, 20);
+                g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit) / 2, 20);
             }
             
         };
@@ -883,7 +847,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             @Override
             public void onMouseClick(MouseEvent e) {
-                if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused()) {
+                if(beginning && StartScreen.isLoaded && !checkFocus.isJustFocused() && !oneSecondDelay.isRunning()) {
                     error.play();
                     checkFocus.deactivateJustFocused();
                     stage.warningOn();
@@ -953,24 +917,19 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         private Thread justFocusedDisabler;
         
         @Override
-        public void windowOpened(WindowEvent e) {
-        }
+        public void windowOpened(WindowEvent e) {}
         
         @Override
-        public void windowClosing(WindowEvent e) {
-        }
+        public void windowClosing(WindowEvent e) {}
         
         @Override
-        public void windowClosed(WindowEvent e) {
-        }
+        public void windowClosed(WindowEvent e) {}
         
         @Override
-        public void windowIconified(WindowEvent e) {
-        }
+        public void windowIconified(WindowEvent e) {}
         
         @Override
-        public void windowDeiconified(WindowEvent e) {
-        }
+        public void windowDeiconified(WindowEvent e) {}
         
         @Override
         public void windowActivated(WindowEvent e) {
@@ -1196,11 +1155,21 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 loadingFrame = 0;
             }
         }
+        drawFieldFocus(g);
         if(checkFocus.windowNotFocused()) {
             g.setColor(new Color(255, 255, 255, 127));
             g.fillRect(0, 0, 600, 600);
         }
         g.dispose();
+    }
+    
+    private void drawFieldFocus(Graphics g) {
+        if(focused != null && focused.getFocused() && !AttackBar.areAnyDirectionsSelected())
+            g.drawImage(numberFieldGlow, -(numberFieldGlow.getWidth() - 30) / 2 + focused.getX() + 1, -(numberFieldGlow.getWidth() - 16) / 2 + focused.getY() + 5, null);
+    }
+    
+    public static void setFocusedField(ArrowBar.NumberFieldFocus nf) {
+        focused = nf;
     }
     
     private void drawCheat(Graphics g) {
