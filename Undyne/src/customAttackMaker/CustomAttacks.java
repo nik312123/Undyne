@@ -194,6 +194,7 @@ public class CustomAttacks {
     }
     
     private ArrayList<AttackBar> importFile() {
+        StartScreen.playClick();
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
         chooser.setDialogTitle("Choose file to import...");
         fileBeingChosen = true;
@@ -354,8 +355,6 @@ public class CustomAttacks {
                 importingComplete = true;
             }
         }
-        else
-            optionSelected = false;
         return null;
     }
     
@@ -367,6 +366,7 @@ public class CustomAttacks {
     }
     
     private void exportFile() {
+        StartScreen.playClick();
         ArrayList<String> output = new ArrayList<>();
         output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
@@ -439,7 +439,7 @@ public class CustomAttacks {
         else if(!optionSelected) {
             boolean newChosen = newThing.contains(mousePosition);
             importChosen = importThing.contains(mousePosition);
-            if(newChosen || importChosen)
+            if(newChosen)
                 StartScreen.playClick();
             if(importChosen) {
                 ArrayList<AttackBar> imported = importFile();
@@ -459,8 +459,10 @@ public class CustomAttacks {
                 if(imported != null)
                     removeImported(imported);
             }
-            else if(addAttack.contains(mousePosition) && attacks.size() < 13000)
+            else if(addAttack.contains(mousePosition) && attacks.size() < 13000) {
+                StartScreen.playClick();
                 addAttack();
+            }
             else {
                 for(AttackBar a : attacks) {
                     if(a.mouseClickWork() == 1) {

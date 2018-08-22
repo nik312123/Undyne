@@ -2163,6 +2163,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         int x = e.getX(), y = e.getY();
         boolean mouseIntersectsCheckBox = bottomBar.getBarCheckBox().contains(x, y);
         if(mouseIntersectsCheckBox) {
+            StartScreen.playClick();
             if(canBeStopped)
                 bottomBar.flipIsRobotBoxedChecked();
             else if(isCustomAttack)

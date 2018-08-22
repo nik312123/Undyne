@@ -1,6 +1,7 @@
 package customAttackMaker;
 
 import defense.Runner;
+import defense.StartScreen;
 
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -108,16 +109,22 @@ public class BottomMenuBar extends JPanel {
     public int mouseWorks(Point mousePosition) {
         play.setLocation(5, y + 28 + 548);
         stop.setLocation(31, y + 28 + 548);
-        if(tab.contains(mousePosition))
+        if(tab.contains(mousePosition)) {
+            StartScreen.playClick();
             isShowing = !isShowing;
+        }
         else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty())
             return 1;
-        else if (IMPORT.contains(mousePosition) && isShowing)
+        else if(IMPORT.contains(mousePosition) && isShowing)
             return 0;
-        else if(play.contains(mousePosition) && !Runner.canBeStopped && CustomAttacks.attacks.size() != 0 && !CustomAttacks.areAnyAttacksEmpty() && noFieldsAreEmpty())
+        else if(play.contains(mousePosition) && !Runner.canBeStopped && CustomAttacks.attacks.size() != 0 && !CustomAttacks.areAnyAttacksEmpty() && noFieldsAreEmpty()) {
+            StartScreen.playClick();
             Runner.play(false);
-        else if (stop.contains(mousePosition) && Runner.canBeStopped)
+        }
+        else if(stop.contains(mousePosition) && Runner.canBeStopped) {
+            StartScreen.playClick();
             Runner.stop(false);
+        }
         return -1;
     }
 
