@@ -2,6 +2,7 @@ package defense;
 
 import customAttackMaker.ArrowBar;
 import customAttackMaker.AttackBar;
+import customAttackMaker.CustomAttacks;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -25,7 +26,7 @@ class Attacks {
     
     private ArrayList<ArrayList<Arrow>> undyneAttacks = new ArrayList<>();
     
-    Attacks(ArrayList<AttackBar> attacks) {
+    Attacks(ArrayList<AttackBar> attacks) throws Exception {
         for(int i = 0; i < 13000; ++i)
             undyneAttacks.add(new ArrayList<>());
         for(AttackBar at : attacks) {
@@ -33,10 +34,22 @@ class Attacks {
                 char dir = ar.getDirection();
                 if(dir == 'n')
                     dir = DIRS[rand.nextInt(4)];
-                if(ar.getSpeed() == 1)
+                int delay = ar.getDelay();
+                if(delay < 1 || delay > 999) {
+                    CustomAttacks.setError(false, "Delay must be between 1 – 999 inclusive");
+                    undyneAttacks = new ArrayList<>();
+                    throw new Exception();
+                }
+                int speed = ar.getSpeed();
+                if(speed < 1 || speed > 10) {
+                    CustomAttacks.setError(false, "Speed must be between 1 – 10 inclusive");
+                    undyneAttacks = new ArrayList<>();
+                    throw new Exception();
+                }
+                if(speed == 1)
                     addSlowArrow(at.getNumber(), ar.isReversible(), dir, ar.getDelay());
                 else
-                    addArrow(at.getNumber(), ar.getSpeed() - 1, ar.isReversible(), dir, ar.getDelay());
+                    addArrow(at.getNumber(), speed - 1, ar.isReversible(), dir, ar.getDelay());
             }
         }
     }

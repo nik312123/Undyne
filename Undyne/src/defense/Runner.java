@@ -151,6 +151,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static BufferedImage importThing;
     public static BufferedImage newThing;
     public static BufferedImage addAttack;
+    public static BufferedImage addAttackDisabled;
     public static BufferedImage ticked;
     public static BufferedImage customArrowDirection;
     public static BufferedImage deleteArrow;
@@ -308,7 +309,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             bottomMenuBar = getCompatibleImage("/bottomBar/bottomMenuBar.png");
             ticked = getCompatibleImage("/ticked.png");
             customArrowDirection = getCompatibleImage("/customArrowDirection.png");
-            addAttack = getCompatibleImage("/AddAttack.png");
+            addAttack = getCompatibleImage("/addAttack.png");
+            addAttackDisabled = getCompatibleImage("/addAttackDisabled.png");
             deleteAttack = getCompatibleImage("/deleteAttack.png");
             newArrow = getCompatibleImage("/newArrow.png");
             droppedDown = getCompatibleImage("/droppedDown.png");
@@ -807,7 +809,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     case MouseEvent.MOUSE_RELEASED:
                         releaseLocation = new Point(e.getX(), e.getY());
                         long time = (System.nanoTime() - pressTime) / 1000000;
-                        if(time <= 500 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
+                        if(time <= 750 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
                             MouseEvent clickEvent = new MouseEvent(frame, MouseEvent.MOUSE_CLICKED, System.nanoTime(), 0, pressLocation.x, pressLocation.y, 1, false);
                             if(!CustomAttacks.isFileBeingChosen()) {
                                 barCheckBoxClicked(clickEvent);
@@ -834,9 +836,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 g.fillRect(0, 0, 600, 28);
                 g.setColor(Color.WHITE);
                 g.drawLine(0, 28, 600, 28);
+                if(checkFocus.windowNotFocused()) {
+                    g.setColor(new Color(255, 255, 255, 127));
+                    g.fillRect(0, 0, 600, 28);
+                }
+                g.setColor(Color.WHITE);
+                g.setFont(deteFontSpeech);
+                String exit = "Press X to Exit";
+                g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit)/2, 20);
             }
             
         };
+        
         topBar.setBounds(0, 0, 600, 28);
         
         bottomBar.setOpaque(false);
@@ -868,7 +879,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.add(sfxSlider);
         frame.add(runner);
         
-        MouseClickTolerance errorListener = new MouseClickTolerance(5, 500, MouseClickTolerance.ClickLocation.PRESS) {
+        MouseClickTolerance errorListener = new MouseClickTolerance(5, 750, MouseClickTolerance.ClickLocation.PRESS) {
             
             @Override
             public void onMouseClick(MouseEvent e) {
@@ -977,8 +988,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         @Override
         public void windowDeactivated(WindowEvent e) {
-            windowFocused = false;
             justFocusedDisabler.interrupt();
+            windowFocused = false;
         }
         
         boolean windowNotFocused() {
@@ -1069,7 +1080,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                         moveButtons(true);
                     if(stage.heartsActivated())
                         startScreen.stop();
-                    else if(beginning && startScreen.isStopped() && !oneSecondDelay.isRunning())
+                    else if(beginning && startScreen.isStopped() && !oneSecondDelay.isRunning() && !isCustomAttack)
                         startScreen.play();
                 }
                 stage.run(g);
@@ -1688,17 +1699,24 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 isPlayTimerDone = true;
             }
             else if(isCalledByTimer) {
-                DELAY = 10;
-                a = new Attacks(customAttackMaker.getAttacks());
+                try {
+                    a = new Attacks(customAttackMaker.getAttacks());
+                }
+                catch(Exception e) {
+                    creatorMusic.play();
+                    isPlayTimerDone = false;
+                    return;
+                }
                 a1 = new Attack(new ArrayList<>(), a);
                 a.setAttack(a1);
+                DELAY = 10;
+                canBeStopped = true;
                 setUpUndyne(bottomBar.isGenocideBoxChecked());
                 beginning = false;
                 isCustomAttack = false;
                 main.changeVolume(musicMutedVolume);
                 main.play();
                 dir = 'u';
-                canBeStopped = true;
                 isPlayTimerDone = false;
             }
         }
@@ -2164,6 +2182,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         return !allStopped && !oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped);
     }
     
+    public static boolean windowNotFocused() {
+        return checkFocus.windowNotFocused();
+    }
+    
     @Override
     public void mouseClicked(MouseEvent e) {}
     
@@ -2174,14 +2196,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public void mouseReleased(MouseEvent e) {}
     
     @Override
-    public void mouseEntered(MouseEvent e) {
-        customAttackMaker.mouseEntered();
-    }
+    public void mouseEntered(MouseEvent e) {}
     
     @Override
-    public void mouseExited(MouseEvent e) {
-        customAttackMaker.mouseExited();
-    }
+    public void mouseExited(MouseEvent e) {}
     
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -2189,9 +2207,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
     
     @Override
-    public void mouseMoved(MouseEvent e) {
-        customAttackMaker.mouseMoved();
-    }
+    public void mouseMoved(MouseEvent e) {}
     
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
