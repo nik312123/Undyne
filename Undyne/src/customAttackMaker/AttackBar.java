@@ -27,7 +27,7 @@ public class AttackBar {
     private ArrayList<ArrowBar> arrows = new ArrayList<>();
     
     AttackBar() {
-        this.number = CustomAttacks.attacks.size();
+        number = CustomAttacks.attacks.size();
     }
     
     public ArrayList<ArrowBar> getArrows() {
@@ -144,7 +144,7 @@ public class AttackBar {
         else if(dropDownButton.contains(CustomAttacks.mousePosition))
             isDropped = !isDropped;
         else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected)
-            arrows.add(new ArrowBar(1, false, 'u', 2));
+            arrows.add(new ArrowBar(0, false, 'u', 0));
         for(int i = 0; i < arrows.size(); ++i) {
             ArrowBar ab = arrows.get(i);
             if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))

@@ -46,8 +46,27 @@ public class ArrowBar {
         this.delay = delay;
         Color foreground = new Color(255, 196, 0);
         try {
-            speedField = new NumberField(2, NumberField.STATE_NORMAL, false);
-            delayField = new NumberField(3, NumberField.STATE_NORMAL, false);
+            speedField = new NumberField(2, NumberField.STATE_NORMAL, false) {
+                @Override
+                public void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    if(Runner.windowNotFocused()) {
+                        g.setColor(new Color(255, 255, 255, 127));
+                        g.fillRect(0, 0, getWidth(), getHeight());
+                    }
+                }
+            };
+            
+            delayField = new NumberField(3, NumberField.STATE_NORMAL, false) {
+                @Override
+                public void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    if(Runner.windowNotFocused()) {
+                        g.setColor(new Color(255, 255, 255, 127));
+                        g.fillRect(0, 0, getWidth(), getHeight());
+                    }
+                }
+            };
             
             speedField.setFont(Runner.deteFontEditor);
             delayField.setFont(Runner.deteFontEditor);
@@ -66,12 +85,18 @@ public class ArrowBar {
             
             speedField.setBounds(AttackBar.ATTACKBAR_X + 6 + 183, y + 7, 34, 13);
             delayField.setBounds(AttackBar.ATTACKBAR_X + 6 + 277, y + 7, 34, 13);
+    
+            if(speed != 0)
+                speedField.setText(Integer.toString(speed));
+            if(delay != 0)
+                delayField.setText(Integer.toString(delay));
         }
         catch(IOException e) {
             e.printStackTrace();
         }
-        Runner.addComponent(speedField, 6);
-        Runner.addComponent(delayField, 6);
+        
+        Runner.addComponent(speedField, 9);
+        Runner.addComponent(delayField, 9);
     }
     
     void removeFields() {
@@ -111,8 +136,12 @@ public class ArrowBar {
         dragArrowIcon(g, x, this.y);
         if(!speedField.getText().isEmpty())
             speed = Integer.parseInt(speedField.getText());
+        else
+            speed = 0;
         if(!delayField.getText().isEmpty())
             delay = Integer.parseInt(delayField.getText());
+        else
+            delay = 0;
         boolean anySelected = AttackBar.areAnyDirectionsSelected();
         if(anySelected) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
@@ -219,12 +248,16 @@ public class ArrowBar {
     public int getDelay() {
         if(!delayField.getText().isEmpty())
             delay = Integer.parseInt(delayField.getText());
+        else
+            delay = 0;
         return delay;
     }
     
     public int getSpeed() {
         if(!speedField.getText().isEmpty())
             speed = Integer.parseInt(speedField.getText());
+        else
+            speed = 0;
         return speed;
     }
     

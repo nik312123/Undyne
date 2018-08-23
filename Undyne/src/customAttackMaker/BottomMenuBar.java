@@ -29,7 +29,6 @@ public class BottomMenuBar extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
-        g.drawRect(0, 0, 600, 600);
         if(Runner.bottomBarShouldDraw()) {
             tab.setBounds(528, y + 548, 46, 25);
             g.drawImage(Runner.bottomMenuBar, 0, y, null);
@@ -58,7 +57,12 @@ public class BottomMenuBar extends JPanel {
             }
             drawBarCheck(g);
         }
-        g.setColor(Color.PINK);
+        if(Runner.windowNotFocused()) {
+            g.setColor(new Color(255, 255, 255, 127));
+            Rectangle tabBounds = tab.getBounds();
+            g.fillRect(tabBounds.x - getX(), tabBounds.y - getY(), tabBounds.width, tabBounds.height);
+            g.fillRect(0, y + 25, 600, 52);
+        }
     }
 
     private void drawBarCheck(Graphics g) {
@@ -106,7 +110,7 @@ public class BottomMenuBar extends JPanel {
         stop.setLocation(31, y + 28 + 548);
         if(tab.contains(mousePosition))
             isShowing = !isShowing;
-        else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty() && !isThereAnEmptyAttack())
+        else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty())
             return 1;
         else if (IMPORT.contains(mousePosition) && isShowing)
             return 0;
