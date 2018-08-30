@@ -755,40 +755,42 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         setUpKeyBindings(runner);
         
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-            private Point pressLocation, releaseLocation;
+        if(isFirstTime) {
+            Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+                private Point pressLocation, releaseLocation;
+        
+                private long pressTime = 0;
+        
+                @Override
+                public void eventDispatched(AWTEvent event) {
+                    MouseEvent e = (MouseEvent) event;
             
-            private long pressTime = 0;
-            
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                MouseEvent e = (MouseEvent) event;
-                
-                switch(e.getID()) {
-                    case MouseEvent.MOUSE_PRESSED:
-                        pressLocation = new Point(e.getX(), e.getY());
-                        pressTime = System.nanoTime();
-                        customAttackMaker.mousePressed();
-                        break;
-                    case MouseEvent.MOUSE_RELEASED:
-                        releaseLocation = new Point(e.getX(), e.getY());
-                        long time = (System.nanoTime() - pressTime) / 1000000;
-                        if(time <= 750 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
-                            MouseEvent clickEvent = new MouseEvent(frame, MouseEvent.MOUSE_CLICKED, System.nanoTime(), 0, pressLocation.x, pressLocation.y, 1, false);
-                            if(!CustomAttacks.isFileBeingChosen()) {
-                                barCheckBoxClicked(clickEvent);
-                                if(canBeStopped)
-                                    bottomBar.mouseWorks(clickEvent.getPoint());
-                                customAttackMaker.mouseClicked();
+                    switch(e.getID()) {
+                        case MouseEvent.MOUSE_PRESSED:
+                            pressLocation = new Point(e.getX(), e.getY());
+                            pressTime = System.nanoTime();
+                            customAttackMaker.mousePressed();
+                            break;
+                        case MouseEvent.MOUSE_RELEASED:
+                            releaseLocation = new Point(e.getX(), e.getY());
+                            long time = (System.nanoTime() - pressTime) / 1000000;
+                            if(time <= 750 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
+                                MouseEvent clickEvent = new MouseEvent(frame, MouseEvent.MOUSE_CLICKED, System.nanoTime(), 0, pressLocation.x, pressLocation.y, 1, false);
+                                if(!CustomAttacks.isFileBeingChosen()) {
+                                    barCheckBoxClicked(clickEvent);
+                                    if(canBeStopped)
+                                        bottomBar.mouseWorks(clickEvent.getPoint());
+                                    customAttackMaker.mouseClicked();
+                                }
+                                if(!beginning || !StartScreen.isLoaded)
+                                    checkFocus.deactivateJustFocused();
                             }
-                            if(!beginning || !StartScreen.isLoaded)
-                                checkFocus.deactivateJustFocused();
-                        }
-                        customAttackMaker.mouseReleased();
-                        break;
+                            customAttackMaker.mouseReleased();
+                            break;
+                    }
                 }
-            }
-        }, AWTEvent.MOUSE_EVENT_MASK);
+            }, AWTEvent.MOUSE_EVENT_MASK);
+        }
         
         bottomBar.setBounds(0, 548, 600, 52);
         
