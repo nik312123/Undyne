@@ -19,7 +19,7 @@ class Attacks {
     
     private char prevChar = 'u';
     
-    private final char[] DIRS = {'u', 'd', 'r', 'l'};
+    private final char[] DIRS = {'d', 'r', 'u', 'l'};
     
     private Random rand = new Random();
     private Attack att;
@@ -30,10 +30,29 @@ class Attacks {
         for(int i = 0; i < 13000; ++i)
             undyneAttacks.add(new ArrayList<>());
         for(AttackBar at : attacks) {
+            int shift = 0;
+            if(at.isOrientationShift())
+                shift = rand.nextInt(4);
+            char[] shiftedDirs = DIRS.clone();
+            shiftDirs(shiftedDirs, shift);
             for(ArrowBar ar : at.getArrows()) {
                 char dir = ar.getDirection();
                 if(dir == 'n')
                     dir = DIRS[rand.nextInt(4)];
+                switch(dir) {
+                    case 'd':
+                        dir = shiftedDirs[0];
+                        break;
+                    case 'r':
+                        dir = shiftedDirs[1];
+                        break;
+                    case 'u':
+                        dir = shiftedDirs[2];
+                        break;
+                    case 'l':
+                        dir = shiftedDirs[3];
+                        break;
+                }
                 int delay = ar.getDelay();
                 if(delay < 1 || delay > 999) {
                     CustomAttacks.setError(false, "Delay must be between 1 – 999 inclusive");
@@ -51,6 +70,15 @@ class Attacks {
                 else
                     addArrow(at.getNumber(), speed - 1, ar.isReversible(), dir, ar.getDelay());
             }
+        }
+    }
+    
+    private void shiftDirs(char[] dirs, int shift) {
+        for(int i = 0; i < dirs.length; ++i) {
+            if(i + shift <= dirs.length - 1)
+                dirs[i + shift] = DIRS[i];
+            else
+                dirs[i + shift - dirs.length] = DIRS[i];
         }
     }
     
@@ -431,905 +459,253 @@ class Attacks {
     }
     
     private void survivalAttackEight(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'r', 35);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'l', 120);
-                else
-                    addArrow(index, 3, false, 'l', 35);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'd', 35);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'u', 120);
-                else
-                    addArrow(index, 3, false, 'u', 35);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'l', 35);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'r', 120);
-                else
-                    addArrow(index, 3, false, 'r', 35);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'u', 35);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'd', 120);
-                else
-                    addArrow(index, 3, false, 'd', 35);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[0], 35);
+        addArrow(index, 3, false, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[1], 35);
+        addArrow(index, 3, false, shiftedDirs[3], 35);
+        addArrow(index, 3, false, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[1], 35);
+        addArrow(index, 3, false, shiftedDirs[1], 35);
+        if(isLastEasy)
+            addArrow(index, 3, false, shiftedDirs[3], 120);
+        else
+            addArrow(index, 3, false, shiftedDirs[3], 35);
     }
     
     private void survivalAttackNine(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'd', 120);
-                else
-                    addArrow(index, 4, false, 'd', 45);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'l', 120);
-                else
-                    addArrow(index, 4, false, 'l', 45);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'u', 120);
-                else
-                    addArrow(index, 4, false, 'u', 45);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'r', 120);
-                else
-                    addArrow(index, 4, false, 'r', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[1], 30);
+        addArrow(index, 4, false, shiftedDirs[0], 30);
+        addArrow(index, 4, false, shiftedDirs[2], 30);
+        addArrow(index, 4, false, shiftedDirs[3], 30);
+        addArrow(index, 4, false, shiftedDirs[1], 30);
+        addArrow(index, 4, false, shiftedDirs[0], 30);
+        addArrow(index, 4, false, shiftedDirs[2], 30);
+        addArrow(index, 4, false, shiftedDirs[3], 30);
+        addArrow(index, 4, false, shiftedDirs[2], 30);
+        if(isLastEasy)
+            addArrow(index, 4, false, shiftedDirs[0], 120);
+        else
+            addArrow(index, 4, false, shiftedDirs[0], 45);
     }
     
     private void survivalAttackTen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'u', 20);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'u', 20);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'u', 45);
-                if(isLastEasy)
-                    addArrow(index, 2, false, 'd', 120);
-                else
-                    addArrow(index, 2, false, 'd', 45);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'r', 20);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'r', 20);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'r', 45);
-                if(isLastEasy)
-                    addArrow(index, 2, false, 'l', 120);
-                else
-                    addArrow(index, 2, false, 'l', 45);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'd', 20);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'd', 20);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'd', 45);
-                if(isLastEasy)
-                    addArrow(index, 2, false, 'u', 120);
-                else
-                    addArrow(index, 2, false, 'u', 45);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'l', 20);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'l', 20);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'l', 45);
-                if(isLastEasy)
-                    addArrow(index, 2, false, 'r', 120);
-                else
-                    addArrow(index, 2, false, 'r', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[0], 45);
+        addArrow(index, 2, false, shiftedDirs[2], 20);
+        addArrow(index, 2, false, shiftedDirs[0], 45);
+        addArrow(index, 2, false, shiftedDirs[2], 45);
+        addArrow(index, 2, false, shiftedDirs[2], 20);
+        addArrow(index, 2, false, shiftedDirs[0], 45);
+        addArrow(index, 2, false, shiftedDirs[0], 45);
+        addArrow(index, 2, false, shiftedDirs[2], 45);
+        if(isLastEasy)
+            addArrow(index, 2, false, shiftedDirs[0], 120);
+        else
+            addArrow(index, 2, false, shiftedDirs[0], 45);
     }
     
     private void survivalAttackEleven(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'r', 1);
-                addArrow(index, 4, false, 'r', 1);
-                addArrow(index, 5, false, 'r', 70);
-                addArrow(index, 3, false, 'l', 1);
-                addArrow(index, 4, false, 'l', 1);
-                addArrow(index, 5, false, 'l', 45);
-                addArrow(index, 4, false, 'u', 40);
-                addArrow(index, 4, false, 'd', 40);
-                addArrow(index, 4, false, 'u', 40);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'd', 120);
-                else
-                    addArrow(index, 4, false, 'd', 45);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'd', 1);
-                addArrow(index, 4, false, 'd', 1);
-                addArrow(index, 5, false, 'd', 70);
-                addArrow(index, 3, false, 'u', 1);
-                addArrow(index, 4, false, 'u', 1);
-                addArrow(index, 5, false, 'u', 45);
-                addArrow(index, 4, false, 'r', 40);
-                addArrow(index, 4, false, 'l', 40);
-                addArrow(index, 4, false, 'r', 40);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'l', 120);
-                else
-                    addArrow(index, 4, false, 'l', 45);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'l', 1);
-                addArrow(index, 4, false, 'l', 1);
-                addArrow(index, 5, false, 'l', 70);
-                addArrow(index, 3, false, 'r', 1);
-                addArrow(index, 4, false, 'r', 1);
-                addArrow(index, 5, false, 'r', 45);
-                addArrow(index, 4, false, 'd', 40);
-                addArrow(index, 4, false, 'u', 40);
-                addArrow(index, 4, false, 'd', 40);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'u', 120);
-                else
-                    addArrow(index, 4, false, 'u', 45);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'u', 1);
-                addArrow(index, 4, false, 'u', 1);
-                addArrow(index, 5, false, 'u', 70);
-                addArrow(index, 3, false, 'd', 1);
-                addArrow(index, 4, false, 'd', 1);
-                addArrow(index, 5, false, 'd', 45);
-                addArrow(index, 4, false, 'l', 40);
-                addArrow(index, 4, false, 'r', 40);
-                addArrow(index, 4, false, 'l', 40);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'r', 120);
-                else
-                    addArrow(index, 4, false, 'r', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[1], 1);
+        addArrow(index, 4, false, shiftedDirs[1], 1);
+        addArrow(index, 5, false, shiftedDirs[1], 70);
+        addArrow(index, 3, false, shiftedDirs[3], 1);
+        addArrow(index, 4, false, shiftedDirs[3], 1);
+        addArrow(index, 5, false, shiftedDirs[3], 45);
+        addArrow(index, 4, false, shiftedDirs[2], 40);
+        addArrow(index, 4, false, shiftedDirs[0], 40);
+        addArrow(index, 4, false, shiftedDirs[2], 40);
+        if(isLastEasy)
+            addArrow(index, 4, false, shiftedDirs[0], 120);
+        else
+            addArrow(index, 4, false, shiftedDirs[0], 45);
     }
     
     private void survivalAttackTwelve(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'l', 60);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'l', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'u', 120);
-                else
-                    addArrow(index, 4, false, 'u', 45);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'u', 60);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'u', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'r', 120);
-                else
-                    addArrow(index, 4, false, 'r', 45);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'r', 60);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'r', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'd', 120);
-                else
-                    addArrow(index, 4, false, 'd', 45);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'r', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'u', 30);
-                addArrow(index, 4, false, 'd', 60);
-                addArrow(index, 4, false, 'l', 30);
-                addArrow(index, 4, false, 'd', 30);
-                addArrow(index, 4, false, 'd', 30);
-                if(isLastEasy)
-                    addArrow(index, 4, false, 'l', 120);
-                else
-                    addArrow(index, 4, false, 'l', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[0], 30);
+        addArrow(index, 4, false, shiftedDirs[1], 30);
+        addArrow(index, 4, false, shiftedDirs[0], 30);
+        addArrow(index, 4, false, shiftedDirs[3], 30);
+        addArrow(index, 4, false, shiftedDirs[2], 30);
+        addArrow(index, 4, false, shiftedDirs[1], 30);
+        addArrow(index, 4, false, shiftedDirs[1], 30);
+        addArrow(index, 4, false, shiftedDirs[3], 60);
+        addArrow(index, 4, false, shiftedDirs[2], 30);
+        addArrow(index, 4, false, shiftedDirs[3], 30);
+        addArrow(index, 4, false, shiftedDirs[3], 30);
+        if(isLastEasy)
+            addArrow(index, 4, false, shiftedDirs[2], 120);
+        else
+            addArrow(index, 4, false, shiftedDirs[2], 45);
     }
     
     private void survivalAttackThirteen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'd', 30);
-                addArrow(index, 3, false, 'd', 30);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'r', 30);
-                addArrow(index, 3, false, 'u', 30);
-                addArrow(index, 3, false, 'u', 30);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'r', 20);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'l', 120);
-                else
-                    addArrow(index, 3, false, 'l', 45);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'l', 30);
-                addArrow(index, 3, false, 'l', 30);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'd', 30);
-                addArrow(index, 3, false, 'r', 30);
-                addArrow(index, 3, false, 'r', 30);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'd', 20);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'u', 120);
-                else
-                    addArrow(index, 3, false, 'u', 45);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'u', 30);
-                addArrow(index, 3, false, 'u', 30);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'l', 30);
-                addArrow(index, 3, false, 'd', 30);
-                addArrow(index, 3, false, 'd', 30);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'l', 20);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'r', 120);
-                else
-                    addArrow(index, 3, false, 'r', 45);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'r', 30);
-                addArrow(index, 3, false, 'r', 30);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'u', 30);
-                addArrow(index, 3, false, 'l', 30);
-                addArrow(index, 3, false, 'l', 30);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'u', 20);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'd', 120);
-                else
-                    addArrow(index, 3, false, 'd', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[0], 30);
+        addArrow(index, 3, false, shiftedDirs[0], 30);
+        addArrow(index, 3, false, shiftedDirs[3], 20);
+        addArrow(index, 3, false, shiftedDirs[3], 20);
+        addArrow(index, 3, false, shiftedDirs[1], 30);
+        addArrow(index, 3, false, shiftedDirs[2], 30);
+        addArrow(index, 3, false, shiftedDirs[2], 30);
+        addArrow(index, 3, false, shiftedDirs[1], 20);
+        addArrow(index, 3, false, shiftedDirs[1], 20);
+        if(isLastEasy)
+            addArrow(index, 3, false, shiftedDirs[3], 120);
+        else
+            addArrow(index, 3, false, shiftedDirs[3], 45);
     }
     
     private void survivalAttackFourteen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addSlowArrow(index, false, 'r', 220);
-                addArrow(index, 3, false, 'd', 25);
-                addArrow(index, 3, false, 'l', 25);
-                addArrow(index, 3, false, 'u', 25);
-                addArrow(index, 3, false, 'd', 25);
-                addArrow(index, 3, false, 'l', 25);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'u', 120);
-                else
-                    addArrow(index, 3, false, 'u', 45);
-                break;
-            case 1:
-                addSlowArrow(index, false, 'd', 220);
-                addArrow(index, 3, false, 'l', 25);
-                addArrow(index, 3, false, 'u', 25);
-                addArrow(index, 3, false, 'r', 25);
-                addArrow(index, 3, false, 'l', 25);
-                addArrow(index, 3, false, 'u', 25);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'r', 120);
-                else
-                    addArrow(index, 3, false, 'r', 45);
-                break;
-            case 2:
-                addSlowArrow(index, false, 'l', 220);
-                addArrow(index, 3, false, 'u', 25);
-                addArrow(index, 3, false, 'r', 25);
-                addArrow(index, 3, false, 'd', 25);
-                addArrow(index, 3, false, 'u', 25);
-                addArrow(index, 3, false, 'r', 25);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'd', 120);
-                else
-                    addArrow(index, 3, false, 'd', 45);
-                break;
-            case 3:
-                addSlowArrow(index, false, 'u', 220);
-                addArrow(index, 3, false, 'r', 25);
-                addArrow(index, 3, false, 'd', 25);
-                addArrow(index, 3, false, 'l', 25);
-                addArrow(index, 3, false, 'r', 25);
-                addArrow(index, 3, false, 'd', 25);
-                if(isLastEasy)
-                    addArrow(index, 3, false, 'l', 120);
-                else
-                    addArrow(index, 3, false, 'l', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addSlowArrow(index, false, shiftedDirs[1], 220);
+        addArrow(index, 3, false, shiftedDirs[0], 25);
+        addArrow(index, 3, false, shiftedDirs[3], 25);
+        addArrow(index, 3, false, shiftedDirs[2], 25);
+        addArrow(index, 3, false, shiftedDirs[0], 25);
+        addArrow(index, 3, false, shiftedDirs[3], 25);
+        if(isLastEasy)
+            addArrow(index, 3, false, shiftedDirs[2], 120);
+        else
+            addArrow(index, 3, false, shiftedDirs[2], 45);
     }
     
     private void survivalAttackFifteen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'l', 55);
-                addArrow(index, 2, false, 'r', 55);
-                addArrow(index, 2, false, 'l', 55);
-                addArrow(index, 2, false, 'r', 65);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'l', 180);
-                else
-                    addArrow(index, 2, true, 'l', 120);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'u', 55);
-                addArrow(index, 2, false, 'd', 55);
-                addArrow(index, 2, false, 'u', 55);
-                addArrow(index, 2, false, 'd', 65);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'u', 180);
-                else
-                    addArrow(index, 2, true, 'u', 120);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'r', 55);
-                addArrow(index, 2, false, 'l', 55);
-                addArrow(index, 2, false, 'r', 55);
-                addArrow(index, 2, false, 'l', 65);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'r', 180);
-                else
-                    addArrow(index, 2, true, 'r', 120);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'd', 55);
-                addArrow(index, 2, false, 'u', 55);
-                addArrow(index, 2, false, 'd', 55);
-                addArrow(index, 2, false, 'u', 65);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'd', 180);
-                else
-                    addArrow(index, 2, true, 'd', 120);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[3], 55);
+        addArrow(index, 2, false, shiftedDirs[1], 55);
+        addArrow(index, 2, false, shiftedDirs[3], 55);
+        addArrow(index, 2, false, shiftedDirs[1], 65);
+        if(isLastEasy)
+            addArrow(index, 2, true, shiftedDirs[3], 180);
+        else
+            addArrow(index, 2, true, shiftedDirs[3], 120);
     }
     
     private void survivalAttackSixteen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'l', 75);
-                addArrow(index, 2, true, 'u', 45);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'd', 75);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'u', 120);
-                else
-                    addArrow(index, 2, true, 'u', 45);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'u', 75);
-                addArrow(index, 2, true, 'r', 45);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'l', 75);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'r', 120);
-                else
-                    addArrow(index, 2, true, 'r', 45);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'r', 75);
-                addArrow(index, 2, true, 'd', 45);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'r', 45);
-                addArrow(index, 2, false, 'u', 75);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'd', 120);
-                else
-                    addArrow(index, 2, true, 'd', 45);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'd', 75);
-                addArrow(index, 2, true, 'l', 45);
-                addArrow(index, 2, false, 'l', 45);
-                addArrow(index, 2, false, 'u', 45);
-                addArrow(index, 2, false, 'd', 45);
-                addArrow(index, 2, false, 'r', 75);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'l', 120);
-                else
-                    addArrow(index, 2, true, 'l', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[1], 45);
+        addArrow(index, 2, false, shiftedDirs[3], 75);
+        addArrow(index, 2, true, shiftedDirs[2], 45);
+        addArrow(index, 2, false, shiftedDirs[2], 45);
+        addArrow(index, 2, false, shiftedDirs[1], 45);
+        addArrow(index, 2, false, shiftedDirs[3], 45);
+        addArrow(index, 2, false, shiftedDirs[0], 75);
+        if(isLastEasy)
+            addArrow(index, 2, true, shiftedDirs[2], 120);
+        else
+            addArrow(index, 2, true, shiftedDirs[2], 45);
     }
     
     private void survivalAttackSeventeen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'r', 45);
-                addArrow(index, 3, false, 'u', 45);
-                addArrow(index, 3, false, 'l', 45);
-                addArrow(index, 3, false, 'd', 80);
-                addArrow(index, 3, true, 'l', 45);
-                addArrow(index, 3, true, 'd', 45);
-                addArrow(index, 3, true, 'r', 45);
-                if(isLastEasy)
-                    addArrow(index, 3, true, 'u', 120);
-                else
-                    addArrow(index, 3, true, 'u', 45);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'd', 45);
-                addArrow(index, 3, false, 'r', 45);
-                addArrow(index, 3, false, 'u', 45);
-                addArrow(index, 3, false, 'l', 80);
-                addArrow(index, 3, true, 'u', 45);
-                addArrow(index, 3, true, 'l', 45);
-                addArrow(index, 3, true, 'd', 45);
-                if(isLastEasy)
-                    addArrow(index, 3, true, 'r', 120);
-                else
-                    addArrow(index, 3, true, 'r', 45);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'l', 45);
-                addArrow(index, 3, false, 'd', 45);
-                addArrow(index, 3, false, 'r', 45);
-                addArrow(index, 3, false, 'u', 80);
-                addArrow(index, 3, true, 'r', 45);
-                addArrow(index, 3, true, 'u', 45);
-                addArrow(index, 3, true, 'l', 45);
-                if(isLastEasy)
-                    addArrow(index, 3, true, 'd', 120);
-                else
-                    addArrow(index, 3, true, 'd', 45);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'u', 45);
-                addArrow(index, 3, false, 'l', 45);
-                addArrow(index, 3, false, 'd', 45);
-                addArrow(index, 3, false, 'r', 80);
-                addArrow(index, 3, true, 'd', 45);
-                addArrow(index, 3, true, 'r', 45);
-                addArrow(index, 3, true, 'u', 45);
-                if(isLastEasy)
-                    addArrow(index, 3, true, 'l', 120);
-                else
-                    addArrow(index, 3, true, 'l', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[1], 45);
+        addArrow(index, 3, false, shiftedDirs[2], 45);
+        addArrow(index, 3, false, shiftedDirs[3], 45);
+        addArrow(index, 3, false, shiftedDirs[0], 80);
+        addArrow(index, 3, true, shiftedDirs[3], 45);
+        addArrow(index, 3, true, shiftedDirs[0], 45);
+        addArrow(index, 3, true, shiftedDirs[1], 45);
+        if(isLastEasy)
+            addArrow(index, 3, true, shiftedDirs[2], 120);
+        else
+            addArrow(index, 3, true, shiftedDirs[2], 45);
     }
     
     private void survivalAttackEighteen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, true, 'l', 33);
-                    addArrow(index, 2, true, 'd', 33);
-                    addArrow(index, 2, true, 'r', 33);
-                    addArrow(index, 2, true, 'u', 33);
-                }
-                addArrow(index, 2, true, 'l', 33);
-                addArrow(index, 2, true, 'd', 33);
-                addArrow(index, 2, true, 'r', 33);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'u', 120);
-                else
-                    addArrow(index, 2, true, 'u', 33);
-                break;
-            case 1:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, true, 'u', 33);
-                    addArrow(index, 2, true, 'l', 33);
-                    addArrow(index, 2, true, 'd', 33);
-                    addArrow(index, 2, true, 'r', 33);
-                }
-                addArrow(index, 2, true, 'u', 33);
-                addArrow(index, 2, true, 'l', 33);
-                addArrow(index, 2, true, 'd', 33);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'r', 120);
-                else
-                    addArrow(index, 2, true, 'r', 33);
-                break;
-            case 2:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, true, 'r', 33);
-                    addArrow(index, 2, true, 'u', 33);
-                    addArrow(index, 2, true, 'l', 33);
-                    addArrow(index, 2, true, 'd', 33);
-                }
-                addArrow(index, 2, true, 'r', 33);
-                addArrow(index, 2, true, 'u', 33);
-                addArrow(index, 2, true, 'l', 33);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'd', 120);
-                else
-                    addArrow(index, 2, true, 'd', 33);
-                break;
-            case 3:
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 2, true, 'd', 33);
-                    addArrow(index, 2, true, 'r', 33);
-                    addArrow(index, 2, true, 'u', 33);
-                    addArrow(index, 2, true, 'l', 33);
-                }
-                addArrow(index, 2, true, 'd', 33);
-                addArrow(index, 2, true, 'r', 33);
-                addArrow(index, 2, true, 'u', 33);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'l', 120);
-                else
-                    addArrow(index, 2, true, 'l', 33);
-                break;
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        for(int i = 0; i < 2; ++i) {
+            addArrow(index, 2, true, shiftedDirs[3], 33);
+            addArrow(index, 2, true, shiftedDirs[0], 33);
+            addArrow(index, 2, true, shiftedDirs[1], 33);
+            addArrow(index, 2, true, shiftedDirs[2], 33);
         }
+        addArrow(index, 2, true, shiftedDirs[3], 33);
+        addArrow(index, 2, true, shiftedDirs[0], 33);
+        addArrow(index, 2, true, shiftedDirs[1], 33);
+        if(isLastEasy)
+            addArrow(index, 2, true, shiftedDirs[2], 120);
+        else
+            addArrow(index, 2, true, shiftedDirs[2], 33);
     }
     
     private void survivalAttackNineteen(int index, int shift, boolean isLastEasy) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'r', 15);
-                addArrow(index, 2, false, 'r', 15);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, false, 'l', 25);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'r', 120);
-                else
-                    addArrow(index, 2, true, 'r', 45);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'd', 15);
-                addArrow(index, 2, false, 'd', 15);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, false, 'u', 25);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'd', 120);
-                else
-                    addArrow(index, 2, true, 'd', 45);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'l', 15);
-                addArrow(index, 2, false, 'l', 15);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, false, 'r', 25);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'l', 120);
-                else
-                    addArrow(index, 2, true, 'l', 45);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'u', 15);
-                addArrow(index, 2, false, 'u', 15);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, false, 'd', 25);
-                if(isLastEasy)
-                    addArrow(index, 2, true, 'u', 120);
-                else
-                    addArrow(index, 2, true, 'u', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 15);
+        addArrow(index, 2, false, shiftedDirs[1], 15);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, true, shiftedDirs[3], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, true, shiftedDirs[3], 30);
+        addArrow(index, 2, false, shiftedDirs[3], 25);
+        addArrow(index, 2, true, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[3], 25);
+        if(isLastEasy)
+            addArrow(index, 2, true, shiftedDirs[1], 120);
+        else
+            addArrow(index, 2, true, shiftedDirs[1], 45);
     }
     
     private void survivalAttackTwenty(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'd', 55);
-                addArrow(index, 2, false, 'd', 55);
-                addArrow(index, 2, false, 'd', 130);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'r', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'd', 120);
-                else
-                    addArrow(index, 5, false, 'd', 45);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'l', 55);
-                addArrow(index, 2, false, 'l', 55);
-                addArrow(index, 2, false, 'l', 130);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'd', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'l', 120);
-                else
-                    addArrow(index, 5, false, 'l', 45);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'u', 55);
-                addArrow(index, 2, false, 'u', 55);
-                addArrow(index, 2, false, 'u', 130);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'l', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'u', 120);
-                else
-                    addArrow(index, 5, false, 'u', 45);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'r', 55);
-                addArrow(index, 2, false, 'r', 55);
-                addArrow(index, 2, false, 'r', 130);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'r', 25);
-                addArrow(index, 5, false, 'u', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'd', 25);
-                addArrow(index, 5, false, 'l', 25);
-                addArrow(index, 5, false, 'u', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'r', 120);
-                else
-                    addArrow(index, 5, false, 'r', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[0], 55);
+        addArrow(index, 2, false, shiftedDirs[0], 55);
+        addArrow(index, 2, false, shiftedDirs[0], 130);
+        addArrow(index, 5, false, shiftedDirs[3], 25);
+        addArrow(index, 5, false, shiftedDirs[2], 25);
+        addArrow(index, 5, false, shiftedDirs[1], 25);
+        addArrow(index, 5, false, shiftedDirs[0], 25);
+        addArrow(index, 5, false, shiftedDirs[1], 25);
+        addArrow(index, 5, false, shiftedDirs[2], 25);
+        addArrow(index, 5, false, shiftedDirs[3], 25);
+        addArrow(index, 5, false, shiftedDirs[2], 25);
+        addArrow(index, 5, false, shiftedDirs[1], 25);
+        if(isLastHard)
+            addArrow(index, 5, false, shiftedDirs[0], 120);
+        else
+            addArrow(index, 5, false, shiftedDirs[0], 45);
     }
     
     private void survivalAttackTwentyOne(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 15);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 15);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                if(isLastHard)
-                    addArrow(index, 4, false, 'r', 120);
-                else
-                    addArrow(index, 4, false, 'r', 45);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 15);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 15);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                if(isLastHard)
-                    addArrow(index, 4, false, 'd', 120);
-                else
-                    addArrow(index, 4, false, 'd', 45);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 15);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 15);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, false, 'r', 25);
-                if(isLastHard)
-                    addArrow(index, 4, false, 'l', 120);
-                else
-                    addArrow(index, 4, false, 'l', 45);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 15);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 15);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, false, 'd', 25);
-                if(isLastHard)
-                    addArrow(index, 4, false, 'u', 120);
-                else
-                    addArrow(index, 4, false, 'u', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[1], 25);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, false, shiftedDirs[1], 15);
+        addArrow(index, 4, false, shiftedDirs[1], 25);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, false, shiftedDirs[1], 25);
+        addArrow(index, 4, false, shiftedDirs[3], 15);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, false, shiftedDirs[1], 25);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, false, shiftedDirs[1], 25);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        if(isLastHard)
+            addArrow(index, 4, false, shiftedDirs[1], 120);
+        else
+            addArrow(index, 4, false, shiftedDirs[1], 45);
     }
     
     private void survivalAttackTwentyTwo(int index, boolean isLastHard) {
@@ -1337,956 +713,264 @@ class Attacks {
     }
     
     private void survivalAttackTwentyThree(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 5, false, 'r', 10);
-                addArrow(index, 4, false, 'd', 40);
-                addArrow(index, 5, false, 'l', 10);
-                addArrow(index, 4, false, 'u', 35);
-                addArrow(index, 4, false, 'r', 1);
-                addArrow(index, 1, false, 'd', 30);
-                addArrow(index, 1, false, 'u', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'l', 120);
-                else
-                    addArrow(index, 5, false, 'l', 70);
-                break;
-            case 1:
-                addArrow(index, 5, false, 'd', 10);
-                addArrow(index, 4, false, 'l', 40);
-                addArrow(index, 5, false, 'u', 10);
-                addArrow(index, 4, false, 'r', 35);
-                addArrow(index, 4, false, 'd', 1);
-                addArrow(index, 1, false, 'l', 30);
-                addArrow(index, 1, false, 'r', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'u', 120);
-                else
-                    addArrow(index, 5, false, 'u', 70);
-                break;
-            case 2:
-                addArrow(index, 5, false, 'l', 10);
-                addArrow(index, 4, false, 'u', 40);
-                addArrow(index, 5, false, 'r', 10);
-                addArrow(index, 4, false, 'd', 35);
-                addArrow(index, 4, false, 'l', 1);
-                addArrow(index, 1, false, 'u', 30);
-                addArrow(index, 1, false, 'd', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'r', 120);
-                else
-                    addArrow(index, 5, false, 'r', 70);
-                break;
-            case 3:
-                addArrow(index, 5, false, 'u', 10);
-                addArrow(index, 4, false, 'r', 40);
-                addArrow(index, 5, false, 'd', 10);
-                addArrow(index, 4, false, 'l', 35);
-                addArrow(index, 4, false, 'u', 1);
-                addArrow(index, 1, false, 'r', 30);
-                addArrow(index, 1, false, 'l', 25);
-                if(isLastHard)
-                    addArrow(index, 5, false, 'd', 120);
-                else
-                    addArrow(index, 5, false, 'd', 70);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 5, false, shiftedDirs[1], 10);
+        addArrow(index, 4, false, shiftedDirs[0], 40);
+        addArrow(index, 5, false, shiftedDirs[3], 10);
+        addArrow(index, 4, false, shiftedDirs[2], 35);
+        addArrow(index, 4, false, shiftedDirs[1], 1);
+        addArrow(index, 1, false, shiftedDirs[0], 30);
+        addArrow(index, 1, false, shiftedDirs[2], 25);
+        if(isLastHard)
+            addArrow(index, 5, false, shiftedDirs[3], 120);
+        else
+            addArrow(index, 5, false, shiftedDirs[3], 70);
     }
     
     private void survivalAttackTwentyFour(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'u', 1);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'u', 45);
-                else
-                    addArrow(index, 3, true, 'u', 80);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'r', 1);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'r', 45);
-                else
-                    addArrow(index, 3, true, 'r', 80);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'd', 1);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'd', 45);
-                else
-                    addArrow(index, 3, true, 'd', 80);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'l', 1);
-                addArrow(index, 3, true, 'l', 80);
-                addArrow(index, 2, false, 'u', 1);
-                addArrow(index, 3, true, 'u', 80);
-                addArrow(index, 2, false, 'd', 1);
-                addArrow(index, 3, true, 'd', 80);
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'r', 1);
-                addArrow(index, 3, true, 'r', 80);
-                addArrow(index, 2, false, 'l', 1);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'l', 45);
-                else
-                    addArrow(index, 3, true, 'l', 80);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[0], 1);
+        addArrow(index, 3, true, shiftedDirs[0], 80);
+        addArrow(index, 2, false, shiftedDirs[1], 1);
+        addArrow(index, 3, true, shiftedDirs[1], 80);
+        addArrow(index, 2, false, shiftedDirs[2], 1);
+        addArrow(index, 3, true, shiftedDirs[2], 80);
+        addArrow(index, 2, false, shiftedDirs[1], 1);
+        addArrow(index, 3, true, shiftedDirs[1], 80);
+        addArrow(index, 2, false, shiftedDirs[3], 1);
+        addArrow(index, 3, true, shiftedDirs[3], 80);
+        addArrow(index, 2, false, shiftedDirs[0], 1);
+        addArrow(index, 3, true, shiftedDirs[0], 80);
+        addArrow(index, 2, false, shiftedDirs[0], 1);
+        addArrow(index, 3, true, shiftedDirs[0], 80);
+        addArrow(index, 2, false, shiftedDirs[2], 1);
+        if(isLastHard)
+            addArrow(index, 3, true, shiftedDirs[2], 45);
+        else
+            addArrow(index, 3, true, shiftedDirs[2], 80);
     }
     
     private void survivalAttackTwentyFive(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                for(int i = 0; i < 3; ++i) {
-                    addArrow(index, 3, false, 'r', 28);
-                    addArrow(index, 3, false, 'd', 28);
-                }
-                addArrow(index, 3, false, 'r', 28);
-                addArrow(index, 3, false, 'd', 50);
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 3, true, 'r', 28);
-                    addArrow(index, 3, true, 'd', 28);
-                }
-                addArrow(index, 3, true, 'r', 28);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'd', 120);
-                else
-                    addArrow(index, 3, true, 'd', 28);
-                break;
-            case 1:
-                for(int i = 0; i < 3; ++i) {
-                    addArrow(index, 3, false, 'd', 28);
-                    addArrow(index, 3, false, 'l', 28);
-                }
-                addArrow(index, 3, false, 'd', 28);
-                addArrow(index, 3, false, 'l', 50);
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 3, true, 'd', 28);
-                    addArrow(index, 3, true, 'l', 28);
-                }
-                addArrow(index, 3, true, 'd', 28);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'l', 120);
-                else
-                    addArrow(index, 3, true, 'l', 28);
-                break;
-            case 2:
-                for(int i = 0; i < 3; ++i) {
-                    addArrow(index, 3, false, 'l', 28);
-                    addArrow(index, 3, false, 'u', 28);
-                }
-                addArrow(index, 3, false, 'l', 28);
-                addArrow(index, 3, false, 'u', 50);
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 3, true, 'l', 28);
-                    addArrow(index, 3, true, 'u', 28);
-                }
-                addArrow(index, 3, true, 'l', 28);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'u', 120);
-                else
-                    addArrow(index, 3, true, 'u', 28);
-                break;
-            case 3:
-                for(int i = 0; i < 3; ++i) {
-                    addArrow(index, 3, false, 'u', 28);
-                    addArrow(index, 3, false, 'r', 28);
-                }
-                addArrow(index, 3, false, 'u', 28);
-                addArrow(index, 3, false, 'r', 50);
-                for(int i = 0; i < 2; ++i) {
-                    addArrow(index, 3, true, 'u', 28);
-                    addArrow(index, 3, true, 'r', 28);
-                }
-                addArrow(index, 3, true, 'u', 28);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'r', 120);
-                else
-                    addArrow(index, 3, true, 'r', 28);
-                break;
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        for(int i = 0; i < 3; ++i) {
+            addArrow(index, 3, false, shiftedDirs[1], 28);
+            addArrow(index, 3, false, shiftedDirs[0], 28);
         }
+        addArrow(index, 3, false, shiftedDirs[1], 28);
+        addArrow(index, 3, false, shiftedDirs[0], 50);
+        for(int i = 0; i < 2; ++i) {
+            addArrow(index, 3, true, shiftedDirs[1], 28);
+            addArrow(index, 3, true, shiftedDirs[0], 28);
+        }
+        addArrow(index, 3, true, shiftedDirs[1], 28);
+        if(isLastHard)
+            addArrow(index, 3, true, shiftedDirs[0], 120);
+        else
+            addArrow(index, 3, true, shiftedDirs[0], 28);
     }
     
     private void survivalAttackTwentySix(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'l', 50);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'l', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'd', 120);
-                else
-                    addArrow(index, 3, true, 'd', 35);
-                break;
-            case 1:
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'u', 50);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'u', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'l', 120);
-                else
-                    addArrow(index, 3, true, 'l', 35);
-                break;
-            case 2:
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'r', 50);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'r', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'u', 120);
-                else
-                    addArrow(index, 3, true, 'u', 35);
-                break;
-            case 3:
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'd', 50);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'd', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'r', 120);
-                else
-                    addArrow(index, 3, true, 'r', 35);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, true, shiftedDirs[3], 35);
+        addArrow(index, 3, true, shiftedDirs[0], 35);
+        addArrow(index, 3, true, shiftedDirs[1], 35);
+        addArrow(index, 3, true, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[0], 35);
+        addArrow(index, 3, false, shiftedDirs[1], 35);
+        addArrow(index, 3, false, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[3], 50);
+        addArrow(index, 3, true, shiftedDirs[2], 35);
+        addArrow(index, 3, true, shiftedDirs[1], 35);
+        addArrow(index, 3, true, shiftedDirs[3], 35);
+        if(isLastHard)
+            addArrow(index, 3, true, shiftedDirs[0], 120);
+        else
+            addArrow(index, 3, true, shiftedDirs[0], 35);
     }
     
     private void survivalAttackTwentySeven(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'u', 25);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'd', 120);
-                else
-                    addArrow(index, 2, true, 'd', 25);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'r', 25);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'l', 120);
-                else
-                    addArrow(index, 2, true, 'l', 25);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, false, 'd', 25);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'u', 120);
-                else
-                    addArrow(index, 2, true, 'u', 25);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'l', 25);
-                addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'r', 25);
-                addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, false, 'u', 25);
-                addArrow(index, 2, false, 'd', 25);
-                addArrow(index, 2, false, 'l', 25);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'r', 120);
-                else
-                    addArrow(index, 2, true, 'r', 25);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[3], 25);
+        addArrow(index, 2, false, shiftedDirs[0], 25);
+        addArrow(index, 2, true, shiftedDirs[2], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[3], 25);
+        addArrow(index, 2, false, shiftedDirs[2], 25);
+        addArrow(index, 2, true, shiftedDirs[0], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[3], 25);
+        addArrow(index, 2, false, shiftedDirs[0], 25);
+        addArrow(index, 2, true, shiftedDirs[2], 25);
+        addArrow(index, 2, false, shiftedDirs[1], 25);
+        addArrow(index, 2, false, shiftedDirs[3], 25);
+        addArrow(index, 2, false, shiftedDirs[2], 25);
+        if(isLastHard)
+            addArrow(index, 2, true, shiftedDirs[0], 120);
+        else
+            addArrow(index, 2, true, shiftedDirs[0], 25);
     }
     
     private void survivalAttackTwentyEight(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'r', 40);
-                addArrow(index, 2, true, 'r', 35);
-                addArrow(index, 2, false, 'u', 40);
-                addArrow(index, 2, true, 'u', 35);
-                addArrow(index, 2, false, 'l', 40);
-                addArrow(index, 2, true, 'l', 35);
-                addArrow(index, 2, false, 'd', 40);
-                addArrow(index, 2, true, 'd', 35);
-                addArrow(index, 2, false, 'r', 40);
-                addArrow(index, 2, true, 'r', 35);
-                addArrow(index, 2, false, 'u', 40);
-                addArrow(index, 2, true, 'u', 35);
-                addArrow(index, 2, false, 'l', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'l', 120);
-                else
-                    addArrow(index, 2, true, 'l', 35);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'd', 40);
-                addArrow(index, 2, true, 'd', 35);
-                addArrow(index, 2, false, 'r', 40);
-                addArrow(index, 2, true, 'r', 35);
-                addArrow(index, 2, false, 'u', 40);
-                addArrow(index, 2, true, 'u', 35);
-                addArrow(index, 2, false, 'l', 40);
-                addArrow(index, 2, true, 'l', 35);
-                addArrow(index, 2, false, 'd', 40);
-                addArrow(index, 2, true, 'd', 35);
-                addArrow(index, 2, false, 'r', 40);
-                addArrow(index, 2, true, 'r', 35);
-                addArrow(index, 2, false, 'u', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'u', 120);
-                else
-                    addArrow(index, 2, true, 'u', 35);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'l', 40);
-                addArrow(index, 2, true, 'l', 35);
-                addArrow(index, 2, false, 'd', 40);
-                addArrow(index, 2, true, 'd', 35);
-                addArrow(index, 2, false, 'r', 40);
-                addArrow(index, 2, true, 'r', 35);
-                addArrow(index, 2, false, 'u', 40);
-                addArrow(index, 2, true, 'u', 35);
-                addArrow(index, 2, false, 'l', 40);
-                addArrow(index, 2, true, 'l', 35);
-                addArrow(index, 2, false, 'd', 40);
-                addArrow(index, 2, true, 'd', 35);
-                addArrow(index, 2, false, 'r', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'r', 120);
-                else
-                    addArrow(index, 2, true, 'r', 35);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'u', 40);
-                addArrow(index, 2, true, 'u', 35);
-                addArrow(index, 2, false, 'l', 40);
-                addArrow(index, 2, true, 'l', 35);
-                addArrow(index, 2, false, 'd', 40);
-                addArrow(index, 2, true, 'd', 35);
-                addArrow(index, 2, false, 'r', 40);
-                addArrow(index, 2, true, 'r', 35);
-                addArrow(index, 2, false, 'u', 40);
-                addArrow(index, 2, true, 'u', 35);
-                addArrow(index, 2, false, 'l', 40);
-                addArrow(index, 2, true, 'l', 35);
-                addArrow(index, 2, false, 'd', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'd', 120);
-                else
-                    addArrow(index, 2, true, 'd', 35);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[1], 40);
+        addArrow(index, 2, true, shiftedDirs[1], 35);
+        addArrow(index, 2, false, shiftedDirs[2], 40);
+        addArrow(index, 2, true, shiftedDirs[2], 35);
+        addArrow(index, 2, false, shiftedDirs[3], 40);
+        addArrow(index, 2, true, shiftedDirs[3], 35);
+        addArrow(index, 2, false, shiftedDirs[0], 40);
+        addArrow(index, 2, true, shiftedDirs[0], 35);
+        addArrow(index, 2, false, shiftedDirs[1], 40);
+        addArrow(index, 2, true, shiftedDirs[1], 35);
+        addArrow(index, 2, false, shiftedDirs[2], 40);
+        addArrow(index, 2, true, shiftedDirs[2], 35);
+        addArrow(index, 2, false, shiftedDirs[3], 40);
+        if(isLastHard)
+            addArrow(index, 2, true, shiftedDirs[3], 120);
+        else
+            addArrow(index, 2, true, shiftedDirs[3], 35);
     }
     
     private void survivalAttackTwentyNine(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'r', 20);
-                if(isLastHard)
-                    addArrow(index, 3, false, 'l', 120);
-                else
-                    addArrow(index, 3, false, 'l', 20);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'd', 20);
-                if(isLastHard)
-                    addArrow(index, 3, false, 'u', 120);
-                else
-                    addArrow(index, 3, false, 'u', 20);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'l', 20);
-                if(isLastHard)
-                    addArrow(index, 3, false, 'r', 120);
-                else
-                    addArrow(index, 3, false, 'r', 20);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'r', 20);
-                addArrow(index, 3, false, 'd', 20);
-                addArrow(index, 3, false, 'u', 20);
-                addArrow(index, 3, false, 'l', 20);
-                addArrow(index, 3, false, 'u', 20);
-                if(isLastHard)
-                    addArrow(index, 3, false, 'd', 120);
-                else
-                    addArrow(index, 3, false, 'd', 20);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[0], 20);
+        addArrow(index, 3, false, shiftedDirs[3], 20);
+        addArrow(index, 3, false, shiftedDirs[1], 20);
+        addArrow(index, 3, false, shiftedDirs[2], 20);
+        addArrow(index, 3, false, shiftedDirs[0], 20);
+        addArrow(index, 3, false, shiftedDirs[3], 20);
+        addArrow(index, 3, false, shiftedDirs[1], 20);
+        addArrow(index, 3, false, shiftedDirs[2], 20);
+        addArrow(index, 3, false, shiftedDirs[1], 20);
+        if(isLastHard)
+            addArrow(index, 3, false, shiftedDirs[3], 120);
+        else
+            addArrow(index, 3, false, shiftedDirs[3], 20);
     }
     
     private void survivalAttackThirty(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'u', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'r', 120);
-                else
-                    addArrow(index, 3, true, 'r', 35);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'r', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'd', 120);
-                else
-                    addArrow(index, 3, true, 'd', 35);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'd', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'l', 120);
-                else
-                    addArrow(index, 3, true, 'l', 35);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'u', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'l', 35);
-                addArrow(index, 3, false, 'd', 35);
-                addArrow(index, 3, false, 'l', 35);
-                addArrow(index, 3, false, 'r', 35);
-                addArrow(index, 3, false, 'u', 35);
-                addArrow(index, 3, true, 'd', 35);
-                addArrow(index, 3, true, 'r', 35);
-                addArrow(index, 3, true, 'l', 35);
-                if(isLastHard)
-                    addArrow(index, 3, true, 'u', 120);
-                else
-                    addArrow(index, 3, true, 'u', 35);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[1], 35);
+        addArrow(index, 3, false, shiftedDirs[3], 35);
+        addArrow(index, 3, false, shiftedDirs[0], 35);
+        addArrow(index, 3, true, shiftedDirs[0], 35);
+        addArrow(index, 3, true, shiftedDirs[1], 35);
+        addArrow(index, 3, true, shiftedDirs[3], 35);
+        addArrow(index, 3, true, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[3], 35);
+        addArrow(index, 3, false, shiftedDirs[2], 35);
+        addArrow(index, 3, false, shiftedDirs[0], 35);
+        addArrow(index, 3, false, shiftedDirs[1], 35);
+        addArrow(index, 3, true, shiftedDirs[3], 35);
+        addArrow(index, 3, true, shiftedDirs[0], 35);
+        addArrow(index, 3, true, shiftedDirs[2], 35);
+        if(isLastHard)
+            addArrow(index, 3, true, shiftedDirs[1], 120);
+        else
+            addArrow(index, 3, true, shiftedDirs[1], 35);
     }
     
     private void survivalAttackThirtyOne(int index, int shift, boolean isLastHard) {
-        switch(shift) {
-            case 0:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'r', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'd', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'd', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'r', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'u', 120);
-                else
-                    addArrow(index, 2, true, 'u', 45);
-                break;
-            case 1:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'd', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'l', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'l', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'd', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'r', 120);
-                else
-                    addArrow(index, 2, true, 'r', 45);
-                break;
-            case 2:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'l', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'u', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'u', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'l', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'd', 120);
-                else
-                    addArrow(index, 2, true, 'd', 45);
-                break;
-            case 3:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'u', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'l', 40);
-                addArrow(index, 2, true, 'r', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'u', 40);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'r', 40);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'd', 40);
-                addArrow(index, 2, true, 'r', 40);
-                addArrow(index, 2, true, 'u', 40);
-                if(isLastHard)
-                    addArrow(index, 2, true, 'l', 120);
-                else
-                    addArrow(index, 2, true, 'l', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[0], 30);
+        addArrow(index, 2, true, shiftedDirs[0], 40);
+        addArrow(index, 2, true, shiftedDirs[2], 40);
+        addArrow(index, 2, true, shiftedDirs[1], 40);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[3], 30);
+        addArrow(index, 2, true, shiftedDirs[3], 40);
+        addArrow(index, 2, true, shiftedDirs[2], 40);
+        addArrow(index, 2, true, shiftedDirs[0], 40);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[1], 30);
+        addArrow(index, 2, true, shiftedDirs[1], 40);
+        addArrow(index, 2, true, shiftedDirs[3], 40);
+        addArrow(index, 2, true, shiftedDirs[0], 40);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[2], 30);
+        addArrow(index, 2, true, shiftedDirs[3], 40);
+        addArrow(index, 2, true, shiftedDirs[0], 40);
+        addArrow(index, 2, true, shiftedDirs[1], 40);
+        if(isLastHard)
+            addArrow(index, 2, true, shiftedDirs[2], 120);
+        else
+            addArrow(index, 2, true, shiftedDirs[2], 45);
     }
     
     private void survivalAttackThirtyTwo(int index, int shift) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'd', 20);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'l', 20);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'u', 20);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'r', 20);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[0], 20);
+        addArrow(index, 4, false, shiftedDirs[0], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[2], 20);
+        addArrow(index, 4, false, shiftedDirs[1], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[2], 20);
+        addArrow(index, 4, false, shiftedDirs[0], 20);
     }
     
     private void survivalAttackThirtyThree(int index, int shift) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'd', 27);
-                addArrow(index, 4, false, 'd', 27);
-                addArrow(index, 4, true, 'd', 27);
-                addArrow(index, 4, true, 'l', 27);
-                addArrow(index, 4, false, 'l', 27);
-                addArrow(index, 4, false, 'r', 27);
-                addArrow(index, 4, true, 'u', 27);
-                addArrow(index, 4, true, 'r', 27);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'l', 27);
-                addArrow(index, 4, false, 'l', 27);
-                addArrow(index, 4, true, 'l', 27);
-                addArrow(index, 4, true, 'u', 27);
-                addArrow(index, 4, false, 'u', 27);
-                addArrow(index, 4, false, 'd', 27);
-                addArrow(index, 4, true, 'r', 27);
-                addArrow(index, 4, true, 'd', 27);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'u', 27);
-                addArrow(index, 4, false, 'u', 27);
-                addArrow(index, 4, true, 'u', 27);
-                addArrow(index, 4, true, 'r', 27);
-                addArrow(index, 4, false, 'r', 27);
-                addArrow(index, 4, false, 'l', 27);
-                addArrow(index, 4, true, 'd', 27);
-                addArrow(index, 4, true, 'l', 27);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'r', 27);
-                addArrow(index, 4, false, 'r', 27);
-                addArrow(index, 4, true, 'r', 27);
-                addArrow(index, 4, true, 'd', 27);
-                addArrow(index, 4, false, 'd', 27);
-                addArrow(index, 4, false, 'u', 27);
-                addArrow(index, 4, true, 'l', 27);
-                addArrow(index, 4, true, 'u', 27);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[0], 27);
+        addArrow(index, 4, false, shiftedDirs[0], 27);
+        addArrow(index, 4, true, shiftedDirs[0], 27);
+        addArrow(index, 4, true, shiftedDirs[3], 27);
+        addArrow(index, 4, false, shiftedDirs[3], 27);
+        addArrow(index, 4, false, shiftedDirs[1], 27);
+        addArrow(index, 4, true, shiftedDirs[2], 27);
+        addArrow(index, 4, true, shiftedDirs[1], 27);
     }
     
     private void survivalAttackThirtyFour(int index, int shift) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'd', 15);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'l', 15);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'r', 45);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'l', 15);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'u', 15);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'd', 45);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'u', 15);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'r', 15);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'l', 45);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'r', 15);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'd', 15);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'l', 20);
-                addArrow(index, 4, false, 'd', 20);
-                addArrow(index, 4, false, 'u', 20);
-                addArrow(index, 4, false, 'r', 20);
-                addArrow(index, 4, false, 'u', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[1], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[0], 15);
+        addArrow(index, 4, false, shiftedDirs[1], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[2], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 15);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[2], 20);
+        addArrow(index, 4, false, shiftedDirs[3], 20);
+        addArrow(index, 4, false, shiftedDirs[1], 20);
+        addArrow(index, 4, false, shiftedDirs[0], 20);
+        addArrow(index, 4, false, shiftedDirs[1], 45);
     }
     
     private void survivalAttackThirtyFive(int index, int shift) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                break;
-            case 1:
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                break;
-            case 2:
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                break;
-            case 3:
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                addArrow(index, 4, false, 'u', 25);
-                addArrow(index, 4, true, 'u', 35);
-                addArrow(index, 4, false, 'd', 25);
-                addArrow(index, 4, true, 'd', 35);
-                addArrow(index, 4, false, 'l', 25);
-                addArrow(index, 4, true, 'l', 35);
-                addArrow(index, 4, false, 'r', 25);
-                addArrow(index, 4, true, 'r', 35);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 4, false, shiftedDirs[2], 25);
+        addArrow(index, 4, true, shiftedDirs[2], 35);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, true, shiftedDirs[3], 35);
+        addArrow(index, 4, false, shiftedDirs[0], 25);
+        addArrow(index, 4, true, shiftedDirs[0], 35);
+        addArrow(index, 4, false, shiftedDirs[1], 25);
+        addArrow(index, 4, true, shiftedDirs[1], 35);
+        addArrow(index, 4, false, shiftedDirs[3], 25);
+        addArrow(index, 4, true, shiftedDirs[3], 35);
+        addArrow(index, 4, false, shiftedDirs[2], 25);
+        addArrow(index, 4, true, shiftedDirs[2], 35);
+        addArrow(index, 4, false, shiftedDirs[0], 25);
+        addArrow(index, 4, true, shiftedDirs[0], 35);
     }
     
     private void survivalAttackThirtySix(int index) {
@@ -2301,80 +985,24 @@ class Attacks {
     }
     
     private void survivalAttackThirtySeven(int index, int shift) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, true, 'u', 33);
-                break;
-            case 1:
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, true, 'r', 33);
-                break;
-            case 2:
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, true, 'd', 33);
-                break;
-            case 3:
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, false, 'd', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, true, 'd', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, false, 'r', 33);
-                addArrow(index, 3, false, 'u', 33);
-                addArrow(index, 3, false, 'l', 33);
-                addArrow(index, 3, true, 'u', 33);
-                addArrow(index, 3, true, 'l', 33);
-                addArrow(index, 3, true, 'r', 33);
-                addArrow(index, 3, true, 'l', 33);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 3, false, shiftedDirs[1], 33);
+        addArrow(index, 3, false, shiftedDirs[0], 33);
+        addArrow(index, 3, false, shiftedDirs[1], 33);
+        addArrow(index, 3, false, shiftedDirs[3], 33);
+        addArrow(index, 3, true, shiftedDirs[1], 33);
+        addArrow(index, 3, true, shiftedDirs[0], 33);
+        addArrow(index, 3, true, shiftedDirs[1], 33);
+        addArrow(index, 3, true, shiftedDirs[3], 33);
+        addArrow(index, 3, false, shiftedDirs[2], 33);
+        addArrow(index, 3, false, shiftedDirs[0], 33);
+        addArrow(index, 3, false, shiftedDirs[1], 33);
+        addArrow(index, 3, false, shiftedDirs[2], 33);
+        addArrow(index, 3, true, shiftedDirs[1], 33);
+        addArrow(index, 3, true, shiftedDirs[2], 33);
+        addArrow(index, 3, true, shiftedDirs[0], 33);
+        addArrow(index, 3, true, shiftedDirs[2], 33);
     }
     
     private void survivalAttackThirtyEight(int index) {
@@ -2430,165 +1058,47 @@ class Attacks {
     }
     
     private void survivalAttackFortyTwo(int index, int shift) {
-        switch(shift) {
-            case 0:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'r', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'd', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'd', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'u', 45);
-                break;
-            case 1:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'd', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'l', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'l', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'r', 45);
-                break;
-            case 2:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'l', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'u', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'u', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'd', 45);
-                break;
-            case 3:
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'r', 25);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'u', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'd', 25);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'l', 30);
-                addArrow(index, 2, true, 'r', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'u', 25);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'r', 30);
-                for(int i = 0; i < 6; ++i)
-                    addArrow(index, 2, true, 'l', 25);
-                addArrow(index, 2, true, 'd', 30);
-                addArrow(index, 2, true, 'r', 30);
-                addArrow(index, 2, true, 'u', 30);
-                addArrow(index, 2, true, 'l', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[0], 25);
+        addArrow(index, 2, true, shiftedDirs[0], 30);
+        addArrow(index, 2, true, shiftedDirs[2], 30);
+        addArrow(index, 2, true, shiftedDirs[1], 30);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[3], 25);
+        addArrow(index, 2, true, shiftedDirs[3], 30);
+        addArrow(index, 2, true, shiftedDirs[2], 30);
+        addArrow(index, 2, true, shiftedDirs[0], 30);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[1], 25);
+        addArrow(index, 2, true, shiftedDirs[1], 30);
+        addArrow(index, 2, true, shiftedDirs[3], 30);
+        addArrow(index, 2, true, shiftedDirs[0], 30);
+        for(int i = 0; i < 6; ++i)
+            addArrow(index, 2, true, shiftedDirs[2], 25);
+        addArrow(index, 2, true, shiftedDirs[3], 30);
+        addArrow(index, 2, true, shiftedDirs[0], 30);
+        addArrow(index, 2, true, shiftedDirs[1], 30);
+        addArrow(index, 2, true, shiftedDirs[2], 45);
     }
     
     private void survivalAttackFortyThree(int index, int shift) {
-        switch(shift) {
-            case 0:
-                addArrow(index, 2, false, 'd', 50);
-                addArrow(index, 2, false, 'd', 50);
-                addArrow(index, 2, false, 'd', 125);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'd', 45);
-                break;
-            case 1:
-                addArrow(index, 2, false, 'l', 50);
-                addArrow(index, 2, false, 'l', 50);
-                addArrow(index, 2, false, 'l', 125);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'l', 45);
-                break;
-            case 2:
-                addArrow(index, 2, false, 'u', 50);
-                addArrow(index, 2, false, 'u', 50);
-                addArrow(index, 2, false, 'u', 125);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'u', 45);
-                break;
-            case 3:
-                addArrow(index, 2, false, 'r', 50);
-                addArrow(index, 2, false, 'r', 50);
-                addArrow(index, 2, false, 'r', 125);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'r', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'd', 20);
-                addArrow(index, 5, false, 'l', 20);
-                addArrow(index, 5, false, 'u', 20);
-                addArrow(index, 5, false, 'r', 45);
-                break;
-        }
+        char[] shiftedDirs = DIRS.clone();
+        shiftDirs(shiftedDirs, shift);
+        addArrow(index, 2, false, shiftedDirs[0], 50);
+        addArrow(index, 2, false, shiftedDirs[0], 50);
+        addArrow(index, 2, false, shiftedDirs[0], 125);
+        addArrow(index, 5, false, shiftedDirs[3], 20);
+        addArrow(index, 5, false, shiftedDirs[2], 20);
+        addArrow(index, 5, false, shiftedDirs[1], 20);
+        addArrow(index, 5, false, shiftedDirs[0], 20);
+        addArrow(index, 5, false, shiftedDirs[1], 20);
+        addArrow(index, 5, false, shiftedDirs[2], 20);
+        addArrow(index, 5, false, shiftedDirs[3], 20);
+        addArrow(index, 5, false, shiftedDirs[2], 20);
+        addArrow(index, 5, false, shiftedDirs[1], 20);
+        addArrow(index, 5, false, shiftedDirs[0], 45);
     }
     
     private void easyAttackOne() {
@@ -2609,8 +1119,10 @@ class Attacks {
     
     private void easyAttackThree() {
         for(int i = 0; i < 2; ++i) {
-            for(char c : DIRS)
-                addArrow(2, 2, false, c, 50);
+            addArrow(2, 2, false, 'u', 50);
+            addArrow(2, 2, false, 'd', 50);
+            addArrow(2, 2, false, 'l', 50);
+            addArrow(2, 2, false, 'r', 50);
         }
     }
     

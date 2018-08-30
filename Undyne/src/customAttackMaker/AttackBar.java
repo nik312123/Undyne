@@ -16,6 +16,7 @@ public class AttackBar {
     static final int ATTACKBAR_X = 30;
     
     private boolean isDropped = true;
+    private boolean orientationShift = false;
     
     private Rectangle dropDownButton = new Rectangle();
     private Rectangle deleteAttack = new Rectangle();
@@ -107,33 +108,36 @@ public class AttackBar {
             y += 30;
             CustomAttacks.dynamicLength += 30;
         }
-        
         if(beingDragged != -1) {
-            
-            if(arrows.get(beingDragged).getOrderIntersecton().intersects(topBound) || arrows.get(beingDragged).getOrderIntersecton().intersects(bottomBound)) {
-                beingDragged = -1;
+            Rectangle orderIntersection = arrows.get(beingDragged).getOrderIntersecton();
+            if(orderIntersection.intersects(topBound) || orderIntersection.intersects(bottomBound))
+                return counter;
+            g.setColor(Color.BLACK);
+            g.fillRect(41, arrows.get(beingDragged).getY() + 3, 415, 22);
+            arrows.get(beingDragged).draw(g, x + 10, y);
+            if(orderIntersection.intersects(upScrollRect)) {
+                CustomAttacks.scrollValue += 0.5;
+                order();
             }
-            
-            if(beingDragged != -1) {
-                g.setColor(Color.BLACK);
-                g.fillRect(41, arrows.get(beingDragged).getY() + 3, 415, 22);
-                arrows.get(beingDragged).draw(g, x + 10, y);
-                if(arrows.get(beingDragged).getOrderIntersecton().intersects(upScrollRect)) {
-                    CustomAttacks.scrollValue += 0.5;
-                    order();
-                }
-                if(arrows.get(beingDragged).getOrderIntersecton().intersects(downScrollRect)) {
-                    CustomAttacks.scrollValue -= 0.5;
-                    order();
-                }
+            else if(orderIntersection.intersects(downScrollRect)) {
+                CustomAttacks.scrollValue -= 0.5;
+                order();
             }
-            
+    
         }
         return counter;
     }
     
+    void switchOrientationShift() {
+        orientationShift = !orientationShift;
+    }
+    
+    public boolean isOrientationShift() {
+        return orientationShift;
+    }
+    
     int mouseClickWork() {
-        boolean anySelected = areAnyDirectionsSelected();
+        boolean anySelected = CustomAttacks.areAnyDirectionsSelected();
         if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
             StartScreen.playClick();
             ArrayList<AttackBar> attacks = CustomAttacks.attacks;
@@ -207,16 +211,6 @@ public class AttackBar {
                 }
             }
         }
-    }
-    
-    public static boolean areAnyDirectionsSelected() {
-        for(AttackBar at : CustomAttacks.attacks) {
-            for(ArrowBar ab : at.getArrows()) {
-                if(ab.isDirectionSelected())
-                    return true;
-            }
-        }
-        return false;
     }
     
 }
