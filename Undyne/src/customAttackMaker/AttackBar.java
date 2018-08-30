@@ -1,6 +1,7 @@
 package customAttackMaker;
 
 import defense.Runner;
+import defense.StartScreen;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -134,6 +135,7 @@ public class AttackBar {
     int mouseClickWork() {
         boolean anySelected = areAnyDirectionsSelected();
         if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
+            StartScreen.playClick();
             ArrayList<AttackBar> attacks = CustomAttacks.attacks;
             AttackBar attBar = attacks.get(number);
             for(ArrowBar arrBar : attBar.getArrows())
@@ -141,21 +143,30 @@ public class AttackBar {
             attacks.remove(number);
             return 1;
         }
-        else if(dropDownButton.contains(CustomAttacks.mousePosition))
+        else if(dropDownButton.contains(CustomAttacks.mousePosition)) {
+            StartScreen.playClick();
             isDropped = !isDropped;
-        else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected)
+        }
+        else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected) {
+            StartScreen.playClick();
             arrows.add(new ArrowBar(0, false, 'u', 0));
+        }
         for(int i = 0; i < arrows.size(); ++i) {
             ArrowBar ab = arrows.get(i);
-            if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition))
+            if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition)) {
+                StartScreen.playClick();
                 ab.switchDirectionIsSelected();
+            }
             else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
+                StartScreen.playClick();
                 ab.removeFields();
                 arrows.remove(i);
                 --i;
             }
-            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected)
+            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected) {
+                StartScreen.playClick();
                 ab.switchReversable();
+            }
         }
         return 0;
     }

@@ -7,11 +7,12 @@ import javax.swing.InputMap;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.text.Highlighter;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.IOException;
 import java.awt.geom.AffineTransform;
 
@@ -37,8 +38,6 @@ public class ArrowBar {
     private NumberField speedField;
     private NumberField delayField;
     
-    private Highlighter defaultHighlighter;
-    
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
         this.reverseable = reverseable;
@@ -46,7 +45,8 @@ public class ArrowBar {
         this.delay = delay;
         Color foreground = new Color(255, 196, 0);
         try {
-            speedField = new NumberField(2, NumberField.STATE_NORMAL, false) {
+            speedField = new NumberFieldFocus(2, NumberField.STATE_NORMAL, false) {
+                
                 @Override
                 public void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -57,7 +57,8 @@ public class ArrowBar {
                 }
             };
             
-            delayField = new NumberField(3, NumberField.STATE_NORMAL, false) {
+            delayField = new NumberFieldFocus(3, NumberField.STATE_NORMAL, false) {
+                
                 @Override
                 public void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -83,9 +84,31 @@ public class ArrowBar {
             speedField.setHorizontalAlignment(JTextField.CENTER);
             delayField.setHorizontalAlignment(JTextField.CENTER);
             
+            speedField.setHighlighter(null);
+            delayField.setHighlighter(null);
+            
+            FocusListener numberFieldListener = new FocusListener() {
+                
+                @Override
+                public void focusGained(FocusEvent e) {
+                    NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
+                    Runner.setFocusedField(nf);
+                    nf.setFocused(true);
+                }
+                
+                @Override
+                public void focusLost(FocusEvent e) {
+                    NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
+                    nf.setFocused(false);
+                }
+            };
+            
+            speedField.addFocusListener(numberFieldListener);
+            delayField.addFocusListener(numberFieldListener);
+            
             speedField.setBounds(AttackBar.ATTACKBAR_X + 6 + 183, y + 7, 34, 13);
             delayField.setBounds(AttackBar.ATTACKBAR_X + 6 + 277, y + 7, 34, 13);
-    
+            
             if(speed != 0)
                 speedField.setText(Integer.toString(speed));
             if(delay != 0)
@@ -97,6 +120,23 @@ public class ArrowBar {
         
         Runner.addComponent(speedField, 9);
         Runner.addComponent(delayField, 9);
+    }
+    
+    public class NumberFieldFocus extends NumberField {
+        
+        private boolean focused = false;
+        
+        NumberFieldFocus(int limit, int state, boolean negativesAllowed) throws IOException {
+            super(limit, state, negativesAllowed);
+        }
+        
+        void setFocused(boolean focused) {
+            this.focused = focused;
+        }
+        
+        public boolean getFocused() {
+            return focused;
+        }
     }
     
     void removeFields() {
@@ -297,19 +337,14 @@ public class ArrowBar {
     private void setFieldUsability(boolean usable) {
         if(usable) {
             speedField.setEditable(true);
-            speedField.setHighlighter(defaultHighlighter);
             speedField.setCaretColor(Color.WHITE);
             delayField.setEditable(true);
-            delayField.setHighlighter(defaultHighlighter);
             delayField.setCaretColor(Color.WHITE);
         }
         else {
-            defaultHighlighter = speedField.getHighlighter();
             speedField.setEditable(false);
-            speedField.setHighlighter(null);
             speedField.setCaretColor(Color.BLACK);
             delayField.setEditable(false);
-            delayField.setHighlighter(null);
             delayField.setCaretColor(Color.BLACK);
         }
     }
