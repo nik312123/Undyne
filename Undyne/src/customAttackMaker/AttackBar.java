@@ -20,6 +20,7 @@ public class AttackBar {
     
     private Rectangle dropDownButton = new Rectangle();
     private Rectangle deleteAttack = new Rectangle();
+    private Rectangle orientationShiftButton = new Rectangle();
     private Rectangle newArrowButton = new Rectangle();
     private Rectangle topBound = new Rectangle();
     private Rectangle bottomBound = new Rectangle();
@@ -54,6 +55,7 @@ public class AttackBar {
         g2.setColor(Color.GREEN);
         drawString(g, x, y);
         deleteAttackButton(g, x, y);
+        orientationShiftButton(g, x, y);
         dropDownButton(g, x, y);
         if(isDropped) {
             topBound.setBounds(0, y + 10, 600, 1);
@@ -77,8 +79,20 @@ public class AttackBar {
     
     private void deleteAttackButton(Graphics g, int x, int y) {
         int displayNum = number + 1;
-        g.drawImage(Runner.deleteAttack, 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70, y - 16, null);
-        deleteAttack.setBounds(x + 130, y - 16, 44, 17);
+        int deleteAttackX = 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70 + 36, deleteAttackY = y - 16;
+        g.drawImage(Runner.deleteAttack, deleteAttackX, deleteAttackY, null);
+        deleteAttack.setBounds(deleteAttackX, deleteAttackY, 44, 17);
+    }
+    
+    private void orientationShiftButton(Graphics g, int x, int y) {
+        int displayNum = number + 1;
+        int orientationShiftX = 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70, orientationShiftY = y - 17;
+        if(orientationShift) {
+            g.setColor(Color.GREEN);
+            g.fillRect(orientationShiftX + 1, orientationShiftY + 1, 21 - 2, 19 - 2);
+        }
+        g.drawImage(Runner.orientationShiftButton, orientationShiftX, orientationShiftY, null);
+        orientationShiftButton.setBounds(orientationShiftX, orientationShiftY, 21, 19);
     }
     
     private void newArrowButton(Graphics g, int x, int y) {
@@ -146,6 +160,10 @@ public class AttackBar {
                 arrBar.removeFields();
             attacks.remove(number);
             return 1;
+        }
+        else if(orientationShiftButton.contains(CustomAttacks.mousePosition) && !anySelected) {
+            StartScreen.playClick();
+            switchOrientationShift();
         }
         else if(dropDownButton.contains(CustomAttacks.mousePosition)) {
             StartScreen.playClick();

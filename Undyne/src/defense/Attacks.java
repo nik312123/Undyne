@@ -37,8 +37,6 @@ class Attacks {
             shiftDirs(shiftedDirs, shift);
             for(ArrowBar ar : at.getArrows()) {
                 char dir = ar.getDirection();
-                if(dir == 'n')
-                    dir = DIRS[rand.nextInt(4)];
                 switch(dir) {
                     case 'd':
                         dir = shiftedDirs[0];
@@ -52,6 +50,8 @@ class Attacks {
                     case 'l':
                         dir = shiftedDirs[3];
                         break;
+                    case 'n':
+                        dir = DIRS[rand.nextInt(4)];
                 }
                 int delay = ar.getDelay();
                 if(delay < 1 || delay > 999) {

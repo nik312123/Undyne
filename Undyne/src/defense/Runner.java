@@ -170,6 +170,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static BufferedImage exportButtonDisabled;
     public static BufferedImage bottomTabUp;
     public static BufferedImage bottomTabDown;
+    public static BufferedImage orientationShiftButton;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
@@ -340,6 +341,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             exportButton = getCompatibleImage("/bottomBar/exportButton.png");
             exportButtonDisabled = getCompatibleImage("/bottomBar/exportButtonDisabled.png");
             bottomTabDown = getCompatibleImage("/bottomBar/tabDown.png");
+            orientationShiftButton = getCompatibleImage("/orientationShiftButton.png");
             bottomTabUp = getCompatibleImage("/bottomBar/tabUp.png");
             numberFieldGlow = getCompatibleImage("/numberFieldGlow.png");
             for(int i = 0; i < 48; ++i)
