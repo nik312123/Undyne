@@ -66,7 +66,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static final long serialVersionUID = 1L;
     
     private static int nothingCounter = 0;
-    private static int DELAY = 10;
+    private static int delay = 10;
     private static int breakCount = 0;
     private static int breakFrame = 0;
     private static int flickeringHeart = 0;
@@ -123,9 +123,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static final String NOTHING = "bad time";
     private static String typed = "";
     private static String activated = "";
-    private static final String[] easyMessage = {"You did well...      ", "only because", "I went easy."};
-    private static final String[] mediumMessage = {"Not bad, punk!", "Let me go", "harder on you."};
-    private static final String[] hardMessage = {"You really are", "something, human.", "Nice job!"};
+    private static final String[] EASY_MESSAGE = {"You did well...      ", "only because", "I went easy."};
+    private static final String[] MEDIUM_MESSAGE = {"Not bad, punk!", "Let me go", "harder on you."};
+    private static final String[] HARD_MESSAGE = {"You really are", "something, human.", "Nice job!"};
     private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
     
     private static Timer timer;
@@ -170,6 +170,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static BufferedImage exportButtonDisabled;
     public static BufferedImage bottomTabUp;
     public static BufferedImage bottomTabDown;
+    public static BufferedImage orientationShiftButton;
     private static BufferedImage[] heartBreak;
     private static BufferedImage[] gameOver;
     private static BufferedImage[] levels = new BufferedImage[4];
@@ -340,6 +341,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             exportButton = getCompatibleImage("/bottomBar/exportButton.png");
             exportButtonDisabled = getCompatibleImage("/bottomBar/exportButtonDisabled.png");
             bottomTabDown = getCompatibleImage("/bottomBar/tabDown.png");
+            orientationShiftButton = getCompatibleImage("/orientationShiftButton.png");
             bottomTabUp = getCompatibleImage("/bottomBar/tabUp.png");
             numberFieldGlow = getCompatibleImage("/numberFieldGlow.png");
             for(int i = 0; i < 48; ++i)
@@ -365,7 +367,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         Runner runner = new Runner();
         runner.setBounds(0, 0, 600, 600);
         
-        timer = new Timer(DELAY, runner);
+        timer = new Timer(delay, runner);
         timer.setActionCommand("main");
         timer.start();
         oneSecondDelay = new Timer(1000, runner);
@@ -755,40 +757,42 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         setUpKeyBindings(runner);
         
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-            private Point pressLocation, releaseLocation;
+        if(isFirstTime) {
+            Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+                private Point pressLocation, releaseLocation;
+        
+                private long pressTime = 0;
+        
+                @Override
+                public void eventDispatched(AWTEvent event) {
+                    MouseEvent e = (MouseEvent) event;
             
-            private long pressTime = 0;
-            
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                MouseEvent e = (MouseEvent) event;
-                
-                switch(e.getID()) {
-                    case MouseEvent.MOUSE_PRESSED:
-                        pressLocation = new Point(e.getX(), e.getY());
-                        pressTime = System.nanoTime();
-                        customAttackMaker.mousePressed();
-                        break;
-                    case MouseEvent.MOUSE_RELEASED:
-                        releaseLocation = new Point(e.getX(), e.getY());
-                        long time = (System.nanoTime() - pressTime) / 1000000;
-                        if(time <= 750 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
-                            MouseEvent clickEvent = new MouseEvent(frame, MouseEvent.MOUSE_CLICKED, System.nanoTime(), 0, pressLocation.x, pressLocation.y, 1, false);
-                            if(!CustomAttacks.isFileBeingChosen()) {
-                                barCheckBoxClicked(clickEvent);
-                                if(canBeStopped)
-                                    bottomBar.mouseWorks(clickEvent.getPoint());
-                                customAttackMaker.mouseClicked();
+                    switch(e.getID()) {
+                        case MouseEvent.MOUSE_PRESSED:
+                            pressLocation = new Point(e.getX(), e.getY());
+                            pressTime = System.nanoTime();
+                            customAttackMaker.mousePressed();
+                            break;
+                        case MouseEvent.MOUSE_RELEASED:
+                            releaseLocation = new Point(e.getX(), e.getY());
+                            long time = (System.nanoTime() - pressTime) / 1000000;
+                            if(time <= 750 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
+                                MouseEvent clickEvent = new MouseEvent(frame, MouseEvent.MOUSE_CLICKED, System.nanoTime(), 0, pressLocation.x, pressLocation.y, 1, false);
+                                if(!CustomAttacks.isFileBeingChosen()) {
+                                    barCheckBoxClicked(clickEvent);
+                                    if(canBeStopped)
+                                        bottomBar.mouseWorks(clickEvent.getPoint());
+                                    customAttackMaker.mouseClicked();
+                                }
+                                if(!beginning || !StartScreen.isLoaded)
+                                    checkFocus.deactivateJustFocused();
                             }
-                            if(!beginning || !StartScreen.isLoaded)
-                                checkFocus.deactivateJustFocused();
-                        }
-                        customAttackMaker.mouseReleased();
-                        break;
+                            customAttackMaker.mouseReleased();
+                            break;
+                    }
                 }
-            }
-        }, AWTEvent.MOUSE_EVENT_MASK);
+            }, AWTEvent.MOUSE_EVENT_MASK);
+        }
         
         bottomBar.setBounds(0, 548, 600, 52);
         
@@ -1164,7 +1168,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
     
     private void drawFieldFocus(Graphics g) {
-        if(focused != null && focused.getFocused() && !AttackBar.areAnyDirectionsSelected())
+        if(focused != null && focused.getFocused() && !CustomAttacks.areAnyDirectionsSelected())
             g.drawImage(numberFieldGlow, -(numberFieldGlow.getWidth() - 30) / 2 + focused.getX() + 1, -(numberFieldGlow.getWidth() - 16) / 2 + focused.getY() + 5, null);
     }
     
@@ -1429,11 +1433,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         g2d.setColor(Color.BLACK);
         String[] message;
         if(isGenocide)
-            message = hardMessage;
+            message = HARD_MESSAGE;
         else if(stage.isMedium())
-            message = mediumMessage;
+            message = MEDIUM_MESSAGE;
         else
-            message = easyMessage;
+            message = EASY_MESSAGE;
         String print = "";
         int speechTextX = speechX + 30 - (isGenocide ? 8 : 0);
         if(speechCounter < message[0].length() + 1) {
@@ -1572,6 +1576,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         dir = 'u';
         typed = "";
         activated = "";
+        delay = 10;
         fadeStart = 0;
         nothingCounter = 0;
         breakCount = 0;
@@ -1591,6 +1596,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         mainIndex = 0;
         levelIndex = 0;
         lastAttack = 1;
+        loadingCounter = 0;
+        loadingFrame = 0;
+        customAttacksCounter = 0;
         isGenocide = false;
         survival = false;
         heartDone = false;
@@ -1601,10 +1609,18 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         automatic = false;
         isGameOver = false;
         switchFade = false;
-        allStopped = false;
         isFirstTime = false;
         speechDone = false;
+        helpStarter = false;
+        isPlayTimerDone = false;
+        isStopTimerDone = false;
+        isStartTimerDone = false;
+        isOpenCreatorTimerDone = false;
+        isCloseCreatorTimerDone = false;
+        isCustomAttack = false;
+        canBeStopped = false;
         timer = null;
+        oneSecondDelay = null;
         gif = null;
         main = null;
         closeButton = null;
@@ -1615,12 +1631,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         helpButton = null;
         playButton = null;
         creatorButton = null;
+        focused = null;
+        checkFocus = null;
         a1 = null;
         a = null;
         frame.dispose();
         frame = null;
         stage = new StartScreen();
         p = new Player();
+        loading = null;
+        topBar = null;
         allStopped = false;
         System.gc();
         try {
@@ -1678,7 +1698,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 }
                 a1 = new Attack(new ArrayList<>(), a);
                 a.setAttack(a1);
-                DELAY = 10;
+                delay = 10;
                 canBeStopped = true;
                 setUpUndyne(bottomBar.isGenocideBoxChecked());
                 beginning = false;
@@ -1725,10 +1745,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 isCustomAttack = !isCustomAttack;
                 beginning = !beginning;
                 moveButtons(!beginning);
-                if(DELAY == 10)
-                    DELAY = 0;
+                if(delay == 10)
+                    delay = 0;
                 else
-                    DELAY = 10;
+                    delay = 10;
                 creatorMusic.play();
                 isOpenCreatorTimerDone = false;
             }
@@ -1744,7 +1764,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 isCloseCreatorTimerDone = true;
             }
             else {
-                DELAY = 10;
+                delay = 10;
                 isCustomAttack = false;
                 beginning = true;
                 isCloseCreatorTimerDone = false;
@@ -1891,7 +1911,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     stage.setHeartX(5);
                     stage.setHeartY(72);
                 }
-                else if(isCustomAttack && !oneSecondDelay.isRunning() && !AttackBar.areAnyDirectionsSelected()) {
+                else if(isCustomAttack && !oneSecondDelay.isRunning() && !CustomAttacks.areAnyDirectionsSelected()) {
                     StartScreen.playClick();
                     closeCreator();
                 }

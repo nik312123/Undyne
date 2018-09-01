@@ -102,7 +102,7 @@ public class CustomAttacks {
             }
             super.approveSelection();
         }
-    
+        
         private boolean checkIfNegativeSelected(int result) {
             switch(result) {
                 case JOptionPane.NO_OPTION:
@@ -255,7 +255,7 @@ public class CustomAttacks {
                     }
                     if(errorLine > 2) {
                         inputArrow = s.nextLine().split(",");
-                        if(inputArrow.length != 5 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
+                        if(inputArrow.length != 4 && inputArrow.length != 2 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
                             error = "Incorrect number of items in the given comma-separated list";
                             importingError = true;
                             errorPopUp.setExpanding(true);
@@ -263,49 +263,72 @@ public class CustomAttacks {
                             StartScreen.playClick();
                             return importedAttacks;
                         }
-                        else if(inputArrow.length == 5) {
+                        else if(inputArrow.length == 2) {
+                            String attackNumString = inputArrow[0];
+                            if(attackNumString.charAt(0) != 'a' || !stringIsNumber(attackNumString.substring(1))) {
+                                error = "Attack must be represented as a(n) where (n) is a number";
+                                importingError = true;
+                                errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
+                                StartScreen.playClick();
+                                return importedAttacks;
+                            }
+                            int attackNum = Integer.parseInt(inputArrow[0].substring(1));
+                            if(attackNum < 0) {
+                                error = "Attack must be greater than zero";
+                                importingError = true;
+                                errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
+                                StartScreen.playClick();
+                                return importedAttacks;
+                            }
+                            else if(attackNum < previousAttack) {
+                                error = "Attacks must be in increasing order";
+                                importingError = true;
+                                errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
+                                StartScreen.playClick();
+                                return importedAttacks;
+                            }
+                            else if(attackNum > previousAttack) {
+                                if(attackNum >= 13000) {
+                                    error = "Maximum number of attacks is 13000";
+                                    importingError = true;
+                                    errorPopUp.setExpanding(true);
+                                    errorPopUp.setVisible(true);
+                                    StartScreen.playClick();
+                                    return importedAttacks;
+                                }
+                                if(attackNum > 1 + previousAttack) {
+                                    for(int i = previousAttack + 1; i < attackNum; ++i) {
+                                        AttackBar newBar = new AttackBar();
+                                        newBar.setNumber(i);
+                                        importedAttacks.add(newBar);
+                                    }
+                                }
+                            }
+                            String orientationShiftString = inputArrow[1];
+                            if(!orientationShiftString.equals("true") && !orientationShiftString.equals("false")) {
+                                error = "Orientation shift can only be true or false";
+                                importingError = true;
+                                errorPopUp.setExpanding(true);
+                                errorPopUp.setVisible(true);
+                                StartScreen.playClick();
+                                return importedAttacks;
+                            }
+                            boolean orientationShift = Boolean.parseBoolean(orientationShiftString);
+                            AttackBar newBar = new AttackBar();
+                            newBar.setNumber(attackNum);
+                            importedAttacks.add(newBar);
+                            previousAttack = attackNum;
+                            if(orientationShift)
+                                newBar.switchOrientationShift();
+                        }
+                        else if(inputArrow.length == 4) {
                             try {
-                                int attack = Integer.parseInt(inputArrow[0]);
-                                if(attack < 0) {
-                                    error = "Attack must be greater than zero";
-                                    importingError = true;
-                                    errorPopUp.setExpanding(true);
-                                    errorPopUp.setVisible(true);
-                                    StartScreen.playClick();
-                                    return importedAttacks;
-                                }
-                                else if(attack < previousAttack) {
-                                    error = "Attacks must be in increasing order";
-                                    importingError = true;
-                                    errorPopUp.setExpanding(true);
-                                    errorPopUp.setVisible(true);
-                                    StartScreen.playClick();
-                                    return importedAttacks;
-                                }
-                                else if(attack > previousAttack) {
-                                    if(attack >= 13000) {
-                                        error = "Maximum number of attacks is 13000";
-                                        importingError = true;
-                                        errorPopUp.setExpanding(true);
-                                        errorPopUp.setVisible(true);
-                                        StartScreen.playClick();
-                                        return importedAttacks;
-                                    }
-                                    if(attack > 1 + previousAttack) {
-                                        for(int i = previousAttack + 1; i < attack; ++i) {
-                                            AttackBar newBar = new AttackBar();
-                                            newBar.setNumber(i);
-                                            importedAttacks.add(newBar);
-                                        }
-                                    }
-                                    AttackBar newBar = new AttackBar();
-                                    newBar.setNumber(attack);
-                                    importedAttacks.add(newBar);
-                                    previousAttack = attack;
-                                }
                                 int speed;
-                                if(!inputArrow[1].equals(" ")) {
-                                    speed = Integer.parseInt(inputArrow[1]);
+                                if(!inputArrow[0].equals(" ")) {
+                                    speed = Integer.parseInt(inputArrow[0]);
                                     if(speed < 1 || speed > 10) {
                                         error = "Speed must be between 1 and 10 inclusive";
                                         importingError = true;
@@ -317,17 +340,18 @@ public class CustomAttacks {
                                 }
                                 else
                                     speed = 0;
-                                if(!inputArrow[2].equals("true") && !inputArrow[2].equals("false")) {
-                                    error = "Third item in list must be true or false";
+                                String reversableString = inputArrow[1];
+                                if(!reversableString.equals("true") && !reversableString.equals("false")) {
+                                    error = "Second item in list must be true or false";
                                     importingError = true;
                                     errorPopUp.setExpanding(true);
                                     errorPopUp.setVisible(true);
                                     StartScreen.playClick();
                                     return importedAttacks;
                                 }
-                                boolean reversable = Boolean.parseBoolean(inputArrow[2]);
-                                char direction = inputArrow[3].charAt(0);
-                                if(inputArrow[3].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
+                                boolean reversable = Boolean.parseBoolean(reversableString);
+                                char direction = inputArrow[2].charAt(0);
+                                if(inputArrow[2].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     importingError = true;
                                     errorPopUp.setExpanding(true);
@@ -336,8 +360,8 @@ public class CustomAttacks {
                                     return importedAttacks;
                                 }
                                 int delay;
-                                if(!inputArrow[4].equals(" ")) {
-                                    delay = Integer.parseInt(inputArrow[4]);
+                                if(!inputArrow[3].equals(" ")) {
+                                    delay = Integer.parseInt(inputArrow[3]);
                                     if(delay < 1 || delay > 999) {
                                         error = "Delay must be between 1 and 999 inclusive";
                                         importingError = true;
@@ -384,12 +408,23 @@ public class CustomAttacks {
         }
     }
     
+    private boolean stringIsNumber(String number) {
+        if(number.length() == 0)
+            return false;
+        for(char c : number.toCharArray()) {
+            if('0' < c && c > '9')
+                return false;
+        }
+        return true;
+    }
+    
     private void exportFile() {
         StartScreen.playClick();
         ArrayList<String> output = new ArrayList<>();
         output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
         for(AttackBar attackBar : attacks) {
+            output.add(String.format("%s,%b", "a" + attackBar.getNumber(), attackBar.isOrientationShift()));
             for(ArrowBar arrowBar : attackBar.getArrows()) {
                 int speed = arrowBar.getSpeed();
                 int delay = arrowBar.getDelay();
@@ -399,7 +434,7 @@ public class CustomAttacks {
                     speedString = " ";
                 if(delay < 1 || delay > 999)
                     delayString = " ";
-                output.add(String.format("%d,%s,%b,%c,%s", attackBar.getNumber(), speedString, arrowBar.isReversible(), arrowBar.getDirection(), delayString));
+                output.add(String.format("%s,%b,%c,%s", speedString, arrowBar.isReversible(), arrowBar.getDirection(), delayString));
             }
         }
         chooser.setDialogTitle("Choose export location...");
@@ -527,6 +562,16 @@ public class CustomAttacks {
     
     public static boolean isFileBeingChosen() {
         return fileBeingChosen;
+    }
+    
+    public static boolean areAnyDirectionsSelected() {
+        for(AttackBar at : attacks) {
+            for(ArrowBar ab : at.getArrows()) {
+                if(ab.isDirectionSelected())
+                    return true;
+            }
+        }
+        return false;
     }
     
 }

@@ -182,7 +182,7 @@ public class ArrowBar {
             delay = Integer.parseInt(delayField.getText());
         else
             delay = 0;
-        boolean anySelected = AttackBar.areAnyDirectionsSelected();
+        boolean anySelected = CustomAttacks.areAnyDirectionsSelected();
         if(anySelected) {
             InputMap im = (InputMap) UIManager.get("TextField.focusInputMap");
             inputMapKeyStrokeReplacement(im, "RIGHT", "none");

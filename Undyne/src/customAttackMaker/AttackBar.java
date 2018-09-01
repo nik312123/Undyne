@@ -16,9 +16,11 @@ public class AttackBar {
     static final int ATTACKBAR_X = 30;
     
     private boolean isDropped = true;
+    private boolean orientationShift = false;
     
     private Rectangle dropDownButton = new Rectangle();
     private Rectangle deleteAttack = new Rectangle();
+    private Rectangle orientationShiftButton = new Rectangle();
     private Rectangle newArrowButton = new Rectangle();
     private Rectangle topBound = new Rectangle();
     private Rectangle bottomBound = new Rectangle();
@@ -53,6 +55,7 @@ public class AttackBar {
         g2.setColor(Color.GREEN);
         drawString(g, x, y);
         deleteAttackButton(g, x, y);
+        orientationShiftButton(g, x, y);
         dropDownButton(g, x, y);
         if(isDropped) {
             topBound.setBounds(0, y + 10, 600, 1);
@@ -76,8 +79,20 @@ public class AttackBar {
     
     private void deleteAttackButton(Graphics g, int x, int y) {
         int displayNum = number + 1;
-        g.drawImage(Runner.deleteAttack, 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70, y - 16, null);
-        deleteAttack.setBounds(x + 130, y - 16, 44, 17);
+        int deleteAttackX = 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70 + 36, deleteAttackY = y - 16;
+        g.drawImage(Runner.deleteAttack, deleteAttackX, deleteAttackY, null);
+        deleteAttack.setBounds(deleteAttackX, deleteAttackY, 44, 17);
+    }
+    
+    private void orientationShiftButton(Graphics g, int x, int y) {
+        int displayNum = number + 1;
+        int orientationShiftX = 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70, orientationShiftY = y - 17;
+        if(orientationShift) {
+            g.setColor(Color.GREEN);
+            g.fillRect(orientationShiftX + 1, orientationShiftY + 1, 21 - 2, 19 - 2);
+        }
+        g.drawImage(Runner.orientationShiftButton, orientationShiftX, orientationShiftY, null);
+        orientationShiftButton.setBounds(orientationShiftX, orientationShiftY, 21, 19);
     }
     
     private void newArrowButton(Graphics g, int x, int y) {
@@ -107,33 +122,36 @@ public class AttackBar {
             y += 30;
             CustomAttacks.dynamicLength += 30;
         }
-        
         if(beingDragged != -1) {
-            
-            if(arrows.get(beingDragged).getOrderIntersecton().intersects(topBound) || arrows.get(beingDragged).getOrderIntersecton().intersects(bottomBound)) {
-                beingDragged = -1;
+            Rectangle orderIntersection = arrows.get(beingDragged).getOrderIntersecton();
+            if(orderIntersection.intersects(topBound) || orderIntersection.intersects(bottomBound))
+                return counter;
+            g.setColor(Color.BLACK);
+            g.fillRect(41, arrows.get(beingDragged).getY() + 3, 415, 22);
+            arrows.get(beingDragged).draw(g, x + 10, y);
+            if(orderIntersection.intersects(upScrollRect)) {
+                CustomAttacks.scrollValue += 0.5;
+                order();
             }
-            
-            if(beingDragged != -1) {
-                g.setColor(Color.BLACK);
-                g.fillRect(41, arrows.get(beingDragged).getY() + 3, 415, 22);
-                arrows.get(beingDragged).draw(g, x + 10, y);
-                if(arrows.get(beingDragged).getOrderIntersecton().intersects(upScrollRect)) {
-                    CustomAttacks.scrollValue += 0.5;
-                    order();
-                }
-                if(arrows.get(beingDragged).getOrderIntersecton().intersects(downScrollRect)) {
-                    CustomAttacks.scrollValue -= 0.5;
-                    order();
-                }
+            else if(orderIntersection.intersects(downScrollRect)) {
+                CustomAttacks.scrollValue -= 0.5;
+                order();
             }
-            
+    
         }
         return counter;
     }
     
+    void switchOrientationShift() {
+        orientationShift = !orientationShift;
+    }
+    
+    public boolean isOrientationShift() {
+        return orientationShift;
+    }
+    
     int mouseClickWork() {
-        boolean anySelected = areAnyDirectionsSelected();
+        boolean anySelected = CustomAttacks.areAnyDirectionsSelected();
         if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
             StartScreen.playClick();
             ArrayList<AttackBar> attacks = CustomAttacks.attacks;
@@ -142,6 +160,10 @@ public class AttackBar {
                 arrBar.removeFields();
             attacks.remove(number);
             return 1;
+        }
+        else if(orientationShiftButton.contains(CustomAttacks.mousePosition) && !anySelected) {
+            StartScreen.playClick();
+            switchOrientationShift();
         }
         else if(dropDownButton.contains(CustomAttacks.mousePosition)) {
             StartScreen.playClick();
@@ -207,16 +229,6 @@ public class AttackBar {
                 }
             }
         }
-    }
-    
-    public static boolean areAnyDirectionsSelected() {
-        for(AttackBar at : CustomAttacks.attacks) {
-            for(ArrowBar ab : at.getArrows()) {
-                if(ab.isDirectionSelected())
-                    return true;
-            }
-        }
-        return false;
     }
     
 }
