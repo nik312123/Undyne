@@ -769,13 +769,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         if(isFirstTime) {
             Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
                 private Point pressLocation = new Point(), releaseLocation = new Point();
-        
+                
                 private long pressTime = 0;
-        
+                
                 @Override
                 public void eventDispatched(AWTEvent event) {
                     MouseEvent e = (MouseEvent) event;
-            
+                    
                     switch(e.getID()) {
                         case MouseEvent.MOUSE_PRESSED:
                             pressLocation.setLocation(e.getX(), e.getY());

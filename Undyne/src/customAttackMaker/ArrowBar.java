@@ -42,14 +42,14 @@ public class ArrowBar {
     private NumberField delayField;
     
     private static final FocusListener NUMBER_FIELD_LISTENER = new FocusListener() {
-    
+        
         @Override
         public void focusGained(FocusEvent e) {
             NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
             Runner.setFocusedField(nf);
             nf.setFocused(true);
         }
-    
+        
         @Override
         public void focusLost(FocusEvent e) {
             NumberFieldFocus nf = (NumberFieldFocus) e.getSource();

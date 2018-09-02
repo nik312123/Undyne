@@ -138,7 +138,7 @@ public class AttackBar {
                 CustomAttacks.scrollValue -= 0.5;
                 order();
             }
-    
+            
         }
         return counter;
     }

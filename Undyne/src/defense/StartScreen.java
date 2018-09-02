@@ -209,7 +209,7 @@ public class StartScreen {
             heartMoved = true;
             playChosen = true;
         }
-    
+        
         creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
         addLinkFormatting(0, 0, 9);
         creditsText[1] = new AttributedString("wjl: Fire sound effect");
@@ -275,14 +275,14 @@ public class StartScreen {
             }
             
         };
-    
+        
         MouseClickTolerance clickableNamesListener = new MouseClickTolerance(5, 750, MouseClickTolerance.ClickLocation.PRESS) {
             @Override
             public void onMousePress(MouseEvent e) {}
-        
+            
             @Override
             public void onMouseRelease(MouseEvent e) {}
-        
+            
             @Override
             public void onMouseClick(MouseEvent e) {
                 String url = "";
@@ -334,7 +334,7 @@ public class StartScreen {
                     e1.printStackTrace();
                 }
             }
-        
+            
             @Override
             public void onMouseEnter(MouseEvent e) {
                 JPanel realSource = (JPanel) getRealSource();
@@ -344,7 +344,7 @@ public class StartScreen {
                     realSource.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 }
             }
-        
+            
             @Override
             public void onMouseExit(MouseEvent e) {
                 Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
