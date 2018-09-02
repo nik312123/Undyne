@@ -1,5 +1,6 @@
 package defense;
 
+import nikunj.classes.MouseClickTolerance;
 import nikunj.classes.PopUp;
 import nikunj.classes.Sound;
 
@@ -9,15 +10,14 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -128,6 +128,9 @@ public class StartScreen {
     static boolean isLoaded = false;
     private boolean[] heartsActivated = new boolean[3];
     
+    private static final Color BUTTON_LOADING_COLOR = new Color(246, 138, 21);
+    private static final Color HARD_BUTTON_COLOR = Color.RED, MEDIUM_BUTTON_COLOR = Color.ORANGE, EASY_BUTTON_COLOR = new Color(0, 234 - 30, 77 - 30), SURVIVAL_BUTTON_COLOR = new Color(0, 191, 255);
+    
     private static Sound flare;
     private static Sound bark;
     private static Sound wall;
@@ -150,6 +153,8 @@ public class StartScreen {
     private Point2D spearLocation = (Point2D) SPEAR_SPAWN.clone();
     
     private Random rand = new Random();
+    
+    private AffineTransform startScreenTransform = new AffineTransform();
     
     private AttributedString[] creditsText = new AttributedString[11];
     
@@ -204,37 +209,7 @@ public class StartScreen {
             heartMoved = true;
             playChosen = true;
         }
-        creditsList = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-            
-            @Override
-            public void afterDraw(Graphics g) {
-                if(creditsList.percentageExpanded() == 1.0) {
-                    Runner.moveButtons(true);
-                    TextAttribute[] t = {TextAttribute.FONT};
-                    int originalY = 20 + g.getFontMetrics((Font) creditsText[0].getIterator(t).getAttribute(t[0])).getHeight() / 2;
-                    int x = 20, y = originalY;
-                    g.setColor(Color.WHITE);
-                    for(AttributedString a : creditsText) {
-                        g.drawString(a.getIterator(), x, y);
-                        y += 40;
-                    }
-                    g.setFont(Runner.deteFontSpeech);
-                    g.drawString("Undertale SFX & music, and creating Undertale", x, originalY + 15);
-                    g.drawString("and code", x, originalY + 15 + 40 * 9);
-                    g.drawString("game!", x, originalY + 15 + 40 * 10);
-                    for(JPanel b : clickableNames)
-                        b.setVisible(true);
-                    g.setFont(Runner.deteFontSpeech);
-                    
-                    g.drawString("PRESS X TO EXIT", 235 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 535 - Math.min(creditsList.getPopUpWidth(), 460) / 4 + 37);
-                }
-            }
-            
-        };
+    
         creditsText[0] = new AttributedString("Toby Fox: Undyne sprites, Annoying Dog sprite,");
         addLinkFormatting(0, 0, 9);
         creditsText[1] = new AttributedString("wjl: Fire sound effect");
@@ -257,113 +232,150 @@ public class StartScreen {
         addLinkFormatting(9, 0, 13);
         addLinkFormatting(9, 18, 35);
         creditsText[10] = new AttributedString("And most importantly, thank you for enjoying our");
-        for(AttributedString a : creditsText) {
-            try {
-                a.addAttribute(TextAttribute.FONT, Font.createFont(Font.TRUETYPE_FONT, Runner.class.getResource("/dete.otf").openStream()).deriveFont(14.0f));
+        for(AttributedString a : creditsText)
+            a.addAttribute(TextAttribute.FONT, Runner.deteFontSpeech);
+        
+        creditsList = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            
+            @Override
+            public void afterDraw(Graphics g) {
+                if(creditsList.percentageExpanded() == 1.0) {
+                    Runner.moveButtons(true);
+                    int originalY = 20 + g.getFontMetrics(Runner.deteFontSpeech).getHeight() / 2;
+                    int x = 20, y = originalY;
+                    g.setColor(Color.WHITE);
+                    g.setFont(Runner.deteFontSpeech);
+                    for(AttributedString a : creditsText) {
+                        a.addAttribute(TextAttribute.FONT, Runner.deteFontSpeech);
+                        g.drawString(a.getIterator(), x, y);
+                        y += 40;
+                    }
+                    g.drawString("Undertale SFX & music, and creating Undertale", x, originalY + 15);
+                    g.drawString("and code", x, originalY + 15 + 40 * 9);
+                    g.drawString("game!", x, originalY + 15 + 40 * 10);
+                    for(JPanel b : clickableNames)
+                        b.setVisible(true);
+                    g.drawString("PRESS X TO EXIT", 235 - g.getFontMetrics().stringWidth("PRESS X TO EXIT") / 2, 535 - Math.min(creditsList.getPopUpWidth(), 460) / 4 + 37);
+                }
+                if(Runner.windowNotFocused()) {
+                    g.setColor(Runner.UNFOCUSED_COLOR);
+                    Graphics2D g2d = (Graphics2D) g;
+                    startScreenTransform.setToIdentity();
+                    startScreenTransform.translate(getWidth() / 2.0 * (1 - percentageExpanded()), getHeight() / 2.0 * (1 - percentageExpanded()));
+                    startScreenTransform.scale(percentageExpanded(), percentageExpanded());
+                    Rectangle bounds = getBounds();
+                    bounds.setLocation(0, 0);
+                    Path2D.Double transformedShape = (Path2D.Double) startScreenTransform.createTransformedShape(bounds);
+                    g2d.fill(transformedShape);
+                }
             }
-            catch(FontFormatException | IOException e) {
-                e.printStackTrace();
+            
+        };
+    
+        MouseClickTolerance clickableNamesListener = new MouseClickTolerance(5, 750, MouseClickTolerance.ClickLocation.PRESS) {
+            @Override
+            public void onMousePress(MouseEvent e) {}
+        
+            @Override
+            public void onMouseRelease(MouseEvent e) {}
+        
+            @Override
+            public void onMouseClick(MouseEvent e) {
+                String url = "";
+                String name = ((JPanel) getRealSource()).getName();
+                int nameInt = Integer.parseInt(name);
+                switch(nameInt) {
+                    case 0:
+                        url = "http://undertale.com/";
+                        break;
+                    case 1:
+                        url = "https://goo.gl/ofAZRS";
+                        break;
+                    case 2:
+                        url = "https://goo.gl/YuLmCt";
+                        break;
+                    case 3:
+                        url = "https://goo.gl/uNnWl8";
+                        break;
+                    case 4:
+                        url = "https://goo.gl/H2By5H";
+                        break;
+                    case 5:
+                        url = "https://goo.gl/DY0LJB";
+                        break;
+                    case 6:
+                        url = "http://soundbible.com/992-Right-Cross.html";
+                        break;
+                    case 7:
+                        url = "";
+                        break;
+                    case 8:
+                        url = "http://www.freesfx.co.uk/sfx/button";
+                        break;
+                    case 9:
+                        url = "mailto:nikchawla312@gmail.com";
+                        break;
+                    case 10:
+                        url = "";
+                        break;
+                    case 11:
+                        url = "mailto:aaron4game@gmail.com";
+                        break;
+                }
+                try {
+                    if(!url.equals(""))
+                        Desktop.getDesktop().browse(new URI(url));
+                }
+                catch(IOException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
             }
-        }
+        
+            @Override
+            public void onMouseEnter(MouseEvent e) {
+                JPanel realSource = (JPanel) getRealSource();
+                if(realSource.isVisible()) {
+                    Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    realSource.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                }
+            }
+        
+            @Override
+            public void onMouseExit(MouseEvent e) {
+                Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                ((JPanel) getRealSource()).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        };
+        
         for(int i = 0, y = 82; i < clickableNames.length; ++i, y += 40) {
             clickableNames[i] = new JPanel();
             JPanel b = clickableNames[i];
             b.setVisible(false);
             b.setLocation(85 - creditsList.getX(), y - creditsList.getY());
             if(i == 11)
-                b.setLocation(230 - creditsList.getX(), 85 + 40 * 9 - creditsList.getY());
+                b.setLocation(237 - creditsList.getX(), 82 + 40 * 9 - creditsList.getY());
             b.setOpaque(false);
             b.setName(Integer.toString(i));
-            b.addMouseListener(new MouseListener() {
-                
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    String url = "";
-                    String name = ((JPanel) e.getSource()).getName();
-                    int nameInt = Integer.parseInt(name);
-                    switch(nameInt) {
-                        case 0:
-                            url = "http://undertale.com/";
-                            break;
-                        case 1:
-                            url = "https://goo.gl/ofAZRS";
-                            break;
-                        case 2:
-                            url = "https://goo.gl/YuLmCt";
-                            break;
-                        case 3:
-                            url = "https://goo.gl/uNnWl8";
-                            break;
-                        case 4:
-                            url = "https://goo.gl/H2By5H";
-                            break;
-                        case 5:
-                            url = "https://goo.gl/DY0LJB";
-                            break;
-                        case 6:
-                            url = "http://soundbible.com/992-Right-Cross.html";
-                            break;
-                        case 7:
-                            url = "";
-                            break;
-                        case 8:
-                            url = "http://www.freesfx.co.uk/sfx/button";
-                            break;
-                        case 9:
-                            url = "mailto:nikchawla312@gmail.com";
-                            break;
-                        case 10:
-                            url = "";
-                            break;
-                        case 11:
-                            url = "mailto:aaron4game@gmail.com";
-                            break;
-                    }
-                    try {
-                        if(!url.equals(""))
-                            Desktop.getDesktop().browse(new URI(url));
-                    }
-                    catch(IOException | URISyntaxException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-                
-                @Override
-                public void mousePressed(MouseEvent e) {}
-                
-                @Override
-                public void mouseReleased(MouseEvent e) {}
-                
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    if(b.isVisible()) {
-                        Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    }
-                }
-                
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    Runner.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    creditsList.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    b.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                
-            });
+            b.addMouseListener(clickableNamesListener);
         }
-        clickableNames[0].setSize(69, 13);
-        clickableNames[1].setSize(29, 13);
-        clickableNames[2].setSize(37, 13);
-        clickableNames[3].setSize(117, 13);
-        clickableNames[4].setSize(133, 13);
-        clickableNames[5].setSize(45, 13);
-        clickableNames[6].setSize(93, 13);
-        clickableNames[7].setSize(103, 13);
-        clickableNames[8].setSize(69, 13);
-        clickableNames[9].setSize(103, 13);
+        clickableNames[0].setSize(72, 13);
+        clickableNames[1].setSize(30, 13);
+        clickableNames[2].setSize(38, 13);
+        clickableNames[3].setSize(123, 13);
+        clickableNames[4].setSize(140, 13);
+        clickableNames[5].setSize(47, 13);
+        clickableNames[6].setSize(97, 13);
+        clickableNames[7].setSize(97, 13);
+        clickableNames[8].setSize(73, 13);
+        clickableNames[9].setSize(109, 13);
         clickableNames[10].setSize(0, 13);
-        clickableNames[11].setSize(132, 13);
+        clickableNames[11].setSize(139, 13);
         for(JPanel b : clickableNames)
             creditsList.add(b);
         creditsList.setLayout(null);
@@ -459,14 +471,14 @@ public class StartScreen {
     }
     
     private void drawSubtitle(Graphics g) {
-        AffineTransform trans = new AffineTransform();
-        trans.translate(96 - scale / 2.0, 195 - scale / 2.0);
-        trans.scale((subtitle.getWidth() + scale) / (double) subtitle.getWidth(), (subtitle.getHeight() + scale * 49.0 / 460.0) / (double) subtitle.getHeight());
+        startScreenTransform.setToIdentity();
+        startScreenTransform.translate(96 - scale / 2.0, 195 - scale / 2.0);
+        startScreenTransform.scale((subtitle.getWidth() + scale) / (double) subtitle.getWidth(), (subtitle.getHeight() + scale * 49.0 / 460.0) / (double) subtitle.getHeight());
         Graphics2D g2d = (Graphics2D) g;
         if(heartsActivated())
-            g2d.drawImage(subtitleBlue, trans, null);
+            g2d.drawImage(subtitleBlue, startScreenTransform, null);
         else
-            g2d.drawImage(subtitle, trans, null);
+            g2d.drawImage(subtitle, startScreenTransform, null);
     }
     
     private void moveHeart() {
@@ -550,9 +562,9 @@ public class StartScreen {
                 g2d.drawImage(keys, 179, 490 + 50 - 20, null);
             }
             else if(!playChosen) {
-                AffineTransform trans = new AffineTransform();
-                trans.translate(174.5, 486 + shift);
-                g2d.drawImage(selectOption, trans, null);
+                startScreenTransform.setToIdentity();
+                startScreenTransform.translate(174.5, 486 + shift);
+                g2d.drawImage(selectOption, startScreenTransform, null);
                 if(warningCounter == 0)
                     g2d.drawImage(keys, 179, 490 + 50 - 20, null);
                 else {
@@ -561,9 +573,9 @@ public class StartScreen {
                 }
             }
             else if((!easyButtonRectRed || !isOnEasy) && (!hardButtonRectRed || !isOnHard) && (!survivalButtonRectRed || !isOnSurvival) && (!mediumButtonRectRed || !isOnMedium)) {
-                AffineTransform trans = new AffineTransform();
-                trans.translate(174.5, 486 + shift);
-                g2d.drawImage(selectDifficulty, trans, null);
+                startScreenTransform.setToIdentity();
+                startScreenTransform.translate(174.5, 486 + shift);
+                g2d.drawImage(selectDifficulty, startScreenTransform, null);
                 if(warningCounter == 0)
                     g2d.drawImage(keys, 179, 490 + 50 - 20, null);
                 else {
@@ -602,7 +614,7 @@ public class StartScreen {
     
     private void hardButton(Graphics g) {
         if(playChosen) {
-            g.setColor(new Color(246, 138, 21));
+            g.setColor(BUTTON_LOADING_COLOR);
             isOnHard = (heartX + 288 + 16 >= 413 && heartX + 288 <= 561 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
             if(hardButtonCount % 6 == 0) {
                 if(isOnHard) {
@@ -634,7 +646,7 @@ public class StartScreen {
                 g.fillRect(380 + 37, 360 - (300 - (Math.abs(300 - hardButtonRect))) + shift, 140, hardButtonRect);
             else {
                 fire2 = true;
-                g.setColor(Color.RED);
+                g.setColor(HARD_BUTTON_COLOR);
                 g.fillRect(380 + 37, 300 + shift, 140, 60);
             }
         }
@@ -646,7 +658,7 @@ public class StartScreen {
     
     private void mediumButton(Graphics g) {
         if(playChosen) {
-            g.setColor(new Color(246, 138, 21));
+            g.setColor(BUTTON_LOADING_COLOR);
             isOnMedium = (heartX + 288 + 16 >= 226 && heartX + 288 <= 374 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
             if(mediumButtonCount % 6 == 0) {
                 if(isOnMedium) {
@@ -677,7 +689,7 @@ public class StartScreen {
             if(!mediumButtonRectRed)
                 g.fillRect(380 + 37 - 187, 360 - (300 - (Math.abs(300 - mediumButtonRect))) + shift, 140, mediumButtonRect);
             else {
-                g.setColor(Color.ORANGE);
+                g.setColor(MEDIUM_BUTTON_COLOR);
                 g.fillRect(380 + 37 - 187, 300 + shift, 140, 60);
             }
         }
@@ -689,7 +701,7 @@ public class StartScreen {
     
     private void easyButton(Graphics g) {
         if(playChosen) {
-            g.setColor(new Color(246, 138, 21));
+            g.setColor(BUTTON_LOADING_COLOR);
             isOnEasy = (heartX + 288 + 16 >= 39 && heartX + 288 <= 187 && heartY + 300 <= 363 + shift && heartY + 300 + 16 >= 300 + shift);
             if(easyButtonCount % 6 == 0) {
                 if(isOnEasy) {
@@ -720,7 +732,7 @@ public class StartScreen {
             if(!easyButtonRectRed)
                 g.fillRect(80 - 37, 360 - (300 - (Math.abs(300 - easyButtonRect))) + shift, 140, easyButtonRect);
             else {
-                g.setColor(new Color(0, 234 - 30, 77 - 30));
+                g.setColor(EASY_BUTTON_COLOR);
                 g.fillRect(80 - 37, 300 + shift, 140, 60);
             }
         }
@@ -732,7 +744,7 @@ public class StartScreen {
     
     private void survivalButton(Graphics g) {
         if(playChosen) {
-            g.setColor(new Color(246, 138, 21));
+            g.setColor(BUTTON_LOADING_COLOR);
             isOnSurvival = (heartX + 288 + 16 >= 226 && heartX + 288 <= 374 && heartY + 300 <= 468 + shift && heartY + 300 + 16 >= 405 + shift);
             if(survivalButtonCount % 6 == 0) {
                 if(isOnSurvival) {
@@ -766,7 +778,7 @@ public class StartScreen {
             if(!survivalButtonRectRed)
                 g.fillRect(80 - 37 + 148 + 39, 360 + 105 - (300 - (Math.abs(300 - survivalButtonRect))) + shift, 140, survivalButtonRect);
             else {
-                g.setColor(new Color(0, 191, 255));
+                g.setColor(SURVIVAL_BUTTON_COLOR);
                 g.fillRect(80 - 37 + 148 + 39, 300 + 105 + shift, 140, 60);
             }
         }
@@ -843,7 +855,7 @@ public class StartScreen {
                 g2d.drawImage(spear, (int) Math.round(SPEAR_SPAWN.getX()), (int) Math.round(SPEAR_SPAWN.getY()), null);
             }
             else if(!spearLocation.equals(SPEAR_END)) {
-                spearLocation = new Point2D.Double(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX()) / 20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY()) / 20);
+                spearLocation.setLocation(spearLocation.getX() + (SPEAR_END.getX() - SPEAR_SPAWN.getX()) / 20, spearLocation.getY() + (SPEAR_END.getY() - SPEAR_SPAWN.getY()) / 20);
                 g2d.drawImage(spear, (int) Math.round(spearLocation.getX()), (int) Math.round(spearLocation.getY()), null);
             }
             else {

@@ -8,7 +8,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
@@ -40,6 +42,10 @@ public class CustomAttacks {
     
     private static String error;
     
+    private static StringBuilder errorBuilder = new StringBuilder();
+    
+    private static final Color startScreenButtonsColor = new Color(157, 50, 100);
+    
     private static Rectangle addAttack = new Rectangle();
     private static Rectangle newThing = new Rectangle(226, 211, 148, 63);
     private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
@@ -64,29 +70,29 @@ public class CustomAttacks {
                     titleMessage = "Error";
                 g.drawString(titleMessage, 10, 25);
                 String[] errorSplit = error.split("\\s+");
-                StringBuilder line = new StringBuilder();
+                errorBuilder.setLength(0);
                 int lineIndex = 1;
                 boolean drewOnLast = true;
                 for(int i = 0; i < errorSplit.length; ++i) {
-                    if(line.length() + errorSplit[i].length() + 1 < 19) {
+                    if(errorBuilder.length() + errorSplit[i].length() + 1 < 19) {
                         drewOnLast = false;
-                        line.append(errorSplit[i]).append(" ");
+                        errorBuilder.append(errorSplit[i]).append(" ");
                     }
                     else {
                         drewOnLast = true;
-                        g.drawString(line.toString(), 10, 25 + 15 + 25 * lineIndex);
+                        g.drawString(errorBuilder.toString(), 10, 25 + 15 + 25 * lineIndex);
                         ++lineIndex;
-                        line = new StringBuilder();
+                        errorBuilder.setLength(0);
                         --i;
                     }
                 }
                 if(!drewOnLast)
-                    g.drawString(line.toString(), 10, 25 + 15 + 25 * lineIndex);
+                    g.drawString(errorBuilder.toString(), 10, 25 + 15 + 25 * lineIndex);
             }
         }
     };
     
-    private JFileChooser chooser = new JFileChooser() {
+    private static JFileChooser chooser = new JFileChooser() {
         @Override
         public void approveSelection() {
             File f = getSelectedFile();
@@ -117,7 +123,9 @@ public class CustomAttacks {
         }
     };
     
-    private boolean anyArrowsExist() {
+    private static final FileNameExtensionFilter TEXT_FILTER = new FileNameExtensionFilter("Text files", "txt");
+    
+    private static boolean anyArrowsExist() {
         for(AttackBar attBar : attacks) {
             if(attBar.getArrows().size() > 0)
                 return true;
@@ -125,16 +133,17 @@ public class CustomAttacks {
         return false;
     }
     
-    public CustomAttacks() {
+    static {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Text files", "txt");
-        chooser.setFileFilter(textFilter);
+        chooser.setFileFilter(TEXT_FILTER);
     }
+    
+    public CustomAttacks() {}
     
     public void perform(Graphics g2) {
         JFrame frame = Runner.getFrame();
         Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
-        mousePosition = new Point(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
+        mousePosition.setLocation(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if(isIn || optionSelected && (!importChosen || importingComplete)) {
@@ -167,11 +176,14 @@ public class CustomAttacks {
         else {
             if(newThingAlpha > 0)
                 newThingAlpha -= 5;
-            if(newThingAlpha < 0)
-                newThingAlpha = 0;
+            if(newThingAlpha < 5)
+                newThingAlpha = 5;
         }
-        g.setColor(new Color(157, 50, 100, newThingAlpha));
+        g.setColor(startScreenButtonsColor);
+        Composite original = g.getComposite();
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, newThingAlpha / 255.0f));
         g.fill(newThing);
+        g.setComposite(original);
         if(importThing.contains(mousePosition) || fileBeingChosen) {
             importThingAlpha += 5;
             if(importThingAlpha > 255)
@@ -180,11 +192,13 @@ public class CustomAttacks {
         else {
             if(importThingAlpha > 0)
                 importThingAlpha -= 5;
-            if(importThingAlpha < 0)
-                importThingAlpha = 0;
+            if(importThingAlpha < 5)
+                importThingAlpha = 5;
         }
-        g.setColor(new Color(157, 50, 100, importThingAlpha));
+        g.setColor(startScreenButtonsColor);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, importThingAlpha / 255.0f));
         g.fill(importThing);
+        g.setComposite(original);
         g.drawImage(Runner.cat, 129, 21, null);
         g.drawImage(Runner.newThing, 226, 211, null);
         g.drawImage(Runner.importThing, 226, 326, null);

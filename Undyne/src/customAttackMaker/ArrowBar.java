@@ -28,6 +28,7 @@ public class ArrowBar {
     private char direction;
     
     private Color textColor = new Color(255, 198, 0);
+    private static final Color FOREGROUND = new Color(255, 196, 0);
     
     private Rectangle deleteArrowButton = new Rectangle();
     private Rectangle directionRectangle = new Rectangle();
@@ -35,15 +36,32 @@ public class ArrowBar {
     private Rectangle dragArrowIcon = new Rectangle();
     private Rectangle reverseTickBox = new Rectangle();
     
+    private static AffineTransform arrowBarTransform = new AffineTransform();
+    
     private NumberField speedField;
     private NumberField delayField;
+    
+    private static final FocusListener NUMBER_FIELD_LISTENER = new FocusListener() {
+    
+        @Override
+        public void focusGained(FocusEvent e) {
+            NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
+            Runner.setFocusedField(nf);
+            nf.setFocused(true);
+        }
+    
+        @Override
+        public void focusLost(FocusEvent e) {
+            NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
+            nf.setFocused(false);
+        }
+    };
     
     ArrowBar(int speed, boolean reverseable, char direction, int delay) {
         this.speed = speed;
         this.reverseable = reverseable;
         this.direction = direction;
         this.delay = delay;
-        Color foreground = new Color(255, 196, 0);
         try {
             speedField = new NumberFieldFocus(2, NumberField.STATE_NORMAL, false) {
                 
@@ -51,7 +69,7 @@ public class ArrowBar {
                 public void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     if(Runner.windowNotFocused()) {
-                        g.setColor(new Color(255, 255, 255, 127));
+                        g.setColor(Runner.UNFOCUSED_COLOR);
                         g.fillRect(0, 0, getWidth(), getHeight());
                     }
                 }
@@ -63,7 +81,7 @@ public class ArrowBar {
                 public void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     if(Runner.windowNotFocused()) {
-                        g.setColor(new Color(255, 255, 255, 127));
+                        g.setColor(Runner.UNFOCUSED_COLOR);
                         g.fillRect(0, 0, getWidth(), getHeight());
                     }
                 }
@@ -72,8 +90,8 @@ public class ArrowBar {
             speedField.setFont(Runner.deteFontEditor);
             delayField.setFont(Runner.deteFontEditor);
             
-            speedField.setForeground(foreground);
-            delayField.setForeground(foreground);
+            speedField.setForeground(FOREGROUND);
+            delayField.setForeground(FOREGROUND);
             
             speedField.setBackground(Color.BLACK);
             delayField.setBackground(Color.BLACK);
@@ -87,24 +105,8 @@ public class ArrowBar {
             speedField.setHighlighter(null);
             delayField.setHighlighter(null);
             
-            FocusListener numberFieldListener = new FocusListener() {
-                
-                @Override
-                public void focusGained(FocusEvent e) {
-                    NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
-                    Runner.setFocusedField(nf);
-                    nf.setFocused(true);
-                }
-                
-                @Override
-                public void focusLost(FocusEvent e) {
-                    NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
-                    nf.setFocused(false);
-                }
-            };
-            
-            speedField.addFocusListener(numberFieldListener);
-            delayField.addFocusListener(numberFieldListener);
+            speedField.addFocusListener(NUMBER_FIELD_LISTENER);
+            delayField.addFocusListener(NUMBER_FIELD_LISTENER);
             
             speedField.setBounds(AttackBar.ATTACKBAR_X + 6 + 183, y + 7, 34, 13);
             delayField.setBounds(AttackBar.ATTACKBAR_X + 6 + 277, y + 7, 34, 13);
@@ -213,8 +215,8 @@ public class ArrowBar {
     
     private void setImage(Graphics g, int x, int y) {
         boolean drawArrow = true;
-        AffineTransform arrowTransform = new AffineTransform();
-        arrowTransform.translate(x + 103, y + 8);
+        arrowBarTransform.setToIdentity();
+        arrowBarTransform.translate(x + 103, y + 8);
         double angle = 0;
         switch(direction) {
             case 'u':
@@ -233,10 +235,10 @@ public class ArrowBar {
                 drawArrow = false;
                 break;
         }
-        arrowTransform.rotate(angle, 3, 6);
+        arrowBarTransform.rotate(angle, 3, 6);
         Graphics2D g2d = (Graphics2D) g;
         if(drawArrow)
-            g2d.drawImage(Runner.customArrowDirection, arrowTransform, null);
+            g2d.drawImage(Runner.customArrowDirection, arrowBarTransform, null);
         else {
             g2d.setColor(textColor);
             g2d.setFont(Runner.deteFontSpeech);

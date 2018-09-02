@@ -26,6 +26,7 @@ public class AttackBar {
     private Rectangle bottomBound = new Rectangle();
     private Rectangle upScrollRect = new Rectangle(0, 0, 600, 5);
     private Rectangle downScrollRect = new Rectangle(0, 595, 600, 5);
+    private Rectangle dragArrowRect = new Rectangle(0, 0, 16, 18);
     
     private ArrayList<ArrowBar> arrows = new ArrayList<>();
     
@@ -201,7 +202,8 @@ public class AttackBar {
                     iconMovement = (int) topBound.getY() + 8;
                 if(iconMovement > bottomBound.getY() - 18)
                     iconMovement = (int) bottomBound.getY() - 18;
-                a.setDragArrowIcon(new Rectangle(a.getDragArrowIcon().x, iconMovement, 16, 8));
+                dragArrowRect.setLocation(a.getDragArrowIcon().x, iconMovement);
+                a.setDragArrowIcon(dragArrowRect);
                 a.setY(iconMovement - 8);
             }
         }

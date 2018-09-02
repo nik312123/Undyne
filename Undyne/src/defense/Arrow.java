@@ -2,8 +2,8 @@ package defense;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 /*
@@ -39,6 +39,8 @@ class Arrow {
     private boolean isSlow;
     private boolean switchDir = false;
     private boolean directionNotSwitched;
+    
+    private static AffineTransform arrowTransform = new AffineTransform();
     
     Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
@@ -220,11 +222,11 @@ class Arrow {
                     angle = 90;
                 break;
         }
-        AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth() / 2.0, arr.getMinY() + arr.getHeight() / 2.0);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        arr = op.filter(arr, null);
-        g.drawImage(arr, x + p.getElementPosition(), y + p.getElementPosition(), null);
+        arrowTransform.setToIdentity();
+        arrowTransform.translate(x + p.getElementPosition(), y + p.getElementPosition());
+        arrowTransform.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth() / 2.0, arr.getMinY() + arr.getHeight() / 2.0);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(arr, arrowTransform, null);
         int xShift, yShift;
         switch(direction) {
             case 'r':

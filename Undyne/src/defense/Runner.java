@@ -231,6 +231,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static SplashScreen loading;
     private static BottomMenuBar bottomBar = CustomAttacks.getBottomMenuBar();
     
+    public static final Color UNFOCUSED_COLOR = new Color(255, 255, 255, 127);
+    private static final Color HEART_BOX_COLOR = new Color(255, 255, 255, 200);
+    
+    private static final BasicStroke AUDIO_SLASH_STROKE = new BasicStroke(2);
+    
+    private static final Line2D.Float AUDIO_SLASH_LINE = new Line2D.Float(4, 20, 20, 2);
+    
+    private static AffineTransform loadingTransform = new AffineTransform();
+    
     private static JPanel topBar;
     
     private static JFrame frame;
@@ -408,7 +417,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void afterDraw(Graphics g) {
                 if(checkFocus.windowNotFocused()) {
-                    g.setColor(new Color(255, 255, 255, 127));
+                    g.setColor(UNFOCUSED_COLOR);
                     g.fillRect(0, 0, 24, 24);
                 }
             }
@@ -458,7 +467,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             @Override
             public void afterDraw(Graphics g) {
                 if(checkFocus.windowNotFocused()) {
-                    g.setColor(new Color(255, 255, 255, 127));
+                    g.setColor(UNFOCUSED_COLOR);
                     g.fillRect(0, 0, 24, 24);
                 }
             }
@@ -527,8 +536,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     else {
                         Graphics2D g2d = (Graphics2D) g;
                         g2d.setColor(Color.WHITE);
-                        g2d.setStroke(new BasicStroke(2));
-                        g2d.draw(new Line2D.Float(4, 20, 20, 2));
+                        g2d.setStroke(AUDIO_SLASH_STROKE);
+                        g2d.draw(AUDIO_SLASH_LINE);
                     }
                 }
                 else if(musicSlider.getPercentage() == 0) {
@@ -536,7 +545,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     musicMutedVolume = 0;
                 }
                 if(checkFocus.windowNotFocused()) {
-                    g.setColor(new Color(255, 255, 255, 127));
+                    g.setColor(UNFOCUSED_COLOR);
                     g.fillRect(0, 0, 24, 24);
                 }
             }
@@ -611,8 +620,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     else {
                         Graphics2D g2d = (Graphics2D) g;
                         g2d.setColor(Color.WHITE);
-                        g2d.setStroke(new BasicStroke(2));
-                        g2d.draw(new Line2D.Float(4, 20, 20, 2));
+                        g2d.setStroke(AUDIO_SLASH_STROKE);
+                        g2d.draw(AUDIO_SLASH_LINE);
                     }
                 }
                 else if(sfxSlider.getPercentage() == 0) {
@@ -620,7 +629,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     sfxMutedVolume = 0;
                 }
                 if(checkFocus.windowNotFocused()) {
-                    g.setColor(new Color(255, 255, 255, 127));
+                    g.setColor(UNFOCUSED_COLOR);
                     g.fillRect(0, 0, 24, 24);
                 }
             }
@@ -759,7 +768,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         
         if(isFirstTime) {
             Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-                private Point pressLocation, releaseLocation;
+                private Point pressLocation = new Point(), releaseLocation = new Point();
         
                 private long pressTime = 0;
         
@@ -769,12 +778,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
                     switch(e.getID()) {
                         case MouseEvent.MOUSE_PRESSED:
-                            pressLocation = new Point(e.getX(), e.getY());
+                            pressLocation.setLocation(e.getX(), e.getY());
                             pressTime = System.nanoTime();
                             customAttackMaker.mousePressed();
                             break;
                         case MouseEvent.MOUSE_RELEASED:
-                            releaseLocation = new Point(e.getX(), e.getY());
+                            releaseLocation.setLocation(e.getX(), e.getY());
                             long time = (System.nanoTime() - pressTime) / 1000000;
                             if(time <= 750 && Math.hypot(releaseLocation.x - pressLocation.x, releaseLocation.y - pressLocation.y) <= 5) {
                                 MouseEvent clickEvent = new MouseEvent(frame, MouseEvent.MOUSE_CLICKED, System.nanoTime(), 0, pressLocation.x, pressLocation.y, 1, false);
@@ -805,7 +814,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 g.setColor(Color.WHITE);
                 g.drawLine(0, 28, 600, 28);
                 if(checkFocus.windowNotFocused()) {
-                    g.setColor(new Color(255, 255, 255, 127));
+                    g.setColor(UNFOCUSED_COLOR);
                     g.fillRect(0, 0, 600, 28);
                 }
                 g.setColor(Color.WHITE);
@@ -867,10 +876,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             public void onMouseRelease(MouseEvent e) {}
             
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void onMouseEnter(MouseEvent e) {}
             
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void onMouseExit(MouseEvent e) {}
             
         };
         
@@ -909,7 +918,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         frame.requestFocus();
         frame.setVisible(true);
         
-        startScreen.changeVolume(musicMutedVolume);
+        startScreen.changeVolume(musicSlider.getPercentage());
         if(!isReplaying)
             startScreen.play();
         isReplaying = false;
@@ -1071,7 +1080,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     }
                     if(p.getHealth() != 0) {
                         drawCheat(g);
-                        drawSqu(g);
+                        drawHeartBox(g);
                         drawCircle(g);
                         drawHeart(g);
                         p.shield(g, dir);
@@ -1150,9 +1159,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 }
                 if(loadingFrame == 48)
                     loadingFrame = 0;
-                AffineTransform loadingTrans = new AffineTransform();
-                loadingTrans.translate(216.5, 265.5);
-                g2d.drawImage(loadingCreator[loadingFrame], loadingTrans, null);
+                loadingTransform.setToIdentity();
+                loadingTransform.translate(216.5, 265.5);
+                g2d.drawImage(loadingCreator[loadingFrame], loadingTransform, null);
             }
             else {
                 loadingCounter = 0;
@@ -1161,7 +1170,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         }
         drawFieldFocus(g);
         if(checkFocus.windowNotFocused()) {
-            g.setColor(new Color(255, 255, 255, 127));
+            g.setColor(UNFOCUSED_COLOR);
             g.fillRect(0, 0, 600, 600);
         }
         g.dispose();
@@ -1379,10 +1388,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             isGameOver = true;
     }
     
-    private void drawSqu(Graphics g) {
+    private void drawHeartBox(Graphics g) {
         int size = 80;
-        Color translucentWhite = new Color(255, 255, 255, 200);
-        g.setColor(translucentWhite);
+        g.setColor(HEART_BOX_COLOR);
         while(size > 72) {
             g.drawRect(getWidth() / 2 - size / 2 + p.getElementPosition(), getHeight() / 2 - size / 2 + p.getElementPosition(), size, size);
             --size;
@@ -1525,7 +1533,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             heal.play();
         main.stop();
         main = mainSounds[++mainIndex];
-        main.changeVolume(musicMutedVolume);
+        main.changeVolume(musicSlider.getPercentage());
         main.play();
     }
     
@@ -1669,7 +1677,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 hideButtons();
                 setUpUndyne(isGenocide);
                 beginning = false;
-                main.changeVolume(musicMutedVolume);
+                main.changeVolume(musicSlider.getPercentage());
                 main.play();
                 isStartTimerDone = false;
             }
@@ -1703,7 +1711,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                 setUpUndyne(bottomBar.isGenocideBoxChecked());
                 beginning = false;
                 isCustomAttack = false;
-                main.changeVolume(musicMutedVolume);
+                main.changeVolume(musicSlider.getPercentage());
                 main.play();
                 dir = 'u';
                 isPlayTimerDone = false;
@@ -2142,7 +2150,8 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             gb = sfxButton;
         }
         Point mousePos = MouseInfo.getPointerInfo().getLocation();
-        mousePos = new Point((int) (mousePos.getX() - s.getLocationOnScreen().getX()), (int) (mousePos.getY() - s.getLocationOnScreen().getY()));
+        Point sliderPoint = s.getLocationOnScreen();
+        mousePos.translate((int) Math.round(-sliderPoint.getX()), (int) Math.round(-sliderPoint.getY()));
         Rectangle bounds = s.getBounds();
         bounds.setBounds(gb.getX() - s.getX(), -6, gb.getWidth(), s.getHeight() + 6);
         return bounds.contains(mousePos);
