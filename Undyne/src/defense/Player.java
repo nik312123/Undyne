@@ -2,7 +2,6 @@ package defense;
 
 import customAttackMaker.CustomAttacks;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -10,7 +9,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +29,8 @@ class Player {
     
     private Random random = new Random();
     
+    private AffineTransform playerTransform = new AffineTransform();
+    
     private static BufferedImage[] shields = new BufferedImage[2];
     
     private Font undyneFont;
@@ -46,13 +46,8 @@ class Player {
     
     Player() {
         if(Runner.isFirstTime) {
-            try {
-                shields[0] = ImageIO.read(Runner.class.getResource("/shieldH.png"));
-                shields[1] = ImageIO.read(Runner.class.getResource("/shield.png"));
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
+            shields[0] = Runner.getCompatibleImage("/shieldH.png");
+            shields[1] = Runner.getCompatibleImage("/shield.png");
         }
         URL fontUrl;
         try {
@@ -110,12 +105,12 @@ class Player {
         else
             shield = shields[1];
         g.translate(300, 300);
-        AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), 35, 35);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        shield = op.filter(shield, null);
+        playerTransform.setToIdentity();
+        playerTransform.translate(265 + elementPosition, 254 + 11 + elementPosition);
+        playerTransform.rotate(Math.toRadians(angle), 35, 35);
         g.translate(-300, -300);
-        g.drawImage(shield, 265 + elementPosition, 254 + 11 + elementPosition, null);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(shield, playerTransform, null);
     }
     
     private void shieldDir() {
