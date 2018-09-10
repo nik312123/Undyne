@@ -146,7 +146,7 @@ public class CustomAttacks {
         mousePosition.setLocation(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if(isIn|| optionSelected && (!importChosen || importingComplete)) {
+        if(isIn || optionSelected && (!importChosen || importingComplete)) {
             isIn = true;
             dynamicLength = (int) scrollValue;
             for(AttackBar attackBar : attacks)
