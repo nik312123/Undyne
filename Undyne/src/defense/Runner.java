@@ -46,8 +46,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
@@ -62,7 +60,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class Runner extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Runner extends JPanel implements ActionListener, KeyListener, MouseWheelListener {
     private static final long serialVersionUID = 1L;
     
     private static int nothingCounter = 0;
@@ -801,6 +799,16 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
                     }
                 }
             }, AWTEvent.MOUSE_EVENT_MASK);
+            
+            Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+                MouseEvent e = (MouseEvent) event;
+        
+                switch(e.getID()) {
+                    case MouseEvent.MOUSE_DRAGGED:
+                        customAttackMaker.mouseDragged();
+                        break;
+                }
+            }, AWTEvent.MOUSE_MOTION_EVENT_MASK);
         }
         
         bottomBar.setBounds(0, 548, 600, 52);
@@ -891,8 +899,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         helpPopUp.addMouseListener(errorListener);
         runner.addMouseListener(errorListener);
         frame.getContentPane().addMouseListener(errorListener);
-        frame.addMouseMotionListener(runner);
-        frame.addMouseListener(runner);
         frame.addMouseWheelListener(runner);
         frame.addKeyListener(runner);
         frame.addWindowListener(checkFocus);
@@ -2184,29 +2190,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     public static boolean windowNotFocused() {
         return checkFocus.windowNotFocused();
     }
-    
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-    
-    @Override
-    public void mousePressed(MouseEvent e) {}
-    
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-    
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-    
-    @Override
-    public void mouseExited(MouseEvent e) {}
-    
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        customAttackMaker.mouseDragged();
-    }
-    
-    @Override
-    public void mouseMoved(MouseEvent e) {}
     
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {

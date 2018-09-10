@@ -479,12 +479,15 @@ public class CustomAttacks {
     }
     
     public void mouseWheelMoved(MouseWheelEvent e) {
-        scrollValue += e.getWheelRotation() * -1;
+        if(isIn && Runner.isCustomAttack)
+            scrollValue += e.getWheelRotation() * -1;
     }
     
     public void mouseDragged() {
-        for(AttackBar a : attacks)
-            a.mouseDragWork();
+        if(isIn && Runner.isCustomAttack) {
+            for(AttackBar a : attacks)
+                a.mouseDragWork();
+        }
     }
     
     public void mouseReleased() {
