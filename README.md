@@ -1,3 +1,3 @@
 # Undyne
 
-This project is about trying to make a Java kind of replica of the Undyne fight from Undertale. We are, in particular, replicating the spear blocking part of the battle. We intend to make an easy mode, hard mode, and survival mode.
+This project is a Java replication of the Undyne fight from Undertale but with more features. We are, in particular, replicating the spear blocking part of the battle. There are easy, medium, hard, and survival modes available as well as an attack creator for importing and exporting attack patterns.
