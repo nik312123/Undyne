@@ -26,36 +26,114 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CustomAttacks {
+    /**
+     * Used to check if user has selected an option at start screen
+     */
     private static boolean optionSelected = false;
+
+    /**
+     * Used to check if user as selected import button
+     */
     private static boolean importChosen = false;
+
+    /**
+     * Changes to true when importing process is completed
+     */
     private static boolean importingComplete = false;
+
+    /**
+     * Changes to true if user selected import attacks and is browsing files
+     */
     private static boolean fileBeingChosen = false;
+
+    /**
+     * Changes to true once the user has selected an option on Custom Attacks start screen
+     */
     private static boolean isIn = false;
+
+    /**
+     * Changes to true if the error popup is closing (contracting)
+     */
     private static boolean errorIsContracting = false;
+
+    /**
+     * Is true if there is an error when importing a file
+     */
     private static boolean importingError = true;
-    
+
+    /**
+     * Line at which there is an error in the imported file
+     */
     private static int errorLine;
+
+    /**
+     * Color's alpha value of the newThing button background
+     */
     private static int newThingAlpha = 0;
+
+    /**
+     * Color's alpha value of the import button background
+     */
     private static int importThingAlpha = 0;
+
+    /**
+     * Scrolling position that changes when mouseWheelListener is triggered
+     */
     static double scrollValue = 70;
+
+    /**
+     * Y values that increments for every element drawn onto a next line
+     */
     static double dynamicLength = 0;
-    
+
+    /**
+     * Error message for when importing a corrupt file
+     */
     private static String error;
-    
+
+    /**
+     * Used to build that actual error message
+     */
     private static StringBuilder errorBuilder = new StringBuilder();
-    
+
+    /**
+     * Background color of the start screen buttons
+     */
     private static final Color startScreenButtonsColor = new Color(157, 50, 100);
-    
+
+    /**
+     * Add attack button
+     */
     private static Rectangle addAttack = new Rectangle();
+
+    /**
+     * Screen screen new button
+     */
     private static Rectangle newThing = new Rectangle(226, 211, 148, 63);
+
+    /**
+     * Start screen import file button
+     */
     private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
-    
+
+    /**
+     * Position of the mouse
+     */
     static Point mousePosition = new Point();
-    
+
+    /**
+     * List of AttackBars
+     */
     public static ArrayList<AttackBar> attacks = new ArrayList<>();
-    
+
+    /**
+     * Bottom menu bar containing the import and export buttons and more
+     */
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
-    
+
+    /**
+     * Error popup object
+     */
     private static PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5) {
         
         @Override
@@ -91,7 +169,10 @@ public class CustomAttacks {
             }
         }
     };
-    
+
+    /**
+     * JFileChooser Object for importing a file
+     */
     private static JFileChooser chooser = new JFileChooser() {
         @Override
         public void approveSelection() {
@@ -122,9 +203,17 @@ public class CustomAttacks {
             return false;
         }
     };
-    
+
+    /**
+     * FileNameExtensionFiler object for exporting files
+     */
     private static final FileNameExtensionFilter TEXT_FILTER = new FileNameExtensionFilter("Text files", "txt");
-    
+
+
+    /**
+     * Checks if ArrayList attacks is empty
+     * @return Whether or not the ArrayList attacks is empty
+     */
     private static boolean anyArrowsExist() {
         for(AttackBar attBar : attacks) {
             if(attBar.getArrows().size() > 0)
@@ -137,9 +226,11 @@ public class CustomAttacks {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setFileFilter(TEXT_FILTER);
     }
-    
-    public CustomAttacks() {}
-    
+
+    /**
+     * The main paint method
+     * @param g2    Graphics object from Runner.java paintComponent
+     */
     public void perform(Graphics g2) {
         JFrame frame = Runner.getFrame();
         Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
@@ -166,7 +257,11 @@ public class CustomAttacks {
         }
         errorPopUp.checkVisibility();
     }
-    
+
+    /**
+     * Custom Attack's start screen paint method
+     * @param g     Graphics object
+     */
     private void startScreen(Graphics2D g) {
         if(newThing.contains(mousePosition)) {
             newThingAlpha += 5;
@@ -207,17 +302,27 @@ public class CustomAttacks {
         String exit = "Press X to Exit";
         g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit) / 2, 550);
     }
-    
+
+    /**
+     * Adds a new AttackBar object to attacks
+     */
     private void addAttack() {
         attacks.add(new AttackBar());
     }
-    
+
+    /**
+     * Reassigns ids to AttackBars when one is deleted
+     */
     private void reassignNumbers() {
         int i = -1;
         for(AttackBar a : CustomAttacks.attacks)
             a.setNumber(++i);
     }
-    
+
+    /**
+     * Paints add attack button
+     * @param g     Graphics object
+     */
     private void addAttackButton(Graphics g) {
         if(attacks.size() >= 13000)
             g.drawImage(Runner.addAttackDisabled, 300 - 33, (int) dynamicLength - 5, null);
@@ -225,7 +330,11 @@ public class CustomAttacks {
             g.drawImage(Runner.addAttack, 300 - 33, (int) dynamicLength - 5, null);
         addAttack.setBounds(300 - 33, (int) dynamicLength - 5, 66, 17);
     }
-    
+
+    /**
+     * Runs when import file button is pressed on start screen
+     * @return An ArrayList of AttackBar objects
+     */
     private ArrayList<AttackBar> importFile() {
         StartScreen.playClick();
         ArrayList<AttackBar> importedAttacks = new ArrayList<>();
@@ -421,7 +530,12 @@ public class CustomAttacks {
                 arrBar.removeFields();
         }
     }
-    
+
+    /**
+     * Checks if a String is a number
+     * @param number    A String
+     * @return Whether or not the String is a number
+     */
     private boolean stringIsNumber(String number) {
         if(number.length() == 0)
             return false;
@@ -431,7 +545,10 @@ public class CustomAttacks {
         }
         return true;
     }
-    
+
+    /**
+     * Runs when export file button is pressed on the bottomMenuBar
+     */
     private void exportFile() {
         StartScreen.playClick();
         ArrayList<String> output = new ArrayList<>();
@@ -469,7 +586,11 @@ public class CustomAttacks {
             }
         }
     }
-    
+
+    /**
+     * Checks if there are any AttackBars with zero ArrowBars
+     * @return Whether or not there are any AttackBars with zero Arrow Bars
+     */
     static boolean areAnyAttacksEmpty() {
         for(AttackBar attackBar : attacks) {
             if(attackBar.getArrows().size() == 0)
@@ -477,30 +598,46 @@ public class CustomAttacks {
         }
         return false;
     }
-    
+
+    /**
+     * MouseWheelListener that changes scrollValue and is called in Runner.java
+     * @param e     MouseWheelEvent
+     */
     public void mouseWheelMoved(MouseWheelEvent e) {
         if(isIn && Runner.isCustomAttack)
             scrollValue += e.getWheelRotation() * -1;
     }
-    
+
+    /**
+     * Triggers when mouse is dragged and is called in Runner.java
+     */
     public void mouseDragged() {
         if(isIn && Runner.isCustomAttack) {
             for(AttackBar a : attacks)
                 a.mouseDragWork();
         }
     }
-    
+
+    /**
+     * Triggers when mouse click is released and is called in Runner.java
+     */
     public void mouseReleased() {
         for(AttackBar a : attacks)
             a.mouseReleased();
     }
-    
+
+    /**
+     * Triggers when mouse is pressed and is called in Runner.java
+     */
     public void mousePressed() {
         for(AttackBar a : attacks) {
             a.mousePressed();
         }
     }
-    
+
+    /**
+     * Triggers when mouse is clicked and is called in Runner.java
+     */
     public void mouseClicked() {
         if(errorPopUp.percentageExpanded() == 1.0) {
             errorPopUp.setExpanding(false);
@@ -544,7 +681,11 @@ public class CustomAttacks {
             }
         }
     }
-    
+
+    /**
+     * Sets viability of speedFields and delayFields of ArrowBars to the boolean variable visibility
+     * @param visibility    Boolean value of whether ot not speedFields and delayFields should be true or false
+     */
     public void setAllFieldsVisibility(boolean visibility) {
         for(AttackBar at : attacks) {
             for(ArrowBar ab : at.getArrows()) {
@@ -552,7 +693,12 @@ public class CustomAttacks {
             }
         }
     }
-    
+
+    /**
+     * Sets the importingError to true or false and sets the error message string
+     * @param importingError    Boolean value of whether there's an importing error
+     * @param message       String value representing the error message
+     */
     public static void setError(boolean importingError, String message) {
         CustomAttacks.importingError = importingError;
         error = message;
@@ -560,27 +706,51 @@ public class CustomAttacks {
         errorPopUp.setVisible(true);
         StartScreen.playClick();
     }
-    
+
+    /**
+     * Returns the error PopUp Object
+     * @return      PopUp Object
+     */
     public PopUp getErrorPopUp() {
         return errorPopUp;
     }
-    
+
+    /**
+     * Returns the ArrayList of AttackBar objects
+     * @return      ArrayList of AttackBar objects
+     */
     public ArrayList<AttackBar> getAttacks() {
         return attacks;
     }
-    
+
+    /**
+     * Returns the BottomMenuBar object
+     * @return      BottomMenuBar object
+     */
     public static BottomMenuBar getBottomMenuBar() {
         return bottomMenuBar;
     }
-    
+
+    /**
+     * Returns true when the user selects an option on Custom Attacks start screen
+     * @return      Boolean value of whether or not the user has selected an option on Custom Attacks start screen
+     */
     public static boolean isIn() {
         return isIn;
     }
-    
+
+    /**
+     * Returns true if user selected Import option on Custom Attacks start screen and is browsing file system
+     * @return      Boolean value of whether or not the user is browsing the file system
+     */
     public static boolean isFileBeingChosen() {
         return fileBeingChosen;
     }
-    
+
+    /**
+     * Returns true if the user has selected on direction button on an ArrowBar
+     * @return Boolean value of whether or not the user has selected on direction button on an ArrowBar
+     */
     public static boolean areAnyDirectionsSelected() {
         for(AttackBar at : attacks) {
             for(ArrowBar ab : at.getArrows()) {

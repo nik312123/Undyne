@@ -17,28 +17,86 @@ import java.io.IOException;
 import java.awt.geom.AffineTransform;
 
 public class ArrowBar {
+
+    /**
+     * The Y position of the Arrow Bar
+     */
     private int y = 0;
+
+    /**
+     * The speed value of the arrow
+     */
     private int speed;
+
+    /**
+     * The delay valye of the arrow
+     */
     private int delay;
-    
+
+    /**
+     * True if the direction button is selected
+     */
     private boolean isDirectionSelected = false;
+
+    /**
+     * Representing if the drag icon is being pressed
+     */
     private boolean pressed = false;
-    private boolean reverseable;
-    
+
+    /**
+     * True if the reverse check box is ticked
+     */
+    private boolean reversible;
+
+    /**
+     * Represents the direction of the arrow. 'u' for up, 'd' for down, 'r' for right, and 'l' for left
+     */
     private char direction;
-    
+
+    /**
+     *  The color object used to draw text
+     */
     private Color textColor = new Color(255, 198, 0);
+
+    /**
+     * The color object used for the foreground of number fields
+     */
     private static final Color FOREGROUND = new Color(255, 196, 0);
-    
+
+    /**
+     * The delete arrow button's rectangle used to set bounds for clicking
+     */
     private Rectangle deleteArrowButton = new Rectangle();
+
+    /**
+     * The direction button's rectangle used to set bounds for clicking
+     */
     private Rectangle directionRectangle = new Rectangle();
-    private Rectangle orderIntersecton = new Rectangle();
+    private Rectangle orderIntersection = new Rectangle();
+
+    /**
+     * The drag icon button's rectangle used to set bounds for clicking
+     */
     private Rectangle dragArrowIcon = new Rectangle();
+
+    /**
+     * The reverse arrow tick box's rectangle used to set bounds for clicking
+     */
     private Rectangle reverseTickBox = new Rectangle();
-    
+
+    /**
+     * The transform object used for the arrow in direction button
+     */
     private static AffineTransform arrowBarTransform = new AffineTransform();
-    
+
+    /**
+     * NumberField object for speed value
+     */
     private NumberField speedField;
+
+    /**
+     * NumberField object for delay value
+     */
     private NumberField delayField;
     
     private static final FocusListener NUMBER_FIELD_LISTENER = new FocusListener() {
@@ -56,10 +114,17 @@ public class ArrowBar {
             nf.setFocused(false);
         }
     };
-    
-    ArrowBar(int speed, boolean reverseable, char direction, int delay) {
+
+    /**
+     * Arrow Bar initializer
+     * @param speed         Int value representing the speed of the arrow
+     * @param reversible    Boolean value representing if the arrow is reversed
+     * @param direction     Char value representing the direction of the arrow
+     * @param delay         Int value representing the delay between previous arrow and current arrow
+     */
+    ArrowBar(int speed, boolean reversible, char direction, int delay) {
         this.speed = speed;
-        this.reverseable = reverseable;
+        this.reversible = reversible;
         this.direction = direction;
         this.delay = delay;
         try {
@@ -123,7 +188,10 @@ public class ArrowBar {
         Runner.addComponent(speedField, 9);
         Runner.addComponent(delayField, 9);
     }
-    
+
+    /**
+     * Manages focus for NumberFields
+     */
     public class NumberFieldFocus extends NumberField {
         
         private boolean focused = false;
@@ -140,28 +208,49 @@ public class ArrowBar {
             return focused;
         }
     }
-    
+
+    /**
+     * Remove the NumberField components
+     */
     void removeFields() {
         Runner.removeComponent(speedField);
         Runner.removeComponent(delayField);
     }
-    
+
+    /**
+     * Returns the y position of the arrowBar
+     * @return Int value representing the y position of the arrowBar
+     */
     int getY() {
         return y;
     }
-    
+
+    /**
+     * Sets the y position of the arrowbar
+     * @param y Int value representing the y position of the arrowBar
+     */
     void setY(int y) {
         this.y = y;
     }
-    
+
+    /**
+     * Sets pressed to true if arrowbar is pressed with the mouse
+     * @param pressed boolean value representing if arrowbar is pressed with the mouse
+     */
     void setPressed(boolean pressed) {
         this.pressed = pressed;
     }
     
-    Rectangle getOrderIntersecton() {
-        return orderIntersecton;
+    Rectangle getOrderIntersection() {
+        return orderIntersection;
     }
-    
+
+    /**
+     * Main paint method
+     * @param g Graphics Object
+     * @param x X position of the arrowBar
+     * @param y Y Position of the ArrowBar
+     */
     void draw(Graphics g, int x, int y) {
         if(!pressed)
             this.y = y;
@@ -170,7 +259,7 @@ public class ArrowBar {
         g.setColor(Color.BLACK);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8, 26, 12);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8, 26, 12);
-        orderIntersecton.setBounds(x, this.y, 100, 10);
+        orderIntersection.setBounds(x, this.y, 100, 10);
         g.drawImage(Runner.arrowImg, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);
         drawDirection(g, x, this.y);
@@ -201,18 +290,36 @@ public class ArrowBar {
         }
         setFieldUsability(!anySelected);
     }
-    
+
+    /**
+     * Handles keystrokes when entering values into numberFields
+     * @param im            InputMap Object
+     * @param keyStrokeName String value representing the keyStroke's name
+     * @param actionMapKey  String Value representing the actionMapKey's name
+     */
     private void inputMapKeyStrokeReplacement(InputMap im, String keyStrokeName, String actionMapKey) {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeName);
         im.put(keyStroke, actionMapKey);
     }
-    
+
+    /**
+     * Drawing method for direction button
+     * @param g Graphics Object
+     * @param x X position of the direction button
+     * @param y Y position of the direction button
+     */
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
         if(!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
             setImage(g, x, y);
     }
-    
+
+    /**
+     * Sets the correct image for the arrowBar's direction button
+     * @param g Graphics Object
+     * @param x X position of the image
+     * @param y Y position of the Image
+     */
     private void setImage(Graphics g, int x, int y) {
         boolean drawArrow = true;
         arrowBarTransform.setToIdentity();
@@ -245,48 +352,93 @@ public class ArrowBar {
             g2d.drawString("R", x + 102, y + 18);
         }
     }
-    
+
+    /**
+     * Drawing method for reverse tick box
+     * @param g Graphics object
+     * @param x X position of the reverse tick box
+     * @param y Y position of the reverse tick box
+     */
     private void reverseTickBox(Graphics g, int x, int y) {
-        if(reverseable)
+        if(reversible)
             g.drawImage(Runner.ticked, x + 400 - 10, y + 8, null);
         reverseTickBox.setBounds(x + 400 - 10, y + 8, 13, 12);
     }
-    
+
+    /**
+     * Returns isPressed
+     * @return Boolean value
+     */
     boolean isPressed() {
         return pressed;
     }
-    
+
+    /**
+     * Drawing method for drag icon
+     * @param g Graphics Object
+     * @param x X position of the drag icon
+     * @param y Y position of the drag icon
+     */
     private void dragArrowIcon(Graphics g, int x, int y) {
         if(!pressed)
             dragArrowIcon.setBounds(x + 424, y + 8, 16, 8 + 3);
         g.drawImage(Runner.dragArrowIcon, dragArrowIcon.x, dragArrowIcon.y, null);
     }
-    
+
+    /**
+     * Returns the drag icon Rectangle object
+     * @return  Rectangle object
+     */
     Rectangle getDragArrowIcon() {
         return dragArrowIcon;
     }
-    
+
+    /**
+     * Sets the bound of the drag icon's rectangle
+     * @param dragArrowIcon Rectangle objects
+     */
     void setDragArrowIcon(Rectangle dragArrowIcon) {
         this.dragArrowIcon = dragArrowIcon;
     }
-    
+
+    /**
+     * Drawing method for delete arrow button
+     * @param g Graphics Object
+     * @param x X position of delete arrow button
+     * @param y Y position of delete arrow button
+     */
     private void deleteArrowButton(Graphics g, int x, int y) {
         g.drawImage(Runner.deleteArrow, x, y, null);
         deleteArrowButton.setBounds(x, y, 19, 17);
     }
-    
+
+    /**
+     * Returns the deleteArrowButton's Rectangle object
+     * @return  Rectangle object
+     */
     Rectangle getDeleteArrowButton() {
         return deleteArrowButton;
     }
-    
+
+    /**
+     * Returns the reverse tick box's Rectangle
+     * @return  Rectangle object
+     */
     Rectangle getReverseTickBox() {
         return reverseTickBox;
     }
-    
+
+    /**
+     * Sets directionSelected to false
+     */
     public void directionSelectedFalse() {
         this.isDirectionSelected = false;
     }
-    
+
+    /**
+     * Returns delay value
+     * @return Int value representing the delay of the arrow
+     */
     public int getDelay() {
         if(!delayField.getText().isEmpty())
             delay = Integer.parseInt(delayField.getText());
@@ -294,7 +446,11 @@ public class ArrowBar {
             delay = 0;
         return delay;
     }
-    
+
+    /**
+     * Returns the speed value
+     * @return Int value representing the speed of the arrow
+     */
     public int getSpeed() {
         if(!speedField.getText().isEmpty())
             speed = Integer.parseInt(speedField.getText());
@@ -302,40 +458,74 @@ public class ArrowBar {
             speed = 0;
         return speed;
     }
-    
+
+    /**
+     * sets the direction of the arrow
+     * @param direction char value representing the direction of the arrow
+     */
     public void setDirection(char direction) {
         this.direction = direction;
     }
-    
+
+    /**
+     * Returns the direction of the arrow
+     * @return Char value
+     */
     public char getDirection() {
         return direction;
     }
-    
-    void switchReversable() {
-        reverseable = !reverseable;
+
+    /**
+     * Toggles the reversible boolean variable
+     */
+    void switchReversible() {
+        reversible = !reversible;
     }
-    
+
+    /**
+     * Returns reversible variable
+     * @return  Boolean value
+     */
     public boolean isReversible() {
-        return reverseable;
+        return reversible;
     }
-    
+
+    /**
+     * Returns Direction buttons rectangle
+     * @return Rectangle Object
+     */
     Rectangle getDirectionRectangle() {
         return directionRectangle;
     }
-    
+
+    /**
+     * Checks if direction button is selected
+     * @return Boolean value representing if direction button is selected
+     */
     public boolean isDirectionSelected() {
         return isDirectionSelected;
     }
-    
+
+    /**
+     * Toggles isDirectionSelected
+     */
     void switchDirectionIsSelected() {
         isDirectionSelected = !isDirectionSelected;
     }
-    
+
+    /**
+     * Sets the visibility of the numberFields to true or false
+     * @param visibility Boolean value representing whether visibility of numberFields
+     */
     void setFieldsVisibility(boolean visibility) {
         speedField.setVisible(visibility);
         delayField.setVisible(visibility);
     }
-    
+
+    /**
+     * Sets numberFields to be usable
+     * @param usable True or false
+     */
     private void setFieldUsability(boolean usable) {
         if(usable) {
             speedField.setEditable(true);
@@ -350,14 +540,18 @@ public class ArrowBar {
             delayField.setCaretColor(Color.BLACK);
         }
     }
-    
+
+    /**
+     * Checks if there are any empty numberFields
+     * @return Boolean value
+     */
     boolean emptyFieldExists() {
         return speedField.getText().isEmpty() || delayField.getText().isEmpty();
     }
     
     @Override
     public String toString() {
-        return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reverseable + ", direction = " + direction + '}';
+        return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reversible + ", direction = " + direction + '}';
     }
 }
 
