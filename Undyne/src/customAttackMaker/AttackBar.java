@@ -188,7 +188,7 @@ public class AttackBar {
             }
             else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected) {
                 StartScreen.playClick();
-                ab.switchReversable();
+                ab.switchReversible();
             }
         }
         return 0;

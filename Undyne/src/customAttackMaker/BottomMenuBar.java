@@ -48,14 +48,13 @@ public class BottomMenuBar extends JPanel {
                 g.drawImage(Runner.exportButton, 456, y + 28, null);
             if(isShowing) {
                 g.drawImage(Runner.bottomTabDown, 541, y + 7, null);
-                if(--y < 0)
-                    y = 0;
+                y = Math.max(y - 1, 0);
             }
             else {
                 g.drawImage(Runner.bottomTabUp, 541, y + 7, null);
-                if(++y > 32)
-                    y = 32;
+                y = Math.min(y + 1, 32);
             }
+            
             drawBarCheck(g);
         }
         if(Runner.windowNotFocused()) {
@@ -119,7 +118,7 @@ public class BottomMenuBar extends JPanel {
             return 0;
         else if(play.contains(mousePosition) && !Runner.canBeStopped && CustomAttacks.attacks.size() != 0 && !CustomAttacks.areAnyAttacksEmpty() && noFieldsAreEmpty()) {
             StartScreen.playClick();
-            Runner.play(false);
+            Runner.playCreatorAttacks(false);
         }
         else if(stop.contains(mousePosition) && Runner.canBeStopped) {
             StartScreen.playClick();
