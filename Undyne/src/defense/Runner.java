@@ -126,7 +126,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     private static final String[] HARD_MESSAGE = {"You really are", "something, human.", "Nice job!"};
     private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
     
-    private static Timer timer;
+    private static Timer mainTimer;
     private static Timer oneSecondDelay;
     
     private static BufferedImage heart;
@@ -374,9 +374,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         Runner runner = new Runner();
         runner.setBounds(0, 0, 600, 600);
         
-        timer = new Timer(delay, runner);
-        timer.setActionCommand("main");
-        timer.start();
+        mainTimer = new Timer(delay, runner);
+        mainTimer.setActionCommand("main");
+        mainTimer.start();
         oneSecondDelay = new Timer(1000, runner);
         oneSecondDelay.setRepeats(false);
         
@@ -802,7 +802,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
                 MouseEvent e = (MouseEvent) event;
-        
+                
                 switch(e.getID()) {
                     case MouseEvent.MOUSE_DRAGGED:
                         customAttackMaker.mouseDragged();
@@ -1269,7 +1269,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
     
     private void gif(Graphics g) {
-        if(a == null || !a.getIsFinished() || a.getIsFinished() && ((isGenocide && count != 19) || (!isGenocide && count != 10))) {
+        if(a == null || !a.getIsFinished() || isGenocide && count != 19 || !isGenocide && count != 10) {
             int maxCount;
             int gifChange;
             if(isGenocide) {
@@ -1580,7 +1580,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     }
     
     private static void restartApplication() {
-        timer.stop();
+        mainTimer.stop();
         allStopped = true;
         stage.resetVars(isReplaying);
         a.resetVars();
@@ -1633,7 +1633,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         isCloseCreatorTimerDone = false;
         isCustomAttack = false;
         canBeStopped = false;
-        timer = null;
+        mainTimer = null;
         oneSecondDelay = null;
         gif = null;
         main = null;
@@ -1994,10 +1994,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         new KeyAction(runner, condition, KeyEvent.VK_V, 0, false) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(timer.getDelay() != 0)
-                    timer.setDelay(0);
+                if(mainTimer.getDelay() != 0)
+                    mainTimer.setDelay(0);
                 else
-                    timer.setDelay(10);
+                    mainTimer.setDelay(10);
             }
         };
         
@@ -2189,6 +2189,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     public static boolean windowNotFocused() {
         return checkFocus.windowNotFocused();
+    }
+    
+    static int getTimerDelay() {
+        return mainTimer.getDelay();
     }
     
     @Override

@@ -223,7 +223,7 @@ class Attack {
         hit = removeArrow(p.getDir(), p);
         block.changeVolume(volume);
         damage.changeVolume(volume);
-        if(hit.equals("H")) {
+        if(hit.equals("H") && Runner.getTimerDelay() != 0) {
             p.setRedZero();
             block.play();
         }
