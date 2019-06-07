@@ -23,7 +23,7 @@ public class ArrowBar {
     
     private boolean isDirectionSelected = false;
     private boolean pressed = false;
-    private boolean reverseable;
+    private boolean reversible;
     
     private char direction;
     
@@ -57,9 +57,9 @@ public class ArrowBar {
         }
     };
     
-    ArrowBar(int speed, boolean reverseable, char direction, int delay) {
+    ArrowBar(int speed, boolean reversible, char direction, int delay) {
         this.speed = speed;
-        this.reverseable = reverseable;
+        this.reversible = reversible;
         this.direction = direction;
         this.delay = delay;
         try {
@@ -171,7 +171,7 @@ public class ArrowBar {
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8, 26, 12);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8, 26, 12);
         orderIntersecton.setBounds(x, this.y, 100, 10);
-        g.drawImage(Runner.arrowImg, x, this.y, null);
+        g.drawImage(Runner.arrowBarImage, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);
         drawDirection(g, x, this.y);
         reverseTickBox(g, x, this.y);
@@ -209,7 +209,7 @@ public class ArrowBar {
     
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
-        if(!isDirectionSelected || Runner.customAttacksCounter % 75 >= 30)
+        if(!isDirectionSelected || Runner.creatorArrowDirectionCounter % 75 >= 30)
             setImage(g, x, y);
     }
     
@@ -247,7 +247,7 @@ public class ArrowBar {
     }
     
     private void reverseTickBox(Graphics g, int x, int y) {
-        if(reverseable)
+        if(reversible)
             g.drawImage(Runner.ticked, x + 400 - 10, y + 8, null);
         reverseTickBox.setBounds(x + 400 - 10, y + 8, 13, 12);
     }
@@ -311,12 +311,12 @@ public class ArrowBar {
         return direction;
     }
     
-    void switchReversable() {
-        reverseable = !reverseable;
+    void switchReversible() {
+        reversible = !reversible;
     }
     
     public boolean isReversible() {
-        return reverseable;
+        return reversible;
     }
     
     Rectangle getDirectionRectangle() {
@@ -357,7 +357,7 @@ public class ArrowBar {
     
     @Override
     public String toString() {
-        return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reverseable + ", direction = " + direction + '}';
+        return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reversible + ", direction = " + direction + '}';
     }
 }
 
