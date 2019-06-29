@@ -11,45 +11,114 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AttackBar {
+    /**
+     * The index of the {@code AttackBar} in the list of {@code CustomAttack} attacks
+     */
     private int number;
     
+    /**
+     * The constant x-position for {@code AttackBar}s
+     */
     static final int ATTACKBAR_X = 30;
     
-    private boolean isDropped = true;
+    /**
+     * True if an {@code AttackBar}'s {@code ArrowBar}s are collapsed and false otherwise
+     */
+    private boolean collapsed = true;
+    
+    /**
+     * True if the {@code AttackBar}'s random orientation shift option is selected and false otherwise
+     */
     private boolean orientationShift = false;
     
+    /**
+     * The dropdown button's clicking bounds
+     */
     private Rectangle dropDownButton = new Rectangle();
+    
+    /**
+     * The delete attack button's clicking bounds
+     */
     private Rectangle deleteAttack = new Rectangle();
+    
+    /**
+     * The orientation shift button's clicking bounds
+     */
     private Rectangle orientationShiftButton = new Rectangle();
+    
+    /**
+     * The new arrow button's clicking bounds
+     */
     private Rectangle newArrowButton = new Rectangle();
+    
+    /**
+     * The top bound to constrict the AttackBar's area
+     */
     private Rectangle topBound = new Rectangle();
+    
+    /**
+     * The bottom bound to constrict the AttackBar's area
+     */
     private Rectangle bottomBound = new Rectangle();
+    
     private Rectangle upScrollRect = new Rectangle(0, 0, 600, 5);
     private Rectangle downScrollRect = new Rectangle(0, 595, 600, 5);
     private Rectangle dragArrowRect = new Rectangle(0, 0, 16, 18);
     
+    /**
+     * The {@code ArrowBar}s under this {@code AttackBar}
+     */
     private ArrayList<ArrowBar> arrows = new ArrayList<>();
     
+    /**
+     * Initializes an {@code AttackBar} with its corresponding number
+     */
     AttackBar() {
-        number = CustomAttacks.attacks.size();
+        number = CustomAttacks.attacks.size() - 1;
     }
     
+    /**
+     * Returns arrows
+     *
+     * @return an ArrayList of ArrowBar objects
+     */
     public ArrayList<ArrowBar> getArrows() {
         return arrows;
     }
     
+    /**
+     * Runs when the add new arrow button is clicked and adds an arrow
+     *
+     * @param bar An AttackBar object
+     */
     void add(ArrowBar bar) {
         arrows.add(bar);
     }
     
+    /**
+     * Returns the id number of the AttackBar
+     *
+     * @return An int value representing the id number of the AttackBar
+     */
     public int getNumber() {
         return number;
     }
     
+    /**
+     * Sets the id number for the AttackBar
+     *
+     * @param num The number to set the AttackBar to (represents the index in customAttacks)
+     */
     void setNumber(int num) {
         this.number = num;
     }
     
+    /**
+     * Draws the {@code AttackBar} and its corresponding components
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param y The y-position of the AttackBar
+     */
     void draw(Graphics g, int y) {
         int x = ATTACKBAR_X;
         Graphics2D g2 = (Graphics2D) g;
@@ -58,7 +127,7 @@ public class AttackBar {
         deleteAttackButton(g, x, y);
         orientationShiftButton(g, x, y);
         dropDownButton(g, x, y);
-        if(isDropped) {
+        if(collapsed) {
             topBound.setBounds(0, y + 10, 600, 1);
             CustomAttacks.dynamicLength += 10;
             y += 30 * drawArrows(g, x, y);
@@ -70,6 +139,13 @@ public class AttackBar {
             CustomAttacks.dynamicLength += 35;
     }
     
+    /**
+     * Draws the "Attack [id]" {@code String} for the {@code AttackBar}
+     *
+     * @param g The graphics object used for drawing the {@code Runner} {@code JPanel}
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     */
     private void drawString(Graphics g, int x, int y) {
         g.setColor(Color.WHITE);
         g.setFont(Runner.deteFontEditorAttack);
@@ -78,6 +154,13 @@ public class AttackBar {
         g.drawString(displayNum + "", 10 + x + g.getFontMetrics().stringWidth("Attack"), y);
     }
     
+    /**
+     * Draws the delete attack button
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     */
     private void deleteAttackButton(Graphics g, int x, int y) {
         int displayNum = number + 1;
         int deleteAttackX = 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70 + 36, deleteAttackY = y - 16;
@@ -85,6 +168,13 @@ public class AttackBar {
         deleteAttack.setBounds(deleteAttackX, deleteAttackY, 44, 17);
     }
     
+    /**
+     * Draws the orientation shift button
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     */
     private void orientationShiftButton(Graphics g, int x, int y) {
         int displayNum = number + 1;
         int orientationShiftX = 10 + x + g.getFontMetrics().stringWidth(displayNum + "") + x + 70, orientationShiftY = y - 17;
@@ -96,13 +186,27 @@ public class AttackBar {
         orientationShiftButton.setBounds(orientationShiftX, orientationShiftY, 21, 19);
     }
     
+    /**
+     * Draws the add new arrow button
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     */
     private void newArrowButton(Graphics g, int x, int y) {
         g.drawImage(Runner.newArrow, x + 10, y + 7, null);
         newArrowButton.setBounds(x + 10, y + 7, 19, 17);
     }
     
+    /**
+     * Draws the drop-down button
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     */
     private void dropDownButton(Graphics g, int x, int y) {
-        if(isDropped) {
+        if(collapsed) {
             g.drawImage(Runner.droppedDown, x - 15, y - 10, null);
             dropDownButton.setBounds(x - 15, y - 10, 6, 5);
         }
@@ -112,6 +216,14 @@ public class AttackBar {
         }
     }
     
+    /**
+     * Draws all the {@code ArrowBar}s for this {@code AttackBar}
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     * @return The number of {@code ArrowBar}s drawn
+     */
     private int drawArrows(Graphics g, int x, int y) {
         int counter = 0;
         int beingDragged = -1;
@@ -124,7 +236,7 @@ public class AttackBar {
             CustomAttacks.dynamicLength += 30;
         }
         if(beingDragged != -1) {
-            Rectangle orderIntersection = arrows.get(beingDragged).getOrderIntersecton();
+            Rectangle orderIntersection = arrows.get(beingDragged).getOrderIntersection();
             if(orderIntersection.intersects(topBound) || orderIntersection.intersects(bottomBound))
                 return counter;
             g.setColor(Color.BLACK);
@@ -143,14 +255,27 @@ public class AttackBar {
         return counter;
     }
     
+    /**
+     * Toggles whether or not the {@code ArrowBar}s for this {@code AttackBar} should have a random orientation shift applied to them
+     */
     void switchOrientationShift() {
         orientationShift = !orientationShift;
     }
     
+    /**
+     * Returns true if the {@code ArrowBar}s for this {@code AttackBar} should have a random orientation shift applied to them
+     *
+     * @return True if the {@code ArrowBar}s for this {@code AttackBar} should have a random orientation shift applied to them
+     */
     public boolean isOrientationShift() {
         return orientationShift;
     }
     
+    /**
+     * Handles mouse clicking action
+     *
+     * @return int value representing what specific action was performed
+     */
     int mouseClickWork() {
         boolean anySelected = CustomAttacks.areAnyDirectionsSelected();
         if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
@@ -168,7 +293,7 @@ public class AttackBar {
         }
         else if(dropDownButton.contains(CustomAttacks.mousePosition)) {
             StartScreen.playClick();
-            isDropped = !isDropped;
+            collapsed = !collapsed;
         }
         else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected) {
             StartScreen.playClick();
@@ -194,6 +319,9 @@ public class AttackBar {
         return 0;
     }
     
+    /**
+     * Handles mouse dragging action
+     */
     void mouseDragWork() {
         for(ArrowBar a : arrows) {
             if(a.isPressed()) {
@@ -210,11 +338,17 @@ public class AttackBar {
         order();
     }
     
+    /**
+     * Handles the mouse release action
+     */
     void mouseReleased() {
         for(ArrowBar a : arrows)
             a.setPressed(false);
     }
     
+    /**
+     * Handles the mouse press action
+     */
     void mousePressed() {
         for(ArrowBar a : arrows) {
             if(a.getDragArrowIcon().contains(CustomAttacks.mousePosition))
@@ -222,10 +356,13 @@ public class AttackBar {
         }
     }
     
+    /**
+     * Handles the arrowbar order changing stuff. (Needs fixing – complete revamp)
+     */
     private void order() {
         for(int i = 0; i < arrows.size(); ++i) {
             for(int j = i + 1; j < arrows.size(); ++j) {
-                if(arrows.get(i).getOrderIntersecton().intersects(arrows.get(j).getOrderIntersecton())) {
+                if(arrows.get(i).getOrderIntersection().intersects(arrows.get(j).getOrderIntersection())) {
                     Collections.swap(arrows, i, j);
                     return;
                 }

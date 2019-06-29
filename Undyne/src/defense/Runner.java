@@ -366,7 +366,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     /**
      * The main timer used for redrawing the JFrame
      */
-    private static Timer timer;
+    private static Timer mainTimer;
     
     /**
      * The timer used for any delays that require one second (has its own loading screen)
@@ -1010,10 +1010,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         Runner runner = new Runner();
         runner.setBounds(0, 0, 600, 600);
         
-        //Initializes the timers
-        timer = new Timer(delay, runner);
-        timer.setActionCommand("main");
-        timer.start();
+        mainTimer = new Timer(delay, runner);
+        mainTimer.setActionCommand("main");
+        mainTimer.start();
+        
         oneSecondDelay = new Timer(1000, runner);
         oneSecondDelay.setRepeats(false);
         
@@ -1724,6 +1724,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         return null;
     }
     
+    /**
+     * The main drawing method for the {@code Runner} {@code JPanel}
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -2522,7 +2527,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      * Resets necessary static values and restarts application
      */
     private static void restartApplication() {
-        timer.stop();
+        mainTimer.stop();
         allStopped = true;
         stage.resetVars(isReplaying);
         a.resetVars();
@@ -2575,7 +2580,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         isCloseCreatorTimerDone = false;
         isCustomAttack = false;
         canBeStopped = false;
-        timer = null;
+        mainTimer = null;
         oneSecondDelay = null;
         gifUndyne = null;
         main = null;
@@ -2938,10 +2943,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         new KeyAction(runner, condition, KeyEvent.VK_V, 0, false) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(timer.getDelay() != 0)
-                    timer.setDelay(0);
+                if(mainTimer.getDelay() != 0)
+                    mainTimer.setDelay(0);
                 else
-                    timer.setDelay(10);
+                    mainTimer.setDelay(10);
             }
         };
         
@@ -3283,7 +3288,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      */
     private static void barCheckBoxClicked(MouseEvent e) {
         int x = e.getX(), y = e.getY();
-        boolean mouseIntersectsCheckBox = bottomBar.getBarCheckBox().contains(x, y);
+        boolean mouseIntersectsCheckBox = bottomBar.getCheckbox().contains(x, y);
         if(mouseIntersectsCheckBox) {
             StartScreen.playClick();
             //If the user clicks the checkbox when testing attacks in the attack creator, it switches off/on the automatic play option
