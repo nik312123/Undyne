@@ -49,11 +49,6 @@ public class ArrowBar {
     private boolean reversible;
     
     /**
-     * True if the reverse checkbox is ticked
-     */
-    private boolean reversible;
-    
-    /**
      * The direction the arrow comes from towards the player
      */
     private char direction;
@@ -356,7 +351,7 @@ public class ArrowBar {
      */
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
-        if(!isDirectionSelected || Runner.creatorArrowDirectionCounter % 75 >= 30)
+        if(!directionSelected || Runner.creatorArrowDirectionCounter % 75 >= 30)
             setImage(g, x, y);
     }
     

@@ -65,7 +65,7 @@ public class CustomAttacks {
     /**
      * Line at which there is an error in the imported file
      */
-    private static int errorLine;
+    private static int currentLine;
     
     /**
      * Color's alpha value of the newThing button background
