@@ -1,47 +1,96 @@
 package defense;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-/*
- * Composes an arrow to be implemented in the Attack class
+/**
+ * Composes an arrow to be implemented in the Attack class that is launched at the player
  */
 class Arrow {
-    /*
-     * This determines the speed the arrow should go at between 1 – 100
+    /**
+     * The speed the arrow should go in pixels/tick between 1 – 100
      */
     private int speed;
-    /*
+    
+    /**
      * This determines whether or not the arrow will be reversed
      */
     private boolean reverse;
-    /*
-     * This determines the direction the arrow should come from
+    
+    /**
+     * This determines the direction the arrow should be traveling
      */
     private char direction;
-    /*
+    
+    /**
      * These are the coordinates of the arrow
      */
     private int x, y;
-    /*
-     * This is the delay after the arrow for the next arrow
+    
+    /**
+     * This is the delay before the next arrow is launched after this arrow is lauched
      */
     private int delay;
+    
+    /**
+     * The distance between the tip of the front of the arrow and the center
+     */
     private int radius = 0;
     
+    /**
+     * What the user uses to block arrows and how the player gets hit
+     */
     static Player p;
     
+    /**
+     * True if the arrow gets past the player's shield
+     */
     private boolean inside = false;
-    private boolean isOne = true;
+    
+    /**
+     * If an arrow is a slow arrow, whether or not the arrow should move one pixel (alternates every tick)
+     */
+    private boolean slowShouldGo = true;
+    
+    /**
+     * True if an arrow is a slow arrow (moves one pixel every other timer tick)
+     */
     private boolean isSlow;
+    
+    /**
+     * True when the arrow is in the process of rotating or has been rotated around the player (reverse arrow)
+     */
     private boolean switchDir = false;
+    
+    /**
+     * True until the arrow has been fully rotated around the player (reverse arrow) or false if it isn't a reverse
+     * arrow
+     */
     private boolean directionNotSwitched;
     
+    /**
+     * Transform used to set the arrow's orientation and rotate/move the arrow
+     */
     private static AffineTransform arrowTransform = new AffineTransform();
     
+    /**
+     * The color of the arrow
+     */
+    enum ArrowColor {
+        RED,
+        BLUE}
+    
+    /**
+     * Creates a new {@code Arrow} object
+     *
+     * @param speed     The speed the arrow should go in pixels/tick between 1 – 100
+     * @param reverse   This determines whether or not the arrow will be reversed (flips from one side to another)
+     * @param direction This determines the direction the arrow should come travel in the direction of
+     * @param delay     This is the delay before the next arrow is launched after this arrow is lauched
+     * @param isSlow    True if an arrow is a slow arrow (moves one pixel every other timer tick)
+     */
     Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
         this.speed = speed;
         this.reverse = reverse;
@@ -53,53 +102,54 @@ class Arrow {
     }
     
     /*
-     * Helper method for the constructor setting the original arrow coordinates
+     * Helper method for the constructor setting the original arrow coordinates based on direction and if it's reversible
      */
     private void setCoordinates(char direction) {
-        switch(direction) {
-            case 'r':
-                if(reverse) {
+        if(reverse) {
+            switch(direction) {
+                case 'r':
                     x = 17 + 11;
                     y = 270 + 11;
-                }
-                else {
-                    x = 11;
-                    y = 270 + 11;
-                }
-                break;
-            case 'l':
-                if(reverse) {
+                    break;
+                case 'l':
                     x = 557 - 9 - 11;
                     y = 270 + 11;
-                }
-                else {
-                    x = 557;
-                    y = 270 + 11;
-                }
-                break;
-            case 'u':
-                if(reverse) {
+                    break;
+                case 'u':
                     x = 285;
                     y = 545 - 8;
-                }
-                else {
-                    x = 285;
-                    y = 545 + 11;
-                }
-                break;
-            case 'd':
-                if(reverse) {
+                    break;
+                case 'd':
                     x = 285;
                     y = 11 + 8 + 11;
-                }
-                else {
+                    break;
+            }
+        }
+        else {
+            switch(direction) {
+                case 'r':
+                    x = 11;
+                    y = 270 + 11;
+                    break;
+                case 'l':
+                    x = 557;
+                    y = 270 + 11;
+                    break;
+                case 'u':
+                    x = 285;
+                    y = 545 + 11;
+                    break;
+                case 'd':
                     x = 285;
                     y = 11;
-                }
-                break;
+                    break;
+            }
         }
     }
     
+    /**
+     * Starts the rotation of a reverse arrow at a 3x speed and gets the distance from the center
+     */
     void switchDir() {
         switchDir = true;
         if(radius == 0) {
@@ -121,9 +171,13 @@ class Arrow {
         }
     }
     
+    /**
+     * Controls the movement of the arrow
+     */
     void tick() {
+        //Moved the arrow 'speed' pixels every tick towards the heart
         if(!Runner.isOneSecondDelayRunning()) {
-            if(speed != 1 || isOne || !isSlow) {
+            if(speed != 1 || slowShouldGo || !isSlow) {
                 switch(direction) {
                     case 'l':
                         x -= speed;
@@ -140,7 +194,9 @@ class Arrow {
                 }
             }
             if(isSlow)
-                isOne = !isOne;
+                slowShouldGo = !slowShouldGo;
+            
+            //Controls the rotation of reverse arrows if it is in the right position based on the formula for the graph of a circle
             if(switchDir && directionNotSwitched) {
                 switch(direction) {
                     case 'l':
@@ -187,14 +243,22 @@ class Arrow {
         }
     }
     
-    void draw(Graphics g, Color c) {
+    /**
+     * Draws the arrow and checks if it the arrow has gotten past the player's shield
+     *
+     * @param g The graphics object used for drawing graphics
+     * @param c The arrow color that the arrow should be (based on which one was added earliest in the ArrayList)
+     */
+    void draw(Graphics g, ArrowColor c) {
+        //Sets arrow to red arrow or blue arrow
         BufferedImage arr;
         if(reverse)
             arr = Runner.reverseArr;
-        else if(c.equals(Color.RED))
+        else if(c == ArrowColor.RED)
             arr = Runner.redArr;
         else
             arr = Runner.blueArr;
+        //Sets the angle the arrow should be oriented when coming at the player
         int angle = 0;
         switch(direction) {
             case 'r':
@@ -222,11 +286,14 @@ class Arrow {
                     angle = 90;
                 break;
         }
+        //Draws the arrow with the necessary location and orientation
         arrowTransform.setToIdentity();
         arrowTransform.translate(x + p.getElementPosition(), y + p.getElementPosition());
         arrowTransform.rotate(Math.toRadians(angle), arr.getMinX() + arr.getWidth() / 2.0, arr.getMinY() + arr.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(arr, arrowTransform, null);
+        
+        //Checks if the arrow has gotten past the shield
         int xShift, yShift;
         switch(direction) {
             case 'r':
@@ -260,38 +327,84 @@ class Arrow {
         }
     }
     
+    /**
+     * Returns true if the arrow has not gotten past the shield
+     *
+     * @return If the arrow has not gotten past the shield
+     */
     boolean notInside() {
         return !inside;
     }
     
+    /**
+     * Returns the x-position of the arrow's tip
+     *
+     * @return The x-position of the arrow's tip
+     */
     int getX() {
         return x;
     }
     
+    /**
+     * Returns the y-position of the arrow's tip
+     *
+     * @return The y-position of the arrow's tip
+     */
     int getY() {
         return y;
     }
     
+    /**
+     * Returns the direction the arrow should be traveling
+     *
+     * @return The direction the arrow should be traveling
+     */
     char getDir() {
         return direction;
     }
     
+    /**
+     * Returns the delay before the following arrow is added
+     *
+     * @return The delay before the following arrow is added
+     */
     int getDelay() {
         return delay;
     }
     
+    /**
+     * Returns the number of pixels the arrow travels per timer tick
+     *
+     * @return The number of pixels the arrow travels per timer tick
+     */
     int getSpeed() {
         return speed;
     }
     
+    /**
+     * Returns true if the arrow is a reverse arrow
+     *
+     * @return True if the arrow is a reverse arrow
+     */
     boolean getReverse() {
         return reverse;
     }
     
+    /**
+     * Returns true until the arrow has been fully rotated around the player if it is a reverse arrow and false if it is
+     * not
+     *
+     * @return True if reverse arrow has been rotated fully around player
+     */
     boolean getDirectionNotSwitched() {
         return directionNotSwitched;
     }
     
+    /**
+     * Returns the arrow in a String format
+     *
+     * @return The arro win a String format
+     */
     @Override
     public String toString() {
         return String.format("Arrow[speed = %d, reverse = %b, direction = %c, delay = %d]", speed, reverse, direction, delay);

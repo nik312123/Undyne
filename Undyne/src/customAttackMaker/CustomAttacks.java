@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -84,7 +85,7 @@ public class CustomAttacks {
     /**
      * The current y-position that changes for every element added to the attack creator UI
      */
-    static double dynamicLength = 0;
+    static int dynamicLength = 0;
     
     /**
      * The error message for when importing a file that doesn't adhere to the correct format
@@ -145,7 +146,7 @@ public class CustomAttacks {
                 g.setColor(Color.WHITE);
                 String titleMessage;
                 if(importingError)
-                    titleMessage = "Error on line " + errorLine;
+                    titleMessage = "Error on line " + currentLine;
                 else
                     titleMessage = "Error";
                 g.drawString(titleMessage, 10, 25);
@@ -271,7 +272,7 @@ public class CustomAttacks {
             isIn = true;
             dynamicLength = (int) scrollValue;
             for(AttackBar attackBar : attacks)
-                attackBar.draw(g, (int) dynamicLength);
+                attackBar.draw(g, dynamicLength);
             addAttackButton(g);
             Runner.setTopBarVisibility(true);
             setAllFieldsVisibility(true);
@@ -326,8 +327,8 @@ public class CustomAttacks {
         g.fill(importThing);
         g.setComposite(original);
         g.drawImage(Runner.cat, 129, 21, null);
-        g.drawImage(Runner.newThing, 226, 211, null);
-        g.drawImage(Runner.importThing, 226, 326, null);
+        g.drawImage(Runner.newImage, 226, 211, null);
+        g.drawImage(Runner.importImage, 226, 326, null);
         g.setFont(Runner.deteFontEditorAttack);
         g.setColor(Color.WHITE);
         String exit = "Press X to Exit";
@@ -345,9 +346,8 @@ public class CustomAttacks {
      * Reassigns the id numbers for each of the {@code AttackBar}s
      */
     private void reassignNumbers() {
-        int i = -1;
-        for(AttackBar a : CustomAttacks.attacks)
-            a.setNumber(++i);
+        for(int i = 0; i < attacks.size(); ++i)
+            attacks.get(i).setNumber(i);
     }
     
     /**
@@ -357,104 +357,134 @@ public class CustomAttacks {
      */
     private void addAttackButton(Graphics g) {
         if(attacks.size() >= 13000)
-            g.drawImage(Runner.addAttackDisabled, 300 - 33, (int) dynamicLength - 5, null);
+            g.drawImage(Runner.addAttackDisabled, 300 - 33, dynamicLength - 5, null);
         else
-            g.drawImage(Runner.addAttack, 300 - 33, (int) dynamicLength - 5, null);
-        addAttack.setBounds(300 - 33, (int) dynamicLength - 5, 66, 17);
+            g.drawImage(Runner.addAttack, 300 - 33, dynamicLength - 5, null);
+        addAttack.setBounds(300 - 33, dynamicLength - 5, 66, 17);
     }
     
     /**
-     * Runs when import file button is pressed on start screen
+     * Checks to make sure the given file and its contents have the proper formatting and imports it into the custom
+     * attack creator
      *
-     * @return An ArrayList of AttackBar objects
+     * @return The {@code ArrayList} of {@code AttackBar}s that are imported into the attack creator
      */
-    private ArrayList<AttackBar> importFile() {
+    private ArrayDeque<AttackBar> importFile() {
         StartScreen.playClick();
-        ArrayList<AttackBar> importedAttacks = new ArrayList<>();
+        ArrayDeque<AttackBar> importedAttacks = new ArrayDeque<>();
+        
+        //Opens the file chooser for the user to be able to select the file to import
         chooser.setDialogTitle("Choose file to import...");
         fileBeingChosen = true;
         int dialogChoice = chooser.showOpenDialog(null);
         fileBeingChosen = false;
+        
+        //If the user has selected a file and hit the option to approve the selected file for importing
         if(dialogChoice == JFileChooser.APPROVE_OPTION) {
-            File openLocation = chooser.getSelectedFile();
+            //The file will be imported using a Scanner
             Scanner s = null;
             try {
-                s = new Scanner(new FileInputStream(openLocation));
+                s = new Scanner(new FileInputStream(chooser.getSelectedFile()));
             }
             catch(FileNotFoundException e) {
                 e.printStackTrace();
             }
+            //If the file was found
             if(s != null) {
+                //The current line separated into an array of Strings by commas
                 String[] inputArrow;
+                
+                //The number of the previous attack
                 int previousAttack = -1;
-                errorLine = 0;
+                
+                //The current line the Scanner is on
+                currentLine = 0;
+                
+                //The error to be used for the error pop-up
                 error = "";
+                
+                //Continues importing as long as the Scanner has lines left
                 while(s.hasNextLine()) {
-                    ++errorLine;
-                    switch(errorLine) {
+                    ++currentLine;
+                    switch(currentLine) {
                         case 1:
+                            //Skips the first line of input
                             s.nextLine();
                             break;
                         case 2:
+                            //This value specifies whether Undyne should be in normal or Undying mode
                             String isGenocide = s.nextLine();
+                            
+                            /*
+                             * Line 2 should only be a boolean
+                             *
+                             * If it isn't, the error pop-up is shown; else, the bottom menu bar Undying checkbox is set accordingly
+                             */
                             if(!isGenocide.equals("true") && !isGenocide.equals("false")) {
                                 error = "The Undying value must be true or false only";
-                                importingError = true;
-                                errorPopUp.setExpanding(true);
-                                errorPopUp.setVisible(true);
-                                StartScreen.playClick();
+                                startError();
                                 return importedAttacks;
                             }
                             else
                                 bottomMenuBar.setIsGenocideBoxChecked(Boolean.parseBoolean(isGenocide));
                             break;
                     }
-                    if(errorLine > 2) {
+                    if(currentLine > 2) {
+                        //The input on the given line is split by commas
                         inputArrow = s.nextLine().split(",");
+                        
+                        /*
+                         * The input can be one of the following:
+                         * An arrow (four elements)
+                         * An attack (two elements)
+                         * A blank line
+                         *
+                         * If it is not one of the above, the error pop-up is shown
+                         */
                         if(inputArrow.length != 4 && inputArrow.length != 2 && (inputArrow.length != 1 || !inputArrow[0].equals(""))) {
                             error = "Incorrect number of items in the given comma-separated list";
-                            importingError = true;
-                            errorPopUp.setExpanding(true);
-                            errorPopUp.setVisible(true);
-                            StartScreen.playClick();
+                            startError();
                             return importedAttacks;
                         }
+                        
+                        //If the length of the comma-separated input line is two, it should be an attack and tested as such
                         else if(inputArrow.length == 2) {
+                            
+                            /*
+                             * The first element should be the attack number string in the format "a(num)" where (num) is an integer value
+                             *
+                             * If this is not the case, the error pop-up is shown
+                             */
                             String attackNumString = inputArrow[0];
                             if(attackNumString.charAt(0) != 'a' || !stringIsNumber(attackNumString.substring(1))) {
                                 error = "Attack must be represented as a(n) where (n) is a number";
-                                importingError = true;
-                                errorPopUp.setExpanding(true);
-                                errorPopUp.setVisible(true);
-                                StartScreen.playClick();
+                                startError();
                                 return importedAttacks;
                             }
                             int attackNum = Integer.parseInt(inputArrow[0].substring(1));
+    
+                            //If the integer (num) attached to the attackNumString is negative, the error pop-up is shown
                             if(attackNum < 0) {
                                 error = "Attack must be greater than zero";
-                                importingError = true;
-                                errorPopUp.setExpanding(true);
-                                errorPopUp.setVisible(true);
-                                StartScreen.playClick();
+                                startError();
                                 return importedAttacks;
                             }
-                            else if(attackNum < previousAttack) {
-                                error = "Attacks must be in increasing order";
-                                importingError = true;
-                                errorPopUp.setExpanding(true);
-                                errorPopUp.setVisible(true);
-                                StartScreen.playClick();
+
+                            //If the integer (num) attached to the attackNumString is less than the previous attack number, the error pop-up is shown
+                            else if(attackNum <= previousAttack) {
+                                error = "Attacks must be monotonically increasing";
+                                startError();
                                 return importedAttacks;
                             }
-                            else if(attackNum > previousAttack) {
+                            else {
+                                //If the integer (num) attached to the attackNumString is greater than 13000, the error pop-up is shown (max 13000 attacks)
                                 if(attackNum >= 13000) {
                                     error = "Maximum number of attacks is 13000";
-                                    importingError = true;
-                                    errorPopUp.setExpanding(true);
-                                    errorPopUp.setVisible(true);
-                                    StartScreen.playClick();
+                                    startError();
                                     return importedAttacks;
                                 }
+                                
+                                //If the attack number is more than simply one greater than the previous attack, empty {@code AttackBar}s should be added in between
                                 if(attackNum > 1 + previousAttack) {
                                     for(int i = previousAttack + 1; i < attackNum; ++i) {
                                         AttackBar newBar = new AttackBar();
@@ -463,16 +493,21 @@ public class CustomAttacks {
                                     }
                                 }
                             }
+    
+                            /*
+                             * The second element should be a boolean representing whether or not that attack should have a random orientation shift applied to it
+                             *
+                             * If this is not a boolean value, the error pop-up is shown
+                             */
                             String orientationShiftString = inputArrow[1];
                             if(!orientationShiftString.equals("true") && !orientationShiftString.equals("false")) {
                                 error = "Orientation shift can only be true or false";
-                                importingError = true;
-                                errorPopUp.setExpanding(true);
-                                errorPopUp.setVisible(true);
-                                StartScreen.playClick();
+                                startError();
                                 return importedAttacks;
                             }
                             boolean orientationShift = Boolean.parseBoolean(orientationShiftString);
+                            
+                            //A new attack bar is added due to the new attack line
                             AttackBar newBar = new AttackBar();
                             newBar.setNumber(attackNum);
                             importedAttacks.add(newBar);
@@ -480,74 +515,76 @@ public class CustomAttacks {
                             if(orientationShift)
                                 newBar.switchOrientationShift();
                         }
+
+                        //If the length of the comma-separated input line is four, it should be an arrow and tested as such
                         else if(inputArrow.length == 4) {
+                            
+                            //If speed is not a space (meaning empty value) or a valid integer between 1 and 10 inclusive, the error pop-up is shown
+                            int speed;
                             try {
-                                int speed;
                                 if(!inputArrow[0].equals(" ")) {
                                     speed = Integer.parseInt(inputArrow[0]);
                                     if(speed < 1 || speed > 10) {
                                         error = "Speed must be between 1 and 10 inclusive";
-                                        importingError = true;
-                                        errorPopUp.setExpanding(true);
-                                        errorPopUp.setVisible(true);
-                                        StartScreen.playClick();
+                                        startError();
                                         return importedAttacks;
                                     }
                                 }
                                 else
                                     speed = 0;
-                                String reversableString = inputArrow[1];
-                                if(!reversableString.equals("true") && !reversableString.equals("false")) {
-                                    error = "Second item in list must be true or false";
-                                    importingError = true;
-                                    errorPopUp.setExpanding(true);
-                                    errorPopUp.setVisible(true);
-                                    StartScreen.playClick();
-                                    return importedAttacks;
-                                }
-                                boolean reversable = Boolean.parseBoolean(reversableString);
-                                char direction = inputArrow[2].charAt(0);
-                                if(inputArrow[2].length() != 1
-                                        || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
-                                    error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
-                                    importingError = true;
-                                    errorPopUp.setExpanding(true);
-                                    errorPopUp.setVisible(true);
-                                    StartScreen.playClick();
-                                    return importedAttacks;
-                                }
-                                int delay;
-                                if(!inputArrow[3].equals(" ")) {
-                                    delay = Integer.parseInt(inputArrow[3]);
-                                    if(delay < 1 || delay > 999) {
-                                        error = "Delay must be between 1 and 999 inclusive";
-                                        importingError = true;
-                                        errorPopUp.setExpanding(true);
-                                        errorPopUp.setVisible(true);
-                                        StartScreen.playClick();
-                                        return importedAttacks;
-                                    }
-                                }
-                                else
-                                    delay = 0;
-                                if(importedAttacks.size() > 13000) {
-                                    error = "Number of attacks must not exceed 13000";
-                                    importingError = true;
-                                    errorPopUp.setExpanding(true);
-                                    errorPopUp.setVisible(true);
-                                    StartScreen.playClick();
-                                    return importedAttacks;
-                                }
-                                importedAttacks.get(importedAttacks.size() - 1).add(new ArrowBar(speed, reversable, direction, delay));
                             }
                             catch(NumberFormatException e) {
-                                error = "Attack number, speed, an delay must all be valid integers";
-                                importingError = true;
-                                errorPopUp.setExpanding(true);
-                                errorPopUp.setVisible(true);
-                                StartScreen.playClick();
+                                error = "Speed must be a valid integer";
+                                startError();
                                 return importedAttacks;
                             }
+                            
+                            //The string that represents whether the arrow is a reverse arrow should be a boolean value or the error-pop up is shown
+                            String reversibleString = inputArrow[1];
+                            if(!reversibleString.equals("true") && !reversibleString.equals("false")) {
+                                error = "Second item in list must be true or false";
+                                startError();
+                                return importedAttacks;
+                            }
+                            boolean reversible = Boolean.parseBoolean(reversibleString);
+                            
+                            //If the direction input is not a character long or not equivalent to 'd', 'l', 'u', 'r', or 'n', the error pop-up is shown
+                            char direction = inputArrow[2].charAt(0);
+                            if(inputArrow[2].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
+                                error = "Direction must be one character long and consist of one of the following characters: d, l, u, or r";
+                                startError();
+                                return importedAttacks;
+                            }
+    
+                            //If speed is not a space (meaning empty value) or a valid integer between 1 and 999 inclusive, the error pop-up is shown
+                            int delay;
+                            if(!inputArrow[3].equals(" ")) {
+                                try {
+                                    delay = Integer.parseInt(inputArrow[3]);
+                                }
+                                catch(NumberFormatException e) {
+                                    error = "Delay must be between a valid integer";
+                                    startError();
+                                    return importedAttacks;
+                                }
+                                if(delay < 1 || delay > 999) {
+                                    error = "Delay must be between 1 and 999 inclusive";
+                                    startError();
+                                    return importedAttacks;
+                                }
+                            }
+                            else
+                                delay = 0;
+                            
+                            AttackBar currentAttack = importedAttacks.getLast();
+                            
+                            //The number of arrows in the current attack must not exceed 13000 or the error pop-up is shown
+                            if(currentAttack.getArrows().size() > 13000) {
+                                error = "Number of attacks must not exceed 13000";
+                                startError();
+                                return importedAttacks;
+                            }
+                            currentAttack.add(new ArrowBar(speed, reversible, direction, delay));
                         }
                     }
                 }
@@ -558,7 +595,17 @@ public class CustomAttacks {
         return null;
     }
     
-    private void removeImported(ArrayList<AttackBar> imported) {
+    /**
+     * Starts the error message
+     */
+    private void startError() {
+        importingError = true;
+        errorPopUp.setExpanding(true);
+        errorPopUp.setVisible(true);
+        StartScreen.playClick();
+    }
+    
+    private void removeImported(ArrayDeque<AttackBar> imported) {
         for(AttackBar attBar : imported) {
             for(ArrowBar arrBar : attBar.getArrows())
                 arrBar.removeFields();
@@ -582,17 +629,24 @@ public class CustomAttacks {
     }
     
     /**
-     * Runs when export file button is pressed on the bottomMenuBar
+     * Exports the attack creator attacks, arrows, and other options to a file
      */
     private void exportFile() {
         StartScreen.playClick();
         ArrayList<String> output = new ArrayList<>();
-        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is "
-                + "ignored, but don't remove it because the first line is always skipped.");
+        //Adds text for the text at the top of a file to import
+        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
+        
+        //Adds the Undying value to the lines to export for the text file
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
+        
         for(AttackBar attackBar : attacks) {
+            
+            //Adds the attack string and orientation shift value to the lines list to be exported
             output.add(String.format("%s,%b", "a" + attackBar.getNumber(), attackBar.isOrientationShift()));
             for(ArrowBar arrowBar : attackBar.getArrows()) {
+                
+                //Gets the values of each arrow bar to be exported
                 int speed = arrowBar.getSpeed();
                 int delay = arrowBar.getDelay();
                 String speedString = Integer.toString(speed);
@@ -604,9 +658,13 @@ public class CustomAttacks {
                 output.add(String.format("%s,%b,%c,%s", speedString, arrowBar.isReversible(), arrowBar.getDirection(), delayString));
             }
         }
+        
+        //Gets the user's selected export location for the txt file
         chooser.setDialogTitle("Choose export location...");
         if(chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File saveLocation = chooser.getSelectedFile();
+            
+            //Makes sure that the text file ends with .txt or adds the extension if not
             if(!saveLocation.getName().endsWith(".txt"))
                 saveLocation = new File(saveLocation.getAbsolutePath() + ".txt");
             PrintWriter p = null;
@@ -616,6 +674,8 @@ public class CustomAttacks {
             catch(FileNotFoundException e) {
                 e.printStackTrace();
             }
+            
+            //Prints the text to the given file location
             if(p != null) {
                 for(String s : output)
                     p.println(s);
@@ -668,9 +728,8 @@ public class CustomAttacks {
      * Triggers when mouse is pressed and is called in Runner.java
      */
     public void mousePressed() {
-        for(AttackBar a : attacks) {
+        for(AttackBar a : attacks)
             a.mousePressed();
-        }
     }
     
     /**
@@ -688,7 +747,7 @@ public class CustomAttacks {
             if(newChosen)
                 StartScreen.playClick();
             if(importChosen) {
-                ArrayList<AttackBar> imported = importFile();
+                ArrayDeque<AttackBar> imported = importFile();
                 if(imported != null)
                     removeImported(imported);
             }
@@ -701,7 +760,7 @@ public class CustomAttacks {
             if(check == 1)
                 exportFile();
             else if(check == 0) {
-                ArrayList<AttackBar> imported = importFile();
+                ArrayDeque<AttackBar> imported = importFile();
                 if(imported != null)
                     removeImported(imported);
             }

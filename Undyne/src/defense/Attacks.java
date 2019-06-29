@@ -4,38 +4,97 @@ import customAttackMaker.ArrowBar;
 import customAttackMaker.AttackBar;
 import customAttackMaker.CustomAttacks;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Runs the arrow initialization, management, and giving giving for the application
+ */
 class Attacks {
-    private boolean isNewAttack = true;
-    private boolean loopDone = false;
-    private boolean isFinished = false;
     
+    /**
+     * True if an attack is done and a new attack has started
+     */
+    private boolean newAttack = true;
+    
+    /**
+     * Stores the number of the last attack that has been done
+     */
     private int lastAttack = 1;
-    private int currentAttack = 1;
-    private int position = 0;
-    private int counter = 0;
     
+    /**
+     * Stores the number of the attack that is currently in play
+     */
+    private int currentAttack = 1;
+    
+    /**
+     * Stores the previous character in attacks with random directions selected so the probability of getting the same
+     * direction twice is 1/16 and the probability of getting each of the other directions is 5/16 each (15/16
+     * altogether)
+     */
     private char prevChar = 'u';
     
+    /**
+     * Array of possible directions used in random selection of a direction and the random orientation shifting of an
+     * attack
+     */
     private final char[] DIRS = {'d', 'r', 'u', 'l'};
     
+    /**
+     * Generates pseudorandom numbers for use in randomly selecting a direction from DIRS or choosing a random
+     * orientation shift clockwise of an attack
+     */
     private Random rand = new Random();
+    
+    /**
+     * {@code Attack} object used to get the list of current arrows in play in order to determine whether all of the
+     * arrows from Attacks and the ones in play are empty
+     */
     private Attack att;
     
-    private ArrayList<ArrayList<Arrow>> undyneAttacks = new ArrayList<>();
+    /**
+     * This {@code ArrayList} is a container of "attacks." Each "attack" is an {@code ArrayList} that contains {@code
+     * Arrow}s.
+     */
+    private ArrayList<ArrayDeque<Arrow>> undyneAttacks = new ArrayList<>();
     
+    /**
+     * The game modes the user can choose from
+     */
+    enum GameMode {
+        EASY,
+        MEDIUM,
+        HARD,
+        SURVIVAL}
+    
+    /**
+     * The {@code Attacks} constructor that is used for importing attacks from {@code CustomAttacks} to be used in
+     * gameplay
+     *
+     * @param attacks The list of attacks from {@code CustomAttacks} to import
+     * @throws Exception An exception thrown either due to the speed or delay not being in the correct range of values
+     */
     Attacks(ArrayList<AttackBar> attacks) throws Exception {
-        for(int i = 0; i < 13000; ++i)
-            undyneAttacks.add(new ArrayList<>());
+        //Adds ArrayLists to undyneAttacks to match the number of attacks given
+        for(int i = 0; i < attacks.size(); ++i)
+            undyneAttacks.add(new ArrayDeque<>());
+        
+        //Goes through given AttackBars to add the given arrows based on the ArrowBars
         for(AttackBar at : attacks) {
+            
+            //The orientation shift is set to zero by default and is only assigned to a random number between 0 and 3 if the AttackBar orientation shift option is selected
             int shift = 0;
             if(at.isOrientationShift())
                 shift = rand.nextInt(4);
+            
+            //The shiftedDirs list of directions clones the typical directions and is shifted clockwise by shift
             char[] shiftedDirs = DIRS.clone();
             shiftDirs(shiftedDirs, shift);
+            
+            //Goes through all the given ArrowBars for each given AttackBar
             for(ArrowBar ar : at.getArrows()) {
+                //Assigns the direction based on the orientation shift
                 char dir = ar.getDirection();
                 switch(dir) {
                     case 'd':
@@ -53,18 +112,24 @@ class Attacks {
                     case 'n':
                         dir = DIRS[rand.nextInt(4)];
                 }
+                
+                //Gets the delay for the arrow and confirms it is between 1 and 999, and if that is not the case, an Exception is thrown
                 int delay = ar.getDelay();
                 if(delay < 1 || delay > 999) {
                     CustomAttacks.setError(false, "Delay must be between 1 – 999 inclusive");
                     undyneAttacks = new ArrayList<>();
                     throw new Exception();
                 }
+                
+                //Gets the speed for the arrow and confirms it is between 1 and 10, and if that is not the case, an Exception is thrown
                 int speed = ar.getSpeed();
                 if(speed < 1 || speed > 10) {
                     CustomAttacks.setError(false, "Speed must be between 1 – 10 inclusive");
                     undyneAttacks = new ArrayList<>();
                     throw new Exception();
                 }
+                
+                //If the given speed is 1, we will use a slow arrow; otherwise, we will use a typical arrow
                 if(speed == 1)
                     addSlowArrow(at.getNumber(), ar.isReversible(), dir, ar.getDelay());
                 else
@@ -73,20 +138,37 @@ class Attacks {
         }
     }
     
+    /**
+     * Shifts the given array of characters by the given shift
+     *
+     * @param dirs  An array of characters (directions in this case)
+     * @param shift The number to shift the dirs array by
+     */
     private void shiftDirs(char[] dirs, int shift) {
         for(int i = 0; i < dirs.length; ++i) {
+            //The array starts out by going to the index i + shift of the dirs array and setting it equal to the given index of the DIRS array
             if(i + shift <= dirs.length - 1)
                 dirs[i + shift] = DIRS[i];
+                
+                /*
+                 * Once i + shift exceeds the length of the dirs array, we need to subtract the length of the dirs array, creating a wrap-around effect to start populating
+                 * the dirs array from 0 onwards to the index before i + shift
+                 */
             else
                 dirs[i + shift - dirs.length] = DIRS[i];
         }
     }
     
-    Attacks(boolean isGenocide, boolean survival, boolean isMedium) {
+    /**
+     * The {@code Attacks} constructor that is used when a game mode is chosen
+     *
+     * @param gm The chosen game mode by the player
+     */
+    Attacks(GameMode gm) {
+        //Adds ArrayLists to undyneAttacks to be filled with Arrows
         for(int i = 0; i < 13000; ++i)
-            undyneAttacks.add(new ArrayList<>());
-        //Survival mode
-        if(survival) {
+            undyneAttacks.add(new ArrayDeque<>());
+        if(gm == GameMode.SURVIVAL) {
             // Super Easy
             normalAttackOne();
             normalAttackTwo();
@@ -98,8 +180,17 @@ class Attacks {
             
             // Easy
             ArrayList<Integer> easyAttacks = new ArrayList<>();
+            
+            //Seven possible easy attacks
             for(int i = 0; i < 7; ++i)
                 easyAttacks.add(i);
+            
+            /*
+             * The i index represents the index of undyneAttacks to place the attack in. This allows randomization in the order of the attack methods
+             * chosen for survival
+             *
+             * Survival attacks eight through nine are attacks without any reverse arrows
+             */
             for(int i = 7; i <= 13; ++i) {
                 int choice = easyAttacks.remove(rand.nextInt(easyAttacks.size()));
                 switch(choice) {
@@ -126,9 +217,14 @@ class Attacks {
                         break;
                 }
             }
+            //After the easy attacks with no reverse arrows, this attack introduces the reverse arrow to the player
             survivalAttackFifteen(14, rand.nextInt(4), false);
+            
+            //We now have four attacks left after the attacks without reverse arrows have completed; we add these to the easy attack choice list
             for(int i = 0; i < 4; ++i)
                 easyAttacks.add(i);
+            
+            //Attacks 14 - 17 are randomly chosen between four attacks that include reverse arrows
             for(int i = 14; i <= 17; ++i) {
                 int choice = easyAttacks.remove(rand.nextInt(easyAttacks.size()));
                 switch(choice) {
@@ -146,53 +242,74 @@ class Attacks {
                         break;
                 }
             }
+            
+            /*
+             * All of the easy attacks have now been introduced. We will now have two more randomized rounds of the above easy attacks,
+             * starting with attack number 18 (as the base)
+             */
             int base = 18;
-            for(int i = 0; i < 2; ++i) {
-                for(int j = 0; j < 12; ++j)
-                    easyAttacks.add(j);
-                for(int j = base; j < base + 12; ++j) {
+            //This for loop represents the number of remaining rounds (two) to give to the player of the given attacks
+            for(int round = 0; round < 2; ++round) {
+                
+                //There are 12 attacks to choose from
+                for(int i = 0; i < 12; ++i)
+                    easyAttacks.add(i);
+                
+                //The attack index is based on the base index and go up to the base index plus 11; the attack order is then randomized
+                for(int i = base; i < base + 12; ++i) {
                     int choice = easyAttacks.remove(rand.nextInt(easyAttacks.size()));
+                    /*
+                     * As one may notice, there is an isLastEasy boolean that is true if the attack will be the last easy attack
+                     * due to it being the second round and the easy attacks choices running out; this is used to increase the wait
+                     * time on the last attack
+                     */
                     switch(choice) {
                         case 0:
-                            survivalAttackEight(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackEight(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 1:
-                            survivalAttackNine(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackNine(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 2:
-                            survivalAttackTen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackTen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 3:
-                            survivalAttackEleven(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackEleven(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 4:
-                            survivalAttackTwelve(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackTwelve(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 5:
-                            survivalAttackThirteen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackThirteen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 6:
-                            survivalAttackFourteen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackFourteen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 7:
-                            survivalAttackFifteen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackFifteen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 8:
-                            survivalAttackSixteen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackSixteen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 9:
-                            survivalAttackSeventeen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackSeventeen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 10:
-                            survivalAttackEighteen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackEighteen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                         case 11:
-                            survivalAttackNineteen(j, rand.nextInt(4), easyAttacks.size() == 0 && i == 1);
+                            survivalAttackNineteen(i, rand.nextInt(4), easyAttacks.size() == 0 && round == 1);
                             break;
                     }
                 }
+                //This increment of 12 is used to update the correct attack index for the next round
                 base += 12;
             }
+            
+            /*
+             * For attacks after the easy attacks, they all have three rounds of randomized attacks since the random arrows have already been introduced
+             * with the exception of the super hard attacks, which is supposed to last forever
+             */
             
             // Hard
             ArrayList<Integer> hardAttacks = new ArrayList<>();
@@ -244,7 +361,7 @@ class Attacks {
                 base += 12;
             }
             
-            // WTH
+            // Very hard
             ArrayList<Integer> superHardAttacks = new ArrayList<>();
             base = 78;
             for(int i = 0; i < 1000; ++i) {
@@ -294,8 +411,9 @@ class Attacks {
                 base += 12;
             }
         }
+        
         //Easy mode
-        else if(!isGenocide && !isMedium) {
+        else if(gm == GameMode.EASY) {
             easyAttackOne();
             easyAttackTwo();
             easyAttackThree();
@@ -315,7 +433,7 @@ class Attacks {
         }
         
         //Medium mode
-        else if(!isGenocide) {
+        else if(gm == GameMode.MEDIUM) {
             normalAttackOne();
             normalAttackTwo();
             normalAttackThree();
@@ -353,36 +471,51 @@ class Attacks {
         }
     }
     
+    /**
+     * Gets the next arrow for the attack pattern
+     *
+     * @return The next arrow for the attack pattern
+     */
     Arrow getCurrentArrow() {
-        for(int i = position; i < undyneAttacks.size() && !loopDone; ++i) {
+        //Used to check if the attack has changed
+        boolean attackChanged = false;
+        
+        //Used to stop the for loop once an attack with a size greater than zero is found
+        boolean loopDone = false;
+        
+        //Loops through the attacks starting at the position of the last attack an arrow was fount at until an attack with at least one arrow is found
+        for(int i = currentAttack - 1; i < undyneAttacks.size() && !loopDone; ++i) {
             if(undyneAttacks.get(i).size() != 0) {
                 currentAttack = i + 1;
-                position = i;
                 loopDone = true;
             }
             else
-                ++counter;
+                attackChanged = true;
         }
-        loopDone = false;
+        //If the current attack number is different than the last attack number, it is a new attack
         if(currentAttack != lastAttack) {
-            isNewAttack = true;
+            newAttack = true;
             lastAttack = currentAttack;
         }
-        else if(counter == 0) {
-            isNewAttack = false;
-            counter = 0;
-            return undyneAttacks.get(position).remove(0);
+        //If the attack has not changed, get the arrow from the current attack
+        else if(!attackChanged) {
+            newAttack = false;
+            return undyneAttacks.get(currentAttack - 1).removeFirst();
         }
-        counter = 0;
-        isFinished = noAttacksLeft();
-        return new Arrow(0, false, 'u', 0, false);
+        return null;
     }
     
-    private boolean noAttacksLeft() {
+    /**
+     * Returns true if there are no arrows in the attack pattern {@code ArrayList} or the undyneAttacks {@code
+     * ArrayList}
+     *
+     * @return True if there are no arrows in the attack pattern or undyneAttacks {@code ArrayList}s
+     */
+    boolean isFinished() {
         ArrayList<Arrow> attackPattern = att.getList();
         if(attackPattern.size() != 0)
             return false;
-        for(int i = position; i < undyneAttacks.size(); ++i) {
+        for(int i = currentAttack - 1; i < undyneAttacks.size(); ++i) {
             for(Arrow a : undyneAttacks.get(i)) {
                 if(a != null && a.getSpeed() != 0)
                     return false;
@@ -391,21 +524,46 @@ class Attacks {
         return true;
     }
     
+    /**
+     * Returns true if an attack is done and a new attack has started
+     *
+     * @return True if an attack is done and a new attack has started
+     */
     boolean isNewAttack() {
-        return isNewAttack;
+        return newAttack;
     }
     
+    /**
+     * Sets newAttack to false
+     */
     void notNewAttack() {
-        isNewAttack = false;
+        newAttack = false;
     }
     
-    private void addArrow(int attack, int speed, boolean reversable, char direction, int delay) {
-        undyneAttacks.get(attack).add(new Arrow(speed, reversable, direction, delay, false));
+    /**
+     * Adds an {@code Arrow} with the given properties to the given attack's {@code ArrayDeque}
+     * @param attack The attack to add the {@code Arrow}
+     * @param speed The speed of the {@code Arrow}
+     * @param reversible True if the {@code Arrow} is a reverse arrow
+     * @param direction The direction of the {@code Arrow}
+     * @param delay The delay until the next {@code Arrow} should spawn
+     */
+    private void addArrow(int attack, int speed, boolean reversible, char direction, int delay) {
+        undyneAttacks.get(attack).add(new Arrow(speed, reversible, direction, delay, false));
     }
     
-    private void addSlowArrow(int attack, boolean reversable, char direction, int delay) {
-        undyneAttacks.get(attack).add(new Arrow(1, reversable, direction, delay, true));
+    /**
+     * Adds a slow {@code Arrow} with the given properties to the given attack's {@code ArrayDeque}
+     * @param attack The attack to add the {@code Arrow}
+     * @param reversible True if the {@code Arrow} is a reverse arrow
+     * @param direction The direction of the {@code Arrow}
+     * @param delay The delay until the next {@code Arrow} should spawn
+     */
+    private void addSlowArrow(int attack, boolean reversible, char direction, int delay) {
+        undyneAttacks.get(attack).add(new Arrow(1, reversible, direction, delay, true));
     }
+    
+    //Here starts the actual attacks that are added
     
     private void survivalAttackThree() {
         for(int i = 0; i < 2; ++i) {
@@ -1618,22 +1776,22 @@ class Attacks {
     }
     
     private void genocideAttackThirteen() {
-        for(int i = 0; i < 15; ++i)
+        for(int i = 0; i < 5; ++i)
             addArrow(12, 2, true, 'd', 30);
         addArrow(12, 2, true, 'd', 40);
         addArrow(12, 2, true, 'u', 40);
         addArrow(12, 2, true, 'r', 40);
-        for(int i = 0; i < 15; ++i)
+        for(int i = 0; i < 5; ++i)
             addArrow(12, 2, true, 'l', 30);
         addArrow(12, 2, true, 'l', 40);
         addArrow(12, 2, true, 'u', 40);
         addArrow(12, 2, true, 'd', 40);
-        for(int i = 0; i < 15; ++i)
+        for(int i = 0; i < 5; ++i)
             addArrow(12, 2, true, 'r', 30);
         addArrow(12, 2, true, 'r', 40);
         addArrow(12, 2, true, 'l', 40);
         addArrow(12, 2, true, 'd', 40);
-        for(int i = 0; i < 15; ++i)
+        for(int i = 0; i < 5; ++i)
             addArrow(12, 2, true, 'u', 30);
         addArrow(12, 2, true, 'l', 40);
         addArrow(12, 2, true, 'd', 40);
@@ -1641,26 +1799,29 @@ class Attacks {
         addArrow(12, 2, true, 'u', 45);
     }
     
+    /**
+     * Sets the {@code Attack} object so it can be used to get the {@code ArrayList} of {@code Arrow}s currently in play
+     * @param att The {@code Attack} object being used for gameplay
+     */
     void setAttack(Attack att) {
         this.att = att;
     }
     
-    boolean getIsFinished() {
-        return isFinished;
-    }
-    
+    /**
+     * Returns the current attack number that the gameplay is currently at
+     * @return The current attack number that the gameplay is currently at
+     */
     int getCurrentAttack() {
         return currentAttack;
     }
     
+    /**
+     * Resets the necessary Attacks variables
+     */
     void resetVars() {
-        isNewAttack = true;
-        loopDone = false;
-        isFinished = false;
+        newAttack = true;
         lastAttack = 1;
         currentAttack = 1;
-        position = 0;
-        counter = 0;
         prevChar = 'u';
         undyneAttacks = new ArrayList<>();
         att = null;

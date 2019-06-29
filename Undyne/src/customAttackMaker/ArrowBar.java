@@ -24,12 +24,12 @@ public class ArrowBar {
     private int y = 0;
     
     /**
-     * The speed value of the arrow
+     * The speed at which the arrow will travel (in pixels/tick) in the game
      */
     private int speed;
     
     /**
-     * The delay value of the arrow
+     * The delay before the next arrow will arrive
      */
     private int delay;
     
@@ -44,12 +44,17 @@ public class ArrowBar {
     private boolean pressed = false;
     
     /**
+     * True if the arrow will be a reversible arrow in the game
+     */
+    private boolean reversible;
+    
+    /**
      * True if the reverse checkbox is ticked
      */
     private boolean reversible;
     
     /**
-     * Represents the direction of the arrow
+     * The direction the arrow comes from towards the player
      */
     private char direction;
     
@@ -129,12 +134,12 @@ public class ArrowBar {
     };
     
     /**
-     * Arrow Bar initializer
+     * Initializes an {@code ArrowBar} with the given properties
      *
-     * @param speed      Int value representing the speed of the arrow
-     * @param reversible Boolean value representing if the arrow is reversed
-     * @param direction  Char value representing the direction of the arrow
-     * @param delay      Int value representing the delay between previous arrow and current arrow
+     * @param speed      The speed at which the arrow will travel (in pixels/tick) in the game
+     * @param reversible True if the arrow will be a reversible arrow in the game
+     * @param direction  The direction the arrow comes from towards the player
+     * @param delay      The delay before the next arrow will arrive
      */
     ArrowBar(int speed, boolean reversible, char direction, int delay) {
         this.speed = speed;
@@ -299,7 +304,7 @@ public class ArrowBar {
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8, 26, 12);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8, 26, 12);
         orderIntersection.setBounds(x, this.y, 100, 10);
-        g.drawImage(Runner.arrowImg, x, this.y, null);
+        g.drawImage(Runner.arrowBarImage, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);
         drawDirection(g, x, this.y);
         reverseTickBox(g, x, this.y);
@@ -351,7 +356,7 @@ public class ArrowBar {
      */
     private void drawDirection(Graphics g, int x, int y) {
         directionRectangle.setBounds(x + 97, y + 6, 18, 16);
-        if(!directionSelected || Runner.customAttacksCounter % 75 >= 30)
+        if(!isDirectionSelected || Runner.creatorArrowDirectionCounter % 75 >= 30)
             setImage(g, x, y);
     }
     
