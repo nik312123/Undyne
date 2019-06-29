@@ -39,7 +39,7 @@ public class ArrowBar {
     private boolean directionSelected = false;
     
     /**
-     * Representing if the drag icon is being pressed down
+     * Represents if the drag icon is being pressed down
      */
     private boolean pressed = false;
     
@@ -99,15 +99,28 @@ public class ArrowBar {
      */
     private NumberField delayField;
     
+    /**
+     * The {@code FocusListener} that tracks which {@code NumberField} is currently focused
+     */
     private static final FocusListener NUMBER_FIELD_LISTENER = new FocusListener() {
         
+        /**
+         * If a {@code NumberField} has gained focus, add a glow around it, and let it know that it is focused
+         *
+         * @param e The {@code FocusEvent} that indicates that a {@code NumberField} has gained focus
+         */
         @Override
         public void focusGained(FocusEvent e) {
             NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
             Runner.setFocusedField(nf);
             nf.setFocused(true);
         }
-        
+    
+        /**
+         * If a {@code NumberField} has lost focus, let it know that it has lost focus
+         *
+         * @param e The {@code FocusEvent} that indicates that a {@code NumberField} has lost focus
+         */
         @Override
         public void focusLost(FocusEvent e) {
             NumberFieldFocus nf = (NumberFieldFocus) e.getSource();
@@ -193,20 +206,39 @@ public class ArrowBar {
     }
     
     /**
-     * Manages focus for NumberFields
+     * A subclass of {@code NumberField} that adds knowledge of whether or not the {@code NumberField} has focus
      */
     public class NumberFieldFocus extends NumberField {
-        
+    
+        /**
+         * True if the {@code NumberFieldFocus} has focus
+         */
         private boolean focused = false;
-        
+    
+        /**
+         * Initializes a {@code NumberFieldFocus}
+         *
+         * @param limit The character limit for the {@code NumberFieldFocus} field
+         * @param state Whether the {@code NumberFieldFocus} should allow decimals or just integers
+         * @param negativesAllowed True if the {@code NumberFieldFocus} should allow negative numbers
+         * @throws IOException Thrown if the limit given is less than zero
+         */
         NumberFieldFocus(int limit, int state, boolean negativesAllowed) throws IOException {
             super(limit, state, negativesAllowed);
         }
-        
+    
+        /**
+         * Sets whether or not this {@code NumberFieldFocus} has focus
+         * @param focused True if the {@code NumberFieldFocus} has focus
+         */
         void setFocused(boolean focused) {
             this.focused = focused;
         }
-        
+    
+        /**
+         * Returns true if the {@code NumberFieldFocus} has focus
+         * @return True if the {@code NumberFieldFocus} has focus
+         */
         public boolean getFocused() {
             return focused;
         }
@@ -252,9 +284,9 @@ public class ArrowBar {
     }
     
     /**
-     * Main paint method
+     * Draws the {@code ArrowBar} and its corresponding components
      *
-     * @param g Graphics Object
+     * @param g The graphics object used for drawing the Runner JPanel
      * @param x The x-position of the {@code ArrowBar}
      * @param y The y-position of the {@code ArrowBar}
      */
@@ -299,11 +331,11 @@ public class ArrowBar {
     }
     
     /**
-     * Handles keystrokes when entering values into numberFields
+     * Changes what a certain keystroke does for the given {@code InputMap}
      *
-     * @param im            InputMap Object
-     * @param keyStrokeName String value representing the keyStroke's name
-     * @param actionMapKey  String Value representing the actionMapKey's name
+     * @param im            The {@code InputMap} for a certain component
+     * @param keyStrokeName The name of the keystroke for which the action is being changed
+     * @param actionMapKey  The action that is being mapped to the given keystroke
      */
     private void inputMapKeyStrokeReplacement(InputMap im, String keyStrokeName, String actionMapKey) {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeName);
@@ -311,8 +343,7 @@ public class ArrowBar {
     }
     
     /**
-     * Sets location of the direction rectangle bounds and draws the image if it is not selected or if it is selected
-     * and matches the counter
+     * Sets location of the direction rectangle bounds and draws the image if it is not selected or if it is selected and matches the counter
      *
      * @param g The graphics object used for drawing the Runner JPanel
      * @param x The x-position of the {@code ArrowBar}
@@ -325,7 +356,7 @@ public class ArrowBar {
     }
     
     /**
-     * Sets the correct image for the arrowBar's direction icon
+     * Draws the {@code ArrowBar}'s direction arrow based on the direction it should be facing
      *
      * @param g The graphics object used for drawing the Runner JPanel
      * @param x The x-position of the {@code ArrowBar}
@@ -367,9 +398,9 @@ public class ArrowBar {
     /**
      * Drawing method for reverse tick box that also sets its bounds for clicking
      *
-     * @param g Graphics object
-     * @param x X position of the reverse tick box
-     * @param y Y position of the reverse tick box
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of the reverse tick box
+     * @param y The y-position of the reverse tick box
      */
     private void reverseTickBox(Graphics g, int x, int y) {
         if(reversible)
@@ -448,16 +479,16 @@ public class ArrowBar {
     }
     
     /**
-     * Makes direction not selected
+     * Makes the direction arrow unselected
      */
     public void directionSelectedFalse() {
         this.directionSelected = false;
     }
     
     /**
-     * Returns delay value
+     * Returns the delay value for the {@code ArrowBar}
      *
-     * @return The delay of the arrow
+     * @return The delay value for the {@code ArrowBar}
      */
     public int getDelay() {
         if(!delayField.getText().isEmpty())
@@ -468,9 +499,9 @@ public class ArrowBar {
     }
     
     /**
-     * Returns the speed value
+     * Returns the speed value for the {@code ArrowBar}
      *
-     * @return The speed of the arrow
+     * @return The speed value for the {@code ArrowBar}
      */
     public int getSpeed() {
         if(!speedField.getText().isEmpty())
@@ -481,25 +512,25 @@ public class ArrowBar {
     }
     
     /**
-     * Sets the direction of the arrow
+     * Sets the direction of the direction arrow
      *
-     * @param direction The direction that the direction icon should point
+     * @param direction The direction the direction arrow should point
      */
     public void setDirection(char direction) {
         this.direction = direction;
     }
     
     /**
-     * Returns the direction of the arrow
+     * Returns the direction of the direction arrow
      *
-     * @return The direction of the arrow
+     * @return The direction of the direction arrow
      */
     public char getDirection() {
         return direction;
     }
     
     /**
-     * Toggles the arrow's reversible state
+     * Toggles the {@code ArrowBar}'s reversible state
      */
     void switchReversible() {
         reversible = !reversible;
@@ -540,7 +571,7 @@ public class ArrowBar {
     }
     
     /**
-     * Sets the visibility of the {@code NumberField}s to true or false
+     * Sets the visibility of the {@code NumberField}s to the given value
      *
      * @param visibility The visibility of {@code NumberField}s
      */
@@ -578,6 +609,11 @@ public class ArrowBar {
         return speedField.getText().isEmpty() || delayField.getText().isEmpty();
     }
     
+    /**
+     * Returns a {@code String} representation of the {@code ArrowBar}
+     *
+     * @return A {@code String} representation of the {@code ArrowBar}
+     */
     @Override
     public String toString() {
         return "{" + "speed = " + speed + ", delay = " + delay + ", reverse = " + reversible + ", direction = " + direction + '}';

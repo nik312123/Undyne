@@ -802,12 +802,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
             
             Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
                 MouseEvent e = (MouseEvent) event;
-                
-                switch(e.getID()) {
-                    case MouseEvent.MOUSE_DRAGGED:
-                        customAttackMaker.mouseDragged();
-                        break;
-                }
+    
+                if(e.getID() == MouseEvent.MOUSE_DRAGGED)
+                    customAttackMaker.mouseDragged();
             }, AWTEvent.MOUSE_MOTION_EVENT_MASK);
         }
         
@@ -1005,6 +1002,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
         return null;
     }
     
+    /**
+     * The main drawing method for the {@code Runner} {@code JPanel}
+     *
+     * @param g The graphics object used for drawing the Runner JPanel
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -2165,7 +2167,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener, Mouse
     
     private static void barCheckBoxClicked(MouseEvent e) {
         int x = e.getX(), y = e.getY();
-        boolean mouseIntersectsCheckBox = bottomBar.getBarCheckBox().contains(x, y);
+        boolean mouseIntersectsCheckBox = bottomBar.getCheckbox().contains(x, y);
         if(mouseIntersectsCheckBox) {
             StartScreen.playClick();
             if(canBeStopped)

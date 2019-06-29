@@ -11,68 +11,69 @@ import java.awt.Rectangle;
 
 public class BottomMenuBar extends JPanel {
     /**
-     * The y position of the bottom menu bar
+     * The change in the y-position of the {@code BottomMenuBar} (y = 0 is where it is showing completely)
      */
     private int y = 0;
     
     /**
-     * The x position of the checkbox
+     * The x-position of the {@code BottomMenuBar} checkbox
      */
     private final int CHECKBOX_X = 353;
     
     /**
-     * Is when the menu bar is opened and false when closed
+     * True if the {@code BottomMenuBar} should be showing and false if it should not
      */
-    private boolean isShowing = true;
+    private boolean showing = true;
     
     /**
-     * Changes to true if robot checkbox is checked
+     * True if the robot (automatic play) checkbox is checked
      */
-    private boolean isRobotBoxChecked = false;
+    private boolean robotBoxChecked = false;
     
     /**
-     * Changes to true if robot checkbox is checked
+     * True if the genocide (Undyne's undying mode) checkbox is checked
      */
-    private boolean isGenocideBoxChecked = false;
+    private boolean genocideBoxChecked = false;
     
     /**
-     * The string used for whether "Undyne" should be drawn or "Automatic"
+     * The string used for whether "Undyne" should be drawn or "Automatic" for the checkbox
      */
     private String checkBoxMode;
     
     /**
-     * A tab shaped button that opens and closes the bottom menu bar
+     * A tab-shaped rectangle used for showing and hiding the {@code BottomMenuBar}
      */
     private Rectangle tab = new Rectangle();
     
     /**
-     * The checkbox rectangle used to set bounds for clicking
+     * The bounds of the {@code BottomMenuBar} checkbox
      */
     private Rectangle checkbox = new Rectangle(CHECKBOX_X, y + 31 + 548, 13, 12);
+    
     /**
-     * The play button's rectangle used to set bounds for clicking
+     * The bounds of the {@code BottomMenuBar} play button
      */
     private Rectangle play = new Rectangle(5, y + 28 + 548, 20, 18);
     
     /**
-     * The stop button's rectangle used to set bounds for clicking
+     * The bounds of the {@code BottomMenuBar} stop button
      */
     private Rectangle stop = new Rectangle(31, y + 28 + 548, 20, 18);
     
     /**
-     * The export button's rectangle used to set bounds for clicking
+     * The bounds of the {@code BottomMenuBar} export button
      */
     private final Rectangle EXPORT = new Rectangle(457, 576, 53, 17);
     
     /**
-     * The import button's rectangle used to set bounds for clicking
+     * The bounds of the {@code BottomMenuBar} import button
      */
     private final Rectangle IMPORT = new Rectangle(518, 576, 53, 17);
     
     /**
-     * The main paint method
+     * Draws the {@code BottomMenuBar}
      *
-     * @param g Graphics object
+     * @param g The graphics object used for drawing the Runner JPanel
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -94,7 +95,7 @@ public class BottomMenuBar extends JPanel {
                 g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
             else
                 g.drawImage(Runner.exportButton, 456, y + 28, null);
-            if(isShowing) {
+            if(showing) {
                 g.drawImage(Runner.bottomTabDown, 541, y + 7, null);
                 if(--y < 0)
                     y = 0;
@@ -115,13 +116,13 @@ public class BottomMenuBar extends JPanel {
     }
     
     /**
-     * Method draws the check box
+     * Draws the checkbox for the {@code BottomMenuBar}
      *
-     * @param g Graphics object
+     * @param g The graphics object used for drawing the Runner JPanel
      */
     private void drawBarCheck(Graphics g) {
         g.drawImage(Runner.checkBox, CHECKBOX_X, y + 31, null);
-        if(Runner.isCustomAttack && isGenocideBoxChecked || Runner.canBeStopped && isRobotBoxChecked)
+        if(Runner.isCustomAttack && genocideBoxChecked || Runner.canBeStopped && robotBoxChecked)
             g.drawImage(Runner.ticked, CHECKBOX_X, y + 31, null);
         if(Runner.isCustomAttack)
             checkBoxMode = "Undying";
@@ -133,9 +134,9 @@ public class BottomMenuBar extends JPanel {
     }
     
     /**
-     * false if there are any empty fields
+     * Returns true if all {@code NumberFieldFocus} instances have been filled
      *
-     * @return Boolean value of whether or not any fields are empty
+     * @return True if all {@code NumberFieldFocus} instances have been filled
      */
     private boolean noFieldsAreEmpty() {
         for(AttackBar attBar : CustomAttacks.attacks) {
@@ -148,9 +149,9 @@ public class BottomMenuBar extends JPanel {
     }
     
     /**
-     * True is at least one attack that is empty
+     * Returns true if at least one {@code AttackBar} has no {@code ArrowBar}s under it
      *
-     * @return Boolean value of whether or not there is at least one attack that is empty
+     * @return True if at least one {@code AttackBar} has no {@code ArrowBar}s under it
      */
     private boolean isThereAnEmptyAttack() {
         if(CustomAttacks.attacks.size() == 0)
@@ -162,9 +163,9 @@ public class BottomMenuBar extends JPanel {
     }
     
     /**
-     * True if all of the attacks are empty
+     * Returns true if there aren't any {@code AttackBar} that have {@code ArrowBar}s under it
      *
-     * @return boolean value of whether all of the attacks are empty
+     * @return True if there aren't any {@code AttackBar} that have {@code ArrowBar}s under it
      */
     private boolean isAttacksEmpty() {
         for(AttackBar a : CustomAttacks.attacks) {
@@ -185,11 +186,11 @@ public class BottomMenuBar extends JPanel {
         stop.setLocation(31, y + 28 + 548);
         if(tab.contains(mousePosition)) {
             StartScreen.playClick();
-            isShowing = !isShowing;
+            showing = !showing;
         }
-        else if(EXPORT.contains(mousePosition) && isShowing && !isAttacksEmpty())
+        else if(EXPORT.contains(mousePosition) && showing && !isAttacksEmpty())
             return 1;
-        else if(IMPORT.contains(mousePosition) && isShowing)
+        else if(IMPORT.contains(mousePosition) && showing)
             return 0;
         else if(play.contains(mousePosition) && !Runner.canBeStopped && CustomAttacks.attacks.size() != 0 && !CustomAttacks.areAnyAttacksEmpty() && noFieldsAreEmpty()) {
             StartScreen.playClick();
@@ -203,60 +204,60 @@ public class BottomMenuBar extends JPanel {
     }
     
     /**
-     * Returns check box's bounds
+     * Returns the bounds of the {@code BottomMenuBar} checkbox
      *
-     * @return Rectangle object
+     * @return The bounds of the {@code BottomMenuBar} checkbox
      */
-    public Rectangle getBarCheckBox() {
+    public Rectangle getCheckbox() {
         checkbox.setLocation(CHECKBOX_X, y + 31 + 548);
         return checkbox;
     }
     
     /**
-     * Toggles the Genocide check box
+     * Toggles whether the genocide (Undyne's undying mode) is activated
      */
     public void flipIsGenocideBoxChecked() {
-        isGenocideBoxChecked = !isGenocideBoxChecked;
+        genocideBoxChecked = !genocideBoxChecked;
     }
     
     /**
-     * Toggles the Robot check box
+     * Toggles whether the robot (automatic play mode) is activated
      */
     public void flipIsRobotBoxedChecked() {
-        isRobotBoxChecked = !isRobotBoxChecked;
+        robotBoxChecked = !robotBoxChecked;
     }
     
     /**
-     * Returns true if Genocide box is checked
+     * Returns true if the genocide (Undyne's undying mode) checkbox is checked
      *
-     * @return Boolean Object
+     * @return True if the genocide (Undyne's undying mode) checkbox is checked
      */
     public boolean isGenocideBoxChecked() {
-        return isGenocideBoxChecked;
+        return genocideBoxChecked;
     }
     
     /**
-     * Sets GenocideBox to true or false
+     * Sets whether the genocide (Undyne's undying mode) checkbox is checked to the given value
      *
-     * @param checked boolean value of what genocideBox should be set to
+     * @param checked Whether the genocide (Undyne's undying mode) checkbox is checke
      */
     void setIsGenocideBoxChecked(boolean checked) {
-        isGenocideBoxChecked = checked;
+        genocideBoxChecked = checked;
     }
     
     /**
-     * Returns true if robot check box is checked
+     * Returns true if the robot (automatic play) checkbox is checked
      *
-     * @return boolen value of if robot check box is checked
+     * @return True if the robot (automatic play) checkbox is checked
      */
     public boolean isRobotBoxChecked() {
-        return isRobotBoxChecked;
+        return robotBoxChecked;
     }
     
     /**
-     * Returns the Y position of the menu bar
+     * Returns the change in the y-position of the {@code BottomMenuBar} (y = 0 is where it is showing completely)
      *
-     * @return int value
+     * @return The change in the y-position of the {@code BottomMenuBar}
      */
     public int getYValue() {
         return y;

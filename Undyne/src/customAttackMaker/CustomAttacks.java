@@ -82,17 +82,17 @@ public class CustomAttacks {
     static double scrollValue = 70;
     
     /**
-     * Y values that increments for every element drawn onto a next line
+     * The current y-position that changes for every element added to the attack creator UI
      */
     static double dynamicLength = 0;
     
     /**
-     * Error message for when importing a corrupt file
+     * The error message for when importing a file that doesn't adhere to the correct format
      */
     private static String error;
     
     /**
-     * Used to build that actual error message
+     * Used to build the error message for the error pop-up
      */
     private static StringBuilder errorBuilder = new StringBuilder();
     
@@ -122,23 +122,25 @@ public class CustomAttacks {
     static Point mousePosition = new Point();
     
     /**
-     * List of AttackBars
+     * The {@code AttackBar}s in the attack creator
      */
     public static ArrayList<AttackBar> attacks = new ArrayList<>();
     
     /**
-     * Bottom menu bar containing the import and export buttons and more
+     * The bottom menu bar that contains several options for controlling certain aspects of the attack creator
      */
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
     
     /**
-     * Error popup object
+     * The {@code PopUp} used to display errors for {@code CustomAttacks}
      */
     private static PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5) {
         
         @Override
         public void afterDraw(Graphics g) {
+            //If the error pop-up has been fully expanded
             if(percentageExpanded() == 1.0) {
+                //Draws the line number of the error if applicable
                 g.setFont(Runner.deteFontError);
                 g.setColor(Color.WHITE);
                 String titleMessage;
@@ -147,15 +149,22 @@ public class CustomAttacks {
                 else
                     titleMessage = "Error";
                 g.drawString(titleMessage, 10, 25);
+                
+                //Splits up the error message into words to put into the error pop-up
                 String[] errorSplit = error.split("\\s+");
                 errorBuilder.setLength(0);
                 int lineIndex = 1;
                 boolean drewOnLast = true;
+                
+                //Draws each line of the error message
                 for(int i = 0; i < errorSplit.length; ++i) {
+                    //If the error message part for the line has not hit the maximum value
                     if(errorBuilder.length() + errorSplit[i].length() + 1 < 19) {
                         drewOnLast = false;
                         errorBuilder.append(errorSplit[i]).append(" ");
                     }
+                    
+                    //Draws the line if the maximum value was reached and continues to the next line
                     else {
                         drewOnLast = true;
                         g.drawString(errorBuilder.toString(), 10, 25 + 15 + 25 * lineIndex);
@@ -164,6 +173,8 @@ public class CustomAttacks {
                         --i;
                     }
                 }
+                
+                //If there is any text left to put on the pop-up, display it
                 if(!drewOnLast)
                     g.drawString(errorBuilder.toString(), 10, 25 + 15 + 25 * lineIndex);
             }
@@ -171,33 +182,50 @@ public class CustomAttacks {
     };
     
     /**
-     * JFileChooser Object for importing a file
+     * Dialog used to import and export to and from the custom attack creator
      */
     private static JFileChooser chooser = new JFileChooser() {
         @Override
         public void approveSelection() {
             File f = getSelectedFile();
+            
+            //If the file chosen already exists, and we are attempting to save the file, present a dialog to ask if the user wishes to overwrite
+            // the file
             if(f.exists() && getDialogType() == SAVE_DIALOG) {
-                int result = JOptionPane.showConfirmDialog(this, "The file already exists. Overwrite?", "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
+                int result = JOptionPane.showConfirmDialog(this, "The file already exists. Overwrite?", "Existing File",
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
+                
+                //If the user does not wish to overwrite the file, exit the method
                 if(checkIfNegativeSelected(result))
                     return;
             }
+            
+            //If a file is being imported and there are arrows already existing in the editor, ask if the user wishes to overwrite the current
+            // editor data
             else if(getDialogType() == OPEN_DIALOG && anyArrowsExist()) {
-                int result = JOptionPane.showConfirmDialog(this, "Overwrite current editor data?", "Overwrite data", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
+                int result = JOptionPane.showConfirmDialog(this, "Overwrite current editor data?", "Overwrite data", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, Runner.warning);
+                
+                //If the user does not wish to overwrite the editor dat, exit the method
                 if(checkIfNegativeSelected(result))
                     return;
             }
             super.approveSelection();
         }
         
+        /**
+         * If the user chooses to cancel the dialog, clicks no, or clicks cancel, then a negative response was given, so true is returned. If
+         * cancel is choosen, the dialog is also closed
+         *
+         * @param result The number that corresponds to the {@code JOptionPane} response given
+         * @return True if the user gives a negative response to the given {@code JOptionPane}
+         */
         private boolean checkIfNegativeSelected(int result) {
             switch(result) {
-                case JOptionPane.NO_OPTION:
-                    return true;
-                case JOptionPane.CLOSED_OPTION:
-                    return true;
                 case JOptionPane.CANCEL_OPTION:
                     cancelSelection();
+                case JOptionPane.NO_OPTION:
+                case JOptionPane.CLOSED_OPTION:
                     return true;
             }
             return false;
@@ -205,14 +233,14 @@ public class CustomAttacks {
     };
     
     /**
-     * FileNameExtensionFiler object for exporting files
+     * The filter used to ensure that the file chosen is a text file
      */
     private static final FileNameExtensionFilter TEXT_FILTER = new FileNameExtensionFilter("Text files", "txt");
     
     /**
-     * Checks if ArrayList attacks is empty
+     * Returns true if there are any {@code ArrowBar}s in the UI
      *
-     * @return Whether or not the ArrayList attacks is empty
+     * @return True if there are any {@code ArrowBar}s in the UI
      */
     private static boolean anyArrowsExist() {
         for(AttackBar attBar : attacks) {
@@ -222,6 +250,7 @@ public class CustomAttacks {
         return false;
     }
     
+     //The static initializer block used to set the JFileChooser to only accept text files
     static {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setFileFilter(TEXT_FILTER);
@@ -262,7 +291,7 @@ public class CustomAttacks {
     /**
      * Custom Attack's start screen paint method
      *
-     * @param g Graphics object
+     * @param g The graphics object used for drawing the Runner JPanel
      */
     private void startScreen(Graphics2D g) {
         if(newThing.contains(mousePosition)) {
@@ -306,14 +335,14 @@ public class CustomAttacks {
     }
     
     /**
-     * Adds a new AttackBar object to attacks
+     * Adds a new {@code AttackBar} to the attack creator
      */
     private void addAttack() {
         attacks.add(new AttackBar());
     }
     
     /**
-     * Reassigns ids to AttackBars when one is deleted
+     * Reassigns the id numbers for each of the {@code AttackBar}s
      */
     private void reassignNumbers() {
         int i = -1;
@@ -322,9 +351,9 @@ public class CustomAttacks {
     }
     
     /**
-     * Paints add attack button
+     * Draws the add attack button
      *
-     * @param g Graphics object
+     * @param g The graphics object used for drawing the Runner JPanel
      */
     private void addAttackButton(Graphics g) {
         if(attacks.size() >= 13000)
@@ -478,7 +507,8 @@ public class CustomAttacks {
                                 }
                                 boolean reversable = Boolean.parseBoolean(reversableString);
                                 char direction = inputArrow[2].charAt(0);
-                                if(inputArrow[2].length() != 1 || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
+                                if(inputArrow[2].length() != 1
+                                        || direction != 'd' && direction != 'l' && direction != 'u' && direction != 'r' && direction != 'n') {
                                     error = "Direction character must be of size one and consist of one of the following characters: d, l, u, or r";
                                     importingError = true;
                                     errorPopUp.setExpanding(true);
@@ -536,10 +566,10 @@ public class CustomAttacks {
     }
     
     /**
-     * Checks if a String is a number
+     * Returns true if a given {@code String} only has characters '0'-'9'
      *
-     * @param number A String
-     * @return Whether or not the String is a number
+     * @param number The {@code String} to be tested
+     * @return True if a given {@code String} only has characters '0'-'9'
      */
     private boolean stringIsNumber(String number) {
         if(number.length() == 0)
@@ -557,7 +587,8 @@ public class CustomAttacks {
     private void exportFile() {
         StartScreen.playClick();
         ArrayList<String> output = new ArrayList<>();
-        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
+        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is "
+                + "ignored, but don't remove it because the first line is always skipped.");
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
         for(AttackBar attackBar : attacks) {
             output.add(String.format("%s,%b", "a" + attackBar.getNumber(), attackBar.isOrientationShift()));
@@ -593,9 +624,9 @@ public class CustomAttacks {
     }
     
     /**
-     * Checks if there are any AttackBars with zero ArrowBars
+     * Returns true if there are any {@code AttackBar}s with no {@code ArrowBar}s
      *
-     * @return Whether or not there are any AttackBars with zero Arrow Bars
+     * @return True if there are any {@code AttackBar}s with no {@code ArrowBar}s
      */
     static boolean areAnyAttacksEmpty() {
         for(AttackBar attackBar : attacks) {
@@ -690,9 +721,9 @@ public class CustomAttacks {
     }
     
     /**
-     * Sets viability of speedFields and delayFields of ArrowBars to the boolean variable visibility
+     * Sets the visibility of all of the {@code NumberField}s to the given value
      *
-     * @param visibility Boolean value of whether ot not speedFields and delayFields should be true or false
+     * @param visibility The value to set the visibility of the {@code NumberField}s to
      */
     public void setAllFieldsVisibility(boolean visibility) {
         for(AttackBar at : attacks) {
@@ -703,10 +734,10 @@ public class CustomAttacks {
     }
     
     /**
-     * Sets the importingError to true or false and sets the error message string
+     * Given whether the error was done in importing and the error message, presents the error pop-up
      *
-     * @param importingError Boolean value of whether there's an importing error
-     * @param message        String value representing the error message
+     * @param importingError True if there's an importing error
+     * @param message        The error message
      */
     public static void setError(boolean importingError, String message) {
         CustomAttacks.importingError = importingError;
@@ -717,54 +748,54 @@ public class CustomAttacks {
     }
     
     /**
-     * Returns the error PopUp Object
+     * Returns the error {@code PopUp}
      *
-     * @return PopUp Object
+     * @return The error {@code PopUp}
      */
     public PopUp getErrorPopUp() {
         return errorPopUp;
     }
     
     /**
-     * Returns the ArrayList of AttackBar objects
+     * Returns the {@code AttackBar}s in the attack creator
      *
-     * @return ArrayList of AttackBar objects
+     * @return The {@code AttackBar}s in the attack creator
      */
     public ArrayList<AttackBar> getAttacks() {
         return attacks;
     }
     
     /**
-     * Returns the BottomMenuBar object
+     * Returns the bottom menu bar that contains several options for controlling certain aspects of the attack creator
      *
-     * @return BottomMenuBar object
+     * @return The bottom menu bar that contains several options for controlling certain aspects of the attack creator
      */
     public static BottomMenuBar getBottomMenuBar() {
         return bottomMenuBar;
     }
     
     /**
-     * Returns true when the user selects an option on Custom Attacks start screen
+     * Returns true if the user selects an option on the {@code CustomAttacks} start screen
      *
-     * @return Boolean value of whether or not the user has selected an option on Custom Attacks start screen
+     * @return true if the user selects an option on the {@code CustomAttacks} start screen
      */
     public static boolean isIn() {
         return isIn;
     }
     
     /**
-     * Returns true if user selected Import option on Custom Attacks start screen and is browsing file system
+     * Returns true if the user is currently choosing a file
      *
-     * @return Boolean value of whether or not the user is browsing the file system
+     * @return True if the user is currently choosing a file
      */
     public static boolean isFileBeingChosen() {
         return fileBeingChosen;
     }
     
     /**
-     * Returns true if the user has selected on direction button on an ArrowBar
+     * Returns true if the user has selected any of the {@code ArrowBar}s' direction arrows
      *
-     * @return Boolean value of whether or not the user has selected on direction button on an ArrowBar
+     * @return True if the user has selected any of the {@code ArrowBar}s' direction arrows
      */
     public static boolean areAnyDirectionsSelected() {
         for(AttackBar at : attacks) {

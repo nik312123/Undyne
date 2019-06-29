@@ -66,12 +66,12 @@ public class AttackBar {
     private Rectangle dragArrowRect = new Rectangle(0, 0, 16, 18);
     
     /**
-     * An ArrayList of ArrowBars
+     * The {@code ArrowBar}s under this {@code AttackBar}
      */
     private ArrayList<ArrowBar> arrows = new ArrayList<>();
     
     /**
-     * An initializer that just assigns the object a number
+     * Initializes an {@code AttackBar} with its corresponding number
      */
     AttackBar() {
         number = CustomAttacks.attacks.size() - 1;
@@ -114,10 +114,10 @@ public class AttackBar {
     }
     
     /**
-     * The main painting method
+     * Draws the {@code AttackBar} and its corresponding components
      *
-     * @param g Graphics object
-     * @param y The Y position of the AttackBar
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param y The y-position of the AttackBar
      */
     void draw(Graphics g, int y) {
         int x = ATTACKBAR_X;
@@ -140,11 +140,11 @@ public class AttackBar {
     }
     
     /**
-     * Draws "Attack" + [id]
+     * Draws the "Attack [id]" {@code String} for the {@code AttackBar}
      *
-     * @param g Graphics Object
-     * @param x X Position
-     * @param y Y Position
+     * @param g The graphics object used for drawing the {@code Runner} {@code JPanel}
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
      */
     private void drawString(Graphics g, int x, int y) {
         g.setColor(Color.WHITE);
@@ -157,9 +157,9 @@ public class AttackBar {
     /**
      * Draws the delete attack button
      *
-     * @param g Graphics Object
-     * @param x The X position of the button
-     * @param y The Y position of the button
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
      */
     private void deleteAttackButton(Graphics g, int x, int y) {
         int displayNum = number + 1;
@@ -171,9 +171,9 @@ public class AttackBar {
     /**
      * Draws the orientation shift button
      *
-     * @param g Graphics Object
-     * @param x The X position of the button
-     * @param y The Y position of the button
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
      */
     private void orientationShiftButton(Graphics g, int x, int y) {
         int displayNum = number + 1;
@@ -189,9 +189,9 @@ public class AttackBar {
     /**
      * Draws the add new arrow button
      *
-     * @param g Graphics Object
-     * @param x The X position of the button
-     * @param y The Y position of the button
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
      */
     private void newArrowButton(Graphics g, int x, int y) {
         g.drawImage(Runner.newArrow, x + 10, y + 7, null);
@@ -199,11 +199,11 @@ public class AttackBar {
     }
     
     /**
-     * Draws the drop down button
+     * Draws the drop-down button
      *
-     * @param g Graphic Object
-     * @param x The X position of the button
-     * @param y The Y position of the button
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
      */
     private void dropDownButton(Graphics g, int x, int y) {
         if(collapsed) {
@@ -217,12 +217,12 @@ public class AttackBar {
     }
     
     /**
-     * Draws all the ArrowBars
+     * Draws all the {@code ArrowBar}s for this {@code AttackBar}
      *
-     * @param g Graphics object
-     * @param x The X position of the ArrowBars
-     * @param y The Y position of the ArrowBars
-     * @return Int value representing the number of arrows drawn
+     * @param g The graphics object used for drawing the Runner JPanel
+     * @param x The x-position of every {@code AttackBar}
+     * @param y The y-position of this {@code AttackBar}
+     * @return The number of {@code ArrowBar}s drawn
      */
     private int drawArrows(Graphics g, int x, int y) {
         int counter = 0;
@@ -256,16 +256,16 @@ public class AttackBar {
     }
     
     /**
-     * Toggles the orientationShift boolean value
+     * Toggles whether or not the {@code ArrowBar}s for this {@code AttackBar} should have a random orientation shift applied to them
      */
     void switchOrientationShift() {
         orientationShift = !orientationShift;
     }
     
     /**
-     * Returns the orientationShift variable
+     * Returns true if the {@code ArrowBar}s for this {@code AttackBar} should have a random orientation shift applied to them
      *
-     * @return Boolean Value
+     * @return True if the {@code ArrowBar}s for this {@code AttackBar} should have a random orientation shift applied to them
      */
     public boolean isOrientationShift() {
         return orientationShift;
