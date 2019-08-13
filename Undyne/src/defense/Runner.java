@@ -155,7 +155,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static int mainIndex = 0;
     
     /**
-     * The number that represents the frame of the level pictures used in survivial
+     * The number that represents the frame of the level pictures used in survival
      */
     private static int levelIndex = 0;
     
@@ -484,7 +484,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     public static BufferedImage addAttackDisabled;
     
     /**
-     * The checkbox checkmark used in the reversible checkboxes in the arrowbars and the checkbox on the bottom bar
+     * The checkbox checkmark used in the reversible checkboxes in the {@code ArrowBar}s and the checkbox on the bottom bar
      */
     public static BufferedImage ticked;
     
@@ -1299,27 +1299,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public void mouseClicked(MouseEvent e) {}
-            
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            
-            @Override
-            public void mouseExited(MouseEvent e) {}
-            
-            @Override
-            public void mouseDragged(MouseEvent e) {}
-            
-            @Override
-            public void mouseMoved(MouseEvent e) {}
-            
-            @Override
             public boolean onButton() {
                 return isVisible() && stage.isOnLink();
             }
@@ -1328,27 +1307,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         //Initializes the start screen help button
         helpButton = new GradientButton(help, Color.BLACK, new Color(148, 0, 211), 376, 380 + 20, 148, 62) {
             private static final long serialVersionUID = 1L;
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-            
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            
-            @Override
-            public void mouseExited(MouseEvent e) {}
-            
-            @Override
-            public void mouseDragged(MouseEvent e) {}
-            
-            @Override
-            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public boolean onButton() {
@@ -1360,27 +1318,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         playButton = new GradientButton(play, Color.BLACK, new Color(148, 0, 211), 76, 300, 148, 62) {
             
             @Override
-            public void mouseClicked(MouseEvent e) {}
-            
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            
-            @Override
-            public void mouseExited(MouseEvent e) {}
-            
-            @Override
-            public void mouseDragged(MouseEvent e) {}
-            
-            @Override
-            public void mouseMoved(MouseEvent e) {}
-            
-            @Override
             public boolean onButton() {
                 return isVisible() && stage.isOnPlay();
             }
@@ -1388,27 +1325,6 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         
         //Initializes the start screen attack creator button
         creatorButton = new GradientButton(creator, Color.BLACK, new Color(148, 0, 211), 376, 300, 148, 62) {
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-            
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            
-            @Override
-            public void mouseExited(MouseEvent e) {}
-            
-            @Override
-            public void mouseDragged(MouseEvent e) {}
-            
-            @Override
-            public void mouseMoved(MouseEvent e) {}
             
             @Override
             public boolean onButton() {
@@ -1714,7 +1630,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             BufferedImage optimized = gfxConfig.createCompatibleImage(current.getWidth(), current.getHeight(), current.getTransparency());
             Graphics2D g2d = optimized.createGraphics();
             
-            //Draw the unoptomized image using the above graphics object (hence optimizing the image)
+            //Draw the unoptimized image using the above graphics object (hence optimizing the image)
             g2d.drawImage(current, 0, 0, null);
             
             //Sets the optimization priority of the given image to the max priority before returning it
@@ -1770,12 +1686,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             //Draws the typical black background
             drawBG(g);
             
-            //Draws all of the start screeen stuff at the beginning of the application start-up
+            //Draws all of the start screen stuff at the beginning of the application start-up
             if(beginning && !oneSecondDelay.isRunning()) {
                 customAttackMaker.setAllFieldsVisibility(false);
                 //Drawn if the start screen should be showing (after the delay at the beginning)
                 if(stage.shouldShow()) {
-                    //Drawn if on the first screen of the start screen (not the game selecton mode)
+                    //Drawn if on the first screen of the start screen (not the game selection mode)
                     if(!stage.isPlayChosen()) {
                         creditsButton.setVisible(true);
                         creditsButton.draw(g);
@@ -1879,7 +1795,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             /*
              * Sets the bottom bar visibility to true if the one second delay loading screen isn't running, the user is past the custom attacks start screen, and the user
-             * is either in the custom attacks mode or is playing attacks from cusotm attacks or false otherwise
+             * is either in the custom attacks mode or is playing attacks from custom attacks or false otherwise
              */
             if(!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped))
                 bottomBar.setVisible(true);
@@ -2292,10 +2208,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     /**
-     * Draws the replay text seen at a gameover or end of a game mode
+     * Draws the replay text seen at a game over or end of a game mode
      *
      * @param g      The graphics object used for drawing the Runner JPanel
-     * @param xShift The shhift in x-position of the text based on whether the replay text is shown in a gameover or end
+     * @param xShift The shift in x-position of the text based on whether the replay text is shown in a game over or end
      *               of a game mode
      */
     private void drawReplay(Graphics g, int xShift) {
@@ -2826,7 +2742,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         if(e.getActionCommand() == null)
             frame.repaint();
         else {
-            //Otherise, based on the timer action command given, it will do certain actions
+            //Otherwise, based on the timer action command given, it will do certain actions
             switch(e.getActionCommand()) {
                 case "main":
                     frame.repaint();
@@ -3097,7 +3013,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      */
     private static void selectPressed() {
         if(beginning) {
-            //If at the beginnning ant the play button has not been chosen
+            //If at the beginning ant the play button has not been chosen
             if(!stage.isPlayChosen()) {
                 //If the user is on the credits button, the credits pop-up will expand
                 if(creditsButton.onButton() && !creditsList.getExpanding()) {

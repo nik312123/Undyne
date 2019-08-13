@@ -30,7 +30,7 @@ class Arrow {
     private int x, y;
     
     /**
-     * This is the delay before the next arrow is launched after this arrow is lauched
+     * This is the delay before the next arrow is launched after this arrow is launched
      */
     private int delay;
     
@@ -88,7 +88,7 @@ class Arrow {
      * @param speed     The speed the arrow should go in pixels/tick between 1 – 100
      * @param reverse   This determines whether or not the arrow will be reversed (flips from one side to another)
      * @param direction This determines the direction the arrow should come travel in the direction of
-     * @param delay     This is the delay before the next arrow is launched after this arrow is lauched
+     * @param delay     This is the delay before the next arrow is launched after this arrow is launched
      * @param isSlow    True if an arrow is a slow arrow (moves one pixel every other timer tick)
      */
     Arrow(int speed, boolean reverse, char direction, int delay, boolean isSlow) {
@@ -403,7 +403,7 @@ class Arrow {
     /**
      * Returns the arrow in a String format
      *
-     * @return The arro win a String format
+     * @return The arrow in a String format
      */
     @Override
     public String toString() {

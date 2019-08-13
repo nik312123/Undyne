@@ -43,6 +43,8 @@ public class CustomAttacks {
     
     private static String error;
     
+    private static String customMessage = "Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.";
+    
     private static StringBuilder errorBuilder = new StringBuilder();
     
     private static final Color startScreenButtonsColor = new Color(157, 50, 100);
@@ -97,6 +99,10 @@ public class CustomAttacks {
         @Override
         public void approveSelection() {
             File f = getSelectedFile();
+            if(!f.getName().endsWith(".txt"))
+                f = new File(f.getAbsolutePath() + ".txt");
+            System.out.println(f.toString());
+            System.out.println(getDialogType());
             if(f.exists() && getDialogType() == SAVE_DIALOG) {
                 int result = JOptionPane.showConfirmDialog(this, "The file already exists. Overwrite?", "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
                 if(checkIfNegativeSelected(result))
@@ -113,7 +119,6 @@ public class CustomAttacks {
         private boolean checkIfNegativeSelected(int result) {
             switch(result) {
                 case JOptionPane.NO_OPTION:
-                    return true;
                 case JOptionPane.CLOSED_OPTION:
                     return true;
                 case JOptionPane.CANCEL_OPTION:
@@ -272,7 +277,7 @@ public class CustomAttacks {
                     switch(currentLine) {
                         case 1:
                             //Skips the first line of input
-                            s.nextLine();
+                            customMessage = s.nextLine();
                             break;
                         case 2:
                             //This value specifies whether Undyne should be in normal or Undying mode
@@ -451,6 +456,12 @@ public class CustomAttacks {
                         }
                     }
                 }
+                
+                //Removes all of the NumberFieldFocus instances from the current attack creator attacks before replacement
+                for(AttackBar attBar : attacks) {
+                    for(ArrowBar arrBar : attBar.getArrows())
+                        arrBar.removeFields();
+                }
                 attacks = new ArrayList<>(importedAttacks);
                 importingComplete = true;
             }
@@ -493,7 +504,7 @@ public class CustomAttacks {
         ArrayList<String> output = new ArrayList<>();
         
         //Adds text for the text at the top of a file to import
-        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
+        output.add(customMessage);
         
         //Adds the Undying value to the lines to export for the text file
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
