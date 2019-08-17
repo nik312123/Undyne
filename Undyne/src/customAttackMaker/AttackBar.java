@@ -63,8 +63,8 @@ public class AttackBar {
             CustomAttacks.dynamicLength += 10;
             y += 30 * drawArrows(g, x, y);
             bottomBound.setBounds(0, y + 6, 600, 1);
-            newArrowButton(g, x, y);
-            CustomAttacks.dynamicLength += 45;
+            newArrowButton(g, x, y + 5);
+            CustomAttacks.dynamicLength += 50;
         }
         else
             CustomAttacks.dynamicLength += 35;
@@ -124,7 +124,7 @@ public class AttackBar {
             CustomAttacks.dynamicLength += 30;
         }
         if(beingDragged != -1) {
-            Rectangle orderIntersection = arrows.get(beingDragged).getOrderIntersection();
+            Rectangle orderIntersection = arrows.get(beingDragged).getOrderIntersecton();
             if(orderIntersection.intersects(topBound) || orderIntersection.intersects(bottomBound))
                 return counter;
             g.setColor(Color.BLACK);
@@ -225,7 +225,7 @@ public class AttackBar {
     private void order() {
         for(int i = 0; i < arrows.size(); ++i) {
             for(int j = i + 1; j < arrows.size(); ++j) {
-                if(arrows.get(i).getOrderIntersection().intersects(arrows.get(j).getOrderIntersection())) {
+                if(arrows.get(i).getOrderIntersecton().intersects(arrows.get(j).getOrderIntersecton())) {
                     Collections.swap(arrows, i, j);
                     return;
                 }

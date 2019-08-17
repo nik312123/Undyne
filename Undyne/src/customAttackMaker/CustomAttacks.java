@@ -40,10 +40,9 @@ public class CustomAttacks {
     private static int importThingAlpha = 0;
     static double scrollValue = 70;
     static int dynamicLength = 0;
-    
+
+
     private static String error;
-    
-    private static String customMessage = "Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.";
     
     private static StringBuilder errorBuilder = new StringBuilder();
     
@@ -58,6 +57,8 @@ public class CustomAttacks {
     public static ArrayList<AttackBar> attacks = new ArrayList<>();
     
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
+
+    private static ScrollBar sb = new ScrollBar();
     
     private static PopUp errorPopUp = new PopUp(170, 175, 260, 250, 15, Color.BLACK, Color.ORANGE, 5) {
         
@@ -99,10 +100,6 @@ public class CustomAttacks {
         @Override
         public void approveSelection() {
             File f = getSelectedFile();
-            if(!f.getName().endsWith(".txt"))
-                f = new File(f.getAbsolutePath() + ".txt");
-            System.out.println(f.toString());
-            System.out.println(getDialogType());
             if(f.exists() && getDialogType() == SAVE_DIALOG) {
                 int result = JOptionPane.showConfirmDialog(this, "The file already exists. Overwrite?", "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, Runner.warning);
                 if(checkIfNegativeSelected(result))
@@ -119,6 +116,7 @@ public class CustomAttacks {
         private boolean checkIfNegativeSelected(int result) {
             switch(result) {
                 case JOptionPane.NO_OPTION:
+                    return true;
                 case JOptionPane.CLOSED_OPTION:
                     return true;
                 case JOptionPane.CANCEL_OPTION:
@@ -155,9 +153,14 @@ public class CustomAttacks {
         if(isIn || optionSelected && (!importChosen || importingComplete)) {
             isIn = true;
             dynamicLength = (int) scrollValue;
+            int top = dynamicLength - 50;
             for(AttackBar attackBar : attacks)
                 attackBar.draw(g, dynamicLength);
             addAttackButton(g);
+            g.setColor(Color.RED);
+            int bottom = dynamicLength;
+            int length = bottom - top;
+            sb.perform(g,length ,mousePosition);
             Runner.setTopBarVisibility(true);
             setAllFieldsVisibility(true);
         }
@@ -212,6 +215,7 @@ public class CustomAttacks {
         g.setColor(Color.WHITE);
         String exit = "Press X to Exit";
         g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit) / 2, 550);
+
     }
     
     private void addAttack() {
@@ -277,7 +281,7 @@ public class CustomAttacks {
                     switch(currentLine) {
                         case 1:
                             //Skips the first line of input
-                            customMessage = s.nextLine();
+                            s.nextLine();
                             break;
                         case 2:
                             //This value specifies whether Undyne should be in normal or Undying mode
@@ -456,12 +460,6 @@ public class CustomAttacks {
                         }
                     }
                 }
-                
-                //Removes all of the NumberFieldFocus instances from the current attack creator attacks before replacement
-                for(AttackBar attBar : attacks) {
-                    for(ArrowBar arrBar : attBar.getArrows())
-                        arrBar.removeFields();
-                }
                 attacks = new ArrayList<>(importedAttacks);
                 importingComplete = true;
             }
@@ -504,7 +502,7 @@ public class CustomAttacks {
         ArrayList<String> output = new ArrayList<>();
         
         //Adds text for the text at the top of a file to import
-        output.add(customMessage);
+        output.add("Note: Editing the file may result in errors. Empty lines are acceptable. This (the first line) is fine for modification as it is ignored, but don't remove it because the first line is always skipped.");
         
         //Adds the Undying value to the lines to export for the text file
         output.add(String.valueOf(bottomMenuBar.isGenocideBoxChecked()));
@@ -561,23 +559,24 @@ public class CustomAttacks {
     }
     
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if(isIn && Runner.isCustomAttack)
-            scrollValue += e.getWheelRotation() * -1;
     }
     
     public void mouseDragged() {
         if(isIn && Runner.isCustomAttack) {
+            sb.mouseDragged(mousePosition);
             for(AttackBar a : attacks)
                 a.mouseDragWork();
         }
     }
     
     public void mouseReleased() {
+        sb.mouseReleased(mousePosition);
         for(AttackBar a : attacks)
             a.mouseReleased();
     }
     
     public void mousePressed() {
+        sb.mousePressed(mousePosition);
         for(AttackBar a : attacks)
             a.mousePressed();
     }

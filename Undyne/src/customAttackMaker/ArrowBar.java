@@ -32,7 +32,7 @@ public class ArrowBar {
     
     private Rectangle deleteArrowButton = new Rectangle();
     private Rectangle directionRectangle = new Rectangle();
-    private Rectangle orderIntersection = new Rectangle();
+    private Rectangle orderIntersecton = new Rectangle();
     private Rectangle dragArrowIcon = new Rectangle();
     private Rectangle reverseTickBox = new Rectangle();
     
@@ -158,8 +158,8 @@ public class ArrowBar {
         this.pressed = pressed;
     }
     
-    Rectangle getOrderIntersection() {
-        return orderIntersection;
+    Rectangle getOrderIntersecton() {
+        return orderIntersecton;
     }
     
     void draw(Graphics g, int x, int y) {
@@ -170,7 +170,7 @@ public class ArrowBar {
         g.setColor(Color.BLACK);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 183, this.y + 8, 26, 12);
         g.fillRect(AttackBar.ATTACKBAR_X + 10 + 277, this.y + 8, 26, 12);
-        orderIntersection.setBounds(x, this.y, 100, 10);
+        orderIntersecton.setBounds(x, this.y, 100, 10);
         g.drawImage(Runner.arrowBarImage, x, this.y, null);
         deleteArrowButton(g, x - 24, this.y + 5);
         drawDirection(g, x, this.y);

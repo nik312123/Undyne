@@ -11,7 +11,7 @@ import java.awt.Rectangle;
 
 public class BottomMenuBar extends JPanel {
     private int y = 0;
-    private final int CHECKBOX_X = 353;
+    private final int CHECKBOX_X = 353 - 24;
     
     private boolean isShowing = true;
     private boolean isRobotBoxChecked = false;
@@ -23,15 +23,15 @@ public class BottomMenuBar extends JPanel {
     private Rectangle checkbox = new Rectangle(CHECKBOX_X, y + 31 + 548, 13, 12);
     private Rectangle play = new Rectangle(5, y + 28 + 548, 20, 18);
     private Rectangle stop = new Rectangle(31, y + 28 + 548, 20, 18);
-    private final Rectangle EXPORT = new Rectangle(457, 576, 53, 17);
-    private final Rectangle IMPORT = new Rectangle(518, 576, 53, 17);
+    private final Rectangle EXPORT = new Rectangle(457 - 24, 576, 53, 17);
+    private final Rectangle IMPORT = new Rectangle(518 - 24, 576, 53, 17);
     
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         if(Runner.bottomBarShouldDraw()) {
-            tab.setBounds(528, y + 548, 46, 25);
+            tab.setBounds(528 - 24, y + 548, 46, 25);
             g.drawImage(Runner.bottomMenuBar, 0, y, null);
             boolean emptyAttackExists = isThereAnEmptyAttack();
             if(!emptyAttackExists && noFieldsAreEmpty()) {
@@ -43,15 +43,15 @@ public class BottomMenuBar extends JPanel {
                 g.drawImage(Runner.bottomStopButtonDisabled, 31, y + 28, null);
             }
             if(emptyAttackExists && isAttacksEmpty())
-                g.drawImage(Runner.exportButtonDisabled, 456, y + 28, null);
+                g.drawImage(Runner.exportButtonDisabled, 456 - 24, y + 28, null);
             else
-                g.drawImage(Runner.exportButton, 456, y + 28, null);
+                g.drawImage(Runner.exportButton, 456 - 24, y + 28, null);
             if(isShowing) {
-                g.drawImage(Runner.bottomTabDown, 541, y + 7, null);
+                g.drawImage(Runner.bottomTabDown, 541 - 24, y + 7, null);
                 y = Math.max(y - 1, 0);
             }
             else {
-                g.drawImage(Runner.bottomTabUp, 541, y + 7, null);
+                g.drawImage(Runner.bottomTabUp, 541 - 24, y + 7, null);
                 y = Math.min(y + 1, 32);
             }
             
