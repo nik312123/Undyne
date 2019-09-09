@@ -5,7 +5,6 @@ import defense.StartScreen;
 import nikunj.classes.PopUp;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.AlphaComposite;
@@ -13,7 +12,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -53,8 +51,6 @@ public class CustomAttacks {
     private static Rectangle newThing = new Rectangle(226, 211, 148, 63);
     private static Rectangle importThing = new Rectangle(226, 326, 148, 63);
     
-    static Point mousePosition = new Point();
-    
     public static ArrayList<AttackBar> attacks = new ArrayList<>();
     
     private static BottomMenuBar bottomMenuBar = new BottomMenuBar();
@@ -64,7 +60,7 @@ public class CustomAttacks {
         @Override
         public void afterDraw(Graphics g) {
             if(percentageExpanded() == 1.0) {
-                g.setFont(Runner.deteFontError);
+                g.setFont(Runner.deteFontTwenty);
                 g.setColor(Color.WHITE);
                 String titleMessage;
                 if(importingError)
@@ -146,24 +142,21 @@ public class CustomAttacks {
     
     public CustomAttacks() {}
     
-    public void perform(Graphics g2) {
-        JFrame frame = Runner.getFrame();
-        Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
-        mousePosition.setLocation(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
-        Graphics2D g = (Graphics2D) g2;
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    public void perform(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if(isIn || optionSelected && (!importChosen || importingComplete)) {
             isIn = true;
             dynamicLength = (int) scrollValue;
             for(AttackBar attackBar : attacks)
-                attackBar.draw(g, dynamicLength);
-            addAttackButton(g);
+                attackBar.draw(g2d, dynamicLength);
+            addAttackButton(g2d);
             Runner.setTopBarVisibility(true);
             setAllFieldsVisibility(true);
         }
         else {
             Runner.setTopBarVisibility(false);
-            startScreen(g);
+            startScreen(g2d);
             setAllFieldsVisibility(false);
         }
         if(errorIsContracting && errorPopUp.percentageExpanded() == 0.0) {
@@ -174,6 +167,8 @@ public class CustomAttacks {
     }
     
     private void startScreen(Graphics2D g) {
+        Point mousePosition = Runner.getMousePos();
+        
         if(newThing.contains(mousePosition)) {
             newThingAlpha += 5;
             if(newThingAlpha > 255)
@@ -208,7 +203,7 @@ public class CustomAttacks {
         g.drawImage(Runner.cat, 129, 21, null);
         g.drawImage(Runner.newImage, 226, 211, null);
         g.drawImage(Runner.importImage, 226, 326, null);
-        g.setFont(Runner.deteFontEditorAttack);
+        g.setFont(Runner.deteFontTwentyFour);
         g.setColor(Color.WHITE);
         String exit = "Press X to Exit";
         g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit) / 2, 550);
@@ -561,12 +556,12 @@ public class CustomAttacks {
     }
     
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if(isIn && Runner.isCustomAttack)
+        if(isIn && Runner.customAttackMode)
             scrollValue += e.getWheelRotation() * -1;
     }
     
     public void mouseDragged() {
-        if(isIn && Runner.isCustomAttack) {
+        if(isIn && Runner.customAttackMode) {
             for(AttackBar a : attacks)
                 a.mouseDragWork();
         }
@@ -583,6 +578,8 @@ public class CustomAttacks {
     }
     
     public void mouseClicked() {
+        Point mousePosition = Runner.getMousePos();
+        
         if(errorPopUp.percentageExpanded() == 1.0) {
             errorPopUp.setExpanding(false);
             StartScreen.playClick();

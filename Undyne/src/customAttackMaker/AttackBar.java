@@ -6,6 +6,7 @@ import defense.StartScreen;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,7 +73,7 @@ public class AttackBar {
     
     private void drawString(Graphics g, int x, int y) {
         g.setColor(Color.WHITE);
-        g.setFont(Runner.deteFontEditorAttack);
+        g.setFont(Runner.deteFontTwentyFour);
         int displayNum = number + 1;
         g.drawString("Attack ", x, y);
         g.drawString(displayNum + "", 10 + x + g.getFontMetrics().stringWidth("Attack"), y);
@@ -152,8 +153,10 @@ public class AttackBar {
     }
     
     int mouseClickWork() {
+        Point mousePosition = Runner.getMousePos();
+        
         boolean anySelected = CustomAttacks.areAnyDirectionsSelected();
-        if(deleteAttack.contains(CustomAttacks.mousePosition) && !anySelected) {
+        if(deleteAttack.contains(mousePosition) && !anySelected) {
             StartScreen.playClick();
             ArrayList<AttackBar> attacks = CustomAttacks.attacks;
             AttackBar attBar = attacks.get(number);
@@ -162,31 +165,31 @@ public class AttackBar {
             attacks.remove(number);
             return 1;
         }
-        else if(orientationShiftButton.contains(CustomAttacks.mousePosition) && !anySelected) {
+        else if(orientationShiftButton.contains(mousePosition) && !anySelected) {
             StartScreen.playClick();
             switchOrientationShift();
         }
-        else if(dropDownButton.contains(CustomAttacks.mousePosition)) {
+        else if(dropDownButton.contains(mousePosition)) {
             StartScreen.playClick();
             isDropped = !isDropped;
         }
-        else if(newArrowButton.contains(CustomAttacks.mousePosition) && !anySelected) {
+        else if(newArrowButton.contains(mousePosition) && !anySelected) {
             StartScreen.playClick();
             arrows.add(new ArrowBar(0, false, 'u', 0));
         }
         for(int i = 0; i < arrows.size(); ++i) {
             ArrowBar ab = arrows.get(i);
-            if(ab.getDirectionRectangle().contains(CustomAttacks.mousePosition)) {
+            if(ab.getDirectionRectangle().contains(mousePosition)) {
                 StartScreen.playClick();
                 ab.switchDirectionIsSelected();
             }
-            else if(ab.getDeleteArrowButton().contains(CustomAttacks.mousePosition) && !anySelected) {
+            else if(ab.getDeleteArrowButton().contains(mousePosition) && !anySelected) {
                 StartScreen.playClick();
                 ab.removeFields();
                 arrows.remove(i);
                 --i;
             }
-            else if(ab.getReverseTickBox().contains(CustomAttacks.mousePosition) && !anySelected) {
+            else if(ab.getReverseTickBox().contains(mousePosition) && !anySelected) {
                 StartScreen.playClick();
                 ab.switchReversible();
             }
@@ -197,7 +200,7 @@ public class AttackBar {
     void mouseDragWork() {
         for(ArrowBar a : arrows) {
             if(a.isPressed()) {
-                int iconMovement = CustomAttacks.mousePosition.y - 8;
+                int iconMovement = Runner.getMousePos().y - 8;
                 if(iconMovement < topBound.getY() + 8)
                     iconMovement = (int) topBound.getY() + 8;
                 if(iconMovement > bottomBound.getY() - 18)
@@ -217,7 +220,7 @@ public class AttackBar {
     
     void mousePressed() {
         for(ArrowBar a : arrows) {
-            if(a.getDragArrowIcon().contains(CustomAttacks.mousePosition))
+            if(a.getDragArrowIcon().contains(Runner.getMousePos()))
                 a.setPressed(true);
         }
     }

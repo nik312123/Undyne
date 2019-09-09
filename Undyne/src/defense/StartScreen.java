@@ -338,16 +338,6 @@ public class StartScreen {
     private int arrowsCounter = 0;
     
     /**
-     * The x-position of the "Made by Nikunj Chawla and Aaron Kandikatla" text
-     */
-    private int nameStringX = 610;
-    
-    /**
-     * The counter used to change the x-position of the name string
-     */
-    private int nameStringCounter = 0;
-    
-    /**
      * The warning counter that shows the warning to use the arrow keys or WASD if someone chooses to click with the
      * mouse instead until it hits zero
      */
@@ -715,7 +705,7 @@ public class StartScreen {
         addLinkFormatting(7, 18, 35);
         creditsText[8] = new AttributedString("And most importantly, thank you for enjoying our");
         for(AttributedString a : creditsText)
-            a.addAttribute(TextAttribute.FONT, Runner.deteFontSpeech);
+            a.addAttribute(TextAttribute.FONT, Runner.deteFontFourteen);
         
         //Initializes the credits pop-up
         creditsList = new PopUp(65, 65, 470, 470, 46, Color.BLACK, Color.ORANGE, 5) {
@@ -728,12 +718,12 @@ public class StartScreen {
             public void afterDraw(Graphics g) {
                 if(creditsList.percentageExpanded() == 1.0) {
                     Runner.moveButtons(true);
-                    int originalY = 20 + g.getFontMetrics(Runner.deteFontSpeech).getHeight() / 2;
+                    int originalY = 20 + g.getFontMetrics(Runner.deteFontFourteen).getHeight() / 2;
                     int x = 20, y = originalY;
                     g.setColor(Color.WHITE);
-                    g.setFont(Runner.deteFontSpeech);
+                    g.setFont(Runner.deteFontFourteen);
                     for(AttributedString a : creditsText) {
-                        a.addAttribute(TextAttribute.FONT, Runner.deteFontSpeech);
+                        a.addAttribute(TextAttribute.FONT, Runner.deteFontFourteen);
                         g.drawString(a.getIterator(), x, y);
                         y += 40;
                     }
@@ -952,9 +942,6 @@ public class StartScreen {
                 
                 //Draws the spear survival button animation
                 drawSpear(g);
-                
-                //Draws the constantly scrolling names of the game creators (Nikunj Chawla and Aaron Kandikatla)
-                drawNames(g);
                 
                 //Draws a number of dots equal to that of the number of hearts activated
                 drawDots(g);
@@ -1597,10 +1584,10 @@ public class StartScreen {
         if(playChosen && !heartsActivated()) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setFont(Runner.deteFontScore);
+            g2d.setFont(Runner.deteFontTwentyTwo);
             g2d.setColor(Color.WHITE);
             String backMessage = "Press X to go back";
-            g2d.drawString(backMessage, (Runner.getFrame().getWidth() - g.getFontMetrics(Runner.deteFontScore).stringWidth(backMessage)) / 2, 30);
+            g2d.drawString(backMessage, (Runner.getFrame().getWidth() - g.getFontMetrics(Runner.deteFontTwentyTwo).stringWidth(backMessage)) / 2, 30);
         }
     }
     
@@ -1676,27 +1663,6 @@ public class StartScreen {
         if(++blueHeartFlashCounter % 2 == 0 && blueHeartOpacity > 0.02f) {
             blueHeartOpacity -= 0.02f;
             blueHeartFlashCounter = 0;
-        }
-    }
-    
-    /**
-     * Draws the game creators' names scrolling on the bottom of the start screen
-     *
-     * @param g The graphics object used for drawing the Runner JPanel
-     */
-    private void drawNames(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setFont(Runner.deteFontScore);
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("Made by Nikunj Chawla and Aaron Kandikatla", nameStringX, 580);
-        g2d.dispose();
-        
-        //Shifts the names to the left every two counts (except once the x-position hits -560, in which case it will restart from the right
-        if(++nameStringCounter % 2 == 0) {
-            if(--nameStringX == -560)
-                nameStringX = 610;
-            nameStringCounter = 0;
         }
     }
     

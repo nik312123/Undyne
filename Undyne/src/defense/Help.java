@@ -65,7 +65,7 @@ class Help {
             @Override
             public void afterDraw(Graphics g) {
                 int heightWidth = Math.min(helpPopUp.getPopUpWidth(), 460);
-                g.setFont(Runner.deteFontSpeech);
+                g.setFont(Runner.deteFontFourteen);
                 helpPopUp.checkVisibility();
                 
                 //If the help pop-up can be seen, draw the help animation

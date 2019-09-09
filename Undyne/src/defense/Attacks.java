@@ -512,6 +512,8 @@ class Attacks {
      * @return True if there are no arrows in the attack pattern or undyneAttacks {@code ArrayList}s
      */
     boolean isFinished() {
+        if(att == null)
+            return false;
         ArrayList<Arrow> attackPattern = att.getList();
         if(attackPattern.size() != 0)
             return false;

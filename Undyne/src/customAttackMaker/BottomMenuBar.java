@@ -35,8 +35,8 @@ public class BottomMenuBar extends JPanel {
             g.drawImage(Runner.bottomMenuBar, 0, y, null);
             boolean emptyAttackExists = isThereAnEmptyAttack();
             if(!emptyAttackExists && noFieldsAreEmpty()) {
-                g.drawImage(Runner.bottomPlayButton, 5, y + 28, null);
-                g.drawImage(Runner.bottomStopButton, 31, y + 28, null);
+                g.drawImage(Runner.isCustomAttackMode() ? Runner.bottomPlayButton : Runner.bottomPlayButtonDisabled, 5, y + 28, null);
+                g.drawImage(Runner.isCustomAttackMode() ? Runner.bottomStopButtonDisabled : Runner.bottomStopButton, 31, y + 28, null);
             }
             else {
                 g.drawImage(Runner.bottomPlayButtonDisabled, 5, y + 28, null);
@@ -58,7 +58,7 @@ public class BottomMenuBar extends JPanel {
             drawBarCheck(g);
         }
         if(Runner.windowNotFocused()) {
-            g.setColor(new Color(255, 255, 255, 127));
+            g.setColor(Runner.UNFOCUSED_COLOR);
             Rectangle tabBounds = tab.getBounds();
             g.fillRect(tabBounds.x - getX(), tabBounds.y - getY(), tabBounds.width, tabBounds.height);
             g.fillRect(0, y + 25, 600, 52);
@@ -67,13 +67,13 @@ public class BottomMenuBar extends JPanel {
     
     private void drawBarCheck(Graphics g) {
         g.drawImage(Runner.checkBox, CHECKBOX_X, y + 31, null);
-        if(Runner.isCustomAttack && isGenocideBoxChecked || Runner.canBeStopped && isRobotBoxChecked)
+        if(Runner.customAttackMode && isGenocideBoxChecked || Runner.canBeStopped && isRobotBoxChecked)
             g.drawImage(Runner.ticked, CHECKBOX_X, y + 31, null);
-        if(Runner.isCustomAttack)
+        if(Runner.customAttackMode)
             checkBoxMode = "Undying";
         else if(Runner.canBeStopped)
             checkBoxMode = "Automatic";
-        g.setFont(Runner.deteFontSpeech);
+        g.setFont(Runner.deteFontFourteen);
         g.setColor(Color.WHITE);
         g.drawString(checkBoxMode, CHECKBOX_X + 17, y + 41);
     }
@@ -122,7 +122,7 @@ public class BottomMenuBar extends JPanel {
         }
         else if(stop.contains(mousePosition) && Runner.canBeStopped) {
             StartScreen.playClick();
-            Runner.stop(false);
+            Runner.stopCreatorAttacks(false);
         }
         return -1;
     }

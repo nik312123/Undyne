@@ -87,8 +87,8 @@ public class ArrowBar {
                 }
             };
             
-            speedField.setFont(Runner.deteFontEditor);
-            delayField.setFont(Runner.deteFontEditor);
+            speedField.setFont(Runner.deteFontTen);
+            delayField.setFont(Runner.deteFontTen);
             
             speedField.setForeground(FOREGROUND);
             delayField.setForeground(FOREGROUND);
@@ -241,7 +241,7 @@ public class ArrowBar {
             g2d.drawImage(Runner.customArrowDirection, arrowBarTransform, null);
         else {
             g2d.setColor(textColor);
-            g2d.setFont(Runner.deteFontSpeech);
+            g2d.setFont(Runner.deteFontFourteen);
             g2d.drawString("R", x + 102, y + 18);
         }
     }

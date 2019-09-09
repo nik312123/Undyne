@@ -316,7 +316,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     /**
      * True if the application is in the custom attack maker
      */
-    public static boolean isCustomAttack = false;
+    public static boolean customAttackMode = false;
     
     /**
      * True if the application is playing attacks from the custom attack maker
@@ -364,6 +364,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private static final String[] MAIN_SOUND_NAMES = {"/soj.ogg", "/survivalSoj.ogg", "/bath.ogg", "/survivalBath.ogg"};
     
     /**
+     * The current position of the mouse
+     */
+    private static Point mousePos = new Point();
+    
+    /**
      * The main timer used for redrawing the JFrame
      */
     private static Timer timer;
@@ -377,6 +382,11 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      * The image used to draw the green player heart in game
      */
     private static BufferedImage heart;
+    
+    /**
+     * The image that shows "Press X to Skip..." when the game over screen can be skipped
+     */
+    private static BufferedImage pressXtoSkip;
     
     /**
      * The image that contains the replay text shown after a game mode results in a death or completion
@@ -749,32 +759,32 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     /**
      * The determination font at 12 point size
      */
-    private static Font deteFontNorm;
+    private static Font deteFontTwelve;
     
     /**
      * The determination font at 22 point size
      */
-    static Font deteFontScore;
+    static Font deteFontTwentyTwo;
     
     /**
      * The determination font at 14 point size
      */
-    public static Font deteFontSpeech;
+    public static Font deteFontFourteen;
     
     /**
      * The determination font at 10 point size
      */
-    public static Font deteFontEditor;
+    public static Font deteFontTen;
     
     /**
      * The determination font at 24 point size
      */
-    public static Font deteFontEditorAttack;
+    public static Font deteFontTwentyFour;
     
     /**
      * The determination font at 20 point size
      */
-    public static Font deteFontError;
+    public static Font deteFontTwenty;
     
     /**
      * The focus listener used to determine whether the Undyne application window is in focus
@@ -959,6 +969,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             deleteArrow = getCompatibleImage("/deleteArrow.png");
             redArr = getCompatibleImage("/arrowR.png");
             reverseArr = getCompatibleImage("/arrowRE.png");
+            pressXtoSkip = getCompatibleImage("/pressXtoSkip.png");
             replay = getCompatibleImage("/replay.png");
             close = getCompatibleImage("/close.png");
             draggable = getCompatibleImage("/draggable.png");
@@ -986,12 +997,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             
             //Initializes fonts
             URL fontUrl = Runner.class.getResource("/dete.otf");
-            deteFontNorm = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
-            deteFontSpeech = deteFontNorm.deriveFont(14.0f);
-            deteFontScore = deteFontNorm.deriveFont(22.0f);
-            deteFontEditor = deteFontNorm.deriveFont(10.0f);
-            deteFontEditorAttack = deteFontNorm.deriveFont(24.0f);
-            deteFontError = deteFontNorm.deriveFont(20.0f);
+            deteFontTwelve = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream()).deriveFont(12.0f);
+            deteFontFourteen = deteFontTwelve.deriveFont(14.0f);
+            deteFontTwentyTwo = deteFontTwelve.deriveFont(22.0f);
+            deteFontTen = deteFontTwelve.deriveFont(10.0f);
+            deteFontTwentyFour = deteFontTwelve.deriveFont(24.0f);
+            deteFontTwenty = deteFontTwelve.deriveFont(20.0f);
         }
         
         //Initializes gifUndyneNormal if necessary
@@ -1399,7 +1410,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                                 }
                                 else if(checkFocus.isJustFocused())
                                     checkFocus.deactivateJustFocused();
-                                if(!CustomAttacks.isFileBeingChosen()) {
+                                if(!CustomAttacks.isFileBeingChosen() && customAttackMode) {
                                     barCheckBoxClicked(clickEvent);
                                     if(canBeStopped)
                                         bottomBar.mouseWorks(clickEvent.getPoint());
@@ -1442,7 +1453,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     g.fillRect(0, 0, 600, 28);
                 }
                 g.setColor(Color.WHITE);
-                g.setFont(deteFontSpeech);
+                g.setFont(deteFontFourteen);
                 String exit = "Press X to Exit";
                 g.drawString(exit, 300 - g.getFontMetrics().stringWidth(exit) / 2, 20);
             }
@@ -1643,6 +1654,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
         //Things are drawn only if allStopped is false
         if(!allStopped) {
             //The JFrame is set to always on top for 20 ticks at the start to ensure it gets on top upon initialization
@@ -1650,6 +1662,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 alwaysOnTopCounter = 20;
                 frame.setAlwaysOnTop(false);
             }
+    
+            Point absoluteMousePosition = MouseInfo.getPointerInfo().getLocation();
+            mousePos.setLocation(absoluteMousePosition.x - frame.getX(), absoluteMousePosition.y - frame.getY());
             
             //Used in the blinking of the creator arrows
             if(++creatorArrowDirectionCounter == 75)
@@ -1708,7 +1723,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     //If the hearts are activated, the start screen music will stop playing for the easter egg audio
                     if(stage.heartsActivated())
                         startScreen.stop();
-                    else if(beginning && startScreen.isStopped() && !oneSecondDelay.isRunning() && !isCustomAttack)
+                    else if(beginning && startScreen.isStopped() && !oneSecondDelay.isRunning() && !customAttackMode)
                         //If the start screen should be showing, the start screen music is played if it isn't playing
                         startScreen.play();
                 }
@@ -1718,7 +1733,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 drawCheat(g);
             }
             //Runs the custom attack editor's draw methods
-            else if(isCustomAttack && !oneSecondDelay.isRunning())
+            else if(customAttackMode && !oneSecondDelay.isRunning())
                 customAttackMaker.perform(g);
             else {
                 //Sets the top bar and numberfield visibilities to false
@@ -1762,7 +1777,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         //If the player dies when running attacks from the attack creator, they are sent back to the attack creator
                         if(canBeStopped) {
                             if(!oneSecondDelay.isRunning())
-                                stop(true);
+                                stopCreatorAttacks(true);
                         }
                         
                         //Stops the main music for the heart break beginning
@@ -1782,8 +1797,10 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                         }
                         
                         //Runs the game over screen until the last frame
-                        else if(!gameOverDone)
+                        else if(!gameOverDone) {
                             gameOver(g);
+                            drawGameOverSkippable(g);
+                        }
                         else {
                             //Draws the final frame of the game over screen along with the replay text
                             drawGameOver(g, gameOverFrame);
@@ -1797,12 +1814,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
              * Sets the bottom bar visibility to true if the one second delay loading screen isn't running, the user is past the custom attacks start screen, and the user
              * is either in the custom attacks mode or is playing attacks from custom attacks or false otherwise
              */
-            if(!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped))
+            if(!oneSecondDelay.isRunning() && CustomAttacks.isIn() && (customAttackMode || canBeStopped))
                 bottomBar.setVisible(true);
             else
                 bottomBar.setVisible(false);
             //If the attacks are done, the main audio is cut, and the speech bubble is drawn
-            if(a != null && a.isFinished() && !oneSecondDelay.isRunning()) {
+            if(a != null && !canBeStopped && !oneSecondDelay.isRunning() && a.isFinished()) {
                 if(genocide && gifFrame == 19 || !genocide && gifFrame == 10 && !canBeStopped) {
                     if(main != null)
                         main.stop();
@@ -1812,7 +1829,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             //If the attacks are done, the player is either sent back to custom attacks if they were running attacks from custom attacks. Otherwise, the Undyne speech is displayed
             if(a != null && a.isFinished() && (genocide && gifFrame == 19 || !genocide && gifFrame == 10) && !oneSecondDelay.isRunning()) {
                 if(canBeStopped)
-                    stop(true);
+                    stopCreatorAttacks(true);
                 else
                     undyneSpeech(g);
             }
@@ -1905,7 +1922,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setFont(deteFontNorm);
+        g2.setFont(deteFontTwelve);
         g2.setColor(Color.GREEN);
         if(!activated.equals(""))
             g2.drawString(activated.substring(0, nothingEndIndex), 0, 13 + 30);
@@ -2207,6 +2224,28 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         g.drawOval(getWidth() / 2 - 25 + p.getElementPosition(), getHeight() / 2 - 25 + p.getElementPosition(), 50, 50);
     }
     
+    private void drawGameOverSkippable(Graphics g) {
+        float opacity = (float) fadeStart;
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        g2d.drawImage(pressXtoSkip, 187, 421, null);
+        g2d.dispose();
+    
+        //Controls the flashing aspect of the pressXtoSkip text
+        if(++flashCount % 3 == 0) {
+            //Increases the opacity if the opacity is less than or equal to 1. Otherwise, it switches to decreasing until the opacity becomes less than 0.03 and switches back.
+            if(fadeStart <= 1 && !switchFade)
+                fadeStart += 0.02;
+            else {
+                switchFade = true;
+                fadeStart -= 0.02;
+                if(fadeStart < 0.03)
+                    switchFade = false;
+            }
+            flashCount = 0;
+        }
+    }
+    
     /**
      * Draws the replay text seen at a game over or end of a game mode
      *
@@ -2244,7 +2283,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     private void undyneSpeech(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setFont(deteFontSpeech);
+        g2d.setFont(deteFontFourteen);
         g2d.setColor(Color.BLACK);
         
         //Sets the message to the easy, medium, or hard message based on the game mode
@@ -2329,7 +2368,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     break;
             }
         }
-        g.setFont(deteFontScore);
+        g.setFont(deteFontTwentyTwo);
         g.setColor(Color.YELLOW);
         g.drawString("Score: " + score, 5, 590);
     }
@@ -2426,6 +2465,15 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
     }
     
     /**
+     * Returns true if the user is in the custom attack editor
+     *
+     * @return True if the user is in the custom attack editor
+     */
+    public static boolean isCustomAttackMode() {
+        return customAttackMode;
+    }
+    
+    /**
      * Returns the main JFrame
      *
      * @return The main JFrame
@@ -2489,7 +2537,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         isStartTimerDone = false;
         isOpenCreatorTimerDone = false;
         isCloseCreatorTimerDone = false;
-        isCustomAttack = false;
+        customAttackMode = false;
         canBeStopped = false;
         timer = null;
         oneSecondDelay = null;
@@ -2597,7 +2645,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 canBeStopped = true;
                 setUpUndyne(bottomBar.isGenocideBoxChecked());
                 beginning = false;
-                isCustomAttack = false;
+                customAttackMode = false;
                 main.changeVolume(musicSlider.getPercentage());
                 main.play();
                 dir = 'u';
@@ -2611,7 +2659,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      *
      * @param isCalledByTimer True if the timer calls the method, the attacks run out, or the player dies
      */
-    public static void stop(boolean isCalledByTimer) {
+    public static void stopCreatorAttacks(boolean isCalledByTimer) {
         //Prevents clicking the stop button multiple times when the loading screen is active, which can cause errors
         if(!oneSecondDelay.isRunning()) {
             //If the stop timer hasn't occurred, stop the main music and do the one second delay loading screen
@@ -2626,10 +2674,12 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 creatorMusic.play();
                 a.resetVars();
                 a1.resetVars();
-                isCustomAttack = true;
+                customAttackMode = true;
                 canBeStopped = false;
                 p.setDamaged(false);
                 p.resetTimeoutCounter();
+                dir = 'u';
+                p.setDirUp();
                 flickeringHeart = 0;
                 isStopTimerDone = false;
             }
@@ -2651,9 +2701,9 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             }
             //After the one second delay loading screen is done, prepare the attack creator
             else {
-                isCustomAttack = !isCustomAttack;
+                customAttackMode = !customAttackMode;
+                moveButtons(beginning);
                 beginning = !beginning;
-                moveButtons(!beginning);
                 if(delay == 10)
                     delay = 0;
                 else
@@ -2680,7 +2730,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
             //After the one second delay loading screen is done, prepare the start screen
             else {
                 delay = 10;
-                isCustomAttack = false;
+                customAttackMode = false;
                 beginning = true;
                 isCloseCreatorTimerDone = false;
             }
@@ -2760,7 +2810,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                     playCreatorAttacks(true);
                     break;
                 case "stop":
-                    stop(true);
+                    stopCreatorAttacks(true);
                     break;
             }
         }
@@ -3114,13 +3164,13 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
         }
         
         //If the user is in the attack creator, go back to the start screen
-        else if(isCustomAttack && !oneSecondDelay.isRunning() && !CustomAttacks.areAnyDirectionsSelected()) {
+        else if(customAttackMode && !oneSecondDelay.isRunning() && !CustomAttacks.areAnyDirectionsSelected()) {
             StartScreen.playClick();
             closeCreator();
         }
         
-        //If the user is in the game over screen after at least one time of seeing the replay text, the user can skip the game over text
-        else if(!gameOverScreenStarted && !isGameOver && !isFirstTime) {
+        //If the user is in the game over screen, the user can skip the game over text
+        else if(!gameOverScreenStarted && !isGameOver) {
             gameOverFrame = 225;
             isGameOver = true;
         }
@@ -3207,7 +3257,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
                 bottomBar.flipIsRobotBoxedChecked();
                 
                 //If the user clicks the checkbox when in the attack creator editor, it switches between the Undyne Undying and normal modes
-            else if(isCustomAttack)
+            else if(customAttackMode)
                 bottomBar.flipIsGenocideBoxChecked();
         }
     }
@@ -3236,7 +3286,7 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      * @return True if the bottom bar should be drawn
      */
     public static boolean bottomBarShouldDraw() {
-        return !allStopped && !oneSecondDelay.isRunning() && CustomAttacks.isIn() && (isCustomAttack || canBeStopped);
+        return !allStopped && !oneSecondDelay.isRunning() && CustomAttacks.isIn() && (customAttackMode || canBeStopped);
     }
     
     /**
@@ -3246,6 +3296,14 @@ public class Runner extends JPanel implements ActionListener, KeyListener {
      */
     public static boolean windowNotFocused() {
         return checkFocus.windowNotFocused();
+    }
+    
+    /**
+     * Returns the current position of the mouse
+     * @return the current position of the mouse
+     */
+    public static Point getMousePos() {
+        return mousePos;
     }
     
 }
